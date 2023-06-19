@@ -1,0 +1,82 @@
+#include "elements/gauss_kernel.h"
+
+GaussKernel::GaussKernel(const std::string& id, const uint8_t& size,
+	const GaussKernelParameters& parameters,
+	bool circular, bool normalized)
+	: parameters(parameters),
+	circular(circular), normalized(normalized)
+{
+	this->label = ElementLabel::GAUSS_KERNEL;
+	this->uniqueIdentifier = id;
+	this->size = size;
+	components["kernel"] = std::vector<double>(size);
+	components["output"] = std::vector<double>(size);
+	components["input"] = std::vector<double>(size);
+}
+
+void GaussKernel::init()
+{
+	kernelRange = mathtools::computeKernelRange(parameters.sigma, parameters.cutOfFactor, size, circular);
+
+	if (circular)
+		extIndex = mathtools::createExtendedIndex(size, kernelRange);
+	else
+		extIndex = {};
+
+	uint32_t rangeXsize = kernelRange[0] + kernelRange[1] + 1;
+	std::vector<int> rangeX(rangeXsize);
+	int startingValue = kernelRange[0];
+	std::iota(rangeX.begin(), rangeX.end(), -startingValue);
+	std::vector<double> gauss(size);
+	if (normalized)
+		gauss = mathtools::gaussNorm(rangeX, 0.0, parameters.sigma);
+	else
+		gauss = mathtools::gauss(rangeX, 0.0, parameters.sigma);
+
+	components["kernel"].resize(rangeX.size());
+	for (int i = 0; i < components["kernel"].size(); i++)
+		components["kernel"][i] = parameters.amplitude * gauss[i];
+
+	components["input"].resize(extIndex.size());
+	std::fill(components["input"].begin(), components["input"].end(), 0);
+}
+
+void GaussKernel::step(const double& t, const double& deltaT)
+{
+
+	updateInput();
+
+	std::vector<double> convolution(size);
+	std::vector<double> subDataInput = mathtools::obtainCircularVector(extIndex, components["input"]);
+
+
+	if (circular)
+		convolution = mathtools::conv_valid(subDataInput, components["kernel"]);
+	else
+		convolution = mathtools::conv(subDataInput, components["kernel"]);
+
+	components["output"] = convolution;
+}
+
+void GaussKernel::close()
+{
+}
+
+
+void GaussKernel::setParameters(const GaussKernelParameters& parameters)
+{
+	this->parameters = parameters;
+	init();
+}
+
+
+GaussKernelParameters GaussKernel::getParameters()
+{
+	return parameters;
+}
+
+GaussKernel::~GaussKernel()
+{
+	// nothing requires cleanup
+}
+
