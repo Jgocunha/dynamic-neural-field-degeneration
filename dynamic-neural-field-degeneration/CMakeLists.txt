@@ -15,7 +15,7 @@ set(SOURCES
 )
 
 # Add executable
-add_executable(launch-dynamic-neural-field-degeneration ${SOURCES})
+add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} "src/threadHandler.cpp" "src/coppeliasimHandler.cpp")
 
 # Add the include directory of dynamic-neural-field-composer and coppeliasim-cpp-client
 target_include_directories(launch-dynamic-neural-field-degeneration PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/dynamic-neural-field-composer/include)
@@ -24,7 +24,7 @@ target_include_directories(launch-dynamic-neural-field-degeneration PRIVATE ${CM
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/dynamic-neural-field-composer)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/coppeliasim-cpp-client)
 
-# Link against imgui, implot and dynamic-neural-field-composer library
+# Link against imgui, implot, dynamic-neural-field-composer, and coppeliasim-cpp-client library
 target_link_libraries(launch-dynamic-neural-field-degeneration PUBLIC imgui)
 target_link_libraries(launch-dynamic-neural-field-degeneration PUBLIC implot)
 target_link_libraries(launch-dynamic-neural-field-degeneration PRIVATE dynamic-neural-field-composer)

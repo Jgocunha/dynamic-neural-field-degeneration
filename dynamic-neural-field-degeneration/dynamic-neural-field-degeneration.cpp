@@ -2,41 +2,13 @@
 
 int main()
 {
-    /*std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>();
+    ThreadHandler handler;
 
-    std::vector<std::shared_ptr<Visualization>> visualizations;
-    visualizations.push_back(std::make_shared<Visualization>(simulation));
+    // Start the threads
+    handler.startThreads();
 
-    Application app{ simulation, visualizations, true };
+    // Wait for the threads to complete
+    handler.joinThreads();
 
-    try {
-        app.init();
-
-        bool userRequestClose = false;
-        while (!userRequestClose)
-        {
-            app.step();
-            userRequestClose = app.getCloseUI();
-        }
-        app.close();
-        return 0;
-    }
-    catch (const Exception& ex) {
-        std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
-        return static_cast<int>(ex.getErrorCode());
-    }
-    catch (const std::exception& ex) {
-        std::cerr << "Exception caught: " << ex.what() << std::endl;
-        return 1;
-    }
-    catch (...)
-    {
-        std::cerr << "Unknown exception occurred." << std::endl;
-        return 1;
-    }*/
-
-    CoppeliaSimClient coppeliaSimClient;
-
-    coppeliaSimClient.initialize();
-
+    return 0;
 }
