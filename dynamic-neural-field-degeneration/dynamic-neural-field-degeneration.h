@@ -1,8 +1,7 @@
-﻿// dynamic-neural-field-degeneration.h : Include file for standard system include files,
-// or project specific include files.
-
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 
-// TODO: Reference additional headers your program requires here.
+#include "./lib/dynamic-neural-field-composer/include/application/application.h"
+#include "./lib/dynamic-neural-field-composer/examples/examples.h"
+#include "./lib/coppeliasim-cpp-client/include/client.h"

@@ -62,8 +62,6 @@ target_link_libraries(launch-dynamic-neural-field-composer PUBLIC imgui)
 target_link_libraries(launch-dynamic-neural-field-composer PUBLIC implot)
 target_link_libraries(launch-dynamic-neural-field-composer PRIVATE dynamic-neural-field-composer)
 
-
-
 # Set C++ standard and compile options
 set_property(TARGET launch-dynamic-neural-field-composer PROPERTY CXX_STANDARD 20)
 #if (CMAKE_VERSION VERSION_GREATER 3.12)
