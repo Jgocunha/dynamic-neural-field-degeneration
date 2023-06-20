@@ -26,6 +26,11 @@ bool CoppeliasimHandler::initialize()
 	return false;
 }
 
+void CoppeliasimHandler::setShapeHandle(const std::string& handle)
+{
+	cuboid.name = handle;
+}
+
 void CoppeliasimHandler::resetSignals()
 {
 	client.setIntegerSignal(CREATE_SHAPE_SIGNAL, 0);

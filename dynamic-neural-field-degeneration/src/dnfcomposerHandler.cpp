@@ -62,17 +62,13 @@ void DNFComposerHandler::setExternalStimulus(const std::string& stimulusLabel)
 	for (int i = 0; i < timeForFieldToSettle; i++)
 		application->step();
 
+	simulation->removeElement("stimulus " + cuboidColorLabel);
 	
 }
 
 std::string DNFComposerHandler::getTargetBox()
 {
 	double centroid = outputField->calculateCentroid();
-
-	simulation->removeElement("stimulus " + cuboidColorLabel);
-
-	//visualizations[0]->
-	//simulation->init();
 
 	double halfRange = 10;
 

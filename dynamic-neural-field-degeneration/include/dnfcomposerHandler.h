@@ -16,7 +16,7 @@ private:
 	std::map<std::string, double> targetBox;
 	std::string cuboidColorLabel;
 
-	int timeForFieldToSettle = 200;
+	int timeForFieldToSettle = 50;
 public:
 	DNFComposerHandler(const std::shared_ptr<Simulation> simulation);
 	~DNFComposerHandler();

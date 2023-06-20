@@ -25,7 +25,10 @@ void ThreadHandler::coppeliasimMain()
     {
         while (currentTrial <= numTrials)
         {
-            cpsh.startStep(currentTrial);
+            cpsh.createShape();
+
+            cpsh.setShapeHandle("Cuboid_" + std::to_string(currentTrial));
+            cpsh.getShapeParameters();
 
             // Lock the mutex before accessing the shared variables
             std::unique_lock<std::mutex> lock(mtx);
@@ -40,10 +43,15 @@ void ThreadHandler::coppeliasimMain()
             // Wait for dnfcomposer to finish reading cuboidColor and write to targetBox
             cv.wait(lock, [this]() { return !isReady; });
 
+            cpsh.pickUpShape();
+
             // Use the value read from targetBox
             cpsh.setTargetBox(targetBox);
 
-            cpsh.endStep();
+            cpsh.placeShape();
+
+            cpsh.resetSignals();
+            //cpsh.endStep();
             currentTrial++;
         }
         cpsh.stop();

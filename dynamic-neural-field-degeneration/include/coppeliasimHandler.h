@@ -56,7 +56,8 @@ public:
 	std::string getShapeColor();
 	void setTargetBox(const std::string& box);
 
-private:
+public:
+	void setShapeHandle(const std::string& handle);
 	void resetSignals();
 	void createShape();
 	void getShapeParameters();
