@@ -18,61 +18,92 @@ protected:
     bool isReady = false;
     std::string cuboidColor = "UNDEFINED";
     std::string targetBox = "UNDEFINED";
+    int numTrials;
+    int currentTrial = 1;
 public:
-    ThreadHandler() {}
+    ThreadHandler(const int& numTrials = 1) :numTrials(numTrials) {}
     ~ThreadHandler() {}
 
     void startThreads();
     void joinThreads();
 
 private:
-    void threadFunction1() 
-    {
-        CoppeliasimHandler cpsh{10};
-            
-        if (cpsh.initialize())
-        {
-            cpsh.run();
-			cpsh.stop();
-        }
-
-        //// Lock the mutex before accessing the shared variables
-        //std::unique_lock<std::mutex> lock(mtx);
-
-        //// Write to var1
-        //cuboidColor = "RED";
-
-        //// Notify thread 2 that var1 is ready
-        //isReady = true;
-        //cv.notify_one();
-
-        //// Wait for thread 2 to finish reading var1 and write to var2
-        //cv.wait(lock, [this]() { return !isReady; });
-
-        //// Use the value read from var2
-        //std::cout << "Thread 1: var2 = " << targetBox << "\n";
-    }
+    void coppeliasimMain();
 
     // Function to be executed in the second thread
-    void threadFunction2() {
-        //// Perform some computations or tasks
+    int dnfcomposerMain() 
+    {
+        std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>();
 
-        //// Lock the mutex before accessing the shared variables
-        //std::unique_lock<std::mutex> lock(mtx);
+        std::vector<std::shared_ptr<Visualization>> visualizations;
+        visualizations.push_back(std::make_shared<Visualization>(simulation));
 
-        //// Wait for var1 to be ready
-        //cv.wait(lock, [this]() { return isReady; });
+        Application app{ simulation, visualizations, true };
 
-        //// Read var1
-        //std::string color = cuboidColor;
+        try {
+            app.init();
 
-        //std::cout << "Cuboid color was read in thread2 as: " + color << "\n";
+            bool userRequestClose = false;
+            while (!userRequestClose)
+            {
+                app.step();
 
-        //// Write to var2
-        //targetBox = "BOX_1";
+                //Lock the mutex before accessing the shared variables
+                std::unique_lock<std::mutex> lock(mtx);
 
-        //// Notify thread 1 that var2 is ready
-        //isReady = false;
-        //cv.notify_one();
+                // Wait for var1 to be ready for a specified duration
+                if (cv.wait_for(lock, std::chrono::milliseconds(100), [this]() { return isReady; })) {
+                    // Read var1
+                    std::string color = cuboidColor;
+
+                    std::cout << "Cuboid color was read in thread2 as: " + color << "\n";
+
+                    // Write to var2
+                    targetBox = "BOX_1";
+
+                    // Notify thread 1 that var2 is ready
+                    isReady = false;
+                    cv.notify_one();
+                }
+
+                userRequestClose = app.getCloseUI();
+            }
+            app.close();
+            return 0;
+        }
+        catch (const Exception& ex) {
+            std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
+            return static_cast<int>(ex.getErrorCode());
+        }
+        catch (const std::exception& ex) {
+            std::cerr << "Exception caught: " << ex.what() << std::endl;
+            return 1;
+        }
+        catch (...)
+        {
+            std::cerr << "Unknown exception occurred." << std::endl;
+            return 1;
+        }
     }
 };
+
+//while (currentTrial <= numTrials)
+        //{ 
+        //    // Lock the mutex before accessing the shared variables
+        //    std::unique_lock<std::mutex> lock(mtx);
+
+        //    // Wait for var1 to be ready
+        //    cv.wait(lock, [this]() { return isReady; });
+
+        //    // Read var1
+        //    std::string color = cuboidColor;
+
+        //    std::cout << "Cuboid color was read in thread2 as: " + color << "\n";
+
+        //    // Write to var2
+        //    targetBox = "BOX_1";
+
+        //    // Notify thread 1 that var2 is ready
+        //    isReady = false;
+        //    cv.notify_one();
+        //}

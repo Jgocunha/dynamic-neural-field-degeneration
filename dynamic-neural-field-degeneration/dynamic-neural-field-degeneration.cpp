@@ -2,7 +2,8 @@
 
 int main()
 {
-    ThreadHandler handler;
+    int numTrials = 10;
+    ThreadHandler handler{ numTrials };
 
     // Start the threads
     handler.startThreads();

@@ -49,7 +49,12 @@ public:
 
 	bool initialize();
 	void run();
+	void startStep(const int& currentTrial);
+	void endStep();
 	void stop();
+
+	std::string getShapeColor();
+	void setTargetBox(const std::string& box);
 
 private:
 	void resetSignals();

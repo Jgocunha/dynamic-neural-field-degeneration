@@ -52,8 +52,6 @@ void CoppeliasimHandler::run()
 		cuboid.name = "Cuboid_" + std::to_string(currentTrial);
 		getShapeParameters();
 
-		computeTargetBox();
-
 		pickUpShape();
 
 		placeShape();
@@ -65,9 +63,38 @@ void CoppeliasimHandler::run()
 	}
 }
 
+void CoppeliasimHandler::startStep(const int& currentTrial)
+{
+	createShape();
+
+	cuboid.name = "Cuboid_" + std::to_string(currentTrial);
+	getShapeParameters();
+
+	pickUpShape();
+}
+
+void CoppeliasimHandler::endStep()
+{
+	placeShape();
+
+	Sleep(20);
+
+	resetSignals();
+}
+
 void CoppeliasimHandler::stop()
 {
 	client.stopSimulation();
+}
+
+std::string CoppeliasimHandler::getShapeColor()
+{
+	return cuboid.color;
+}
+
+void CoppeliasimHandler::setTargetBox(const std::string& box)
+{
+	client.setStringSignal(SHAPE_BOX_SIGNAL, box);
 }
 
 void CoppeliasimHandler::createShape()
@@ -157,6 +184,9 @@ void CoppeliasimHandler::computeTargetBox()
 		box = BoxToPlaceShape::BOX_1; // Default to BOX_1 if the color is unknown
 		client.log("Unknown color. Target box set to BOX_1");
 	}
+
+
+
 
 	client.setStringSignal(SHAPE_BOX_SIGNAL, boxToPlaceShapeMap[box]);
 }
