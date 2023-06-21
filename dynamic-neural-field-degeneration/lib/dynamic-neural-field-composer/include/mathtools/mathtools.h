@@ -109,28 +109,28 @@ namespace mathtools {
 	{
 		uint32_t l = size - 2 * 1 + 2;
 		uint32_t m = 1;
-		uint32_t r = position - m;
-		T rem = r % l;
-		T positionShifted = rem + m;
+		T r = position - static_cast<T>(m); // Calculate the shift with fractional part
+		T rem = std::fmod(r, static_cast<T>(l)); // Calculate the remainder
+		T positionShifted = rem + static_cast<T>(m); // Apply the shifted position
 
 		std::vector<T> g(size);
 		std::vector<T> xRange(size);
-		std::iota(xRange.begin(), xRange.end(), 1);
+		std::iota(xRange.begin(), xRange.end(), static_cast<T>(1));
 
 		if (sigma)
 		{
 			std::vector<T> d(size);
 			std::vector<T> lMinusd(size);
-			std::transform(xRange.begin(), xRange.end(), d.begin(), [&positionShifted](T element) { return element = abs(element - positionShifted); });
-			std::transform(d.begin(), d.end(), lMinusd.begin(), [&l](T element) { return element = -1 * (element - l); });
+			std::transform(xRange.begin(), xRange.end(), d.begin(), [&positionShifted, &l](T element) { return std::abs(element - positionShifted); });
+			std::transform(d.begin(), d.end(), lMinusd.begin(), [&l](T element) { return -1 * (element - l); });
 			for (int i = 0; i < size; i++)
 			{
-				g[i] = exp(-0.5 * pow(std::min(d[i], lMinusd[i]), 2) / pow(sigma, 2));
+				g[i] = std::exp(-0.5 * std::pow(std::min(d[i], lMinusd[i]), 2) / std::pow(sigma, 2));
 			}
 		}
 		//else
 		//{
-		//	// if sigma not zero what to do?
+		//    // if sigma not zero what to do?
 		//}
 		return g;
 	}

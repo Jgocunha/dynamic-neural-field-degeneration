@@ -45,7 +45,7 @@ bool DNFComposerHandler::getUserRequestClose()
 
 void DNFComposerHandler::setExternalStimulus(const std::string& stimulusLabel)
 {
-	double offset = 1.5;
+	double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
 	std::cout << "Stimulus label: " << stimulusLabel << "\n";
 	cuboidColorLabel = stimulusLabel;

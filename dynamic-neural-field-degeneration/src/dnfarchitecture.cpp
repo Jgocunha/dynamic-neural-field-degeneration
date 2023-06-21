@@ -42,7 +42,7 @@ void DNFarchitecture::setup()
     // create neural fields
     ActivationFunctionParameters afp = { ActivationFunctionType::Heaviside, 0.0, 0.2 };
     NeuralFieldParameters nfp1 = { 20, -10 };
-    NeuralFieldParameters nfp2 = { 20, -5 };
+    NeuralFieldParameters nfp2 = { 20, -10 };
     std::shared_ptr<DegenerateNeuralField> neural_field_u(new DegenerateNeuralField("field u", fieldSize, nfp1, afp));
     std::shared_ptr<DegenerateNeuralField> neural_field_v(new DegenerateNeuralField("field v", fieldSize, nfp2, afp));
 
@@ -52,13 +52,13 @@ void DNFarchitecture::setup()
     // create interactions and add them to the simulationulation
     GaussKernelParameters gkp1;
     gkp1.amplitude = 20;  // self-sustained (without input)
-    gkp1.sigma = 5;
+    gkp1.sigma = 3;
     std::shared_ptr<GaussKernel> gaussKernel_u_u(new GaussKernel("u - u", fieldSize, gkp1)); // self-excitation u-v
     simulation->addElement(gaussKernel_u_u);
 
     GaussKernelParameters gkp2;
     gkp2.amplitude = 6;  // self-stabilized (with input)
-    gkp2.sigma = 5;
+    gkp2.sigma = 2;
     std::shared_ptr<GaussKernel> gaussKernel_v_v(new GaussKernel("v - v", fieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(gaussKernel_v_v);
 
@@ -91,6 +91,8 @@ void DNFarchitecture::setup()
 
     noise_kernel_u->addInput(noise_u);
     noise_kernel_v->addInput(noise_v);
+
+    //coupling_u_v->trainWeights("temp_input.txt", "temp_output.txt", 1000);
 
 }
 

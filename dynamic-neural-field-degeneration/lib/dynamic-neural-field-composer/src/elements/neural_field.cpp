@@ -88,11 +88,11 @@ double NeuralField::calculateCentroid()
 
 		// x positions array
 		std::vector<double> x(size);
-		for (int i = 0; i < size-1; i++)
+		for (int i = 0; i < size; i++)
 			x[i] = i;
 
 		// Compute the integral and normalization factor
-		for (int i = 0; i < size - 1; i++) 
+		for (int i = 0; i < size - 1; i++)
 		{
 			double dx = x[i + 1] - x[i];
 			double a = components["output"][i];
@@ -102,9 +102,8 @@ double NeuralField::calculateCentroid()
 		}
 
 		// Compute the centroid
-		centroid = (integral / norm);
+		centroid = (integral / norm) + 0.5;
 	}
 
 	return centroid;
 }
-
