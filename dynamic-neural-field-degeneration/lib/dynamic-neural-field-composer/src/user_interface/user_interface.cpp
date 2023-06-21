@@ -17,7 +17,7 @@ UserInterface::UserInterface(std::shared_ptr<Simulation> simulation, std::vector
 
     // Setup windows here
     //windows.push_back(std::make_shared<PlotWindow>(visualizations[1]));
-    windows.push_back(std::make_shared<SimulationWindow>(simulation));
+    //windows.push_back(std::make_shared<SimulationWindow>(simulation));
     //windows.push_back(std::make_shared<CouplingWindow>(simulation));
     windows.push_back(std::make_shared<DegeneracyWindow>(simulation));
 }

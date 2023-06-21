@@ -1,5 +1,10 @@
 #pragma once
 
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 #include "../lib/dynamic-neural-field-composer/include/application/application.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_neural_field.h"
 
@@ -18,6 +23,7 @@ private:
 
 	int timeForFieldToSettle = 50;
 public:
+	DNFComposerHandler() {}
 	DNFComposerHandler(const std::shared_ptr<Simulation> simulation);
 	~DNFComposerHandler();
 
@@ -25,7 +31,9 @@ public:
 	void step();
 	void close();
 
-	bool getUserRequestClose();
+	void handleSignals();
+
+	 bool getUserRequestClose();
 	void setExternalStimulus(const std::string& stimulusLabel);
 	std::string getTargetBox();
 private:

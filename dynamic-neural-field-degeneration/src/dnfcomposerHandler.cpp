@@ -70,7 +70,7 @@ std::string DNFComposerHandler::getTargetBox()
 {
 	double centroid = outputField->calculateCentroid();
 
-	double halfRange = 10;
+	double halfRange = 1;
 
 	if (centroid >= 12.5 - halfRange && centroid < 12.5 + halfRange)
 		return "BOX_1";
@@ -87,7 +87,7 @@ std::string DNFComposerHandler::getTargetBox()
 	else if (centroid >= 87.5 - halfRange && centroid < 87.5 + halfRange)
 		return "BOX_7";
 	else
-		return "Unknown";
+		return "BOX_0";
 }
 
 void DNFComposerHandler::setupCuboidColorMap()

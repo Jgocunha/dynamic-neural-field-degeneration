@@ -10,7 +10,7 @@ PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization)
 
 void PlotWindow::render()
 {
-	renderElementSelector();
+	//renderElementSelector();
 	renderPlots();
 }
 

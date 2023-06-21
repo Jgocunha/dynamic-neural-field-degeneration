@@ -14,6 +14,7 @@ class ThreadHandler
 {
 private:
     std::thread dnfcomposerThread, coppeliasimThread;
+    DNFComposerHandler dnfch;
 protected:
     std::mutex mtx;
     std::condition_variable cv;
@@ -23,7 +24,7 @@ protected:
     int numTrials;
     int currentTrial = 1;
 public:
-    ThreadHandler(const int& numTrials = 1) :numTrials(numTrials) {}
+    ThreadHandler(const int& numTrials = 1);
     ~ThreadHandler() {}
 
     void startThreads();
@@ -32,4 +33,5 @@ public:
 private:
     void coppeliasimMain();
     int dnfcomposerMain();
+    void dnfcomposerSignalHandling();
 };

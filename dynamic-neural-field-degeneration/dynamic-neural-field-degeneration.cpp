@@ -2,7 +2,7 @@
 
 int main()
 {
-    int numTrials = 10;
+    int numTrials = 100;
     ThreadHandler handler{ numTrials };
 
     // Start the threads
