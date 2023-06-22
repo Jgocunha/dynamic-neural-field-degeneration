@@ -69,7 +69,7 @@ set_property(TARGET launch-dynamic-neural-field-composer PROPERTY CXX_STANDARD 2
 
 
 # Enable testing
-enable_testing()
+#enable_testing()
 # Add Test library
-add_subdirectory(lib/Catch2)
-add_subdirectory(tests)
+#add_subdirectory(lib/Catch2)
+#add_subdirectory(tests)

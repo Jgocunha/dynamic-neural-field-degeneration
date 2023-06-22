@@ -87,6 +87,7 @@ public:
 	void step();
 	void close();
 
+	void addWindow(std::shared_ptr<UserInterfaceWindow> window);
 
 	const bool getCloseUI();
 	~UserInterface() = default;

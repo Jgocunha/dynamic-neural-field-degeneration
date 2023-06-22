@@ -22,6 +22,11 @@ UserInterface::UserInterface(std::shared_ptr<Simulation> simulation, std::vector
     windows.push_back(std::make_shared<DegeneracyWindow>(simulation));
 }
 
+void UserInterface::addWindow(std::shared_ptr<UserInterfaceWindow> window)
+{
+    windows.push_back(window);
+}
+
 void UserInterface::init()
 {
 	
