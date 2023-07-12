@@ -48,3 +48,7 @@ Application::~Application()
 	// no cleanup necessary
 }
 
+void Application::addWindow(std::shared_ptr<UserInterfaceWindow> window)
+{
+	userInterface->addWindow(window);
+}
