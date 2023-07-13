@@ -54,7 +54,7 @@ std::shared_ptr<Simulation> test_DegeneracyOneLayerFieldModel()
     sim->addElement(gaussKernel_v_v);
 
     //std::shared_ptr<FieldCoupling> coupling_u_v(new FieldCoupling("u - v", fieldSize, { 0.95, 0.1 }));
-    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.80, 0.1 }));
+    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.80, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
     sim->addElement(coupling_u_v);
 
     // create noise stimulus and noise kernel

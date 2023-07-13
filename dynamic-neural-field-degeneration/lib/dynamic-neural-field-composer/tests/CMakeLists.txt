@@ -16,6 +16,7 @@ add_library(test_sources OBJECT
 	"test_visualization.cpp"
 	"test_application.cpp"
 	"test_user_interface.cpp"
+	"test_simulation.cpp"
 )
 target_link_libraries(test_sources PRIVATE
 	Catch2::Catch2WithMain
@@ -30,7 +31,7 @@ add_executable(tests
 target_link_libraries(tests PRIVATE
 	Catch2::Catch2WithMain
 	test_sources
-	#dynamic-neural-field-composer
+	dynamic-neural-field-composer
 )
 include(CTest)
 include(Catch)

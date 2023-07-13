@@ -1,11 +1,11 @@
 
 #include "application/application.h"
 
-Application::Application(std::shared_ptr<Simulation> simulation, std::vector<std::shared_ptr<Visualization>> visualizations, bool activateUserInterface)
-	:simulation(simulation), visualizations(visualizations), activateUserInterface(activateUserInterface)
+Application::Application(std::shared_ptr<Simulation> simulation, bool activateUserInterface)
+	:simulation(simulation), activateUserInterface(activateUserInterface)
 {
-	if(this->visualizations.empty())
-		addVisualization();
+	//if(this->visualizations.empty())
+		//addVisualization();
 	if(activateUserInterface)
 		userInterface = std::make_shared<UserInterface>(this->simulation, this->visualizations);
 }
@@ -36,6 +36,12 @@ void Application::close()
 		userInterface->close();
 }
 
+void Application::activateUserInterfaceWindow(const std::shared_ptr<UserInterfaceWindow> window)
+{
+	if (activateUserInterface)
+		userInterface->activateWindow(window);
+}
+
 const bool Application::getCloseUI()
 {
 	if (activateUserInterface)
@@ -48,7 +54,3 @@ Application::~Application()
 	// no cleanup necessary
 }
 
-void Application::addWindow(std::shared_ptr<UserInterfaceWindow> window)
-{
-	userInterface->addWindow(window);
-}

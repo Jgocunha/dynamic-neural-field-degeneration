@@ -6,8 +6,9 @@
 // Helper function to create a sample Element object for testing
 std::shared_ptr<NeuralField> createSampleNeuralField(const std::string& elementId, uint8_t size = 1)
 {
-    NeuralFieldParameters nfp{ 1, -5, 5 };
-    return std::make_shared<NeuralField>(elementId, size, nfp);
+    NeuralFieldParameters nfp{ 1, -5};
+    ActivationFunctionParameters afp{ ActivationFunctionType::Sigmoid, 1, 0 };
+    return std::make_shared<NeuralField>(elementId, size, nfp, afp);
 }
 
 // Mock class for testing Element

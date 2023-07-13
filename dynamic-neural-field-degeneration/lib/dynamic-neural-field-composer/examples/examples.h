@@ -10,10 +10,12 @@
 #include "elements/sum_dimension.h"
 #include "elements/degenerate_field_coupling.h"
 #include "elements/degenerate_neural_field.h"
+#include "wizards/field_coupling_wizard.h"
 
 
 
 std::shared_ptr<Simulation> test_SharedTaskKnowledge();
 std::shared_ptr<Simulation> test_TwoLayerField();
 std::shared_ptr<Simulation> test_DegeneracyOneLayerFieldModel();
+std::shared_ptr<Simulation> test_DegeneracyCuboidColor();
 

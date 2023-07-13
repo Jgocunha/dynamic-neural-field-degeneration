@@ -82,7 +82,7 @@ private:
 		if (ImGui::Button("Add", { 100.0f, 30.0f }))
 		{
 			FieldCouplingParameters fcp = { sigma };
-			std::shared_ptr<FieldCoupling> gaussCoupling = std::make_shared<FieldCoupling>(id, size, fcp);
+			std::shared_ptr<FieldCoupling> gaussCoupling = std::make_shared<FieldCoupling>(id, size, fcp, LearningRule::DELTA_KROGH_HERTZ);
 			simulation->addElement(gaussCoupling);
 		}
 	}

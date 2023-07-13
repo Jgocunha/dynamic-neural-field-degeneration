@@ -71,10 +71,8 @@ class UserInterface
 private:
 	std::shared_ptr<Simulation> simulation;
 	std::vector<std::shared_ptr<Visualization>> visualizations;
-
 	std::vector<std::shared_ptr<UserInterfaceWindow>> windows;
 
-	//ImGuiIO& io;// = ImGui::GetIO();
 	HWND windowHandle;
 	WNDCLASSEXW windowClass;
 	bool closeUI;
@@ -87,7 +85,7 @@ public:
 	void step();
 	void close();
 
-	void addWindow(std::shared_ptr<UserInterfaceWindow> window);
+	void activateWindow(const std::shared_ptr<UserInterfaceWindow> window);
 
 	const bool getCloseUI();
 	~UserInterface() = default;

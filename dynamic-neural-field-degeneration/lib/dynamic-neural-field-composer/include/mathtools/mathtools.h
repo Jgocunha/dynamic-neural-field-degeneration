@@ -162,7 +162,6 @@ namespace mathtools {
 		return h;
 	}
 
-
 	template<typename T>
 	std::vector<T> sumGauss(const std::vector<T>& gauss1, const std::vector<T>& gauss2)
 	{
@@ -234,7 +233,7 @@ namespace mathtools {
 	}
 
 	template <typename T>
-	std::vector<std::vector<T>> deltaLearningRule(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
+	std::vector<std::vector<T>> deltaLearningRuleWidrowHoff(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
 	{
 		uint8_t inputSize = input.size();
 		uint8_t outputSize = targetOutput.size();
@@ -264,6 +263,44 @@ namespace mathtools {
 
 		return weights;
 	}
+
+	template <typename T>
+	std::vector<std::vector<T>> deltaLearningRuleKroghHertz(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
+	{
+
+		 double deltaT = 1.0;
+		 double tau_w = 5.0;
+		 double eta = 0.5;
+
+		uint8_t inputSize = input.size();
+		uint8_t outputSize = targetOutput.size();
+		if (inputSize != outputSize)
+			throw std::invalid_argument("Input and targetOutput must have the same size.");
+
+		// Calculate the activation levels of the fields based on the input values and current weights
+		std::vector<T> actualOutput(outputSize, 0.0);
+		for (size_t j = 0; j < outputSize; ++j) {
+			for (size_t i = 0; i < inputSize; ++i) {
+				actualOutput[j] += input[i] * weights[i][j];
+			}
+		}
+
+		// Calculate the error between the target output and the actual output
+		std::vector<T> error(outputSize, 0.0);
+		for (size_t j = 0; j < outputSize; ++j) {
+			error[j] = targetOutput[j] - actualOutput[j];
+		}
+
+		// Update the weights based on the error and current activation levels of the fields
+		for (size_t i = 0; i < inputSize; ++i) {
+			for (size_t j = 0; j < outputSize; ++j) {
+				weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
+			}
+		}
+
+		return weights;
+	}
+
 
 	template <typename T>
 	T generateRandomNumber(const T& min, const T& max)

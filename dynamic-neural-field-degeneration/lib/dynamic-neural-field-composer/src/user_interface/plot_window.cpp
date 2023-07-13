@@ -1,16 +1,23 @@
 #include "./user_interface/plot_window.h"
 
 
+PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation)
+{
+	this->visualization = std::make_shared<Visualization>(simulation);
+	//numPlotWindows++;
+	//id = numPlotWindows;
+}
+
 PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization)
 {
 	this->visualization = visualization;
-	numPlotWindows++;
-	id = numPlotWindows;
+	//numPlotWindows++;
+	//id = numPlotWindows;
 }
 
 void PlotWindow::render()
 {
-	//renderElementSelector();
+	renderElementSelector();
 	renderPlots();
 }
 

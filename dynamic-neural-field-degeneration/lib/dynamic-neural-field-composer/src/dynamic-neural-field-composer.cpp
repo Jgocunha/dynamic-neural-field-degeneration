@@ -1,16 +1,19 @@
 ﻿#include "dynamic-neural-field-composer.h"
 
+// This .cpp file is an example of how you can use the library to create your own DNF simulation.
+
 int main(int argc, char* argv[])
 {
-    //std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>();
-    //std::shared_ptr<Simulation> simulation = test_SharedTaskKnowledge();
-    std::shared_ptr<Simulation> simulation = test_DegeneracyOneLayerFieldModel();
+    // After defining the simulation, we can create the application.
+    std::shared_ptr<Simulation> simulation = test_DegeneracyCuboidColor();
+    // You can run the application without the user interface by setting the second parameter to false.
+    Application app{ simulation, true};
+    
+    // After creating the application, we can add the windows we want to display.
+    app.activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
+    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation));
+    app.activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
 
-    std::vector<std::shared_ptr<Visualization>> visualizations;
-    visualizations.push_back(std::make_shared<Visualization>(simulation));
-    
-    Application app{ simulation, visualizations, true};
-    
     try {
         app.init();
 

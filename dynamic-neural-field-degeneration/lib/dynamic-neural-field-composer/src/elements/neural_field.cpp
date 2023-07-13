@@ -107,3 +107,5 @@ double NeuralField::calculateCentroid()
 
 	return centroid;
 }
+
+

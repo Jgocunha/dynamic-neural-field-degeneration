@@ -36,7 +36,7 @@ std::shared_ptr<Simulation> test_SharedTaskKnowledge()
     gkp.sigma = 5;
     std::shared_ptr<GaussKernel> gaussKernel_v_v(new GaussKernel("v - v", fieldSize, gkp));
 
-    std::shared_ptr<FieldCoupling> coupling_u_v(new FieldCoupling("u - v", fieldSize, { 0.75, 0.1}));
+    std::shared_ptr<FieldCoupling> coupling_u_v(new FieldCoupling("u - v", fieldSize, { 0.75, 0.1}, LearningRule::DELTA_KROGH_HERTZ));
 
     sim->addElement(mexicanHatKernel_u_u);
     sim->addElement(gaussKernel_v_v);

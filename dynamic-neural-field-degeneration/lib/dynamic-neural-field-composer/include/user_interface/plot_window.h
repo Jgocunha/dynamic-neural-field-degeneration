@@ -8,9 +8,10 @@ class PlotWindow : public UserInterfaceWindow
 {
 private:
 	std::shared_ptr<Visualization> visualization;
-	static inline uint8_t numPlotWindows = 0;
+	//static inline uint8_t numPlotWindows = 0;
 	uint8_t id;
 public:
+	PlotWindow(const std::shared_ptr<Simulation>& simulation);
 	PlotWindow(const std::shared_ptr<Visualization>& visualization);
 	void render() override;
 	~PlotWindow() = default;

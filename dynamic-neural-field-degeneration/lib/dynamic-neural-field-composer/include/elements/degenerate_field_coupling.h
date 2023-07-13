@@ -12,7 +12,7 @@ private:
 	double maxWeightValue = 0;
 	double weightReductionFactor = 0.8;
 public:
-	DegenerateFieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters);
+	DegenerateFieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
 
 	void init() override;
 	void step(const double& t, const double& deltaT) override;

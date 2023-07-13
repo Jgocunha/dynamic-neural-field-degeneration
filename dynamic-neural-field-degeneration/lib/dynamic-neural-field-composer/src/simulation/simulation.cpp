@@ -1,5 +1,5 @@
-//#include "simulation.h"
 #include "simulation/simulation.h"
+
 
 Simulation::Simulation(const double& deltaT, const double& tZero, const double& t)
 	: deltaT(deltaT), tZero(tZero), t(t)
@@ -112,6 +112,20 @@ void Simulation::createInteraction(const std::string& stimulusElementId,
 	std::shared_ptr<Element> receivingElement = getElement(receivingElementId);
 	receivingElement->addInput(stimulusElement, stimulusComponent);
 }
+
+//void Simulation::trainCoupling(const std::string& couplingUniqueIdentifier)
+//{
+//	// check if coupling exists
+//	for (int i = 0; i < elements.size(); i++)
+//	{
+//		if (elements[i]->getUniqueIdentifier() == couplingUniqueIdentifier)
+//		{
+//			elements[i]->
+//			return;
+//		}
+//	}
+//	throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, couplingUniqueIdentifier);
+//}
 
 std::shared_ptr<Element> Simulation::getElement(const std::string& id) const
 {

@@ -28,11 +28,13 @@ add_library(dynamic-neural-field-composer
     "src/user_interface/simulation_window.cpp" 
     "src/user_interface/coupling_window.cpp" 
     "examples/ex_two_layer_field.cpp" 
-    "src/user_interface/sum_dimension.cpp" 
+    "src/elements/sum_dimension.cpp" 
     "examples/ex_degeneracy_one_layer_field_model.cpp"
     "src/user_interface/degeneracy_window.cpp" 
     "src/elements/degenerate_neural_field.cpp"
     "src/elements/degenerate_field_coupling.cpp"
+    "examples/ex_degeneracy_cuboid_color.cpp" 
+    "src/wizards/field_coupling_wizard.cpp"
 ) 
 
 # Set the desired output directory relative to the project
@@ -51,10 +53,8 @@ target_include_directories(dynamic-neural-field-composer PUBLIC ${PROJECT_SOURCE
 
 # Main executable
 add_executable(launch-dynamic-neural-field-composer 
-    #"src/dynamic-neural-field-composer.cpp"
-    "experiments/degeneracy.cpp"
+    "src/dynamic-neural-field-composer.cpp"
 )
-
 
 add_subdirectory(lib)
 
@@ -67,9 +67,9 @@ set_property(TARGET launch-dynamic-neural-field-composer PROPERTY CXX_STANDARD 2
 #if (CMAKE_VERSION VERSION_GREATER 3.12)
 #endif() 
 
-
 # Enable testing
-#enable_testing()
+enable_testing()
 # Add Test library
-#add_subdirectory(lib/Catch2)
-#add_subdirectory(tests)
+#find_package(Catch2 3 REQUIRED)
+add_subdirectory(lib/Catch2)
+add_subdirectory(tests)

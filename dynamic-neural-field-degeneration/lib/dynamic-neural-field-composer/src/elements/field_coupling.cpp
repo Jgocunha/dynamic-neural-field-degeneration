@@ -1,7 +1,7 @@
 #include "elements/field_coupling.h"
 
-FieldCoupling::FieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters)
-	: parameters(parameters)
+FieldCoupling::FieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
+	: parameters(parameters), learningRule(learningRule)
 {
 	this->label = ElementLabel::FIELD_COUPLING;
 	this->uniqueIdentifier = id;
@@ -9,6 +9,13 @@ FieldCoupling::FieldCoupling(const std::string& id, const uint8_t& size, const F
 	components["input"] = std::vector<double>(size);
 	components["output"] = std::vector<double>(size);
 	mathtools::resizeMatrix(weights, size, size);
+
+	// Initialize the weight matrix with random values
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			weights[i][j] = mathtools::generateRandomNumber(-1.0, 1.0);
+		}
+	}
 }
 
 void FieldCoupling::init()
@@ -38,28 +45,6 @@ void FieldCoupling::close()
 	std::fill(components["input"].begin(), components["input"].end(), 0);
 	std::fill(components["output"].begin(), components["output"].end(), 0);
 	// empty weight matrix
-}
-
-void FieldCoupling::trainWeights(const std::string& inputFilename, const std::string& outputFilename, const uint16_t& iterations)
-{
-	// check if the filenames, throw exceptions
-	// check how much lines "temp_input.txt", and "temp_output.txt" have
-	uint8_t numLinesInput = mathtools::countNumOfLinesInFile("temp_input.txt");
-	uint8_t numLinesOutput = mathtools::countNumOfLinesInFile("temp_output.txt");
-	if (numLinesInput != numLinesOutput)
-		std::cerr << "The files " << inputFilename << " and " << outputFilename << " have a different number of lines.\n";
-
-	// read data and update weights
-	int lineCount = 0;
-	std::vector<double> input = std::vector<double>(size);
-	std::vector<double> output = std::vector<double>(size);
-	for (int i = 0; i < iterations; i++)
-	{
-		input = readInputOrOutput(inputFilename, lineCount);
-		output = readInputOrOutput(outputFilename, lineCount);
-		updateWeights(input, output);
-		lineCount = (lineCount + 1) % (numLinesInput);
-	}
 }
 
 void FieldCoupling::getInputFunction()
@@ -93,63 +78,28 @@ void FieldCoupling::resetWeights()
 	mathtools::fillMatrixWithRandomValues(weights, 0, 0);
 }
 
-std::vector<double> FieldCoupling::readInputOrOutput(const std::string& filename, const uint8_t& line)
-{
-	std::ifstream file(filename);
-	std::vector<double> data;
-
-	if (file.is_open())
-	{
-		std::string lineData;
-		uint8_t currentLine = 0;
-
-		// Read lines from the file until the desired line is reached
-		while (std::getline(file, lineData) && currentLine < line)
-			currentLine++;
-
-		if (currentLine == line)
-		{
-			std::istringstream iss(lineData);
-			double value;
-			while (iss >> value)
-				data.push_back(value);
-		}
-		else
-			std::cout << "Line " << static_cast<int>(line) << " not found in " << filename << std::endl;
-		file.close();
-	}
-	else
-		std::cout << "Failed to open file " << filename << std::endl;
-
-	return data;
-}
-
-void FieldCoupling::writeInputOrOutput(const std::string& filename, const std::vector<double>* data)
-{
-	std::ofstream file(filename, std::ios::app); // Open file in append mode
-	if (file.is_open())
-	{
-		for (const auto& element : (*data))
-			file << element << " ";  // Write element to file separated by a space
-		file << '\n';
-		file.close();
-		std::cout << "Data saved to " << filename << std::endl;
-	}
-	else
-	{
-		std::cout << "Failed to save data to " << filename << std::endl;
-	}
-}
-
 void FieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
 {
-	weights = mathtools::deltaLearningRule(weights, input, output, parameters.learningRate);
+	switch (learningRule)
+	{
+	case LearningRule::HEBBIAN:
+		weights = mathtools::hebbLearningRule(input, output, parameters.learningRate);
+		break;
+	case LearningRule::DELTA_WIDROW_HOFF:
+		weights = mathtools::deltaLearningRuleWidrowHoff(weights, input, output, parameters.learningRate);
+		break;
+	case LearningRule::DELTA_KROGH_HERTZ:
+		weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
+		break;
+	}
 	writeWeights();
 }
 
 bool FieldCoupling::readWeights()
 {
-	std::ifstream file("weights.txt");  // Open file for reading
+	std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
+	std::ifstream file(filepath);  // Open file for reading
+
 	if (file.is_open()) {
 		mathtools::resizeMatrix(weights, 0, 0);
 		double element;
@@ -174,7 +124,9 @@ bool FieldCoupling::readWeights()
 
 void FieldCoupling::writeWeights()
 {
-	std::ofstream file("weights.txt"); // Open file for writing
+	std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
+	std::ofstream file(filepath); // Open file for writing
+
 	if (file.is_open()) {
 		// Loop through each row of weights
 		for (const auto& row : weights) {

@@ -2,16 +2,17 @@
 
 #include "user_interface/user_interface_window.h"
 
-#include "./elements/field_coupling.h"
-#include "./elements/gauss_stimulus.h"
+#include "./wizards/field_coupling_wizard.h"
 
 class CouplingWindow : public UserInterfaceWindow
 {
 private:
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<Visualization> visualization;
-	std::shared_ptr<FieldCoupling> coupling;
+
+	FieldCouplingWizard fieldCouplingWizard;
 	ImVec2 mouseCoordinates;
+
 public:
 	CouplingWindow(const std::shared_ptr<Simulation>& simulation);
 	void render() override;
@@ -21,6 +22,8 @@ private:
 	void renderPlots();
 	void renderOperations();
 	void checkForMousePress();
-
-	std::vector<double> normalizeFieldActivation(std::vector<double>& vec, const double& restingLevel);
+	void renderAddStimulusButtons();
+	void renderRemoveStimulusButton();
+	void renderFinishTrainingButton();
+	void renderStimulusFinishedButton();
 };

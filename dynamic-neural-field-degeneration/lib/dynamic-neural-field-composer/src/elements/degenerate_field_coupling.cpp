@@ -1,7 +1,7 @@
 #include "./elements/degenerate_field_coupling.h"
 
-DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters)
-	: FieldCoupling(id, size, parameters)
+DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
+	: FieldCoupling(id, size, parameters, learningRule)
 {
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;

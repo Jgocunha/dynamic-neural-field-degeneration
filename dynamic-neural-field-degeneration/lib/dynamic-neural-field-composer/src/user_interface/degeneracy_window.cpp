@@ -4,20 +4,11 @@ DegeneracyWindow::DegeneracyWindow(const std::shared_ptr<Simulation>& simulation
 	:simulation(simulation)
 {
 	couplingSelected = false;
-
-	inputField = std::dynamic_pointer_cast<NeuralField>(simulation->getElement("field u"));
-	outputField = std::dynamic_pointer_cast<NeuralField>(simulation->getElement("field v"));
-	coupling = std::dynamic_pointer_cast<FieldCoupling>(simulation->getElement("u - v"));
-	// hardcoded
-	gaussKernelInputField = std::dynamic_pointer_cast<GaussKernel>(simulation->getElement("u - u"));
-	gaussKernelOutputField = std::dynamic_pointer_cast<GaussKernel>(simulation->getElement("v - v"));
-	
-	couplingSelected = true;
 }
 
 void DegeneracyWindow::render()
 {
-	if (ImGui::Begin("Centroid window"))
+	if (ImGui::Begin("Degeneracy test"))
 	{
 
 		if (couplingSelected)
@@ -152,12 +143,11 @@ void DegeneracyWindow::renderFieldCentroidsPlotOverSimulationIterations()
 		ImPlot::SetupAxisLimits(ImAxis_X1, 0, inputFieldCentroidsValue.size(), ImGuiCond_Always);
 		ImPlot::PlotLine(labelInputField.c_str(), &inputFieldCentroidsValue[0], inputFieldCentroidsValue.size());
 
-		//std::string labelOutputField = "Centroid of " + outputFieldId;
-		//ImPlot::SetupAxisLimits(ImAxis_X1, 0, outputFieldCentroidsValue.size(), ImGuiCond_Always);
-		//ImPlot::PlotLine(labelOutputField.c_str(), &outputFieldCentroidsValue[0], outputFieldCentroidsValue.size());
-		iteration++;
-		ImPlot::EndPlot();
-		
+		std::string labelOutputField = "Centroid of " + outputFieldId;
+		ImPlot::SetupAxisLimits(ImAxis_X1, 0, outputFieldCentroidsValue.size(), ImGuiCond_Always);
+		ImPlot::PlotLine(labelOutputField.c_str(), &outputFieldCentroidsValue[0], outputFieldCentroidsValue.size());
 	}
 
+	ImPlot::EndPlot();
+	iteration++;
 }

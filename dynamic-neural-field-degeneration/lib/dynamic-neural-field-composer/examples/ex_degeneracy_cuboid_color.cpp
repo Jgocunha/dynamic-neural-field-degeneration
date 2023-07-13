@@ -1,20 +1,15 @@
-#include "../include/dnfarchitecture.h"
+#include "examples.h"
 
-DNFarchitecture::DNFarchitecture()
+std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
 {
-	simulation = std::make_shared<Simulation>(2, 0, 0);
-}
 
-DNFarchitecture::~DNFarchitecture()
-{
-}
+    // create simulation object
+    std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(5, 0, 0);
 
-void DNFarchitecture::setup()
-{
     double fieldSize = 100.0;
 
     // add gaussian inputs
-    double offset = 1.5;
+    double offset = 1.0;
     GaussStimulusParameters gsp = { 3, 15, 20 };
     gsp.position = 12.5 + offset;
     std::shared_ptr<GaussStimulus> stimulus_a(new GaussStimulus("gauss stimulus 1", fieldSize, gsp));
@@ -62,7 +57,8 @@ void DNFarchitecture::setup()
     std::shared_ptr<GaussKernel> gaussKernel_v_v(new GaussKernel("v - v", fieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(gaussKernel_v_v);
 
-    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.75, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    LearningRule lr = LearningRule::DELTA_KROGH_HERTZ;
+    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.65, 0.1 }, lr));
     simulation->addElement(coupling_u_v);
 
     // create noise stimulus and noise kernel
@@ -92,11 +88,42 @@ void DNFarchitecture::setup()
     noise_kernel_u->addInput(noise_u);
     noise_kernel_v->addInput(noise_v);
 
-    //coupling_u_v->trainWeights("temp_input.txt", "temp_output.txt", 1000);
+    // ==
+    // set up the field coupling wizard
+    FieldCouplingWizard fcpw{ simulation, "u - v"};
 
-}
+    //std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+    //{
+    //    { 12.5 + offset },
+    //    { 25 + offset },
+    //    { 37.5 + offset },
+    //    { 50 + offset },
+    //    { 62.5 + offset },
+    //    { 75 + offset },
+    //    { 87.5 + offset }
+    //};
+    //std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+    //{
+    //    { 12.5 + offset },
+    //    { 25 + offset },
+    //    { 37.5 + offset },
+    //    { 50 + offset },
+    //    { 62.5 + offset },
+    //    { 75 + offset },
+    //    { 87.5 + offset }
+    //};
 
-std::shared_ptr<Simulation> DNFarchitecture::getSimulation()
-{
+    //fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+    //fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+
+    //gsp.amplitude = 15;
+    //gsp.sigma = 3;
+
+    //fcpw.setGaussStimulusParameters(gsp);
+
+    //fcpw.simulateAssociation();
+    
+    //fcpw.trainWeights(500);
+
     return simulation;
 }

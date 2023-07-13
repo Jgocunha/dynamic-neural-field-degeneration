@@ -1,4 +1,3 @@
-
 #include "user_interface/user_interface.h"
 
 UserInterface::UserInterface(std::shared_ptr<Simulation> simulation, std::vector<std::shared_ptr<Visualization>> visualizations)
@@ -17,14 +16,9 @@ UserInterface::UserInterface(std::shared_ptr<Simulation> simulation, std::vector
 
     // Setup windows here
     //windows.push_back(std::make_shared<PlotWindow>(visualizations[1]));
-    //windows.push_back(std::make_shared<SimulationWindow>(simulation));
-    //windows.push_back(std::make_shared<CouplingWindow>(simulation));
-    windows.push_back(std::make_shared<DegeneracyWindow>(simulation));
-}
-
-void UserInterface::addWindow(std::shared_ptr<UserInterfaceWindow> window)
-{
-    windows.push_back(window);
+   /* windows.push_back(std::make_shared<SimulationWindow>(simulation));
+    windows.push_back(std::make_shared<CouplingWindow>(simulation));
+    windows.push_back(std::make_shared<DegeneracyWindow>(simulation));*/
 }
 
 void UserInterface::init()
@@ -169,6 +163,11 @@ void UserInterface::close()
 	CleanupDeviceD3D();
 	::DestroyWindow(windowHandle);
 	::UnregisterClassW(windowClass.lpszClassName, windowClass.hInstance);
+}
+
+void UserInterface::activateWindow(const std::shared_ptr<UserInterfaceWindow> window)
+{
+    windows.push_back(window);
 }
 
 const bool UserInterface::getCloseUI()
