@@ -6,6 +6,7 @@
 #include "../lib/dynamic-neural-field-composer/include/elements/gauss_kernel.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/gauss_stimulus.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/normal_noise.h"
+#include "../lib/dynamic-neural-field-composer/include/wizards/field_coupling_wizard.h"
 
 
 class DNFarchitecture

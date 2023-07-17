@@ -58,7 +58,7 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
     simulation->addElement(gaussKernel_v_v);
 
     LearningRule lr = LearningRule::DELTA_KROGH_HERTZ;
-    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.65, 0.1 }, lr));
+    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, fieldSize, { 0.65, 0.1 }, lr));
     simulation->addElement(coupling_u_v);
 
     // create noise stimulus and noise kernel

@@ -77,11 +77,11 @@ void FieldCouplingWizard::simulateAssociation()
             simulation->step();
 
 
-        std::vector<double>* input = simulation->getComponentPtr("field u", "activation");
-        std::vector<double>* output = simulation->getComponentPtr("field v", "activation");
+        std::vector<double>* input = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "activation");
+        std::vector<double>* output = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "activation");
 
-        auto inputRestingLevel = simulation->getComponentPtr("field u", "resting level");
-        auto outputRestingLevel = simulation->getComponentPtr("field v", "resting level");
+        auto inputRestingLevel = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "resting level");
+        auto outputRestingLevel = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "resting level");
 
         // normalize data (remove resting level and normalize between -1 and 1))
         *input = normalizeFieldActivation(*input, (*inputRestingLevel)[0]);

@@ -1,18 +1,22 @@
 #include "elements/field_coupling.h"
 
-FieldCoupling::FieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
+FieldCoupling::FieldCoupling(const std::string& id, const uint8_t& sizeOfOutputField, const uint8_t& sizeOfInputField, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
 	: parameters(parameters), learningRule(learningRule)
 {
 	this->label = ElementLabel::FIELD_COUPLING;
 	this->uniqueIdentifier = id;
-	this->size = size;
-	components["input"] = std::vector<double>(size);
-	components["output"] = std::vector<double>(size);
-	mathtools::resizeMatrix(weights, size, size);
+	this->size = sizeOfOutputField;
+
+	components["input"] = std::vector<double>(sizeOfInputField); // 100
+	components["output"] = std::vector<double>(sizeOfOutputField); // 180
+	int size_1 = components["input"].size(); // 180
+	int size_2 = components["output"].size(); // 100
+	 
+	mathtools::resizeMatrix(weights, components["input"].size(), components["output"].size()); // 100 x 180
 
 	// Initialize the weight matrix with random values
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
+	for (int i = 0; i < components["input"].size(); i++) { //!
+		for (int j = 0; j < components["output"].size(); j++) { //!
 			weights[i][j] = mathtools::generateRandomNumber(-1.0, 1.0);
 		}
 	}
@@ -27,7 +31,7 @@ void FieldCoupling::init()
 		trained = true;
 	else
 	{
-		mathtools::resizeMatrix(weights, size, size);
+		mathtools::resizeMatrix(weights, components["input"].size(), components["output"].size()); //!
 		mathtools::fillMatrixWithRandomValues(weights, -1, 1);
 		trained = false;
 	}
@@ -59,10 +63,11 @@ void FieldCoupling::getInputFunction()
 
 void FieldCoupling::computeOutput()
 {
-	// multiply the input by the weights to get output
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			components["output"][i] += weights[j][i] * components["input"][j];
+	// multiply the input by the weights to get output 
+	for (int i = 0; i < components["input"].size(); i++) //!
+		for (int j = 0; j < components["output"].size(); j++) //!
+			components["output"][i] += weights[i][j] * components["input"][i]; // !
+			// components["output"][i] += weights[j][i] * components["input"][j]; // !	
 }
 
 void FieldCoupling::scaleOutput()
@@ -106,7 +111,7 @@ bool FieldCoupling::readWeights()
 		std::vector<double> row;
 		while (file >> element) {  // Read each element from file
 			row.push_back(element);  // Add element to the current row
-			if (row.size() == size)
+			if (row.size() == components["output"].size()) //!
 			{
 				weights.push_back(row);  // Add row to the vector of weights
 				row.clear();  // Clear the row for the next iteration

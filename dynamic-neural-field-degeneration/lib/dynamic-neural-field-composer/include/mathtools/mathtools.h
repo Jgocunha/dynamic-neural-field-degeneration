@@ -186,7 +186,7 @@ namespace mathtools {
 	void resizeMatrix(std::vector<std::vector<T>>& matrix, uint8_t newRowSize, uint8_t newColSize)
 	{
 		matrix.resize(newRowSize);
-		for (int i = 0; i < newColSize; i++)
+		for (int i = 0; i < newRowSize; i++)
 			matrix[i].resize(newColSize);
 	}
 

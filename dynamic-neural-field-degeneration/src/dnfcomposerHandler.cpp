@@ -6,14 +6,14 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	:simulation(simulation)
 {
 	visualization = std::make_shared<Visualization>(simulation);
-	visualization->addPlottingData("field u", "activation");
-	visualization->addPlottingData("field v", "activation");
+	visualization->addPlottingData("perceptual field", "activation");
+	visualization->addPlottingData("decision field", "activation");
 
 
 	application = std::make_shared<Application>(simulation, true);
 
-	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("field u"));
-	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("field v"));
+	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
+	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
 
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization));
 	application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));

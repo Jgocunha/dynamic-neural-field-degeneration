@@ -19,6 +19,7 @@ enum class LearningRule
 	DELTA_KROGH_HERTZ
 };
 
+
 class FieldCoupling : public Element
 {
 protected:
@@ -26,8 +27,9 @@ protected:
 	std::vector<std::vector<double>> weights;
 	bool trained;
 	LearningRule learningRule;
+
 public:
-	FieldCoupling(const std::string& id, const uint8_t& size, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
+	FieldCoupling(const std::string& id, const uint8_t& sizeOfOutputField, const uint8_t& sizeOfInputField, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
 	
 	void init() override;
 	void step(const double& t, const double& deltaT) override;

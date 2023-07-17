@@ -11,88 +11,102 @@ DNFarchitecture::~DNFarchitecture()
 
 void DNFarchitecture::setup()
 {
-    double fieldSize = 100.0;
-
-    // add gaussian inputs
-    double offset = 1.5;
-    GaussStimulusParameters gsp = { 3, 15, 20 };
-    gsp.position = 12.5 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_a(new GaussStimulus("gauss stimulus 1", fieldSize, gsp));
-    gsp.position = 25 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_b(new GaussStimulus("gauss stimulus 2", fieldSize, gsp));
-    gsp.position = 37.5 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_c(new GaussStimulus("gauss stimulus 3", fieldSize, gsp));
-    gsp.position = 50 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_d(new GaussStimulus("gauss stimulus 4", fieldSize, gsp));
-    gsp.position = 62.5 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_e(new GaussStimulus("gauss stimulus 5", fieldSize, gsp));
-    gsp.position = 75 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_f(new GaussStimulus("gauss stimulus 6", fieldSize, gsp));
-    gsp.position = 87.5 + offset;
-    std::shared_ptr<GaussStimulus> stimulus_g(new GaussStimulus("gauss stimulus 7", fieldSize, gsp));
-
-    simulation->addElement(stimulus_a);
-    simulation->addElement(stimulus_b);
-    simulation->addElement(stimulus_c);
-    simulation->addElement(stimulus_d);
-    simulation->addElement(stimulus_e);
-    simulation->addElement(stimulus_f);
-    simulation->addElement(stimulus_g);
+    double perceptualFieldSize = 100.0;
+    double decisionFieldSize = 180.0;
 
     // create neural fields
     ActivationFunctionParameters afp = { ActivationFunctionType::Heaviside, 0.0, 0.2 };
     NeuralFieldParameters nfp1 = { 20, -10 };
     NeuralFieldParameters nfp2 = { 20, -10 };
-    std::shared_ptr<DegenerateNeuralField> neural_field_u(new DegenerateNeuralField("field u", fieldSize, nfp1, afp));
-    std::shared_ptr<DegenerateNeuralField> neural_field_v(new DegenerateNeuralField("field v", fieldSize, nfp2, afp));
+    std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
+    std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
 
-    simulation->addElement(neural_field_u);
-    simulation->addElement(neural_field_v);
+    simulation->addElement(perceptual_field);
+    simulation->addElement(decision_field);
 
     // create interactions and add them to the simulationulation
     GaussKernelParameters gkp1;
     gkp1.amplitude = 20;  // self-sustained (without input)
     gkp1.sigma = 3;
-    std::shared_ptr<GaussKernel> gaussKernel_u_u(new GaussKernel("u - u", fieldSize, gkp1)); // self-excitation u-v
-    simulation->addElement(gaussKernel_u_u);
+    std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-v
+    simulation->addElement(k_per_per);
 
     GaussKernelParameters gkp2;
     gkp2.amplitude = 6;  // self-stabilized (with input)
     gkp2.sigma = 2;
-    std::shared_ptr<GaussKernel> gaussKernel_v_v(new GaussKernel("v - v", fieldSize, gkp2)); // self-excitation v-v
-    simulation->addElement(gaussKernel_v_v);
+    std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
+    simulation->addElement(k_dec_dec);
 
-    std::shared_ptr<DegenerateFieldCoupling> coupling_u_v(new DegenerateFieldCoupling("u - v", fieldSize, { 0.75, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
-    simulation->addElement(coupling_u_v);
+    std::shared_ptr<FieldCoupling> w_per_dec(new FieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.75, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    simulation->addElement(w_per_dec);
 
     // create noise stimulus and noise kernel
-    std::shared_ptr<NormalNoise> noise_u(new NormalNoise("noise u", fieldSize, { 1 }));
-    std::shared_ptr<NormalNoise> noise_v(new NormalNoise("noise v", fieldSize, { 1 }));
-    std::shared_ptr<GaussKernel> noise_kernel_u(new GaussKernel("noise kernel u", fieldSize, { 0.25, 0.2 }));
-    std::shared_ptr<GaussKernel> noise_kernel_v(new GaussKernel("noise kernel v", fieldSize, { 0.25, 0.2 }));
+    std::shared_ptr<NormalNoise> noise_per(new NormalNoise("noise per", perceptualFieldSize, { 1 }));
+    std::shared_ptr<NormalNoise> noise_dec(new NormalNoise("noise dec", decisionFieldSize, { 1 }));
+    std::shared_ptr<GaussKernel> noise_kernel_per(new GaussKernel("noise kernel per", perceptualFieldSize, { 0.25, 0.2 }));
+    std::shared_ptr<GaussKernel> noise_kernel_dec(new GaussKernel("noise kernel dec", decisionFieldSize, { 0.25, 0.2 }));
 
-    simulation->addElement(noise_u);
-    simulation->addElement(noise_v);
-    simulation->addElement(noise_kernel_u);
-    simulation->addElement(noise_kernel_v);
+    simulation->addElement(noise_per);
+    simulation->addElement(noise_dec);
+    simulation->addElement(noise_kernel_per);
+    simulation->addElement(noise_kernel_dec);
 
     // define the interactions between the elements
-    neural_field_u->addInput(gaussKernel_u_u); // self-excitation
-    neural_field_u->addInput(noise_kernel_u); // noise
+    perceptual_field->addInput(k_per_per); // self-excitation
+    perceptual_field->addInput(noise_kernel_per); // noise
 
-    neural_field_v->addInput(gaussKernel_v_v); // self-excitation
-    neural_field_v->addInput(noise_kernel_v); // noise
-    neural_field_v->addInput(coupling_u_v); // coupling
+    decision_field->addInput(k_dec_dec); // self-excitation
+    decision_field->addInput(noise_kernel_dec); // noise
+    decision_field->addInput(w_per_dec); // coupling
 
-    gaussKernel_u_u->addInput(neural_field_u);
-    gaussKernel_v_v->addInput(neural_field_v);
+    k_per_per->addInput(perceptual_field);
+    k_dec_dec->addInput(decision_field);
 
-    coupling_u_v->addInput(neural_field_u, "activation");
+    w_per_dec->addInput(perceptual_field, "activation");
 
-    noise_kernel_u->addInput(noise_u);
-    noise_kernel_v->addInput(noise_v);
+    noise_kernel_per->addInput(noise_per);
+    noise_kernel_dec->addInput(noise_dec);
 
-    //coupling_u_v->trainWeights("temp_input.txt", "temp_output.txt", 1000);
+    // ==
+    // set up the field coupling wizard
+    FieldCouplingWizard fcpw{ simulation, "per - dec" };
+
+    // add gaussian inputs
+    double offset = 1.0;
+    GaussStimulusParameters gsp = { 3, 15, 20 };
+
+    std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+    {
+        { 12.5 + offset },
+        { 25 + offset },
+        { 37.5 + offset },
+        { 50 + offset },
+        { 62.5 + offset },
+        { 75 + offset },
+        { 87.5 + offset }
+    };
+    std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+    {
+        { 12.5 + offset },
+        { 25 + offset },
+        { 37.5 + offset },
+        { 50 + offset },
+        { 62.5 + offset },
+        { 75 + offset },
+        { 87.5 + offset }
+    };
+
+    fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+    fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+
+    gsp.amplitude = 15;
+    gsp.sigma = 3;
+
+    fcpw.setGaussStimulusParameters(gsp);
+
+    fcpw.simulateAssociation();
+
+    fcpw.trainWeights(500);
 
 }
 
