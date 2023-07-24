@@ -14,35 +14,23 @@
 #define PLACE_SHAPE_SIGNAL "placeShape"
 #define SHAPE_PLACED_SIGNAL "shapePlaced"
 
-#define SHAPE_COLOR_SIGNAL "shapeColor"
-#define SHAPE_BOX_SIGNAL "shapeBox"
+#define SHAPE_HUE_SIGNAL "shapeHue"
+#define SHAPE_ANGLE_SIGNAL "targetAngle"
 
 
 struct Shape
 {
 	std::string name;
-	std::string color;
+	double hue;
 };
 
-enum BoxToPlaceShape
-{
-	BOX_1 = 1, // red
-	BOX_2, // orange
-	BOX_3, // yellow
-	BOX_4, // green
-	BOX_5, // blue
-	BOX_6, // indigo
-	BOX_7, // violet
-};
-
-extern std::map<BoxToPlaceShape, std::string> boxToPlaceShapeMap;
 
 class CoppeliasimHandler
 {
 private:
 	CoppeliaSimClient client;
 	Shape cuboid;
-	BoxToPlaceShape box;
+	double robotTargetAngle;
 	int numTrials;
 public:
 	CoppeliasimHandler(const int& numTrials);
@@ -53,8 +41,8 @@ public:
 	void endStep();
 	void stop();
 
-	std::string getShapeColor();
-	void setTargetBox(const std::string& box);
+	double getShapeColor();
+	void setTargetAngle(const double& targetAngle);
 
 public:
 	void setShapeHandle(const std::string& handle);
@@ -63,5 +51,4 @@ public:
 	void getShapeParameters();
 	void pickUpShape();
 	void placeShape();
-	void computeTargetBox();
 };

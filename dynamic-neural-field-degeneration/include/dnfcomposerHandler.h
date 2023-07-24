@@ -30,8 +30,7 @@ class DNFComposerHandler
 {
 private:
 	std::shared_ptr<Application> application;
-	std::shared_ptr<Visualization> visualizationPer;
-	std::shared_ptr<Visualization> visualizationDec;
+	std::shared_ptr<Visualization> visualizationPer, visualizationDec;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<DegenerateNeuralField> inputField;
 	std::shared_ptr<DegenerateNeuralField> outputField;
@@ -43,7 +42,7 @@ private:
 
 protected:
 	std::string cuboidColor;
-	std::string targetBox;
+	double targetAngle;
 
 	std::map<std::string, double> cuboidColorToCentroidMapping;
 	std::map<std::string, double> targetBoxToCentroidMapping;
@@ -57,14 +56,15 @@ public:
 	void step();
 	void close();
 
-	void handleSignals();
+	//void handleSignals();
 
 	bool getUserRequestClose();
 	void setExternalStimulus(const std::string& stimulusLabel);
-	std::string getTargetBox();
+	double getTargetAngle();
+	//std::string getTargetBox();
 private:
-	void setupCuboidColorMap();
-	void setupTargetBoxMap();
-	void updateStatistics();
-	void verifyOutput();
+	//void setupCuboidColorMap();
+	//void setupTargetBoxMap();
+	//void updateStatistics();
+	//void verifyOutput();
 };

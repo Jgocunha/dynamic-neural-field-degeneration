@@ -44,10 +44,10 @@ void ExperimentWindow::setCuboidColor(const std::string& cuboidColor)
 	this->cuboidColor = cuboidColor;
 }
 
-void ExperimentWindow::setTargetBox(const std::string& targetBox)
-{
-	this->targetBox = targetBox;
-}
+//void ExperimentWindow::setTargetAngle(const std::string& targetAngle)
+//{
+//	this->targetAngle = targetAngle;
+//}
 
 void ExperimentWindow::setCurrentTrial(const int& currentTrial)
 {

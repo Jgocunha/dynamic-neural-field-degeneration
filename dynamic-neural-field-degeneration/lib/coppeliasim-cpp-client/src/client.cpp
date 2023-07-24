@@ -56,6 +56,12 @@ void CoppeliaSimClient::setStringSignal(const std::string& signalName, const std
 	log("Signal: " + signalName + " set to: " + signalValue);
 }
 
+void CoppeliaSimClient::setFloatSignal(const std::string& signalName, const double& signalValue)
+{
+	simxSetFloatSignal(clientID, signalName.c_str(), signalValue, simx_opmode_oneshot);
+	log("Signal: " + signalName + " set to: " + std::to_string(signalValue));
+}
+
 int CoppeliaSimClient::getIntegerSignal(const std::string& signalName)
 {
 	simxInt signalValue;
@@ -75,6 +81,15 @@ std::string CoppeliaSimClient::getStringSignal(const std::string& signalName)
 	internalSignalValue = std::string(reinterpret_cast<char*>(signalValue), signalLength);
 	log("Signal: " + signalName + " read as: " + internalSignalValue);
 	return internalSignalValue;
+}
+
+double CoppeliaSimClient::getFloatSignal(const std::string& signalName)
+{
+	simxFloat signalValue;
+	simxGetFloatSignal(clientID, signalName.c_str(), &signalValue, simx_opmode_blocking);
+	//setIntegerSignal(signalName.c_str(), 0);
+	log("Signal: " + signalName + " read as: " + std::to_string(signalValue));
+	return signalValue;
 }
 
 void CoppeliaSimClient::log(const std::string& message)

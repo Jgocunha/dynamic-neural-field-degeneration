@@ -58,7 +58,7 @@ void ThreadHandler::coppeliasimMain()
         cpsh.pickUpShape();
 
         // Use the value read from targetBox
-        cpsh.setTargetBox(targetBox);
+        //cpsh.setTargetBox(targetBox);
 
         cpsh.placeShape();
 
@@ -125,7 +125,7 @@ void ThreadHandler::dnfcomposerSignalHandling()
             Sleep(1000);
 
             // Write to var2
-            targetBox = dnfch.getTargetBox();
+            targetBox = dnfch.getTargetAngle();
 
             // Notify thread 1 that var2 is ready
             isReady = false;
