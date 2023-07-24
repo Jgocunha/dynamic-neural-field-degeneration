@@ -41,14 +41,14 @@ public:
 	void endStep();
 	void stop();
 
-	double getShapeColor();
+	double getShapeHue();
 	void setTargetAngle(const double& targetAngle);
 
 public:
 	void setShapeHandle(const std::string& handle);
 	void resetSignals();
 	void createShape();
-	void getShapeParameters();
+	void setShapeHue();
 	void pickUpShape();
 	void placeShape();
 };

@@ -61,15 +61,15 @@ bool DNFComposerHandler::getUserRequestClose()
 	return application->getCloseUI();
 }
 
-void DNFComposerHandler::setExternalStimulus(const std::string& stimulusLabel)
+void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 {
 	double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
-	std::cout << "Stimulus label: " << stimulusLabel << "\n";
-	cuboidColor = stimulusLabel;
-	gsp.position = cuboidColorToCentroidMapping[stimulusLabel] + offset;
+	std::cout << "Stimulus label: " << "\n";
+	//cuboidColor = stimulusLabel;
+	gsp.position = cuboidHue + offset;
 	std::cout << "Stimulus position: " << gsp.position << "\n";
-	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + stimulusLabel, inputField->getSize(), gsp));
+	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + cuboidColor, inputField->getSize(), gsp));
 
 	simulation->addElement(stimulus);
 	inputField->addInput(stimulus);
@@ -84,7 +84,7 @@ void DNFComposerHandler::setExternalStimulus(const std::string& stimulusLabel)
 	
 }
 
-double DNFComposerHandler::getTargetAngle()
+double DNFComposerHandler::getTargetPlaceAngle()
 {
 	double centroid = outputField->calculateCentroid();
 	//decisionResults.numDecisions++;

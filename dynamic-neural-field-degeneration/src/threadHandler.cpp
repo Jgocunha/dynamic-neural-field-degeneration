@@ -40,13 +40,13 @@ void ThreadHandler::coppeliasimMain()
         cpsh.createShape();
 
         cpsh.setShapeHandle("Cuboid_" + std::to_string(currentTrial));
-        cpsh.getShapeParameters();
+        cpsh.setShapeHue();
 
         // Lock the mutex before accessing the shared variables
         std::unique_lock<std::mutex> lock(mtx);
 
         // Write to cuboidColor
-        cuboidColor = cpsh.getShapeColor();
+        cuboidHue = cpsh.getShapeHue();
 
         // Notify dnfcomposer thread that cuboidColor is ready
         isReady = true;
@@ -57,8 +57,8 @@ void ThreadHandler::coppeliasimMain()
 
         cpsh.pickUpShape();
 
-        // Use the value read from targetBox
-        //cpsh.setTargetBox(targetBox);
+        // Use the value read from 
+        cpsh.setTargetAngle(targetPlaceAngle);
 
         cpsh.placeShape();
 
@@ -81,9 +81,9 @@ int ThreadHandler::dnfcomposerMain()
         {
             dnfch.step();
 
-            if (cuboidColor != "UNDEFINED")
-                dnfch.setExternalStimulus(cuboidColor);
-            cuboidColor = "UNDEFINED";
+            if (cuboidHue >= 0)
+                dnfch.setExternalStimulus(cuboidHue);
+            cuboidHue = -1;
       
         }
         dnfch.close();
@@ -122,10 +122,10 @@ void ThreadHandler::dnfcomposerSignalHandling()
 
             //dnfch.setExternalStimulus(cuboidColor);
 
-            Sleep(1000);
+            Sleep(3000);
 
             // Write to var2
-            targetBox = dnfch.getTargetAngle();
+            targetPlaceAngle = dnfch.getTargetPlaceAngle();
 
             // Notify thread 1 that var2 is ready
             isReady = false;

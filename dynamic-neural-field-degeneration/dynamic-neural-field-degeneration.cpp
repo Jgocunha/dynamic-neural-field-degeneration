@@ -4,6 +4,7 @@ int main()
 {
     int numTrials = 100;
     ThreadHandler handler{ numTrials };
+    Sleep(200);
 
     // Start the threads
     handler.startThreads();

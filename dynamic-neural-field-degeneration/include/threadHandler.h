@@ -19,8 +19,8 @@ protected:
     std::mutex mtx;
     std::condition_variable cv;
     bool isReady = false;
-    std::string cuboidColor = "UNDEFINED";
-    std::string targetBox = "UNDEFINED";
+    double cuboidHue = -1;
+    double targetPlaceAngle;
     int numTrials;
     int currentTrial = 1;
 public:

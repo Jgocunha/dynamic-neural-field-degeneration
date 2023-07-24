@@ -42,7 +42,7 @@ private:
 
 protected:
 	std::string cuboidColor;
-	double targetAngle;
+	double cuboidHue;
 
 	std::map<std::string, double> cuboidColorToCentroidMapping;
 	std::map<std::string, double> targetBoxToCentroidMapping;
@@ -59,8 +59,8 @@ public:
 	//void handleSignals();
 
 	bool getUserRequestClose();
-	void setExternalStimulus(const std::string& stimulusLabel);
-	double getTargetAngle();
+	void setExternalStimulus(const double& cuboidHue);
+	double getTargetPlaceAngle();
 	//std::string getTargetBox();
 private:
 	//void setupCuboidColorMap();

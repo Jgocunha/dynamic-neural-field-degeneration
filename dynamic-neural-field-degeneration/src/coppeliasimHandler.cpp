@@ -44,7 +44,7 @@ void CoppeliasimHandler::run()
 		createShape();
 
 		cuboid.name = "Cuboid_" + std::to_string(currentTrial);
-		getShapeParameters();
+		getShapeHue();
 
 		pickUpShape();
 
@@ -62,7 +62,7 @@ void CoppeliasimHandler::startStep(const int& currentTrial)
 	createShape();
 
 	cuboid.name = "Cuboid_" + std::to_string(currentTrial);
-	getShapeParameters();
+	getShapeHue();
 
 	pickUpShape();
 }
@@ -81,14 +81,14 @@ void CoppeliasimHandler::stop()
 	client.stopSimulation();
 }
 
-double CoppeliasimHandler::getShapeColor()
+double CoppeliasimHandler::getShapeHue()
 {
 	return cuboid.hue;
 }
 
 void CoppeliasimHandler::setTargetAngle(const double& targetAngle)
 {
-	client.setFloatSignal(SHAPE_ANGLE_SIGNAL, robotTargetAngle);
+	client.setFloatSignal(SHAPE_ANGLE_SIGNAL, targetAngle);
 }
 
 void CoppeliasimHandler::createShape()
@@ -103,7 +103,7 @@ void CoppeliasimHandler::createShape()
 	} while (!wasShapeCreated);
 }
 
-void CoppeliasimHandler::getShapeParameters()
+void CoppeliasimHandler::setShapeHue()
 {
 	cuboid.hue = client.getFloatSignal(SHAPE_HUE_SIGNAL);
 }
