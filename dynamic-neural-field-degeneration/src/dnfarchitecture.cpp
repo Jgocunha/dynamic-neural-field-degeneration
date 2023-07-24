@@ -71,11 +71,11 @@ void DNFarchitecture::setup()
     noise_kernel_per->addInput(noise_per);
     noise_kernel_dec->addInput(noise_dec);
 
-    GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
-    std::shared_ptr<GaussStimulus> gauss_stimulus(new GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
+    //GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
+    //std::shared_ptr<GaussStimulus> gauss_stimulus(new GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
 
-    simulation->addElement(gauss_stimulus);
-    perceptual_field->addInput(gauss_stimulus);
+    //simulation->addElement(gauss_stimulus);
+    //perceptual_field->addInput(gauss_stimulus);
 
     // ==
     // set up the field coupling wizard

@@ -5,18 +5,29 @@
 DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulation)
 	:simulation(simulation)
 {
-	visualization = std::make_shared<Visualization>(simulation);
-	visualization->addPlottingData("perceptual field", "activation");
-	visualization->addPlottingData("decision field", "activation");
+	visualizationPer = std::make_shared<Visualization>(simulation);
+	visualizationDec = std::make_shared<Visualization>(simulation);
+
+	visualizationPer->addPlottingData("perceptual field", "activation");
+	visualizationDec->addPlottingData("decision field", "activation");
 
 
 	application = std::make_shared<Application>(simulation, true);
 
+	// After creating the application, we can add the windows we want to display.
+	application->activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
+	PlotDimensions pd;
+	pd = { 0, 360, -30, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationPer, pd));
+	pd = { 0, 180, -30, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationDec, pd));
+	application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
+
 	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
 	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
 
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization));
-	application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
+	//application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization));
+	//application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
 
 	window = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(window);
@@ -64,7 +75,7 @@ void DNFComposerHandler::setExternalStimulus(const std::string& stimulusLabel)
 	cuboidColor = stimulusLabel;
 	gsp.position = cuboidColorToCentroidMapping[stimulusLabel] + offset;
 	std::cout << "Stimulus position: " << gsp.position << "\n";
-	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + stimulusLabel, 100, gsp));
+	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + stimulusLabel, inputField->getSize(), gsp));
 
 	simulation->addElement(stimulus);
 	inputField->addInput(stimulus);

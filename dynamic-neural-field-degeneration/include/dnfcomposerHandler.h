@@ -30,7 +30,8 @@ class DNFComposerHandler
 {
 private:
 	std::shared_ptr<Application> application;
-	std::shared_ptr<Visualization> visualization;
+	std::shared_ptr<Visualization> visualizationPer;
+	std::shared_ptr<Visualization> visualizationDec;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<DegenerateNeuralField> inputField;
 	std::shared_ptr<DegenerateNeuralField> outputField;
