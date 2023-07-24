@@ -1,11 +1,14 @@
 #include "elements/mexican_hat_kernel.h"
 
-MexicanHatKernel::MexicanHatKernel(const std::string& id, const uint8_t& size,
+MexicanHatKernel::MexicanHatKernel(const std::string& id, const int& size,
 	const MexicanHatKernelParameters& parameters,
 	bool circular, bool normalized) 
 	: parameters(parameters),
 	circular(circular), normalized(normalized)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	this->label = ElementLabel::MEXICAN_HAT_KERNEL;
 	this->uniqueIdentifier = id;
 	this->size = size;

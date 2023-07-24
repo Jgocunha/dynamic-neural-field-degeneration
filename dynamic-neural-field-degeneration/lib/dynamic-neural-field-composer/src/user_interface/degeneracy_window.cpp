@@ -45,10 +45,6 @@ void DegeneracyWindow::renderCouplingSelector()
 						inputField = std::dynamic_pointer_cast<NeuralField>(simulationElement->getInputs().at(0));
 						outputField = std::dynamic_pointer_cast<NeuralField>(simulation->getElementsThatHaveSpecifiedElementAsInput(simulationElement->getUniqueIdentifier()).at(0));
 						coupling = std::dynamic_pointer_cast<FieldCoupling>(simulationElement);
-						// hardcoded
-						gaussKernelInputField = std::dynamic_pointer_cast<GaussKernel>(simulation->getElement("u - u"));
-						gaussKernelOutputField = std::dynamic_pointer_cast<GaussKernel>(simulation->getElement("v - v"));
-
 					}
 					ImGui::TreePop();
 				}

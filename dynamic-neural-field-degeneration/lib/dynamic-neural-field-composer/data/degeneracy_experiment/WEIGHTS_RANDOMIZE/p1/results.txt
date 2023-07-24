@@ -1,0 +1,86 @@
+Experiment WEIGHTS_RANDOMIZE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+
+Nonlinear regression model:
+    y ~ b1*sin(b2*x)
+
+Estimated Coefficients:
+          <strong>Estimate</strong>       <strong>SE</strong>        <strong>tStat</strong>       <strong>pValue</strong>  
+          <strong>________</strong>    <strong>________</strong>    <strong>_______</strong>    <strong>__________</strong>
+
+    <strong>b1</strong>    -0.53983     0.21661    -2.4922      0.014373
+    <strong>b2</strong>     0.94625    0.067401     14.039    3.4096e-25
+
+
+Number of observations: 100, Error degrees of freedom: 98
+Root Mean Squared Error: 1.52
+R-Squared: 0.0272,  Adjusted R-Squared 0.0172
+F-statistic vs. zero model: 3.13, p-value = 0.0481
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------
+Experiment WEIGHTS_RANDOMIZE
+Target centroid value: 59.5| Acceptable deviation: 0.5
+Number of trials: 500
+Average number of iterations until disapearance of peak: 65.794
+Overall maximum deviation from target centroid: 4
+Average number of iterations until misbehavior: 40.318
+--------------

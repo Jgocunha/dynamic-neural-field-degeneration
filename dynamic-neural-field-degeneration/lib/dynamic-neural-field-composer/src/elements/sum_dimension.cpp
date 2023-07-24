@@ -1,9 +1,12 @@
 #include "./elements/sum_dimension.h"
 
-SumDimension::SumDimension(const std::string& id, const uint8_t size,
+SumDimension::SumDimension(const std::string& id, const int& size,
 	const SumDimensionParameters& parameters)
 	: parameters(parameters)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	this->label = ElementLabel::SUM_DIMENSION;
 	this->uniqueIdentifier = id;
 	this->size = size;

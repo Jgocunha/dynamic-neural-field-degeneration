@@ -1,0 +1,42 @@
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 40.94
+Overall maximum deviation from target centroid: 0.1129
+Average number of iterations until misbehavior: 2.24
+--------------
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 40.94
+Overall maximum deviation from target centroid: 0.1129
+Average number of iterations until misbehavior: 2.24
+--------------
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 40.94
+Overall maximum deviation from target centroid: 0.1129
+Average number of iterations until misbehavior: 2.24
+--------------
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 350
+Average number of iterations until disapearance of peak: 40.7743
+Overall maximum deviation from target centroid: 0.1129
+Average number of iterations until misbehavior: 0.98571
+--------------
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 350
+Average number of iterations until disapearance of peak: 40.7743
+Overall maximum deviation from target centroid: 0.1129
+Average number of iterations until misbehavior: 0.98571
+--------------
+Experiment NEURONS_DEACTIVATE_field u_field v
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 650
+Average number of iterations until disapearance of peak: 40.3508
+Overall maximum deviation from target centroid: 0.1253
+Average number of iterations until misbehavior: 0.84
+--------------

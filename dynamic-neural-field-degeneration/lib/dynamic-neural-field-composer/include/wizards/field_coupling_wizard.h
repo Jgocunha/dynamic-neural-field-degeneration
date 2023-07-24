@@ -32,7 +32,7 @@ public:
 	void setTargetPeakLocationsForNeuralFieldPost(const std::vector<std::vector<double>>& targetPeakLocationsForNeuralFieldPost);
 
 	void simulateAssociation();
-	void trainWeights(const uint8_t iterations);
+	void trainWeights(const int iterations);
 
 private:
 	void setFieldCoupling(const std::string& fieldCouplingUniqueId);
@@ -41,5 +41,5 @@ private:
 
 	std::vector<double> normalizeFieldActivation(std::vector<double>& vec, const double& restingLevel);
 	void saveFieldActivation(const std::vector<double>* fieldActivation, const std::string& filename);
-	std::vector<double> readFieldActivation(const std::string& filename, const uint8_t line);
+	std::vector<double> readFieldActivation(const std::string& filename, const int line);
 };

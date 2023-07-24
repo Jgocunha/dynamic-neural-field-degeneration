@@ -1,8 +1,11 @@
 #include "elements/normal_noise.h"
 
-NormalNoise::NormalNoise(std::string id, const uint8_t& size, const NormalNoiseParameters& parameters)
+NormalNoise::NormalNoise(std::string id, const int& size, const NormalNoiseParameters& parameters)
 	: parameters(parameters)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	this->label = ElementLabel::NORMAL_NOISE;
 	this->uniqueIdentifier = id;
 	this->size = size;

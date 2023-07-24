@@ -1,9 +1,12 @@
 #include "./elements/degenerate_neural_field.h"
 
-DegenerateNeuralField::DegenerateNeuralField(const std::string& id, const uint8_t& size, const NeuralFieldParameters& parameters
+DegenerateNeuralField::DegenerateNeuralField(const std::string& id, const int& size, const NeuralFieldParameters& parameters
 , const ActivationFunctionParameters& activationFunctionParameters)
 	: NeuralField(id, size, parameters, activationFunctionParameters)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;
 	populateIndicesForDegeneration();

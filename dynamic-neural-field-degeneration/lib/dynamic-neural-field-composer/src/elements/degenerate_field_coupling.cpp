@@ -1,8 +1,12 @@
 #include "./elements/degenerate_field_coupling.h"
 
-DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const uint8_t& sizeOfOutputField, const uint8_t& sizeOfInputField, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
-	: FieldCoupling(id, sizeOfOutputField, sizeOfInputField, parameters, learningRule)
+DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
+	: FieldCoupling(id, outputSize, inputSize, parameters, learningRule)
 {
+
+	// Assert that the sizes are positive
+	assert(outputSize > 0 && inputSize > 0);
+
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;
 
@@ -32,7 +36,7 @@ void DegenerateFieldCoupling::startDegeneration()
 void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1;
-	double numWeightsToDegenerate = (components["input"].size()* components["output"].size()) * percentage;
+	double numWeightsToDegenerate = (size*size) * percentage;
 	switch (degeneracyType)
 	{
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -70,9 +74,9 @@ ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
 
 void DegenerateFieldCoupling::populateIndicesForDegeneration()
 {
-	for (int i = 0; i < components["input"].size(); ++i)
+	for (int i = 0; i < size; ++i)
 	{
-		for (int j = 0; j < components["output"].size(); ++j)
+		for (int j = 0; j < size; ++j)
 		{
 			std::pair<int, int> pair(i, j);
 			indicesForDegeneration.insert(pair);
@@ -83,9 +87,9 @@ void DegenerateFieldCoupling::populateIndicesForDegeneration()
 void DegenerateFieldCoupling::findMinMaxWeightValues()
 {
 	// Find the minimum and maximum values of the weights
-	for (int row = 0; row < components["input"].size(); row++)
+	for (int row = 0; row < size; row++)
 	{
-		for (int col = 0; col < components["output"].size(); col++)
+		for (int col = 0; col < size; col++)
 		{
 			minWeightValue = std::min(minWeightValue, weights[row][col]);
 			maxWeightValue = std::max(maxWeightValue, weights[row][col]);
@@ -95,12 +99,12 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	int maxAttempts = components["input"].size() * components["output"].size();
+	int maxAttempts = size * size;
 	int row_idx, col_idx;
 
 	for (int i = 0; i < maxAttempts; i++)
 	{
-		row_idx = mathtools::generateRandomNumber(0, size  - 1);
+		row_idx = mathtools::generateRandomNumber(0, size - 1);
 		col_idx = mathtools::generateRandomNumber(0, size - 1);
 		if (weights[row_idx][col_idx] > 0)
 		{

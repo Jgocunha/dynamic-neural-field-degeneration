@@ -29,7 +29,7 @@ private:
 	std::vector<uint32_t> extIndex;
 	bool degenerate;
 public:
-	GaussKernel(const std::string& id, const uint8_t& size,
+	GaussKernel(const std::string& id, const int& size,
 		const GaussKernelParameters& parameters,
 		bool circular = true, bool normalized = true);
 

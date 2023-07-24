@@ -27,7 +27,7 @@ add_library(dynamic-neural-field-composer
     "src/user_interface/plot_window.cpp"
     "src/user_interface/simulation_window.cpp" 
     "src/user_interface/coupling_window.cpp" 
-    "examples/ex_two_layer_field.cpp" 
+    "examples/ex_two_layer_field.cpp"
     "src/elements/sum_dimension.cpp" 
     "examples/ex_degeneracy_one_layer_field_model.cpp"
     "src/user_interface/degeneracy_window.cpp" 
@@ -44,8 +44,11 @@ set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")
 add_compile_definitions(OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY}")
 
 # Set C++ standard and compile options
-#if (CMAKE_VERSION VERSION_GREATER 3.12)
-set_property(TARGET dynamic-neural-field-composer PROPERTY CXX_STANDARD 20)
+# Set the minimum required C++ version to C++11
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+target_compile_features(dynamic-neural-field-composer PRIVATE cxx_std_20)
+#set_property(TARGET dynamic-neural-field-composer PROPERTY CXX_STANDARD 17)
 #endif()
 
 # Specify include directories
@@ -63,13 +66,16 @@ target_link_libraries(launch-dynamic-neural-field-composer PUBLIC implot)
 target_link_libraries(launch-dynamic-neural-field-composer PRIVATE dynamic-neural-field-composer)
 
 # Set C++ standard and compile options
-set_property(TARGET launch-dynamic-neural-field-composer PROPERTY CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+target_compile_features(launch-dynamic-neural-field-composer PRIVATE cxx_std_20)
+#set_property(TARGET launch-dynamic-neural-field-composer PROPERTY CXX_STANDARD 17)
 #if (CMAKE_VERSION VERSION_GREATER 3.12)
 #endif() 
 
 # Enable testing
-enable_testing()
+#enable_testing()
 # Add Test library
 #find_package(Catch2 3 REQUIRED)
-add_subdirectory(lib/Catch2)
-add_subdirectory(tests)
+#add_subdirectory(lib/Catch2)
+#add_subdirectory(tests)

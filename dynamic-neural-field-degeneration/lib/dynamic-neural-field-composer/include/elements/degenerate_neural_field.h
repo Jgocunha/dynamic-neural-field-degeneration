@@ -11,7 +11,7 @@ private:
 	std::vector<int> indicesForDegeneration;
 	std::vector<int> degeneratedIndices;
 public:
-    DegenerateNeuralField(const std::string& id, const uint8_t& size, const NeuralFieldParameters& parameters,
+    DegenerateNeuralField(const std::string& id, const int& size, const NeuralFieldParameters& parameters,
 		const ActivationFunctionParameters& activationFunctionParameters);
 
 	void init() override;

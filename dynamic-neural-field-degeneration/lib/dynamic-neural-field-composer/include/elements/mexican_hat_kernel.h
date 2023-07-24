@@ -38,7 +38,7 @@ private:
 	std::array<uint32_t, 2> kernelRange;
 	std::vector<uint32_t> extIndex;
 public:
-	MexicanHatKernel(const std::string& id, const uint8_t& size,
+	MexicanHatKernel(const std::string& id, const int& size,
 		const MexicanHatKernelParameters& parameters,
 		bool circular = true, bool normalized = true);
 

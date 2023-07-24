@@ -11,7 +11,11 @@ int main(int argc, char* argv[])
     
     // After creating the application, we can add the windows we want to display.
     app.activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
-    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation));
+    PlotDimensions pd;
+    pd = { 0, 360, -30, 40 };
+    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation, pd));
+    pd = { 0, 180, -30, 40 };
+    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation, pd));
     app.activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
 
     try {

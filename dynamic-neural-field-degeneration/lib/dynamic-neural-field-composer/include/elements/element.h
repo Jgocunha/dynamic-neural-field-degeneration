@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <map>
 #include <memory>
+#include <cassert>
+#include <cmath>
 
 #include "../exceptions/exception.h"
 
@@ -48,7 +50,7 @@ class Element
 protected:
 	std::string uniqueIdentifier;
 	ElementLabel label;
-	uint8_t size;
+	int size;
 	std::unordered_map<std::string, std::vector<double>> components;
 	std::unordered_map<std::shared_ptr<Element>, std::string> inputs;
 public:
@@ -65,7 +67,7 @@ public:
 	void setUniqueIdentifier(const std::string& uniqueIdentifier);
 	void setSize(uint8_t size);
 
-	uint8_t getSize();
+	int getSize();
 	std::string getUniqueIdentifier() const;
 	ElementLabel getLabel();
 	std::vector<double> getComponent(const std::string& componentName);

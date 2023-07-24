@@ -1,8 +1,11 @@
 #include "elements/gauss_stimulus.h"
 
-GaussStimulus::GaussStimulus(std::string id, const uint8_t& size, const GaussStimulusParameters& parameters)
+GaussStimulus::GaussStimulus(std::string id, const int& size, const GaussStimulusParameters& parameters)
 	: parameters(parameters)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	if (parameters.position < 0 || parameters.position >= size)
 		throw Exception(ErrorCode::GAUSS_STIMULUS_POSITION_OUT_OF_RANGE, id);
 

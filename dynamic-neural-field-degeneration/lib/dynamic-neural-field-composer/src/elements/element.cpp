@@ -20,8 +20,8 @@ void Element::addInput(const std::shared_ptr<Element>& inputElement, const std::
 		throw Exception(ErrorCode::ELEM_INPUT_ALREADY_EXISTS);
 	
 	// check if input element has the same size as the element
-	//if(inputElement->size != size)
-	//	throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
+	if(inputElement->getComponentPtr("output")->size() != this->getComponentPtr("input")->size())
+		throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
 
 	inputs[inputElement] = inputComponent;
 }
@@ -51,7 +51,6 @@ bool Element::hasInput(const std::string& inputElementId, const std::string& inp
 
 void Element::updateInput()
 {
-	int aux = size;
 	std::fill(components["input"].begin(), components["input"].end(), 0);
 
 	for (const auto& input_pair : inputs) {
@@ -60,10 +59,7 @@ void Element::updateInput()
 		auto& inputElementComponents = inputElement->components;
 		const auto& inputElementComponentValue = inputElementComponents.at(inputElementComponent);
 
-		if(this->getLabel() == ElementLabel::FIELD_COUPLING)
-			aux = components["input"].size();
-
-		for (int i = 0; i < aux; i++)
+		for (int i = 0; i < inputElementComponentValue.size(); i++)
 		{
 			components["input"][i] += inputElementComponentValue[i];
 		}
@@ -88,7 +84,7 @@ void Element::setSize(uint8_t size)
 	throw Exception(ErrorCode::ELEM_SIZE_NOT_ALLOWED, uniqueIdentifier);
 }
 
-uint8_t Element::getSize()
+int Element::getSize()
 {
 	return size;
 }

@@ -1,11 +1,14 @@
 #include "elements/gauss_kernel.h"
 
-GaussKernel::GaussKernel(const std::string& id, const uint8_t& size,
+GaussKernel::GaussKernel(const std::string& id, const int& size,
 	const GaussKernelParameters& parameters,
 	bool circular, bool normalized)
 	: parameters(parameters),
 	circular(circular), normalized(normalized)
 {
+	// Assert that the size is positive
+	assert(size > 0);
+
 	this->label = ElementLabel::GAUSS_KERNEL;
 	this->uniqueIdentifier = id;
 	this->size = size;

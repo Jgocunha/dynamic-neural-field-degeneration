@@ -11,8 +11,11 @@ DNFarchitecture::~DNFarchitecture()
 
 void DNFarchitecture::setup()
 {
-    double perceptualFieldSize = 100.0;
-    double decisionFieldSize = 180.0;
+    // create simulation object
+    //std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(5, 0, 0);
+
+    const int perceptualFieldSize = 360;
+    const int decisionFieldSize = 180;
 
     // create neural fields
     ActivationFunctionParameters afp = { ActivationFunctionType::Heaviside, 0.0, 0.2 };
@@ -26,18 +29,19 @@ void DNFarchitecture::setup()
 
     // create interactions and add them to the simulationulation
     GaussKernelParameters gkp1;
-    gkp1.amplitude = 20;  // self-sustained (without input)
+    gkp1.amplitude = 19;  // self-sustained (without input)
     gkp1.sigma = 3;
     std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-v
     simulation->addElement(k_per_per);
 
+
     GaussKernelParameters gkp2;
-    gkp2.amplitude = 6;  // self-stabilized (with input)
+    gkp2.amplitude = 15;  // self-stabilized (with input)
     gkp2.sigma = 2;
     std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(k_dec_dec);
 
-    std::shared_ptr<FieldCoupling> w_per_dec(new FieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.75, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    std::shared_ptr<FieldCoupling> w_per_dec(new FieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
     simulation->addElement(w_per_dec);
 
     // create noise stimulus and noise kernel
@@ -67,46 +71,52 @@ void DNFarchitecture::setup()
     noise_kernel_per->addInput(noise_per);
     noise_kernel_dec->addInput(noise_dec);
 
+    GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
+    std::shared_ptr<GaussStimulus> gauss_stimulus(new GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
+
+    simulation->addElement(gauss_stimulus);
+    perceptual_field->addInput(gauss_stimulus);
+
     // ==
     // set up the field coupling wizard
-    FieldCouplingWizard fcpw{ simulation, "per - dec" };
+    //FieldCouplingWizard fcpw{ simulation, "per - dec" };
 
-    // add gaussian inputs
-    double offset = 1.0;
-    GaussStimulusParameters gsp = { 3, 15, 20 };
+    //// add gaussian inputs
+    //double offset = 1.0;
+    //GaussStimulusParameters gsp = { 3, 15, 20 };
 
-    std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-    {
-        { 12.5 + offset },
-        { 25 + offset },
-        { 37.5 + offset },
-        { 50 + offset },
-        { 62.5 + offset },
-        { 75 + offset },
-        { 87.5 + offset }
-    };
-    std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-    {
-        { 12.5 + offset },
-        { 25 + offset },
-        { 37.5 + offset },
-        { 50 + offset },
-        { 62.5 + offset },
-        { 75 + offset },
-        { 87.5 + offset }
-    };
+    //std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+    //{
+    //    { 00.00 + offset }, // red
+    //    { 40.60 + offset }, // orange
+    //    { 60.00 + offset }, // yellow
+    //    { 120.00 + offset }, // green
+    //    { 240.00 + offset }, // blue
+    //    { 274.15 + offset }, // indigo
+    //    { 281.79 + offset } // violet
+    //};
+    //std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+    //{
+    //    { 22.50 + offset },
+    //    { 45.00 + offset },
+    //    { 67.50 + offset },
+    //    { 90.00 + offset },
+    //    { 112.5 + offset },
+    //    { 135.0 + offset },
+    //    { 157.5 + offset }
+    //};
 
-    fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-    fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+    //fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+    //fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 
-    gsp.amplitude = 15;
-    gsp.sigma = 3;
+    //gsp.amplitude = 15;
+    //gsp.sigma = 3;
 
-    fcpw.setGaussStimulusParameters(gsp);
+    //fcpw.setGaussStimulusParameters(gsp);
 
-    fcpw.simulateAssociation();
+    //fcpw.simulateAssociation();
 
-    fcpw.trainWeights(500);
+    //fcpw.trainWeights(100);
 
 }
 

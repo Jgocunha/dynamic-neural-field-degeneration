@@ -44,7 +44,7 @@ protected:
 	NeuralFieldParameters parameters;
 	ActivationFunctionParameters activationFunctionParameters;
 public:
-	NeuralField(std::string id, const uint8_t& size,
+	NeuralField(std::string id, const int& size,
 		const NeuralFieldParameters& parameters, 
 		const ActivationFunctionParameters& activationFunctionParameters);
 	void init() override;

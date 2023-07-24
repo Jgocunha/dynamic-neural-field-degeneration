@@ -4,15 +4,29 @@
 PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation)
 {
 	this->visualization = std::make_shared<Visualization>(simulation);
-	//numPlotWindows++;
-	//id = numPlotWindows;
+	id = ++current_id;
+	plotDimensions = { 0, 100, -30, 40 };
 }
 
 PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization)
 {
 	this->visualization = visualization;
-	//numPlotWindows++;
-	//id = numPlotWindows;
+	id = ++current_id;
+	plotDimensions = { 0, 100, -30, 40 };
+}
+
+PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions)
+	:plotDimensions(dimensions)
+{
+	this->visualization = std::make_shared<Visualization>(simulation);
+	id = ++current_id;
+}
+
+PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions)
+	:plotDimensions(dimensions)
+{
+	this->visualization = visualization;
+	id = ++current_id;
 }
 
 void PlotWindow::render()
@@ -25,9 +39,10 @@ void PlotWindow::renderPlots()
 {
 	configure();
 
-	if (ImGui::Begin("Plot window"))
+	std::string plotTitle = "Plot window " + std::to_string(id);
+	if (ImGui::Begin(plotTitle.c_str()))
 	{
-		if (ImPlot::BeginPlot("Plot window"))
+		if (ImPlot::BeginPlot(plotTitle.c_str()))
 		{
 			ImPlot::SetupAxes("Field position", "Amplitude");
 			ImPlot::SetupLegend(ImPlotLocation_NorthEast, ImPlotLegendFlags_Outside);
@@ -54,7 +69,9 @@ void PlotWindow::renderElementSelector()
 	static std::string selectedElementId{};
 	static int currentElementIdx = 0;
 
-	if (ImGui::Begin("Plot selector"))
+	std::string selectorTitle = "Plot selector " + std::to_string(id);
+
+	if (ImGui::Begin(selectorTitle.c_str()))
 	{
 		if (ImGui::BeginListBox("Select element", { 200.0f, 100.0f }))
 		{
@@ -102,7 +119,7 @@ void PlotWindow::renderElementSelector()
 
 void PlotWindow::configure()
 {
-	ImPlot::SetNextAxesLimits(0, 100, -30, 40);
+	ImPlot::SetNextAxesLimits(plotDimensions.xMin, plotDimensions.xMax, plotDimensions.yMin, plotDimensions.yMax);
 	ImPlotStyle& style = ImPlot::GetStyle();
 	style.LineWeight = 3.0f;
 }

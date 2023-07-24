@@ -149,7 +149,7 @@ void FieldCouplingWizard::saveFieldActivation(const std::vector<double>* fieldAc
     }
 }
 
-std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& filename, const uint8_t line)
+std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& filename, const int line)
 {
     std::ifstream file(filename);
     std::vector<double> data;
@@ -157,7 +157,7 @@ std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& 
     if (file.is_open())
     {
         std::string lineData;
-        uint8_t currentLine = 0;
+        int currentLine = 0;
 
         // Read lines from the file until the desired line is reached
         while (std::getline(file, lineData) && currentLine < line)
@@ -180,11 +180,11 @@ std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& 
     return data;
 }
 
-void FieldCouplingWizard::trainWeights(const uint8_t iterations)
+void FieldCouplingWizard::trainWeights(const int iterations)
 {
     // check how much lines "temp_input.txt", and "temp_output.txt" have
-    uint8_t numLinesInput = mathtools::countNumOfLinesInFile(pathToFieldActivationPre);
-    uint8_t numLinesOutput = mathtools::countNumOfLinesInFile(pathToFieldActivationPost);
+    int numLinesInput = mathtools::countNumOfLinesInFile(pathToFieldActivationPre);
+    int numLinesOutput = mathtools::countNumOfLinesInFile(pathToFieldActivationPost);
     if (numLinesInput != numLinesOutput)
         std::cerr << "The files " << pathToFieldActivationPre << " and " << pathToFieldActivationPost << " have a different number of lines.\n";
 

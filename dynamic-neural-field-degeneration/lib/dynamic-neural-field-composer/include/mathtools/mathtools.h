@@ -183,7 +183,7 @@ namespace mathtools {
 	}
 
 	template <typename T>
-	void resizeMatrix(std::vector<std::vector<T>>& matrix, uint8_t newRowSize, uint8_t newColSize)
+	void resizeMatrix(std::vector<std::vector<T>>& matrix, int newRowSize, int newColSize)
 	{
 		matrix.resize(newRowSize);
 		for (int i = 0; i < newRowSize; i++)
@@ -200,8 +200,8 @@ namespace mathtools {
 	template <typename T>
 	std::vector<std::vector<T>> hebbLearningRule(const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
 	{
-		uint8_t inputSize = input.size();
-		uint8_t outputSize = targetOutput.size();
+		int inputSize = input.size();
+		int outputSize = targetOutput.size();
 		// Check if input, and targetOutput have the same size
 		if (inputSize != outputSize)
 			throw std::invalid_argument("Input and targetOutput must have the same size.");
@@ -218,8 +218,8 @@ namespace mathtools {
 	template <typename T>
 	std::vector<std::vector<T>> ojaLearningRule(const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
 	{
-		uint8_t inputSize = input.size();
-		uint8_t outputSize = targetOutput.size();
+		int inputSize = input.size();
+		int outputSize = targetOutput.size();
 		// Check if input, and targetOutput have the same size
 		if (inputSize != outputSize)
 			throw std::invalid_argument("Input and targetOutput must have the same size.");
@@ -235,8 +235,8 @@ namespace mathtools {
 	template <typename T>
 	std::vector<std::vector<T>> deltaLearningRuleWidrowHoff(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
 	{
-		uint8_t inputSize = input.size();
-		uint8_t outputSize = targetOutput.size();
+		int inputSize = input.size();
+		int outputSize = targetOutput.size();
 		if (inputSize != outputSize)
 			throw std::invalid_argument("Input and targetOutput must have the same size.");
 
@@ -272,10 +272,8 @@ namespace mathtools {
 		 double tau_w = 5.0;
 		 double eta = 0.5;
 
-		uint8_t inputSize = input.size();
-		uint8_t outputSize = targetOutput.size();
-		if (inputSize != outputSize)
-			throw std::invalid_argument("Input and targetOutput must have the same size.");
+		int inputSize = input.size();
+		int outputSize = targetOutput.size();
 
 		// Calculate the activation levels of the fields based on the input values and current weights
 		std::vector<T> actualOutput(outputSize, 0.0);

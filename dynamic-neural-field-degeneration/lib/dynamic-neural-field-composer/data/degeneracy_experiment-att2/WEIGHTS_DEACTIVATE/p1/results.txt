@@ -1,0 +1,74 @@
+{Not enough input arguments.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plotData', 'E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\plotData.m', 10)" style="font-weight:bold">plotData</a> (<a href="matlab: opentoline('E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\plotData.m',10,0)">line 10</a>)
+acceptableRange = [targetCentroid-acceptableDeviation, targetCentroid+acceptableDeviation];
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtainResults_u_v', 'E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\obtainResults_u_v.m', 78)" style="font-weight:bold">obtainResults_u_v</a> (<a href="matlab: opentoline('E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\obtainResults_u_v.m',78,0)">line 78</a>)
+        plotData(data, locationDirPath, title, targetCentroid, acceptableDeviation);
+} 
+obtainResults_u_v
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtainResults_u_v', 'E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\obtainResults_u_v.m', 40)" style="font-weight:bold">obtainResults_u_v</a> (<a href="matlab: opentoline('E:\Dev\universidade-minho-phd\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab\obtainResults_u_v.m',40,0)">line 40</a>)] 
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------
+Experiment WEIGHTS_DEACTIVATE
+Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
+Number of trials: 50
+Average number of iterations until disapearance of peak: 182.08
+Overall maximum deviation from target centroid: 3.1999
+Average number of iterations until misbehavior: 20.9
+--------------

@@ -1,0 +1,88 @@
+%% Clear the MATLAB environment
+clear;
+clc;
+
+%% Setup variables
+experiments = {'WEIGHTS_DEACTIVATE', 'weights', 'iteration'; ...
+               'WEIGHTS_DEACTIVATE_PERCENTAGE', 'weights', 'percentage'; ...
+               'WEIGHTS_REDUCE', 'weights', 'iteration'; ...
+               'WEIGHTS_RANDOMIZE', 'weights', 'iteration'; ...
+               'NEURONS_DEACTIVATE', 'neurons', 'iteration'; ...
+               'NEURONS_DEACTIVATE_PERCENTAGE', 'neurons', 'percentage'; ...
+               };
+
+locations = {'p1', 59.5; ...
+        	 %'p2', 58.5; ...
+             %'p3', 78.5; ...
+             %'p4', 18.7; ...
+             };
+
+experimentDirPath = '';
+locationDirPath = '';
+centroidFilePath = '';
+resultsFilePath = '';
+targetCentroid = 0;
+acceptableDeviation = 0.1;
+
+%% Run analysis
+for experiment = 1:size(experiments,1)
+    experimentDirPath = ['../', experiments{experiment}, '/'];
+    disp(['Experiment ', experiments{experiment, 1}]);
+    for location = 1:size(locations,1)
+        %% Variable setup
+        locationDirPath = [experimentDirPath, locations{location}, '/'];
+        targetCentroid = locations{location,2};
+        %% Read data
+        centroidFilePath = [locationDirPath, 'centroids.txt'];
+        % Initialize an empty cell array to store the lines
+        lines = readData(centroidFilePath);
+        
+        %% Analyse the data
+        resultsFilePath = [locationDirPath, 'results.txt'];
+        delete(resultsFilePath)
+        diary(resultsFilePath);
+
+        %% Calculate the average size of all lines
+        numTrials = getNumTrials(lines);
+        avgNumIt = getAvgIt(lines);
+        
+        % Display the average size of all lines
+        disp('Number of experiment trials:');
+        disp(numTrials);
+        disp('Average number of degeneration iterations survived until disapearance of peak:');
+        disp(avgNumIt);
+
+        %% Find the maximum and minimum deviation
+        [maxDev, minDev] = getMaxMinDev(lines, targetCentroid);
+        disp('Maximum deviation:');
+        disp(maxDev);
+        disp('Minimum deviation:');
+        disp(minDev);
+
+        %% Find the average number of iterations survived until misbehaviour
+%         averageIterationsUntilMisbehavior = getAvgItMisbehavior(lines, numTrials, targetCentroid, acceptableDeviation);
+%         disp('Average number of iterations survived until misbehaviour:');
+%         disp(averageIterationsUntilMisbehavior);
+
+         %% Plot the data
+%         switch experiments{experiment, 1}
+%             case 'WEIGHTS_DEACTIVATE'
+%                 title = ['Randomly deactivating one of the ' experiments{experiment, 2} ' (unique) in each iteration (', locations{location, 1}, ')'];
+%             case 'WEIGHTS_DEACTIVATE_PERCENTAGE'
+%                 title = ['Randomly deactivating 10% of the ' experiments{experiment, 2} ' (unique) in each iteration (', locations{location, 1}, ')'];
+%             case 'WEIGHTS_REDUCE'
+%                 title = ['Randomly reducing one of the ' experiments{experiment, 2} ' in each iteration (x0.6) (', locations{location, 1}, ')'];
+%             case 'WEIGHTS_RANDOMIZE'
+%                 title = ['Randomly randomizing one of the ' experiments{experiment, 2} ' in each iteration (', locations{location, 1}, ')'];
+%             case 'NEURONS_DEACTIVATE'
+%                 title = ['Deactivating one of the ' experiments{experiment, 2} ' (unique) in each iteration (', locations{location, 1}, ')'];
+%             case 'NEURONS_DEACTIVATE_PERCENTAGE'
+%                 title = ['Deactivating 10% of the ' experiments{experiment, 2} ' (unique) in each iteration (', locations{location, 1}, ')'];
+%         end
+%         plotData(lines, locationDirPath, title, targetCentroid, acceptableDeviation);
+
+        disp('-------------------------------------------------------------');
+        diary off;
+    end
+    disp('=============================================================');
+end

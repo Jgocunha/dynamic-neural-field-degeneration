@@ -29,7 +29,7 @@ class GaussStimulus : public Element
 private:
 	GaussStimulusParameters parameters;
 public:
-	GaussStimulus(std::string id, const uint8_t& size,
+	GaussStimulus(std::string id, const int& size,
 		const GaussStimulusParameters& parameters);
 	void init() override;
 	void step(const double& t, const double& deltaT) override;

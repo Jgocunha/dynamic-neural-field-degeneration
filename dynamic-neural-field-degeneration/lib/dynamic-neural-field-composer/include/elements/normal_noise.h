@@ -19,7 +19,7 @@ class NormalNoise : public Element
 private:
 	NormalNoiseParameters parameters;
 public:
-	NormalNoise(std::string id, const uint8_t& size, const NormalNoiseParameters& parameters);
+	NormalNoise(std::string id, const int& size, const NormalNoiseParameters& parameters);
 
 	void init() override;
 	void step(const double& t, const double& deltaT) override;

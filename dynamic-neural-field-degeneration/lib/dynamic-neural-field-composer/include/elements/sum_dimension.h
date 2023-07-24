@@ -23,7 +23,7 @@ class SumDimension : public Element
 private:
 	SumDimensionParameters parameters;
 public:
-	SumDimension(const std::string& id, const uint8_t size,
+	SumDimension(const std::string& id, const int& size,
 				const SumDimensionParameters& parameters);
 	void init() override;
 	void step(const double& t, const double& deltaT) override;
