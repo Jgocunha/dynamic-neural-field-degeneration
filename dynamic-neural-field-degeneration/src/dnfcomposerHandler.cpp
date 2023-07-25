@@ -17,9 +17,9 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	// After creating the application, we can add the windows we want to display.
 	application->activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
 	PlotDimensions pd;
-	pd = { 0, 360, -30, 40 };
+	pd = { 0, 360, -20, 20 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationPer, pd));
-	pd = { 0, 180, -30, 40 };
+	pd = { 0, 180, -20, 20 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationDec, pd));
 	application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
 
