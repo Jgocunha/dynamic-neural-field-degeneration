@@ -8,8 +8,8 @@ class ExperimentWindow : public UserInterfaceWindow //, public DNFComposerHandle
 private:
 	std::shared_ptr<Simulation> simulation;
 	int currentTrial;
-	std::string cuboidColor;
-	std::string targetBox;
+	double cuboidHue;
+	double robotTargetAngle;
 	double correctDecisionRatio;
 	int numCorrectDecisions;
 	std::string currentDegeneration;
@@ -18,8 +18,8 @@ public:
 	void render() override;
 	~ExperimentWindow() = default;
 
-	void setCuboidColor(const std::string& cuboidColor);
-	void setTargetBox(const std::string& targetBox);
+	void setCuboidHue(const double& cuboidHue);
+	void setTargetRobotAngle(const double& robotTargetAngle);
 	
 	void setCurrentTrial(const int& currentTrial);
 	void setDecisionRatio(const double& decisionRatio);

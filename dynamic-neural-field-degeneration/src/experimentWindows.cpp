@@ -4,8 +4,8 @@ ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation
 	: simulation(simulation)
 {
 	currentTrial = 0;
-	cuboidColor = "null";
-	targetBox = "null";
+	cuboidHue = 0.0;
+	robotTargetAngle = 0.0;
 	correctDecisionRatio = 0;
 	currentDegeneration = "null";
 	numCorrectDecisions = 0;
@@ -35,19 +35,19 @@ void ExperimentWindow::renderExperimentStatistics()
 
 void ExperimentWindow::renderShapeDetails()
 {
-	ImGui::Text("Cuboid color is %s", cuboidColor.c_str());
-	ImGui::Text("Target box is %s", targetBox.c_str());
+	ImGui::Text("Cuboid hue is %.2f", cuboidHue);
+	ImGui::Text("Target place angle is %.2f", robotTargetAngle);
 }
 
-void ExperimentWindow::setCuboidColor(const std::string& cuboidColor)
+void ExperimentWindow::setCuboidHue(const double& cuboidHue)
 {
-	this->cuboidColor = cuboidColor;
+	this->cuboidHue = cuboidHue;
 }
 
-//void ExperimentWindow::setTargetAngle(const std::string& targetAngle)
-//{
-//	this->targetAngle = targetAngle;
-//}
+void ExperimentWindow::setTargetRobotAngle(const double& robotTargetAngle)
+{
+	this->robotTargetAngle = robotTargetAngle;
+}
 
 void ExperimentWindow::setCurrentTrial(const int& currentTrial)
 {

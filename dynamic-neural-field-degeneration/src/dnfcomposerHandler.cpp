@@ -2,6 +2,16 @@
 
 #include "../include/dnfcomposerHandler.h"
 
+std::unordered_map<double, int> hueToAngleMap = {
+		{0.0, 15},
+		{40.6, 40},
+		{60.0, 65},
+		{120.0, 90},
+		{240.0, 115},
+		{274.150, 140},
+		{284.740, 165}
+};
+
 DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulation)
 	:simulation(simulation)
 {
@@ -42,13 +52,13 @@ void DNFComposerHandler::init()
 void DNFComposerHandler::step()
 {
 	application->step();
-	//updateStatistics();
+	updateStatistics();
 	
-	//window->setCuboidColor(cuboidColor);
-	//window->setTargetBox(targetBox);
-	//window->setCurrentTrial(decisionResults.numDecisions);
-	//window->setNumCorrectDecisions(decisionResults.numCorrectDecisions);
-	//window->setDecisionRatio(decisionResults.decisionRatio);
+	//window->setCuboidHue(cuboidHue);
+	window->setTargetRobotAngle(targetRobotAngle);
+	window->setCurrentTrial(decisionResults.numDecisions);
+	window->setNumCorrectDecisions(decisionResults.numCorrectDecisions);
+	window->setDecisionRatio(decisionResults.decisionRatio);
 }
 
 void DNFComposerHandler::close()
@@ -68,6 +78,8 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	std::cout << "Stimulus label: " << "\n";
 	//cuboidColor = stimulusLabel;
 	gsp.position = cuboidHue + offset;
+	window->setCuboidHue(cuboidHue);
+
 	std::cout << "Stimulus position: " << gsp.position << "\n";
 	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + cuboidColor, inputField->getSize(), gsp));
 
@@ -75,7 +87,6 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	inputField->addInput(stimulus);
 
 	simulation->init();
-	//visualizations[0]->addPlottingData("stimulus " + stimulusLabel, "output");
 
 	for (int i = 0; i < timeForFieldToSettle; i++)
 		application->step();
@@ -87,43 +98,44 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 double DNFComposerHandler::getTargetPlaceAngle()
 {
 	double centroid = outputField->calculateCentroid();
-	//decisionResults.numDecisions++;
+	decisionResults.numDecisions++;
+	targetRobotAngle = centroid;
 
-	//verifyOutput();
-
+	verifyOutput();
 	return centroid;
 }
 
-//void DNFComposerHandler::updateStatistics()
-//{
-//	if(decisionResults.numDecisions)
-//		decisionResults.decisionRatio = (decisionResults.numCorrectDecisions / decisionResults.numDecisions) * 100;
-//}
+void DNFComposerHandler::updateStatistics()
+{
+	if(decisionResults.numDecisions)
+		decisionResults.decisionRatio = (decisionResults.numCorrectDecisions / decisionResults.numDecisions) * 100;
+}
 
-//void DNFComposerHandler::verifyOutput()
-//{
-//	std::string expectedTargetBox;
-//	std::string actualTargetBox = targetBox;
-//
-//	// Determine the expected target box based on the current cuboid color
-//	if (cuboidColor == "RED")
-//		expectedTargetBox = "BOX_1";
-//	else if (cuboidColor == "ORANGE")
-//		expectedTargetBox = "BOX_2";
-//	else if (cuboidColor == "YELLOW")
-//		expectedTargetBox = "BOX_3";
-//	else if (cuboidColor == "GREEN")
-//		expectedTargetBox = "BOX_4";
-//	else if (cuboidColor == "BLUE")
-//		expectedTargetBox = "BOX_5";
-//	else if (cuboidColor == "INDIGO")
-//		expectedTargetBox = "BOX_6";
-//	else if (cuboidColor == "VIOLET")
-//		expectedTargetBox = "BOX_7";
-//
-//	// Check if the actual target box matches the expected target box
-//	if (actualTargetBox == expectedTargetBox)
-//		decisionResults.numCorrectDecisions++;
-//	else
-//		decisionResults.numIncorrectDecisions++;
-//}
+void DNFComposerHandler::verifyOutput()
+{
+	if (verifyRobotAngle())
+		decisionResults.numCorrectDecisions++;
+	else
+		decisionResults.numIncorrectDecisions++;
+}
+
+bool DNFComposerHandler::verifyRobotAngle()
+{
+	// Find the closest cuboidHue value in the lookup table.
+	double closestHue = cuboidHue;
+	double minDistance = std::abs(cuboidHue - closestHue);
+	for (const auto& entry : hueToAngleMap) {
+		double distance = std::abs(cuboidHue - entry.first);
+		if (distance <= 5 && distance < minDistance) {
+			closestHue = entry.first;
+			minDistance = distance;
+		}
+	}
+
+	// Check if the corresponding robotTargetAngle matches the provided value within +/- 5.
+	auto it = hueToAngleMap.find(closestHue);
+	if (it != hueToAngleMap.end()) {
+		int targetAngle = it->second;
+		return std::abs(targetAngle - targetRobotAngle) <= 5;
+	}
+}

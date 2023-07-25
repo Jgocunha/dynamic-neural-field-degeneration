@@ -9,6 +9,7 @@
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_neural_field.h"
 #include "./experimentWindows.h"
 
+extern std::unordered_map<double, int> hueToAngleMap;
 
 struct DecisionEvaluation
 {
@@ -32,8 +33,7 @@ private:
 	std::shared_ptr<Application> application;
 	std::shared_ptr<Visualization> visualizationPer, visualizationDec;
 	std::shared_ptr<Simulation> simulation;
-	std::shared_ptr<DegenerateNeuralField> inputField;
-	std::shared_ptr<DegenerateNeuralField> outputField;
+	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
 	std::shared_ptr<ExperimentWindow> window;
 	bool userRequestClose = false;
 	int timeForFieldToSettle = 50;
@@ -43,6 +43,7 @@ private:
 protected:
 	std::string cuboidColor;
 	double cuboidHue;
+	double targetRobotAngle = 0.0;
 
 	std::map<std::string, double> cuboidColorToCentroidMapping;
 	std::map<std::string, double> targetBoxToCentroidMapping;
@@ -65,6 +66,7 @@ public:
 private:
 	//void setupCuboidColorMap();
 	//void setupTargetBoxMap();
-	//void updateStatistics();
-	//void verifyOutput();
+	void updateStatistics();
+	void verifyOutput();
+	bool verifyRobotAngle();
 };

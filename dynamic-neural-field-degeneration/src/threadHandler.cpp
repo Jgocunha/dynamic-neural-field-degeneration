@@ -122,7 +122,7 @@ void ThreadHandler::dnfcomposerSignalHandling()
 
             //dnfch.setExternalStimulus(cuboidColor);
 
-            Sleep(3000);
+            Sleep(1000);
 
             // Write to var2
             targetPlaceAngle = dnfch.getTargetPlaceAngle();
