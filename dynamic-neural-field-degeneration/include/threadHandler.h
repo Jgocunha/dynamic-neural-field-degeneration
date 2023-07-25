@@ -14,18 +14,18 @@ class ThreadHandler
 {
 private:
     std::thread dnfcomposerThread, coppeliasimThread;
-    DNFComposerHandler dnfch;
+    std::shared_ptr<DNFComposerHandler> dnfch;
 protected:
+    int numTrials;
+    int currentTrial = 1;
     std::mutex mtx;
     std::condition_variable cv;
     bool isReady = false;
     double cuboidHue = -1;
-    double targetPlaceAngle;
-    int numTrials;
-    int currentTrial = 1;
+    double targetPlaceAngle = -1;
 public:
-    ThreadHandler(const int& numTrials = 1);
-    ~ThreadHandler() {}
+    ThreadHandler(int numTrials = 1);
+    ~ThreadHandler();
 
     void startThreads();
     void joinThreads();

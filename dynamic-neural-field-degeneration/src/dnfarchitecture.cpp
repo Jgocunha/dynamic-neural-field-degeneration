@@ -3,6 +3,7 @@
 DNFarchitecture::DNFarchitecture()
 {
 	simulation = std::make_shared<Simulation>(2, 0, 0);
+    setup();
 }
 
 DNFarchitecture::~DNFarchitecture()

@@ -2,18 +2,15 @@
 
 #include "../include/dnfcomposerHandler.h"
 
-std::unordered_map<double, int> hueToAngleMap = {
-		{0.0, 15},
-		{40.6, 40},
-		{60.0, 65},
-		{120.0, 90},
-		{240.0, 115},
-		{274.150, 140},
-		{284.740, 165}
-};
+
+
+DNFComposerHandler::DNFComposerHandler()
+{
+}
 
 DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulation)
-	:simulation(simulation)
+	:simulation(simulation),
+	window(std::make_shared<ExperimentWindow>(simulation))
 {
 	visualizationPer = std::make_shared<Visualization>(simulation);
 	visualizationDec = std::make_shared<Visualization>(simulation);
@@ -36,7 +33,6 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
 	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
 
-	window = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(window);
 }
 
@@ -46,24 +42,53 @@ DNFComposerHandler::~DNFComposerHandler()
 
 void DNFComposerHandler::init()
 {
-	application->init();
+	try {
+		application->init();
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "Exception in DNFComposerHandler::init(): " << ex.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unknown exception occurred in DNFComposerHandler::init()" << std::endl;
+	}
 }
 
 void DNFComposerHandler::step()
 {
-	application->step();
-	updateStatistics();
+	try
+	{
+		application->step();
+		updateStatistics();
 	
-	//window->setCuboidHue(cuboidHue);
-	window->setTargetRobotAngle(targetRobotAngle);
-	window->setCurrentTrial(decisionResults.numDecisions);
-	window->setNumCorrectDecisions(decisionResults.numCorrectDecisions);
-	window->setDecisionRatio(decisionResults.decisionRatio);
+		//window->setCuboidHue(cuboidHue);
+		window->setTargetRobotAngle(targetRobotAngle);
+		window->setCurrentTrial(decisionResults.numDecisions);
+		window->setNumCorrectDecisions(decisionResults.numCorrectDecisions);
+		window->setDecisionRatio(decisionResults.decisionRatio);
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "Exception in DNFComposerHandler::step(): " << ex.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unknown exception occurred in DNFComposerHandler::step()" << std::endl;
+	}
 }
 
 void DNFComposerHandler::close()
 {
-	application->close();
+	try {
+		application->close();
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "Exception in DNFComposerHandler::close(): " << ex.what() << std::endl;
+		// Perform any necessary cleanup or fallback behavior
+		// ...
+	}
+	catch (...) {
+		std::cerr << "Unknown exception occurred in DNFComposerHandler::close()" << std::endl;
+		// Perform any necessary cleanup or fallback behavior
+		// ...
+	}
 }
 
 bool DNFComposerHandler::getUserRequestClose()
@@ -75,13 +100,12 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 {
 	double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
-	std::cout << "Stimulus label: " << "\n";
-	//cuboidColor = stimulusLabel;
+
 	gsp.position = cuboidHue + offset;
 	window->setCuboidHue(cuboidHue);
 
 	std::cout << "Stimulus position: " << gsp.position << "\n";
-	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus " + cuboidColor, inputField->getSize(), gsp));
+	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus", inputField->getSize(), gsp));
 
 	simulation->addElement(stimulus);
 	inputField->addInput(stimulus);
@@ -91,51 +115,60 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	for (int i = 0; i < timeForFieldToSettle; i++)
 		application->step();
 
-	simulation->removeElement("stimulus " + cuboidColor);
+	simulation->removeElement("stimulus");
 	
 }
 
 double DNFComposerHandler::getTargetPlaceAngle()
 {
-	double centroid = outputField->calculateCentroid();
-	decisionResults.numDecisions++;
-	targetRobotAngle = centroid;
-
+	targetRobotAngle = outputField->calculateCentroid();
 	verifyOutput();
-	return centroid;
+	return targetRobotAngle;
 }
 
 void DNFComposerHandler::updateStatistics()
 {
-	if(decisionResults.numDecisions)
-		decisionResults.decisionRatio = (decisionResults.numCorrectDecisions / decisionResults.numDecisions) * 100;
+	if (decisionResults.numDecisions > 0)
+		decisionResults.decisionRatio = (static_cast<double>(decisionResults.numCorrectDecisions) / decisionResults.numDecisions) * 100;
+	else 
+		decisionResults.decisionRatio = 0.0;
 }
 
 void DNFComposerHandler::verifyOutput()
 {
-	if (verifyRobotAngle())
-		decisionResults.numCorrectDecisions++;
-	else
-		decisionResults.numIncorrectDecisions++;
+	decisionResults.numDecisions++;
+	// Increment numCorrectDecisions or numIncorrectDecisions based on verifyRobotAngle()
+	verifyRobotAngle() ? decisionResults.numCorrectDecisions++ : decisionResults.numIncorrectDecisions++;
 }
 
 bool DNFComposerHandler::verifyRobotAngle()
 {
-	// Find the closest cuboidHue value in the lookup table.
-	double closestHue = cuboidHue;
-	double minDistance = std::abs(cuboidHue - closestHue);
-	for (const auto& entry : hueToAngleMap) {
-		double distance = std::abs(cuboidHue - entry.first);
-		if (distance <= 5 && distance < minDistance) {
-			closestHue = entry.first;
-			minDistance = distance;
+	// Use binary search to find the closest hue value in the lookup table.
+	auto it = std::lower_bound(hueToAngleMap.begin(), hueToAngleMap.end(), cuboidHue,
+		[](const auto& entry, double hue) {
+			return entry.first < hue;
+		});
+
+	if (it != hueToAngleMap.end()) {
+		double closestHue = it->first;
+		double minDistance = std::abs(cuboidHue - closestHue);
+
+		// Check if the corresponding robotTargetAngle matches the provided value within +/- 5.
+		int targetAngle = it->second;
+		if (std::abs(targetAngle - targetRobotAngle) <= 5) {
+			return true;
+		}
+
+		// Check the previous element if it is closer in distance
+		if (it != hueToAngleMap.begin()) {
+			auto prevIt = std::prev(it);
+			double prevHue = prevIt->first;
+			double prevDistance = std::abs(cuboidHue - prevHue);
+			if (prevDistance < minDistance && std::abs(prevIt->second - targetRobotAngle) <= 5) {
+				return true;
+			}
 		}
 	}
 
-	// Check if the corresponding robotTargetAngle matches the provided value within +/- 5.
-	auto it = hueToAngleMap.find(closestHue);
-	if (it != hueToAngleMap.end()) {
-		int targetAngle = it->second;
-		return std::abs(targetAngle - targetRobotAngle) <= 5;
-	}
+	return false;
 }

@@ -17,6 +17,7 @@ public:
 	DNFarchitecture();
 	~DNFarchitecture();
 
-	void setup();
 	std::shared_ptr<Simulation> getSimulation();
+private:
+	void setup();
 };

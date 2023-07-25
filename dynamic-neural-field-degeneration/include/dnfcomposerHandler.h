@@ -4,12 +4,12 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <algorithm> // For std::lower_bound
 
 #include "../lib/dynamic-neural-field-composer/include/application/application.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_neural_field.h"
 #include "./experimentWindows.h"
 
-extern std::unordered_map<double, int> hueToAngleMap;
 
 struct DecisionEvaluation
 {
@@ -40,16 +40,22 @@ private:
 
 	DecisionEvaluation decisionResults;
 
+	std::unordered_map<double, int> hueToAngleMap = {
+		{00.00,  15},
+		{40.60,  40},
+		{60.00,  65},
+		{120.00, 90},
+		{240.00, 115},
+		{274.15, 140},
+		{284.74, 165}
+	};
+
 protected:
-	std::string cuboidColor;
-	double cuboidHue;
+	double cuboidHue = 0.0;
 	double targetRobotAngle = 0.0;
 
-	std::map<std::string, double> cuboidColorToCentroidMapping;
-	std::map<std::string, double> targetBoxToCentroidMapping;
-
 public:
-	DNFComposerHandler() {}
+	DNFComposerHandler();
 	DNFComposerHandler(const std::shared_ptr<Simulation> simulation);
 	~DNFComposerHandler();
 
@@ -57,15 +63,10 @@ public:
 	void step();
 	void close();
 
-	//void handleSignals();
-
 	bool getUserRequestClose();
 	void setExternalStimulus(const double& cuboidHue);
 	double getTargetPlaceAngle();
-	//std::string getTargetBox();
 private:
-	//void setupCuboidColorMap();
-	//void setupTargetBoxMap();
 	void updateStatistics();
 	void verifyOutput();
 	bool verifyRobotAngle();

@@ -1,15 +1,15 @@
 #include "../include/threadHandler.h"
 
 
-ThreadHandler::ThreadHandler(const int& numTrials)
+ThreadHandler::ThreadHandler(int numTrials)
     : numTrials{ numTrials }
 {
     DNFarchitecture dnfarch;
-    dnfarch.setup();
+    dnfch = std::make_shared<DNFComposerHandler>(dnfarch.getSimulation());
+}
 
-    std::shared_ptr<Simulation> simulation = dnfarch.getSimulation();
-
-    dnfch = DNFComposerHandler{ simulation };
+ThreadHandler::~ThreadHandler()
+{
 }
 
 void ThreadHandler::startThreads()
@@ -42,28 +42,30 @@ void ThreadHandler::coppeliasimMain()
         cpsh.setShapeHandle("Cuboid_" + std::to_string(currentTrial));
         cpsh.setShapeHue();
 
-        // Lock the mutex before accessing the shared variables
-        std::unique_lock<std::mutex> lock(mtx);
+        {
+            // Lock the mutex before accessing the shared variables
+            std::unique_lock<std::mutex> lock(mtx);
 
-        // Write to cuboidColor
-        cuboidHue = cpsh.getShapeHue();
+            // Write to cuboidHue
+            cuboidHue = cpsh.getShapeHue();
 
-        // Notify dnfcomposer thread that cuboidColor is ready
-        isReady = true;
-        cv.notify_one();
+            // Notify dnfcomposer thread that cuboidHue is ready
+            isReady = true;
+            cv.notify_one();
 
-        // Wait for dnfcomposer to finish reading cuboidColor and write to targetBox
-        cv.wait(lock, [this]() { return !isReady; });
+            // Wait for dnfcomposer to finish reading cuboidHue and write to targetPlaceAngle
+            cv.wait(lock, [this]() { return !isReady; });
+        }
 
         cpsh.pickUpShape();
 
-        // Use the value read from 
+        // Use the value read from cuboidHue
         cpsh.setTargetAngle(targetPlaceAngle);
 
         cpsh.placeShape();
 
         cpsh.resetSignals();
-        //cpsh.endStep();
+
         currentTrial++;
     }
     cpsh.stop();
@@ -72,27 +74,27 @@ void ThreadHandler::coppeliasimMain()
 int ThreadHandler::dnfcomposerMain()
 {
     try {
+        dnfch->init();
 
-        dnfch.init();
-        
-        std::thread dnfcomposerSignalHandlingThread = std::thread(&ThreadHandler::dnfcomposerSignalHandling, this);
+        std::thread dnfcomposerSignalHandlingThread(&ThreadHandler::dnfcomposerSignalHandling, this);
 
-        while (!dnfch.getUserRequestClose())
+        while (!dnfch->getUserRequestClose())
         {
-            dnfch.step();
+            dnfch->step();
 
             if (cuboidHue >= 0)
-                dnfch.setExternalStimulus(cuboidHue);
-            cuboidHue = -1;
-      
+            {
+                dnfch->setExternalStimulus(cuboidHue);
+                cuboidHue = -1;
+            }
         }
-        dnfch.close();
+
+        // Wait for dnfcomposerSignalHandlingThread to complete
+        dnfcomposerSignalHandlingThread.join(); 
+
+        dnfch->close();
 
         return 0;
-    }
-    catch (const Exception& ex) {
-        std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
-        return static_cast<int>(ex.getErrorCode());
     }
     catch (const std::exception& ex) {
         std::cerr << "Exception caught: " << ex.what() << std::endl;
@@ -107,25 +109,22 @@ int ThreadHandler::dnfcomposerMain()
 
 void ThreadHandler::dnfcomposerSignalHandling()
 {
-    //Lock the mutex before accessing the shared variables
     std::unique_lock<std::mutex> lock(mtx);
 
-    while (!dnfch.getUserRequestClose())
+    while (!dnfch->getUserRequestClose())
     {
-        // Wait for var1 to be ready for a specified duration
-        if (cv.wait_for(lock, std::chrono::milliseconds(10), [this]() { return isReady; }))
+        // Wait until isReady is true or until the condition_variable is notified,
+        // whichever comes first.
+        cv.wait(lock, [this]() { return isReady || dnfch->getUserRequestClose(); });
+
+        // Check if the loop is still running
+        if (!dnfch->getUserRequestClose())
         {
-            //// Read var1
-            //std::string color = cuboidColor;
+            // Simulate some processing time
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-            //std::cout << "Cuboid color was read in thread2 as: " + cuboidColor << "\n";
-
-            //dnfch.setExternalStimulus(cuboidColor);
-
-            Sleep(1000);
-
-            // Write to var2
-            targetPlaceAngle = dnfch.getTargetPlaceAngle();
+            // Write the targetPlaceAngle from the DNF composer to the shared variable
+            targetPlaceAngle = dnfch->getTargetPlaceAngle();
 
             // Notify thread 1 that var2 is ready
             isReady = false;
