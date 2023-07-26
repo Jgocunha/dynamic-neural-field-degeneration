@@ -1,29 +1,31 @@
 #include "./user_interface/plot_window.h"
 
 
-PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation)
+PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation, bool renderPlotSelector)
+	:renderPlotSelector(renderPlotSelector)
 {
 	this->visualization = std::make_shared<Visualization>(simulation);
 	id = ++current_id;
 	plotDimensions = { 0, 100, -30, 40 };
 }
 
-PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization)
+PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, bool renderPlotSelector)
+	:renderPlotSelector(renderPlotSelector)
 {
 	this->visualization = visualization;
 	id = ++current_id;
 	plotDimensions = { 0, 100, -30, 40 };
 }
 
-PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions)
-	:plotDimensions(dimensions)
+PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions, bool renderPlotSelector)
+	:plotDimensions(dimensions), renderPlotSelector(renderPlotSelector)
 {
 	this->visualization = std::make_shared<Visualization>(simulation);
 	id = ++current_id;
 }
 
-PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions)
-	:plotDimensions(dimensions)
+PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions, bool renderPlotSelector)
+	:plotDimensions(dimensions), renderPlotSelector(renderPlotSelector)
 {
 	this->visualization = visualization;
 	id = ++current_id;
@@ -31,7 +33,8 @@ PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, cons
 
 void PlotWindow::render()
 {
-	renderElementSelector();
+	if (renderPlotSelector)
+		renderElementSelector();
 	renderPlots();
 }
 

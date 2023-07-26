@@ -15,7 +15,7 @@ ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation
 
 void ExperimentWindow::render()
 {
-	if (ImGui::Begin("Input and output"))
+	if (ImGui::Begin("Field analysis"))
 	{
 		renderShapeDetails();
 	}

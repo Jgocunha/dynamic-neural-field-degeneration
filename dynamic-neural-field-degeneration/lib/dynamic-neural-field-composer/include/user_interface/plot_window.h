@@ -15,13 +15,14 @@ class PlotWindow : public UserInterfaceWindow
 {
 private:
 	std::shared_ptr<Visualization> visualization;
-	 int id;
-	 PlotDimensions plotDimensions;
+	int id;
+	PlotDimensions plotDimensions;
+	bool renderPlotSelector;
 public:
-	PlotWindow(const std::shared_ptr<Simulation>& simulation);
-	PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions);
-	PlotWindow(const std::shared_ptr<Visualization>& visualization);
-	PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions);
+	PlotWindow(const std::shared_ptr<Simulation>& simulation, bool renderPlotSelector = true);
+	PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions, bool renderPlotSelector = true);
+	PlotWindow(const std::shared_ptr<Visualization>& visualization, bool renderPlotSelector = true);
+	PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions, bool renderPlotSelector = true);
 	void render() override;
 	~PlotWindow() = default;
 private:

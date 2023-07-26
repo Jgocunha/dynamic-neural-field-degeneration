@@ -26,12 +26,12 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	visualization->addPlottingData("perceptual field", "activation");
 	PlotDimensions pd;
 	pd = { 0, 360, -20, 20 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd));
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
 	pd = { 0, 180, -20, 20 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd));
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 }
 
 DNFComposerHandler::~DNFComposerHandler()
