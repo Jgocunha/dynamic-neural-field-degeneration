@@ -36,6 +36,7 @@ void ExperimentWindow::renderExperimentStatistics()
 void ExperimentWindow::renderShapeDetails()
 {
 	ImGui::Text("Cuboid hue is %.2f", cuboidHue);
+	ImGui::Text("Expected place angle is %.2f", 0.00);
 	ImGui::Text("Target place angle is %.2f", robotTargetAngle);
 }
 

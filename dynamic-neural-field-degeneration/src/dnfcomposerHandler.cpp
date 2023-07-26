@@ -12,28 +12,26 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	:simulation(simulation),
 	window(std::make_shared<ExperimentWindow>(simulation))
 {
-	visualizationPer = std::make_shared<Visualization>(simulation);
-	visualizationDec = std::make_shared<Visualization>(simulation);
-
-	visualizationPer->addPlottingData("perceptual field", "activation");
-	visualizationDec->addPlottingData("decision field", "activation");
-
-
-	application = std::make_shared<Application>(simulation, true);
-
-	// After creating the application, we can add the windows we want to display.
-	application->activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
-	PlotDimensions pd;
-	pd = { 0, 360, -20, 20 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationPer, pd));
-	pd = { 0, 180, -20, 20 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualizationDec, pd));
-	application->activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
-
+	// Setup the input and output field.
 	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
 	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
 
+	// Create the application
+	application = std::make_shared<Application>(simulation, true);
 	application->activateUserInterfaceWindow(window);
+	
+	// After creating the application, we can add the windows we want to display.
+	// Create visualizations for each plot window and add the plotting data.
+	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
+	visualization->addPlottingData("perceptual field", "activation");
+	PlotDimensions pd;
+	pd = { 0, 360, -20, 20 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd));
+
+	visualization = std::make_shared<Visualization>(simulation);
+	visualization->addPlottingData("decision field", "activation");
+	pd = { 0, 180, -20, 20 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd));
 }
 
 DNFComposerHandler::~DNFComposerHandler()
@@ -101,10 +99,11 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
 
+	this->cuboidHue = cuboidHue;
 	gsp.position = cuboidHue + offset;
 	window->setCuboidHue(cuboidHue);
+	std::cout << "cuboidHue setExternalStimulus() at " << this->cuboidHue << std::endl;
 
-	std::cout << "Stimulus position: " << gsp.position << "\n";
 	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus", inputField->getSize(), gsp));
 
 	simulation->addElement(stimulus);
@@ -130,7 +129,7 @@ void DNFComposerHandler::updateStatistics()
 {
 	if (decisionResults.numDecisions > 0)
 		decisionResults.decisionRatio = (static_cast<double>(decisionResults.numCorrectDecisions) / decisionResults.numDecisions) * 100;
-	else 
+	else
 		decisionResults.decisionRatio = 0.0;
 }
 
@@ -138,37 +137,36 @@ void DNFComposerHandler::verifyOutput()
 {
 	decisionResults.numDecisions++;
 	// Increment numCorrectDecisions or numIncorrectDecisions based on verifyRobotAngle()
-	verifyRobotAngle() ? decisionResults.numCorrectDecisions++ : decisionResults.numIncorrectDecisions++;
+	if (verifyRobotAngle())
+		decisionResults.numCorrectDecisions++;
+	else
+		decisionResults.numIncorrectDecisions++;
 }
 
 bool DNFComposerHandler::verifyRobotAngle()
 {
-	// Use binary search to find the closest hue value in the lookup table.
-	auto it = std::lower_bound(hueToAngleMap.begin(), hueToAngleMap.end(), cuboidHue,
-		[](const auto& entry, double hue) {
-			return entry.first < hue;
-		});
+	// Define the tolerance for angle comparison
+	const int ANGLE_TOLERANCE = 5;
+	// Check if cuboidHue exists in the map
+	auto closestHueIter = hueToAngleMap.end();
+	double minDifference = ANGLE_TOLERANCE;
 
-	if (it != hueToAngleMap.end()) {
-		double closestHue = it->first;
-		double minDistance = std::abs(cuboidHue - closestHue);
-
-		// Check if the corresponding robotTargetAngle matches the provided value within +/- 5.
-		int targetAngle = it->second;
-		if (std::abs(targetAngle - targetRobotAngle) <= 5) {
-			return true;
-		}
-
-		// Check the previous element if it is closer in distance
-		if (it != hueToAngleMap.begin()) {
-			auto prevIt = std::prev(it);
-			double prevHue = prevIt->first;
-			double prevDistance = std::abs(cuboidHue - prevHue);
-			if (prevDistance < minDistance && std::abs(prevIt->second - targetRobotAngle) <= 5) {
-				return true;
-			}
+	for (auto it = hueToAngleMap.begin(); it != hueToAngleMap.end(); ++it)
+	{
+		double difference = std::abs(cuboidHue - it->first);
+		if (difference <= ANGLE_TOLERANCE && difference < minDifference)
+		{
+			minDifference = difference;
+			closestHueIter = it;
 		}
 	}
 
+	if (closestHueIter != hueToAngleMap.end())
+	{
+		int target_angle = closestHueIter->second;
+		return std::abs(target_angle - targetRobotAngle) <= ANGLE_TOLERANCE;
+	}
+
+	// No matching rules for the given cuboidHue and robotTargetAngle.
 	return false;
 }
