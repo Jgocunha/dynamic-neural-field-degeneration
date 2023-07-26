@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "./dnfcomposerHandler.h"
 #include "../lib/dynamic-neural-field-composer/include/user_interface/user_interface.h"
 
 class ExperimentWindow : public UserInterfaceWindow //, public DNFComposerHandler
@@ -8,8 +7,8 @@ class ExperimentWindow : public UserInterfaceWindow //, public DNFComposerHandle
 private:
 	std::shared_ptr<Simulation> simulation;
 	int currentTrial;
-	double cuboidHue;
-	double robotTargetAngle;
+	double cuboidHue, perceptualFieldCentroid;
+	double robotTargetAngle, expectedTargetAngle;
 	double correctDecisionRatio;
 	int numCorrectDecisions;
 	std::string currentDegeneration;
@@ -24,6 +23,9 @@ public:
 	void setCurrentTrial(const int& currentTrial);
 	void setDecisionRatio(const double& decisionRatio);
 	void setNumCorrectDecisions(const int& numCorrectDecisions);
+	void setExpectedTargetAngle(const double& expectedTargetAngle);
+	void setPerceptualFieldCentroid(const double& perceptualFieldCentroid);
+
 private:
 	void renderShapeDetails();
 	void renderExperimentStatistics();

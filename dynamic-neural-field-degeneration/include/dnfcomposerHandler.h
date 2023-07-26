@@ -66,6 +66,7 @@ public:
 	bool getUserRequestClose();
 	void setExternalStimulus(const double& cuboidHue);
 	double getTargetPlaceAngle();
+	void getPerceptualFieldCentroid();
 private:
 	void updateStatistics();
 	void verifyOutput();

@@ -9,6 +9,8 @@ ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation
 	correctDecisionRatio = 0;
 	currentDegeneration = "null";
 	numCorrectDecisions = 0;
+	perceptualFieldCentroid = 0.0;
+	expectedTargetAngle = 0.0;
 }
 
 void ExperimentWindow::render()
@@ -30,14 +32,16 @@ void ExperimentWindow::renderExperimentStatistics()
 {
 	ImGui::Text("Current trial is %d", currentTrial);
 	ImGui::Text("Number of correct decisions is %d", numCorrectDecisions);
-	ImGui::Text("Correct decision percentage %.2f", correctDecisionRatio, "%");
+	ImGui::Text("Correct decision percentage %.2f", correctDecisionRatio);
 }
 
 void ExperimentWindow::renderShapeDetails()
 {
 	ImGui::Text("Cuboid hue is %.2f", cuboidHue);
-	ImGui::Text("Expected place angle is %.2f", 0.00);
-	ImGui::Text("Target place angle is %.2f", robotTargetAngle);
+	ImGui::Text("Perceptual field centroid is %.2f", perceptualFieldCentroid);
+
+	ImGui::Text("Expected place angle is %.2f", expectedTargetAngle);
+	ImGui::Text("Decision field centroid is %.2f", robotTargetAngle);
 }
 
 void ExperimentWindow::setCuboidHue(const double& cuboidHue)
@@ -63,4 +67,14 @@ void ExperimentWindow::setDecisionRatio(const double& decisionRatio)
 void ExperimentWindow::setNumCorrectDecisions(const int& numCorrectDecisions)
 {
 	this->numCorrectDecisions = numCorrectDecisions;
+}
+
+void ExperimentWindow::setExpectedTargetAngle(const double& expectedTargetAngle)
+{
+	this->expectedTargetAngle = expectedTargetAngle;
+}
+
+void ExperimentWindow::setPerceptualFieldCentroid(const double& perceptualFieldCentroid)
+{
+	this->perceptualFieldCentroid = perceptualFieldCentroid;
 }

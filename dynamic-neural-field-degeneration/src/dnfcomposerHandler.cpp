@@ -102,7 +102,6 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	this->cuboidHue = cuboidHue;
 	gsp.position = cuboidHue + offset;
 	window->setCuboidHue(cuboidHue);
-	std::cout << "cuboidHue setExternalStimulus() at " << this->cuboidHue << std::endl;
 
 	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus", inputField->getSize(), gsp));
 
@@ -115,7 +114,13 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 		application->step();
 
 	simulation->removeElement("stimulus");
-	
+
+	getPerceptualFieldCentroid();
+}
+
+void DNFComposerHandler::getPerceptualFieldCentroid()
+{
+	window->setPerceptualFieldCentroid(inputField->calculateCentroid());
 }
 
 double DNFComposerHandler::getTargetPlaceAngle()
@@ -163,7 +168,8 @@ bool DNFComposerHandler::verifyRobotAngle()
 
 	if (closestHueIter != hueToAngleMap.end())
 	{
-		int target_angle = closestHueIter->second;
+		double target_angle = closestHueIter->second;
+		window->setExpectedTargetAngle(target_angle);
 		return std::abs(target_angle - targetRobotAngle) <= ANGLE_TOLERANCE;
 	}
 
