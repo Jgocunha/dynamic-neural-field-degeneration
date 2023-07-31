@@ -1,8 +1,8 @@
 #include "../include/threadHandler.h"
 
 
-ThreadHandler::ThreadHandler(int numTrials)
-    : numTrials{ numTrials }
+ThreadHandler::ThreadHandler(int numTrials, SimulationMode simMode)
+    : numTrials{ numTrials }, simMode {simMode}
 {
     DNFarchitecture dnfarch;
     dnfch = std::make_shared<DNFComposerHandler>(dnfarch.getSimulation());
@@ -86,6 +86,21 @@ int ThreadHandler::dnfcomposerMain()
             {
                 dnfch->setExternalStimulus(cuboidHue);
                 cuboidHue = -1;
+            }
+
+            switch (simMode)
+            {
+            case SimulationMode::NORMAL:
+                // do nothing
+                break;
+            case SimulationMode::DEGENERATE:
+                // call degeneration function
+                break;
+            case SimulationMode::LEARNING:
+                // call learning function
+                break;
+            default:
+                break;
             }
         }
 

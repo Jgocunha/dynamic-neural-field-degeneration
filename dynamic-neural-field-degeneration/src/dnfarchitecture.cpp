@@ -28,7 +28,7 @@ void DNFarchitecture::setup()
     simulation->addElement(perceptual_field);
     simulation->addElement(decision_field);
 
-    // create interactions and add them to the simulationulation
+    // create interactions and add them to the simulation
     GaussKernelParameters gkp1;
     gkp1.amplitude = 19;  // self-sustained (without input)
     gkp1.sigma = 3;
@@ -42,7 +42,7 @@ void DNFarchitecture::setup()
     std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(k_dec_dec);
 
-    std::shared_ptr<FieldCoupling> w_per_dec(new FieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
     simulation->addElement(w_per_dec);
 
     // create noise stimulus and noise kernel

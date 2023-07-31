@@ -12,6 +12,8 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	// Setup the input and output field.
 	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
 	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
+	fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement("per - dec"));
+
 
 	// Create the application
 	application = std::make_shared<Application>(simulation, true);
@@ -30,7 +32,7 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	pd = { 0, 180, -20, 20 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
-	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 
 }
 

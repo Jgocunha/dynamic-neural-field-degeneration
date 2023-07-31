@@ -3,7 +3,9 @@
 int main()
 {
     int numTrials = 100;
-    ThreadHandler handler{ numTrials };
+    SimulationMode mode = SimulationMode::NORMAL;
+    ThreadHandler handler{ numTrials, SimulationMode::NORMAL };
+
     Sleep(200);
 
     // Start the threads

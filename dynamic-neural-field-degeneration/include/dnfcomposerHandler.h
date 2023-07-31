@@ -8,6 +8,7 @@
 
 #include "../lib/dynamic-neural-field-composer/include/application/application.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_neural_field.h"
+#include "../lib/dynamic-neural-field-composer/include/elements/degenerate_field_coupling.h"
 #include "./experimentWindows.h"
 
 
@@ -34,8 +35,11 @@ private:
 	std::shared_ptr<Visualization> visualizationPer, visualizationDec;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
+	std::shared_ptr<DegenerateFieldCoupling> fieldCoupling;
 	std::shared_ptr<ExperimentWindow> window;
 	bool userRequestClose = false;
+	bool degenerate = false;
+	bool learning = false;
 	int timeForFieldToSettle = 50;
 
 	DecisionEvaluation decisionResults;
