@@ -182,8 +182,8 @@ void CouplingWindow::renderStimulusFinishedButton()
 
 void CouplingWindow::renderFinishTrainingButton()
 {
-	if (ImGui::Button("Finish training"))
-		fieldCouplingWizard.trainWeights(500);
+	//if (ImGui::Button("Finish training"))
+		//fieldCouplingWizard.trainWeights(500);
 }
 
 

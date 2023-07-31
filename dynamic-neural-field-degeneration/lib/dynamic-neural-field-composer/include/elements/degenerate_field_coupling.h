@@ -10,7 +10,7 @@ private:
 	std::set<std::pair<int, int>> indicesForDegeneration;
 	double minWeightValue = 0;
 	double maxWeightValue = 0;
-	double weightReductionFactor = 0.8;
+	double weightReductionFactor = 0.4;
 public:
 	DegenerateFieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
 

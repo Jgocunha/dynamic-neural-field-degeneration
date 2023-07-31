@@ -28,6 +28,8 @@
 #include "./simulation_window.h"
 #include "./coupling_window.h"
 #include "./degeneracy_window.h"
+#include "./matrix_plot_window.h"
+
 
 // Dear ImGui stuff
 struct FrameContext

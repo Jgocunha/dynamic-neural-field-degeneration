@@ -35,7 +35,7 @@ add_library(dynamic-neural-field-composer
     "src/elements/degenerate_field_coupling.cpp"
     "examples/ex_degeneracy_cuboid_color.cpp" 
     "src/wizards/field_coupling_wizard.cpp"
-) 
+   "src/user_interface/matrix_plot_window.cpp") 
 
 # Set the desired output directory relative to the project
 set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")

@@ -3,14 +3,11 @@
 DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule)
 	: FieldCoupling(id, outputSize, inputSize, parameters, learningRule)
 {
-
 	// Assert that the sizes are positive
 	assert(outputSize > 0 && inputSize > 0);
 
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;
-
-	populateIndicesForDegeneration();
 }
 
 void DegenerateFieldCoupling::init()
@@ -18,7 +15,7 @@ void DegenerateFieldCoupling::init()
 	FieldCoupling::init();
 	populateIndicesForDegeneration();
 	findMinMaxWeightValues();
-	degenerate = false;
+	//degenerate = false;
 }
 
 void DegenerateFieldCoupling::step(const double& t, const double& deltaT)
@@ -36,7 +33,7 @@ void DegenerateFieldCoupling::startDegeneration()
 void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1;
-	double numWeightsToDegenerate = (size*size) * percentage;
+	double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
 	switch (degeneracyType)
 	{
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -74,11 +71,11 @@ ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
 
 void DegenerateFieldCoupling::populateIndicesForDegeneration()
 {
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < components["output"].size(); i++)
 	{
-		for (int j = 0; j < size; ++j)
+		for (int j = 0; j < components["input"].size(); j++)
 		{
-			std::pair<int, int> pair(i, j);
+			std::pair<int, int> pair(j, i);
 			indicesForDegeneration.insert(pair);
 		}
 	}
@@ -87,28 +84,29 @@ void DegenerateFieldCoupling::populateIndicesForDegeneration()
 void DegenerateFieldCoupling::findMinMaxWeightValues()
 {
 	// Find the minimum and maximum values of the weights
-	for (int row = 0; row < size; row++)
+	for (int i = 0; i < components["output"].size(); i++)
 	{
-		for (int col = 0; col < size; col++)
+		for (int j = 0; j < components["input"].size(); j++)
 		{
-			minWeightValue = std::min(minWeightValue, weights[row][col]);
-			maxWeightValue = std::max(maxWeightValue, weights[row][col]);
+			minWeightValue = std::min(minWeightValue, weights[j][i]);
+			maxWeightValue = std::max(maxWeightValue, weights[j][i]);
 		}
 	}
 }
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	int maxAttempts = size * size;
+	static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
 
 	for (int i = 0; i < maxAttempts; i++)
 	{
-		row_idx = mathtools::generateRandomNumber(0, size - 1);
-		col_idx = mathtools::generateRandomNumber(0, size - 1);
+		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
+		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
 		if (weights[row_idx][col_idx] > 0)
 		{
-			weights[row_idx][col_idx] = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
+			double aux = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
+			weights[row_idx][col_idx] = aux;
 			break;
 		}
 	}
@@ -126,13 +124,14 @@ double DegenerateFieldCoupling::getWeightReductionFactor()
 
 void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 {
-	int maxAttempts = size * size;
+	static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
+
 	for (int i = 0; i < maxAttempts; i++)
 	{
-		row_idx = mathtools::generateRandomNumber(0, size - 1);
-		col_idx = mathtools::generateRandomNumber(0, size - 1);
-		if (weights[row_idx][col_idx] > 0)
+		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
+		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
+		if (weights[row_idx][col_idx] != 0)
 		{
 			weights[row_idx][col_idx] = weights[row_idx][col_idx] * weightReductionFactor;
 			break;
@@ -142,14 +141,14 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {
-	int maxAttempts = size * size;
+	static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
 	bool uniqueCombinationFound = false;
-	int numIndices = static_cast<int>((size * size) / 10.0);
+	int numIndices = static_cast<int>((components["output"].size() * components["input"].size()) / 10.0);
 	while (!uniqueCombinationFound)
 	{
-		row_idx = mathtools::generateRandomNumber(0, size - 1);
-		col_idx = mathtools::generateRandomNumber(0, size - 1);
+		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
+		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
 		std::pair<int, int> pair(row_idx, col_idx);
 		if (indicesForDegeneration.find(pair) != indicesForDegeneration.end())
 		{

@@ -15,9 +15,9 @@ class PlotWindow : public UserInterfaceWindow
 {
 private:
 	std::shared_ptr<Visualization> visualization;
-	int id;
-	PlotDimensions plotDimensions;
-	bool renderPlotSelector;
+	 int id;
+	 PlotDimensions plotDimensions;
+	 bool renderPlotSelector;
 public:
 	PlotWindow(const std::shared_ptr<Simulation>& simulation, bool renderPlotSelector = true);
 	PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions, bool renderPlotSelector = true);

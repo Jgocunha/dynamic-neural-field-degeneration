@@ -307,7 +307,7 @@ namespace mathtools {
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		// Create a uniform distribution from 1 to 2 (inclusive)
-		std::uniform_int_distribution<> dis(min, max);
+		std::uniform_real_distribution<> dis(min, max);
 		// Generate a random integer between 1 and 2
 		T randomNum = dis(gen);
 		return randomNum;

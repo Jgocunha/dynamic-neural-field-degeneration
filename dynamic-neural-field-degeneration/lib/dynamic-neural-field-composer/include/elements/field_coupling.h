@@ -35,6 +35,8 @@ public:
 
 	void resetWeights();
 	void updateWeights(const std::vector<double> input, const std::vector<double> output);
+	
+	const std::vector<std::vector<double>>& getWeights() const;
 
 	~FieldCoupling() = default;
 
@@ -46,4 +48,5 @@ protected:
 
 	bool readWeights();
 	void writeWeights();
+
 };

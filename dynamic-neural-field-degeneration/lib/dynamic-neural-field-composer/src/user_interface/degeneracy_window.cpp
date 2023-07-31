@@ -95,11 +95,11 @@ void DegeneracyWindow::renderFieldCentroids()
 {
 	static std::string inputFieldId = inputField->getUniqueIdentifier();
 	double inputFieldCentroid = inputField->calculateCentroid();
-	ImGui::Text("Centroid of %s : %.2f", inputFieldId.c_str(), inputFieldCentroid);
+	ImGui::Text("Centroid of %s : %f", inputFieldId.c_str(), inputFieldCentroid);
 
 	static std::string outputFieldId = outputField->getUniqueIdentifier();
 	double outputFieldCentroid = outputField->calculateCentroid();
-	ImGui::Text("Centroid of %s : %.2f", outputFieldId.c_str(), outputFieldCentroid);
+	ImGui::Text("Centroid of %s : %f", outputFieldId.c_str(), outputFieldCentroid);
 }
 
 void DegeneracyWindow::renderFieldCentroidsPlotOverSimulationIterations()

@@ -29,6 +29,9 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	visualization->addPlottingData("decision field", "activation");
 	pd = { 0, 180, -20, 20 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
+
+	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+
 }
 
 DNFComposerHandler::~DNFComposerHandler()

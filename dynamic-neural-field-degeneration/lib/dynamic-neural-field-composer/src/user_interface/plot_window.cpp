@@ -33,7 +33,7 @@ PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, cons
 
 void PlotWindow::render()
 {
-	if (renderPlotSelector)
+	if(renderPlotSelector)
 		renderElementSelector();
 	renderPlots();
 }

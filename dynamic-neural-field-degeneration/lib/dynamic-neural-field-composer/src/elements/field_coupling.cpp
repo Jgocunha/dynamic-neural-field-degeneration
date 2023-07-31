@@ -9,9 +9,9 @@ FieldCoupling::FieldCoupling(const std::string& id, const int& outputSize, const
 	this->label = ElementLabel::FIELD_COUPLING;
 	this->uniqueIdentifier = id;
 	this->size = outputSize;
-	components["input"] = std::vector<double>(inputSize); // 100
-	components["output"] = std::vector<double>(outputSize); // 180
-	mathtools::resizeMatrix(weights, components["input"].size(), components["output"].size()); // 100 180
+	components["input"] = std::vector<double>(inputSize); 
+	components["output"] = std::vector<double>(outputSize);
+	mathtools::resizeMatrix(weights, components["input"].size(), components["output"].size());
 
 	// Initialize the weight matrix with random values
 	mathtools::fillMatrixWithRandomValues(weights, -1, 1);
@@ -63,7 +63,7 @@ void FieldCoupling::computeOutput()
 		for (int j = 0; j < components["input"].size(); j++)
 			components["output"][i] += weights[j][i] * components["input"][j];
 
-	//// only the positive values of the output are considered
+	// only the positive values of the output are considered
 	for (auto& value : components["output"])
 		if (value < 0)
 			value = 0;
@@ -97,6 +97,11 @@ void FieldCoupling::updateWeights(const std::vector<double> input, const std::ve
 		break;
 	}
 	writeWeights();
+}
+
+const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
+{
+	return weights;
 }
 
 bool FieldCoupling::readWeights()

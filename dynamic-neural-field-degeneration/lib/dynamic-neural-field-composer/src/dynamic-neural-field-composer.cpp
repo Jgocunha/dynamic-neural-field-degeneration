@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
     pd = { 0, 180, -30, 40 };
     app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation, pd));
     app.activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
+    app.activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 
     try {
         app.init();

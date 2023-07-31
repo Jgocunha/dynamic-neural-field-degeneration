@@ -15,17 +15,18 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
     NeuralFieldParameters nfp2 = { 20, -10 };
     std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
     std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
+    //perceptual_field->setDegeneracyType(ElementDegeneracyType::NEURONS_DEACTIVATE);
+    //perceptual_field->startDegeneration();
 
     simulation->addElement(perceptual_field);
     simulation->addElement(decision_field);
 
-    // create interactions and add them to the simulationulation
+    // create interactions and add them to the simulation
     GaussKernelParameters gkp1;
     gkp1.amplitude = 19;  // self-sustained (without input)
     gkp1.sigma = 3;
     std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-v
     simulation->addElement(k_per_per);
-
 
     GaussKernelParameters gkp2;
     gkp2.amplitude = 15;  // self-stabilized (with input)
@@ -33,8 +34,10 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
     std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(k_dec_dec);
 
-    std::shared_ptr<FieldCoupling> w_per_dec(new FieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
     simulation->addElement(w_per_dec);
+    w_per_dec->setDegeneracyType(ElementDegeneracyType::WEIGHTS_REDUCE);
+    w_per_dec->startDegeneration();
 
     // create noise stimulus and noise kernel
     std::shared_ptr<NormalNoise> noise_per(new NormalNoise("noise per", perceptualFieldSize, { 1 }));
@@ -67,11 +70,11 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
     std::shared_ptr<GaussStimulus> gauss_stimulus(new GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
 
     simulation->addElement(gauss_stimulus);
-    perceptual_field->addInput(gauss_stimulus); 
+    perceptual_field->addInput(gauss_stimulus);
 
     // ==
     // set up the field coupling wizard
-    FieldCouplingWizard fcpw{ simulation, "per - dec" };
+    //FieldCouplingWizard fcpw{ simulation, "per - dec" };
 
     //// add gaussian inputs
     //double offset = 1.0;
@@ -89,13 +92,13 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
     //};
     //std::vector<std::vector<double>> outputTargetPeaksForCoupling =
     //{
-    //    { 22.50 + offset },
-    //    { 45.00 + offset },
-    //    { 67.50 + offset },
+    //    { 15.00 + offset },
+    //    { 40.00 + offset },
+    //    { 65.00 + offset },
     //    { 90.00 + offset },
-    //    { 112.5 + offset },
-    //    { 135.0 + offset },
-    //    { 157.5 + offset }
+    //    { 115.00 + offset },
+    //    { 140.00 + offset },
+    //    { 165.00 + offset }
     //};
 
     //fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
