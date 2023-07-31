@@ -1,8 +1,5 @@
 
-
 #include "../include/dnfcomposerHandler.h"
-
-
 
 DNFComposerHandler::DNFComposerHandler()
 {
