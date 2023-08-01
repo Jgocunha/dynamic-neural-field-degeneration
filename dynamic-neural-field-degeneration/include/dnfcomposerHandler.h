@@ -37,10 +37,9 @@ private:
 	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
 	std::shared_ptr<DegenerateFieldCoupling> fieldCoupling;
 	std::shared_ptr<ExperimentWindow> window;
-	bool userRequestClose = false;
-	bool degenerate = false;
-	bool learning = false;
-	int timeForFieldToSettle = 50;
+	
+	int timeForFieldToSettle;
+	std::vector<double> centroids;
 
 	DecisionEvaluation decisionResults;
 
@@ -60,7 +59,7 @@ protected:
 
 public:
 	DNFComposerHandler();
-	DNFComposerHandler(const std::shared_ptr<Simulation> simulation);
+	DNFComposerHandler(const std::shared_ptr<Simulation> simulation, bool isGUIVisible, int timeForFieldToSettle);
 	~DNFComposerHandler();
 
 	void init();
@@ -71,6 +70,8 @@ public:
 	void setExternalStimulus(const double& cuboidHue);
 	double getTargetPlaceAngle();
 	void getPerceptualFieldCentroid();
+	void applyDegeneration();
+	void saveCentroids();
 private:
 	void updateStatistics();
 	void verifyOutput();

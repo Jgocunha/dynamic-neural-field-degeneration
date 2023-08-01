@@ -17,6 +17,7 @@ void DegenerateNeuralField::init()
 {
 	NeuralField::init();
 	populateIndicesForDegeneration();
+	degenerate = false;
 }
 
 void DegenerateNeuralField::calculateActivation(const double& t, const double& deltaT)
@@ -59,7 +60,7 @@ void DegenerateNeuralField::applyDegeneracy()
 	{
 		case ElementDegeneracyType::NEURONS_DEACTIVATE:
 			setRandomUniqueNeuronToZero();
-			//degenerate = false;
+			degenerate = false;
 			break;
 		case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
 			while (numNeuronsToDegenerate)

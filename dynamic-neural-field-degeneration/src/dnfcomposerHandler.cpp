@@ -5,18 +5,16 @@ DNFComposerHandler::DNFComposerHandler()
 {
 }
 
-DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulation)
-	:simulation(simulation),
-	window(std::make_shared<ExperimentWindow>(simulation))
+DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulation, bool isGUIVisible, int timeForFieldToSettle)
+	:simulation(simulation), window(std::make_shared<ExperimentWindow>(simulation)), timeForFieldToSettle(timeForFieldToSettle)
 {
 	// Setup the input and output field.
 	inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("perceptual field"));
 	outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement("decision field"));
 	fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement("per - dec"));
 
-
 	// Create the application
-	application = std::make_shared<Application>(simulation, true);
+	application = std::make_shared<Application>(simulation, isGUIVisible);
 	application->activateUserInterfaceWindow(window);
 	
 	// After creating the application, we can add the windows we want to display.
@@ -24,16 +22,17 @@ DNFComposerHandler::DNFComposerHandler(const std::shared_ptr<Simulation> simulat
 	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
 	PlotDimensions pd;
-	pd = { 0, 360, -20, 20 };
+	pd = { 0, 360, -25, 30 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -20, 20 };
+	pd = { 0, 180, -15, 25 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
-	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 
+	//centroids.resize(inputField->getSize() * outputField->getSize());
 }
 
 DNFComposerHandler::~DNFComposerHandler()
@@ -99,7 +98,7 @@ bool DNFComposerHandler::getUserRequestClose()
 void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 {
 	double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 15, 20 };
+	GaussStimulusParameters gsp = { 3, 25, 20 };
 
 	this->cuboidHue = cuboidHue;
 	gsp.position = cuboidHue + offset;
@@ -110,12 +109,15 @@ void DNFComposerHandler::setExternalStimulus(const double& cuboidHue)
 	simulation->addElement(stimulus);
 	inputField->addInput(stimulus);
 
-	simulation->init();
+	//simulation->init();
 
 	for (int i = 0; i < timeForFieldToSettle; i++)
 		application->step();
 
 	simulation->removeElement("stimulus");
+
+	for (int i = 0; i < timeForFieldToSettle; i++)
+		application->step();
 
 	getPerceptualFieldCentroid();
 }
@@ -148,6 +150,7 @@ void DNFComposerHandler::verifyOutput()
 		decisionResults.numCorrectDecisions++;
 	else
 		decisionResults.numIncorrectDecisions++;
+	centroids.push_back(targetRobotAngle);
 }
 
 bool DNFComposerHandler::verifyRobotAngle()
@@ -177,4 +180,33 @@ bool DNFComposerHandler::verifyRobotAngle()
 
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	return false;
+}
+
+void DNFComposerHandler::applyDegeneration()
+{
+	fieldCoupling->setDegeneracyType(ElementDegeneracyType::WEIGHTS_DEACTIVATE);
+
+	fieldCoupling->startDegeneration();
+
+	for (int i = 0; i < timeForFieldToSettle; i++)
+		application->step();
+
+	getPerceptualFieldCentroid();
+}
+
+void DNFComposerHandler::saveCentroids()
+{
+	std::string filePath = "../../../data/centroids.txt";
+	std::ofstream outputFile(filePath, std::ios::app); // Open the file in append mode
+
+	if (!outputFile)
+		std::cerr << "Failed to open the file for writing." << std::endl;
+
+	for (const auto& centroid : centroids)
+		outputFile << centroid << " ";
+	outputFile << std::endl;
+
+	outputFile.close();
+
+	std::cout << "New centroids appended to " << filePath << std::endl;
 }

@@ -23,10 +23,12 @@ std::shared_ptr<Simulation> test_DegeneracyCuboidColor()
 
     // create interactions and add them to the simulation
     GaussKernelParameters gkp1;
-    gkp1.amplitude = 19;  // self-sustained (without input)
+    gkp1.amplitude = 35;  // self-sustained (without input)
     gkp1.sigma = 3;
+    gkp1.amplitudeGlobal = -1;
     std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-v
     simulation->addElement(k_per_per);
+
 
     GaussKernelParameters gkp2;
     gkp2.amplitude = 15;  // self-stabilized (with input)

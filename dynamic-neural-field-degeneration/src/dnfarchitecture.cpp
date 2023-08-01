@@ -2,7 +2,7 @@
 
 DNFarchitecture::DNFarchitecture()
 {
-	simulation = std::make_shared<Simulation>(2, 0, 0);
+	simulation = std::make_shared<Simulation>(5, 0, 0);
     setup();
 }
 
@@ -20,7 +20,7 @@ void DNFarchitecture::setup()
 
     // create neural fields
     ActivationFunctionParameters afp = { ActivationFunctionType::Heaviside, 0.0, 0.2 };
-    NeuralFieldParameters nfp1 = { 20, -10 };
+    NeuralFieldParameters nfp1 = { 25, -10 };
     NeuralFieldParameters nfp2 = { 20, -10 };
     std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
     std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
@@ -30,11 +30,11 @@ void DNFarchitecture::setup()
 
     // create interactions and add them to the simulation
     GaussKernelParameters gkp1;
-    gkp1.amplitude = 19;  // self-sustained (without input)
+    gkp1.amplitude = 35;  // self-sustained (without input)
     gkp1.sigma = 3;
-    std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-v
+    gkp1.amplitudeGlobal = -1;
+    std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-u
     simulation->addElement(k_per_per);
-
 
     GaussKernelParameters gkp2;
     gkp2.amplitude = 15;  // self-stabilized (with input)
@@ -42,7 +42,7 @@ void DNFarchitecture::setup()
     std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
     simulation->addElement(k_dec_dec);
 
-    std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.50, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
+    std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.5, 0.1 }, LearningRule::DELTA_KROGH_HERTZ));
     simulation->addElement(w_per_dec);
 
     // create noise stimulus and noise kernel

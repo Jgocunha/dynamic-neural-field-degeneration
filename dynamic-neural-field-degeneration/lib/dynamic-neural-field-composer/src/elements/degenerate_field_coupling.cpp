@@ -15,7 +15,7 @@ void DegenerateFieldCoupling::init()
 	FieldCoupling::init();
 	populateIndicesForDegeneration();
 	findMinMaxWeightValues();
-	//degenerate = false;
+	degenerate = false;
 }
 
 void DegenerateFieldCoupling::step(const double& t, const double& deltaT)
@@ -38,6 +38,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 	{
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 			setRandomUniqueWeightToZero();
+			degenerate = false;
 			break;
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE_PERCENTAGE:
 			while (numWeightsToDegenerate)
@@ -49,9 +50,11 @@ void DegenerateFieldCoupling::applyDegeneracy()
 			break;
 		case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 			setRandomWeightToRandomValue();
+			degenerate = false;
 			break;
 		case ElementDegeneracyType::WEIGHTS_REDUCE:
 			setRandomWeightToReduceValue();
+			degenerate = false;
 			break;
 		default:
 			std::cout << "Degeneracy type not supported" << std::endl;
@@ -155,6 +158,7 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 			indicesForDegeneration.erase(pair);
 			weights[row_idx][col_idx] = 0;
 			uniqueCombinationFound = true;
+			std::cout << "Weight deactivated " << row_idx << " " << col_idx << std::endl;
 		}
 		else if (!(indicesForDegeneration.size()))
 		{

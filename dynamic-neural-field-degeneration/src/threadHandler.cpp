@@ -1,11 +1,14 @@
 #include "../include/threadHandler.h"
 
 
-ThreadHandler::ThreadHandler(int numTrials, SimulationMode simMode)
-    : numTrials{ numTrials }, simMode {simMode}
+ThreadHandler::ThreadHandler(const ExperimentParameters& experimentParameters)
+    : experimentParameters{ experimentParameters }
 {
     DNFarchitecture dnfarch;
-    dnfch = std::make_shared<DNFComposerHandler>(dnfarch.getSimulation());
+    if (experimentParameters.mode == SimulationMode::DEBUG)
+        dnfch = std::make_shared<DNFComposerHandler>(dnfarch.getSimulation(), true, TIMETOSETTLE_DEBUG);
+    else
+        dnfch = std::make_shared<DNFComposerHandler>(dnfarch.getSimulation(), false, TIMETOSETTLE_FAST);
 }
 
 ThreadHandler::~ThreadHandler()
@@ -31,11 +34,11 @@ void ThreadHandler::joinThreads()
 
 void ThreadHandler::coppeliasimMain()
 {
-    CoppeliasimHandler cpsh{ numTrials };
+    CoppeliasimHandler cpsh{ experimentParameters.numOfTrials };
 
     while (!cpsh.initialize());
 
-    while (currentTrial <= numTrials)
+    while (currentTrial <= experimentParameters.numOfTrials)
     {
         cpsh.createShape();
 
@@ -71,62 +74,43 @@ void ThreadHandler::coppeliasimMain()
     cpsh.stop();
 }
 
-int ThreadHandler::dnfcomposerMain()
+void ThreadHandler::dnfcomposerMain()
 {
-    try {
-        dnfch->init();
+    dnfch->init();
 
-        std::thread dnfcomposerSignalHandlingThread(&ThreadHandler::dnfcomposerSignalHandling, this);
+    std::thread dnfcomposerSignalHandlingThread(&ThreadHandler::dnfcomposerSignalHandling, this);
 
-        while (!dnfch->getUserRequestClose())
+    while (currentTrial <= experimentParameters.numOfTrials)
+    {
+        dnfch->step();
+
+        if (cuboidHue >= 0)
         {
-            dnfch->step();
+            dnfch->setExternalStimulus(cuboidHue);
+            cuboidHue = -1;
 
-            if (cuboidHue >= 0)
-            {
-                dnfch->setExternalStimulus(cuboidHue);
-                cuboidHue = -1;
-            }
+            if (experimentParameters.degeneracyType != ElementDegeneracyType::NONE)
+                dnfch->applyDegeneration();
 
-            switch (simMode)
-            {
-            case SimulationMode::NORMAL:
-                // do nothing
-                break;
-            case SimulationMode::DEGENERATE:
-                // call degeneration function
-                break;
-            case SimulationMode::LEARNING:
-                // call learning function
-                break;
-            default:
-                break;
-            }
+            //if(experimentParameters.learningType != ElementDegeneracyType::NONE) tbdf
         }
 
-        // Wait for dnfcomposerSignalHandlingThread to complete
-        dnfcomposerSignalHandlingThread.join(); 
+    }
 
-        dnfch->close();
+    dnfch->saveCentroids();
 
-        return 0;
-    }
-    catch (const std::exception& ex) {
-        std::cerr << "Exception caught: " << ex.what() << std::endl;
-        return 1;
-    }
-    catch (...)
-    {
-        std::cerr << "Unknown exception occurred." << std::endl;
-        return 1;
-    }
+    // Wait for dnfcomposerSignalHandlingThread to complete
+    dnfcomposerSignalHandlingThread.join(); 
+
+    dnfch->close();
+
 }
 
 void ThreadHandler::dnfcomposerSignalHandling()
 {
     std::unique_lock<std::mutex> lock(mtx);
 
-    while (!dnfch->getUserRequestClose())
+    while (currentTrial <= experimentParameters.numOfTrials)
     {
         // Wait until isReady is true or until the condition_variable is notified,
         // whichever comes first.
@@ -136,7 +120,10 @@ void ThreadHandler::dnfcomposerSignalHandling()
         if (!dnfch->getUserRequestClose())
         {
             // Simulate some processing time
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            if(experimentParameters.mode == SimulationMode::DEBUG)
+                std::this_thread::sleep_for(std::chrono::milliseconds(TIMETOSLEEP_DEBUG));
+            else
+                std::this_thread::sleep_for(std::chrono::milliseconds(TIMETOSLEEP_FAST));
 
             // Write the targetPlaceAngle from the DNF composer to the shared variable
             targetPlaceAngle = dnfch->getTargetPlaceAngle();

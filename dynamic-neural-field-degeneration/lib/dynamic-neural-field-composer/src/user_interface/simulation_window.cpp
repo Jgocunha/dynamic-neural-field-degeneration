@@ -117,23 +117,18 @@ void SimulationWindow::renderElementProperties(const std::pair<int, std::string>
 		{
 		case ElementLabel::NEURAL_FIELD:
 			addElementNeuralField();
-			simulation->init();
 			break;
 		case ElementLabel::GAUSS_STIMULUS:
 			addElementGaussStimulus();
-			simulation->init();
 			break;
 		case ElementLabel::FIELD_COUPLING:
 			addElementFieldCoupling();
-			simulation->init();
 			break;
 		case ElementLabel::GAUSS_KERNEL:
 			addElementGaussKernel();
-			simulation->init();
 			break;
 		case ElementLabel::MEXICAN_HAT_KERNEL:
 			addElementMexicanHatKernel();
-			simulation->init();
 			break;
 		case ElementLabel::NORMAL_NOISE:
 			// normal noise to do

@@ -35,47 +35,6 @@ void CoppeliasimHandler::resetSignals()
 	client.log("All signals were reset.");
 }
 
-void CoppeliasimHandler::run()
-{
-	int currentTrial = 1;
-
-	while (currentTrial <= numTrials)
-	{
-		createShape();
-
-		cuboid.name = "Cuboid_" + std::to_string(currentTrial);
-		getShapeHue();
-
-		pickUpShape();
-
-		placeShape();
-
-		Sleep(2000);
-
-		resetSignals();
-		currentTrial++;
-	}
-}
-
-void CoppeliasimHandler::startStep(const int& currentTrial)
-{
-	createShape();
-
-	cuboid.name = "Cuboid_" + std::to_string(currentTrial);
-	getShapeHue();
-
-	pickUpShape();
-}
-
-void CoppeliasimHandler::endStep()
-{
-	placeShape();
-
-	Sleep(20);
-
-	resetSignals();
-}
-
 void CoppeliasimHandler::stop()
 {
 	client.stopSimulation();

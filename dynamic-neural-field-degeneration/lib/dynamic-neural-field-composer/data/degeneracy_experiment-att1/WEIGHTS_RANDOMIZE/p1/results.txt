@@ -1,7 +1,0 @@
-Experiment WEIGHTS_RANDOMIZE
-Location: p1| Target centroid value: 59.5| Acceptable deviation: 0.1
-Number of trials: 1000
-Average number of iterations until disapearance of peak: 12.123
-Overall maximum deviation from target centroid: 2.9916
-Average number of iterations until misbehavior: 3.318
---------------

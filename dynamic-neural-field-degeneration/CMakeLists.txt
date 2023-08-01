@@ -14,8 +14,21 @@ set(SOURCES
     dynamic-neural-field-degeneration.cpp
 )
 
+
 # Add executable
-add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} "src/threadHandler.cpp" "src/coppeliasimHandler.cpp" "src/dnfcomposerHandler.cpp" "src/dnfarchitecture.cpp" "src/experimentWindows.cpp")
+add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} 
+    "src/threadHandler.cpp" 
+    "src/coppeliasimHandler.cpp" 
+    "src/dnfcomposerHandler.cpp" 
+    "src/dnfarchitecture.cpp" 
+    "src/experimentWindows.cpp"
+)
+
+# Set the desired output directory relative to the project
+set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")
+
+# Pass the OUTPUT_DIRECTORY as a preprocessor definition
+add_compile_definitions(OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY}")
 
 # Add the include directory of dynamic-neural-field-composer and coppeliasim-cpp-client
 target_include_directories(launch-dynamic-neural-field-degeneration PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/dynamic-neural-field-composer/include)

@@ -21,7 +21,8 @@ void Element::addInput(const std::shared_ptr<Element>& inputElement, const std::
 	
 	// check if input element has the same size as the element
 	if(inputElement->getComponentPtr("output")->size() != this->getComponentPtr("input")->size())
-		throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
+		if (inputElement->getComponentPtr("output")->size() != this->getSize())
+			throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
 
 	inputs[inputElement] = inputComponent;
 }

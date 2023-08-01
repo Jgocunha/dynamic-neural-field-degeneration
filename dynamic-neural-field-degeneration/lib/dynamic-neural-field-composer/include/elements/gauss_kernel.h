@@ -9,12 +9,16 @@ struct GaussKernelParameters
 {
 	double sigma;
 	double amplitude;
+	double amplitudeGlobal;
+	double fullSum;
 	int cutOfFactor = 5;
-
+	
 	bool operator==(const GaussKernelParameters& other) const
 	{
 		return sigma == other.sigma &&
 			amplitude == other.amplitude &&
+			amplitudeGlobal == other.amplitudeGlobal &&
+			fullSum == other.fullSum &&
 			cutOfFactor == other.cutOfFactor;
 	}
 };

@@ -10,13 +10,27 @@
 #include "./dnfcomposerHandler.h"
 #include "./dnfarchitecture.h"
 
+
+#define TIMETOSETTLE_DEBUG 50
+#define TIMETOSETTLE_FAST 50
+
+#define TIMETOSLEEP_DEBUG 2000
+#define TIMETOSLEEP_FAST 150
+
+
 enum struct SimulationMode
 {
-    NORMAL = 0,
-    DEGENERATE,
-    LEARNING
+    DEBUG = 0,
+    FAST,
 };
 
+struct ExperimentParameters
+{
+    int numOfTrials = 1;
+    SimulationMode mode = SimulationMode::DEBUG;
+    ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
+    //ElementLearningType tbdf
+};
 
 class ThreadHandler
 {
@@ -24,9 +38,7 @@ private:
     std::thread dnfcomposerThread, coppeliasimThread;
     std::shared_ptr<DNFComposerHandler> dnfch;
 protected:
-    int numTrials;
-    SimulationMode simMode;
-    bool learning;
+    ExperimentParameters experimentParameters;
     int currentTrial = 1;
     std::mutex mtx;
     std::condition_variable cv;
@@ -34,7 +46,7 @@ protected:
     double cuboidHue = -1;
     double targetPlaceAngle = -1;
 public:
-    ThreadHandler(int numTrials, SimulationMode simMode);
+    ThreadHandler(const ExperimentParameters& experimentParameters);
     ~ThreadHandler();
 
     void startThreads();
@@ -42,6 +54,6 @@ public:
 
 private:
     void coppeliasimMain();
-    int dnfcomposerMain();
+    void dnfcomposerMain();
     void dnfcomposerSignalHandling();
 };

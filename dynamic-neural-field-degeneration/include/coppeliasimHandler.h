@@ -36,9 +36,6 @@ public:
 	CoppeliasimHandler(const int& numTrials);
 
 	bool initialize();
-	void run();
-	void startStep(const int& currentTrial);
-	void endStep();
 	void stop();
 
 	double getShapeHue();

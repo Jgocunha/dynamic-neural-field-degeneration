@@ -41,6 +41,7 @@ void GaussKernel::init()
 		components["kernel"][i] = parameters.amplitude * gauss[i];
 
 	components["input"].resize(extIndex.size());
+	parameters.fullSum = 0;
 	std::fill(components["input"].begin(), components["input"].end(), 0);
 }
 
@@ -48,6 +49,8 @@ void GaussKernel::step(const double& t, const double& deltaT)
 {
 
 	updateInput();
+
+	parameters.fullSum = std::accumulate(components["input"].begin(), components["input"].end(), (double)0.0);
 
 	std::vector<double> convolution(size);
 	std::vector<double> subDataInput = mathtools::obtainCircularVector(extIndex, components["input"]);
@@ -58,7 +61,9 @@ void GaussKernel::step(const double& t, const double& deltaT)
 	else
 		convolution = mathtools::conv(subDataInput, components["kernel"]);
 
-	components["output"] = convolution;
+	//components["output"] = convolution;
+	for (int i = 0; i < components["output"].size(); i++)
+		components["output"][i] = convolution[i] + parameters.amplitudeGlobal * parameters.fullSum;
 }
 
 void GaussKernel::close()
