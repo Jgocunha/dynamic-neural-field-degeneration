@@ -11,13 +11,6 @@
 #include "./dnfarchitecture.h"
 
 
-#define TIMETOSETTLE_DEBUG 30
-#define TIMETOSETTLE_FAST 30
-
-#define TIMETOSLEEP_DEBUG 2200
-#define TIMETOSLEEP_FAST 150
-
-
 enum struct SimulationMode
 {
     DEBUG = 0,
@@ -29,30 +22,41 @@ struct ExperimentParameters
     int numOfTrials = 1;
     SimulationMode mode = SimulationMode::DEBUG;
     ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
-    //ElementLearningType tbdf
-    double percentageOfElementsToAffect;
+    double percentageOfElementsToAffect = 0.0;
+    
+    int timeForFieldsToSettle = 30;
+    int timeForSimToSleep = 2200;
 };
 
-class ThreadHandler
+struct ExperimentData
+{
+    int currentTrial = 1;
+    double cuboidHue = -1.0;
+    double targetPlaceAngle = -1.0;
+};
+
+struct ThreadSignalling
+{
+    bool cuboidHueIsRead = false;
+    std::mutex mtx;
+    std::condition_variable cv;
+};
+
+class ExperimentHandler
 {
 private:
     std::thread dnfcomposerThread, coppeliasimThread;
     std::shared_ptr<DNFComposerHandler> dnfch;
 protected:
-    ExperimentParameters experimentParameters;
-    int currentTrial = 1;
-    std::mutex mtx;
-    std::condition_variable cv;
-    bool isReady = false;
-    double cuboidHue = -1;
-    double targetPlaceAngle = -1;
+    ExperimentParameters expParam;
+    ExperimentData expData;
+    ThreadSignalling signals;
 public:
-    ThreadHandler(const ExperimentParameters& experimentParameters);
-    ~ThreadHandler();
+    ExperimentHandler(const ExperimentParameters& expParam);
+    ~ExperimentHandler();
 
     void startThreads();
     void joinThreads();
-
 private:
     void coppeliasimMain();
     void dnfcomposerMain();

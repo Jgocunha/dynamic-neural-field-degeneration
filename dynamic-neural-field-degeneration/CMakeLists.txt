@@ -14,14 +14,13 @@ set(SOURCES
     dynamic-neural-field-degeneration.cpp
 )
 
-
 # Add executable
 add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} 
-    "src/threadHandler.cpp" 
+    "src/experimentHandler.cpp" 
     "src/coppeliasimHandler.cpp" 
     "src/dnfcomposerHandler.cpp" 
     "src/dnfarchitecture.cpp" 
-    "src/experimentWindows.cpp"
+    "src/experimentInterface.cpp"
 )
 
 # Set the desired output directory relative to the project

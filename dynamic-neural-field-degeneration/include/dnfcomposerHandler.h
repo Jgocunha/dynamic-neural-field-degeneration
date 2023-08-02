@@ -9,7 +9,7 @@
 #include "../lib/dynamic-neural-field-composer/include/application/application.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_neural_field.h"
 #include "../lib/dynamic-neural-field-composer/include/elements/degenerate_field_coupling.h"
-#include "./experimentWindows.h"
+#include "./experimentInterface.h"
 
 
 struct DecisionEvaluation

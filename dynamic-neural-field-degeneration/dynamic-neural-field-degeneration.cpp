@@ -1,6 +1,5 @@
-﻿#include "dynamic-neural-field-degeneration.h"
-
-
+﻿
+#include "dynamic-neural-field-degeneration.h"
 
 int main()
 {
@@ -10,11 +9,15 @@ int main()
     expParam.mode = SimulationMode::DEBUG;
     expParam.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
     expParam.percentageOfElementsToAffect = 10;
+    
+    expParam.timeForFieldsToSettle = 30;
+    expParam.timeForSimToSleep = 2200;
 
     try
     {
-        ThreadHandler handler{expParam};
+        ExperimentHandler handler{expParam};
 
+        // Wait just a little bit for the architecture to setup
         Sleep(200);
 
         // Start the threads
