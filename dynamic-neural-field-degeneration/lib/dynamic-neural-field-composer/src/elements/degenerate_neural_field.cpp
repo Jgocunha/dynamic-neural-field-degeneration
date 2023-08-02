@@ -53,7 +53,7 @@ void DegenerateNeuralField::startDegeneration()
 
 void DegenerateNeuralField::applyDegeneracy()
 {
-	double percentage = 0.1;
+	double percentage = 0.01; // 1 percent
 	double numNeuronsToDegenerate = size * percentage;
 
 	switch (degeneracyType)
@@ -63,7 +63,7 @@ void DegenerateNeuralField::applyDegeneracy()
 			degenerate = false;
 			break;
 		case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
-			while (numNeuronsToDegenerate)
+			while (numNeuronsToDegenerate > 0)
 			{
 				setRandomUniqueNeuronToZero();
 				numNeuronsToDegenerate--;

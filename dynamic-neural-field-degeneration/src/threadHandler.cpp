@@ -80,6 +80,10 @@ void ThreadHandler::dnfcomposerMain()
 
     std::thread dnfcomposerSignalHandlingThread(&ThreadHandler::dnfcomposerSignalHandling, this);
 
+    // Before starting the trials degenerate target percentage
+    for (int i = 0; i < experimentParameters.percentageOfElementsToAffect; i++)
+        dnfch->applyDegenerationAtTheBeginning(experimentParameters.degeneracyType);
+
     while (currentTrial <= experimentParameters.numOfTrials)
     {
         dnfch->step();
@@ -90,7 +94,7 @@ void ThreadHandler::dnfcomposerMain()
             cuboidHue = -1;
 
             if (experimentParameters.degeneracyType != ElementDegeneracyType::NONE)
-                dnfch->applyDegeneration();
+                dnfch->applyDegeneration(experimentParameters.degeneracyType);
 
             //if(experimentParameters.learningType != ElementDegeneracyType::NONE) tbdf
         }

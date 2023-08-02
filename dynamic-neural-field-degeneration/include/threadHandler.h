@@ -11,10 +11,10 @@
 #include "./dnfarchitecture.h"
 
 
-#define TIMETOSETTLE_DEBUG 50
-#define TIMETOSETTLE_FAST 50
+#define TIMETOSETTLE_DEBUG 30
+#define TIMETOSETTLE_FAST 30
 
-#define TIMETOSLEEP_DEBUG 2000
+#define TIMETOSLEEP_DEBUG 2200
 #define TIMETOSLEEP_FAST 150
 
 
@@ -30,6 +30,7 @@ struct ExperimentParameters
     SimulationMode mode = SimulationMode::DEBUG;
     ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
     //ElementLearningType tbdf
+    double percentageOfElementsToAffect;
 };
 
 class ThreadHandler

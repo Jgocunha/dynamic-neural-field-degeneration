@@ -8,7 +8,8 @@ int main()
 
     expParam.numOfTrials = 100;
     expParam.mode = SimulationMode::DEBUG;
-    expParam.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+    expParam.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+    expParam.percentageOfElementsToAffect = 10;
 
     try
     {

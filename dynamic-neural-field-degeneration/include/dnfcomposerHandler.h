@@ -70,8 +70,9 @@ public:
 	void setExternalStimulus(const double& cuboidHue);
 	double getTargetPlaceAngle();
 	void getPerceptualFieldCentroid();
-	void applyDegeneration();
+	void applyDegeneration(ElementDegeneracyType elementDegeneracyType);
 	void saveCentroids();
+	void applyDegenerationAtTheBeginning(ElementDegeneracyType elementDegeneracyType);
 private:
 	void updateStatistics();
 	void verifyOutput();

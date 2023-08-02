@@ -32,7 +32,7 @@ void DegenerateFieldCoupling::startDegeneration()
 
 void DegenerateFieldCoupling::applyDegeneracy()
 {
-	double percentage = 0.1;
+	double percentage = 0.01; // 1 percent
 	double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
 	switch (degeneracyType)
 	{
@@ -41,7 +41,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 			degenerate = false;
 			break;
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE_PERCENTAGE:
-			while (numWeightsToDegenerate)
+			while (numWeightsToDegenerate > 0)
 			{
 				setRandomUniqueWeightToZero();
 				numWeightsToDegenerate--;
@@ -52,8 +52,24 @@ void DegenerateFieldCoupling::applyDegeneracy()
 			setRandomWeightToRandomValue();
 			degenerate = false;
 			break;
+		case ElementDegeneracyType::WEIGHTS_RANDOMIZE_PERCENTAGE:
+			while (numWeightsToDegenerate > 0)
+			{
+				setRandomWeightToRandomValue();
+				numWeightsToDegenerate--;
+			}
+			degenerate = false;
+			break;
 		case ElementDegeneracyType::WEIGHTS_REDUCE:
 			setRandomWeightToReduceValue();
+			degenerate = false;
+			break;
+		case ElementDegeneracyType::WEIGHTS_REDUCE_PERCENTAGE:
+			while (numWeightsToDegenerate > 0)
+			{
+				setRandomWeightToReduceValue();
+				numWeightsToDegenerate--;
+			}
 			degenerate = false;
 			break;
 		default:
