@@ -182,7 +182,7 @@ bool DNFComposerHandler::verifyRobotAngle()
 	return false;
 }
 
-void DNFComposerHandler::applyDegenerationAtTheBeginning(ElementDegeneracyType elementDegeneracyType)
+void DNFComposerHandler::applyDegeneration(ElementDegeneracyType elementDegeneracyType)
 {
 	switch (elementDegeneracyType)
 	{
@@ -203,32 +203,32 @@ void DNFComposerHandler::applyDegenerationAtTheBeginning(ElementDegeneracyType e
 	simulation->step();
 }
 
-void DNFComposerHandler::applyDegeneration(ElementDegeneracyType elementDegeneracyType)
-{
-	switch (elementDegeneracyType)
-	{
-	case ElementDegeneracyType::NEURONS_DEACTIVATE:
-		inputField->setDegeneracyType(elementDegeneracyType);
-		inputField->startDegeneration();
-		for (int i = 0; i < timeForFieldToSettle; i++)
-			application->step();
-
-		getPerceptualFieldCentroid();
-		break;
-	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
-		fieldCoupling->setDegeneracyType(elementDegeneracyType);
-		fieldCoupling->startDegeneration();
-		for (int i = 0; i < timeForFieldToSettle; i++)
-			application->step();
-
-		getPerceptualFieldCentroid();
-		break;
-	default:
-		break;
-	}
-}
+//void DNFComposerHandler::applyDegeneration(ElementDegeneracyType elementDegeneracyType)
+//{
+//	switch (elementDegeneracyType)
+//	{
+//	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+//		inputField->setDegeneracyType(elementDegeneracyType);
+//		inputField->startDegeneration();
+//		for (int i = 0; i < timeForFieldToSettle; i++)
+//			application->step();
+//
+//		getPerceptualFieldCentroid();
+//		break;
+//	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+//	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+//	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+//		fieldCoupling->setDegeneracyType(elementDegeneracyType);
+//		fieldCoupling->startDegeneration();
+//		for (int i = 0; i < timeForFieldToSettle; i++)
+//			application->step();
+//
+//		getPerceptualFieldCentroid();
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 void DNFComposerHandler::saveCentroids()
 {

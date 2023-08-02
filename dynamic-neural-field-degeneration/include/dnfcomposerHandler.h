@@ -45,7 +45,7 @@ private:
 
 	std::unordered_map<double, int> hueToAngleMap = {
 		{00.00,  15},
-		{40.6034,  40},
+		{40.6034, 40},
 		{60.00,  65},
 		{120.00, 90},
 		{240.00, 115},
@@ -70,9 +70,8 @@ public:
 	void setExternalStimulus(const double& cuboidHue);
 	double getTargetPlaceAngle();
 	void getPerceptualFieldCentroid();
-	void applyDegeneration(ElementDegeneracyType elementDegeneracyType);
 	void saveCentroids();
-	void applyDegenerationAtTheBeginning(ElementDegeneracyType elementDegeneracyType);
+	void applyDegeneration(ElementDegeneracyType elementDegeneracyType);
 private:
 	void updateStatistics();
 	void verifyOutput();

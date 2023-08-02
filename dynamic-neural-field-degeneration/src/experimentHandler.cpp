@@ -40,68 +40,76 @@ void ExperimentHandler::coppeliasimMain()
 
     while (!cpsh.initialize());
 
-    while (expData.currentTrial <= expParam.numOfTrials)
+    while (1)
     {
-        cpsh.createShape();
+        signals.coppeliaIsReady = true;
+        
+        while (!signals.dnfcomposerIsReady);
 
-        cpsh.setShapeHandle("Cuboid_" + std::to_string(expData.currentTrial));
-        cpsh.setShapeHue();
-
+        for (int i = 0; i < expData.numberOfDifferentCuboids; i++)
         {
-            // Lock the mutex before accessing the shared variables
-            std::unique_lock<std::mutex> lock(signals.mtx);
+            cpsh.createShape();
 
-            // Write to cuboidHue
-            expData.cuboidHue = cpsh.getShapeHue();
+            cpsh.setShapeHandle("Cuboid_" + std::to_string(expData.currentTrial));
+            cpsh.setShapeHue();
 
-            // Notify dnfcomposer thread that cuboidHue is ready
-            signals.cuboidHueIsRead = true;
-            signals.cv.notify_one();
+            {
+                // Lock the mutex before accessing the shared variables
+                std::unique_lock<std::mutex> lock(signals.mtx);
 
-            // Wait for dnfcomposer to finish reading cuboidHue and write to targetPlaceAngle
-            signals.cv.wait(lock, [this]() { return !signals.cuboidHueIsRead; });
+                // Write to cuboidHue
+                expData.cuboidHue = cpsh.getShapeHue();
+
+                // Notify dnfcomposer thread that cuboidHue is ready
+                signals.cuboidHueIsRead = true;
+                signals.cv.notify_one();
+
+                // Wait for dnfcomposer to finish reading cuboidHue and write to targetPlaceAngle
+                signals.cv.wait(lock, [this]() { return !signals.cuboidHueIsRead; });
+            }
+
+            cpsh.pickUpShape();
+
+            cpsh.setTargetAngle(expData.targetPlaceAngle);
+
+            expData.registeredAngles.push_back(expData.targetPlaceAngle);
+
+            cpsh.placeShape();
+
+            cpsh.resetSignals();
+
+            //expData.currentTrial++;
         }
-
-        cpsh.pickUpShape();
-
-        // Use the value read from cuboidHue
-        cpsh.setTargetAngle(expData.targetPlaceAngle);
-
-        cpsh.placeShape();
-
-        cpsh.resetSignals();
-
-        expData.currentTrial++;
+        signals.coppeliaIsReady = false;
     }
     cpsh.stop();
 }
 
 void ExperimentHandler::dnfcomposerMain()
 {
-    dnfch->init();
 
+    dnfch->init();
+    
     std::thread dnfcomposerSignalHandlingThread(&ExperimentHandler::dnfcomposerSignalHandling, this);
 
+    // First run a complete task visually
+    taskProcedure();
+
+    if(evaluateBehaviour())
+        std::cout << "Behaviour is good\n";
+	else
+		std::cout << "Behaviour is bad\n";
+
     // Before starting the trials degenerate target percentage
-    for (int i = 0; i < expParam.percentageOfElementsToAffect; i++)
-        dnfch->applyDegenerationAtTheBeginning(expParam.degeneracyType);
+    degenerationProcedure();
 
-    while (expData.currentTrial <= expParam.numOfTrials)
-    {
-        dnfch->step();
+    // Run a complete task visually
+    taskProcedure();
 
-        if (expData.cuboidHue >= 0)
-        {
-            dnfch->setExternalStimulus(expData.cuboidHue);
-            expData.cuboidHue = -1;
-
-            if (expParam.degeneracyType != ElementDegeneracyType::NONE)
-                dnfch->applyDegeneration(expParam.degeneracyType);
-        }
-
-    }
-
-    dnfch->saveCentroids();
+    if (evaluateBehaviour())
+        std::cout << "Behaviour is good\n";
+    else
+        std::cout << "Behaviour is bad\n";
 
     // Wait for dnfcomposerSignalHandlingThread to complete
     dnfcomposerSignalHandlingThread.join(); 
@@ -114,7 +122,7 @@ void ExperimentHandler::dnfcomposerSignalHandling()
 {
     std::unique_lock<std::mutex> lock(signals.mtx);
 
-    while (expData.currentTrial <= expParam.numOfTrials)
+    while (1)
     {
         // Wait until timeForSimToSleep is true or until the condition_variable is notified,
         // whichever comes first.
@@ -138,3 +146,47 @@ void ExperimentHandler::dnfcomposerSignalHandling()
         }
     }
 }
+
+void ExperimentHandler::taskProcedure()
+{
+
+    while (!signals.coppeliaIsReady);
+
+    signals.dnfcomposerIsReady = true;
+    
+    while(signals.coppeliaIsReady)
+    {
+        dnfch->step();
+
+        if (expData.cuboidHue >= 0)
+        {
+            dnfch->setExternalStimulus(expData.cuboidHue);
+            expData.cuboidHue = -1;
+        }
+    }
+    signals.dnfcomposerIsReady = false;
+
+}
+
+bool ExperimentHandler::evaluateBehaviour()
+{
+    // Check if each angle in registeredAngles is within 
+    // the acceptableAngleError range of the corresponding angle in expectedAngles
+    for (size_t i = 0; i < expData.registeredAngles.size(); ++i) 
+    {
+        double angleDiff = std::abs(expData.registeredAngles[i] - expData.expectedAngles[i]);
+        if (angleDiff > expParam.acceptableAngleError)
+            return false;
+    }
+
+    // If all checks pass, return true
+    return true;
+}
+
+void ExperimentHandler::degenerationProcedure()
+{
+    for (int i = 0; i < expParam.percentageOfElementsToAffect; i++)
+	    dnfch->applyDegeneration(expParam.degeneracyType);
+}
+
+

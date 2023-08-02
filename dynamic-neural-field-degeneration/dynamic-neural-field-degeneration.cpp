@@ -7,8 +7,9 @@ int main()
 
     expParam.numOfTrials = 100;
     expParam.mode = SimulationMode::DEBUG;
-    expParam.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-    expParam.percentageOfElementsToAffect = 10;
+    expParam.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE;
+    expParam.percentageOfElementsToAffect = 15;
+    expParam.acceptableAngleError = 5;
     
     expParam.timeForFieldsToSettle = 30;
     expParam.timeForSimToSleep = 2200;
