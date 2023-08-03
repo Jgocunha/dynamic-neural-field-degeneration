@@ -1,32 +1,22 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
+
 int main()
 {
-    ExperimentParameters expParam;
-
-    expParam.numOfTrials = 100;
-    expParam.mode = SimulationMode::DEBUG;
-    expParam.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE;
-    expParam.percentageOfElementsToAffect = 15;
-    expParam.acceptableAngleError = 5;
-    
-    expParam.timeForFieldsToSettle = 30;
-    expParam.timeForSimToSleep = 2200;
-
     try
     {
-        ExperimentHandler handler{expParam};
+        ExperimentParameters params;
+        ExperimentHandler experiment { params };
 
-        // Wait just a little bit for the architecture to setup
-        Sleep(200);
+        experiment.init();
+        experiment.close();
 
-        // Start the threads
-        handler.startThreads();
-
-        // Wait for the threads to complete
-        handler.joinThreads();
-
+        return 0;
+    }
+    catch (const Exception& ex) {
+        std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
+        return static_cast<int>(ex.getErrorCode());
     }
     catch (const std::exception& ex) {
         std::cerr << "Exception caught: " << ex.what() << std::endl;
@@ -37,7 +27,5 @@ int main()
         std::cerr << "Unknown exception occurred." << std::endl;
         return 1;
     }
-
-    return 0;
 }
 

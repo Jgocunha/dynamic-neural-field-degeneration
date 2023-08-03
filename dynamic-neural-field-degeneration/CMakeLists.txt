@@ -16,12 +16,10 @@ set(SOURCES
 
 # Add executable
 add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} 
-    "src/experimentHandler.cpp" 
-    "src/coppeliasimHandler.cpp" 
-    "src/dnfcomposerHandler.cpp" 
-    "src/dnfarchitecture.cpp" 
-    "src/experimentInterface.cpp"
-)
+    "src/coppeliasim-handler.cpp"
+    "src/experiment-handler.cpp"
+    "src/dnfcomposer-handler.cpp"
+ "src/dnf-architecture.cpp")
 
 # Set the desired output directory relative to the project
 set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")

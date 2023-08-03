@@ -1,8 +1,8 @@
 
 #pragma once
 
-#define LOG_ON_COPPELIA false
-#define LOG_ON_CMD false
+#define LOG_ON_COPPELIA true
+#define LOG_ON_CMD true
 
 #include <iostream>
 #include <windows.h>

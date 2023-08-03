@@ -10,15 +10,4 @@
 #include "../lib/dynamic-neural-field-composer/include/wizards/field_coupling_wizard.h"
 
 
-class DNFarchitecture
-{
-private:
-	std::shared_ptr<Simulation> simulation;
-public:
-	DNFarchitecture();
-	~DNFarchitecture();
-
-	std::shared_ptr<Simulation> getSimulation();
-private:
-	void setup();
-};
+std::shared_ptr<Simulation> getExperimentSimulation();
