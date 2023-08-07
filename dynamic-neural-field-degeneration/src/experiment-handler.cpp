@@ -16,7 +16,7 @@ void ExperimentHandler::init()
 void ExperimentHandler::step()
 {
 	// do a complete task
-
+	pickAndPlace();
 	// degenerate
 
 	// do re-learning cycle
@@ -30,6 +30,20 @@ void ExperimentHandler::close()
 
 void ExperimentHandler::pickAndPlace()
 {
+	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
+	{
+		createShape();
+		readShapeHue();
+		graspShape();
+		readTargetAngle();
+		placeShape();
+		updateStatistics();
+		cleanUpTrial();
+	}
+}
+
+void ExperimentHandler::createShape()
+{
 	// set the create shape signal to true
 	signals.createShape = true;
 	coppeliasimHandler.setSignals(signals);
@@ -37,7 +51,10 @@ void ExperimentHandler::pickAndPlace()
 
 	// wait for the shape created signal to be true
 	while (!coppeliasimHandler.getSignals().isShapeCreated);
+}
 
+void ExperimentHandler::graspShape()
+{
 	// go pick up the cuboid
 	signals.graspShape = true;
 	coppeliasimHandler.setSignals(signals);
@@ -45,24 +62,88 @@ void ExperimentHandler::pickAndPlace()
 
 	// wait for the cuboid to be grasped
 	while (!coppeliasimHandler.getSignals().isShapeGrasped);
+}
 
-	// wait for the hue of the cuboid
-	while (!coppeliasimHandler.getSignals().shapeHue);
-
-	// set the hue of the cuboid for dnfcomposer !!
-
-	// wait for composer to give the target angle !!
-
-	// if not 0 send the target angle to coppelia
-	signals.targetAngle = 0.0;
-	coppeliasimHandler.setSignals(signals);
-	signals.targetAngle = -1.0;
-
+void ExperimentHandler::placeShape()
+{
 	// and set place shape to true
 	signals.placeShape = true;
 	coppeliasimHandler.setSignals(signals);
 	signals.placeShape = false;
+	signals.targetAngle = UNDEFINED;
 
 	// when receive shape placed restart cycle
 	while (!coppeliasimHandler.getSignals().isShapePlaced);
+}
+
+void ExperimentHandler::readShapeHue()
+{
+	// wait for the hue of the cuboid
+	do
+		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
+	while (signals.shapeHue == UNDEFINED);
+
+	// set the hue of the cuboid for dnfcomposer
+	dnfcomposerHandler.setExternalInput(signals.shapeHue);
+	data.shapeHue = signals.shapeHue; // !! calcute the expected target angle here
+	signals.shapeHue = UNDEFINED;
+
+	// wait for the shape hue to be read
+	while (!dnfcomposerHandler.getHaveFieldsSettled());
+}
+
+void ExperimentHandler::readTargetAngle()
+{
+	// wait for the target angle
+	do
+		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+	while (signals.targetAngle == UNDEFINED);
+
+	data.outputFieldCentroid = signals.targetAngle;
+
+	// set the target angle for coppelia
+	coppeliasimHandler.setSignals(signals);
+}
+
+void ExperimentHandler::cleanUpTrial()
+{
+	coppeliasimHandler.resetSignals();
+}
+
+void ExperimentHandler::updateStatistics()
+{
+	stats.numDecisions++;
+	// Increment numCorrectDecisions or numIncorrectDecisions based on verifyRobotAngle()
+	if (verifyDecision())
+		stats.numCorrectDecisions++;
+	else
+		stats.numIncorrectDecisions++;
+
+	stats.decisionRatio = (static_cast<double>(stats.numCorrectDecisions) / stats.numDecisions) * 100;
+}
+
+bool ExperimentHandler::verifyDecision()
+{
+	// Check if cuboidHue exists in the map
+	auto closestHueIter = hueToAngleMap.end();
+	double minDifference = param.decisionTolerance;
+
+	for (auto it = hueToAngleMap.begin(); it != hueToAngleMap.end(); ++it)
+	{
+		double difference = std::abs(data.shapeHue - it->first);
+		if (difference <= param.decisionTolerance && difference < minDifference)
+		{
+			minDifference = difference;
+			closestHueIter = it;
+		}
+	}
+
+	if (closestHueIter != hueToAngleMap.end())
+	{
+		double target_angle = closestHueIter->second;
+		return std::abs(target_angle - data.outputFieldCentroid) <= param.decisionTolerance;
+	}
+
+	// No matching rules for the given cuboidHue and robotTargetAngle.
+	return false;
 }

@@ -3,6 +3,7 @@
 #include <thread>
 
 #include "../lib/coppeliasim-cpp-client/include/client.h"
+#include "./macros.h"
 
 // define signals here.
 #define CREATE_SHAPE_SIGNAL "createShape"
@@ -28,8 +29,8 @@ struct Signals
 	bool placeShape = false;
 	bool isShapePlaced = false;
 
-	double shapeHue = 0.0;
-	double targetAngle = 0.0;
+	double shapeHue = UNDEFINED;
+	double targetAngle = UNDEFINED;
 };
 
 class CoppeliasimHandler
@@ -38,6 +39,7 @@ private:
 	std::thread coppeliasimThread;
 	CoppeliaSimClient client;
 	Signals signals;
+	bool wereSignalsChanged = false;
 public:
 	CoppeliasimHandler();
 	
@@ -48,7 +50,8 @@ public:
 	void setSignals(Signals signals);
 	Signals getSignals();
 
-private:
-	void updateSignals();
 	void resetSignals();
+private:
+	void writeSignals();
+	void readSignals();
 };

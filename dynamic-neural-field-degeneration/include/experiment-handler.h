@@ -10,12 +10,25 @@
 
 struct ExperimentParameters
 {
+	const int numberOfShapesPerTrial = 7;
+	const int decisionTolerance = 5;
 
 };
 
 struct ExperimentData
 {
+	double inputFieldCentroid = UNDEFINED;
+	double outputFieldCentroid = UNDEFINED;
+	double shapeHue = UNDEFINED;
+	double expectedTargetAngle = UNDEFINED;
+};
 
+struct ExperimentStatistics
+{
+	int numDecisions = 0;
+	int numCorrectDecisions = 0;
+	int numIncorrectDecisions = 0;
+	double decisionRatio = 0.0;
 };
 
 class ExperimentHandler
@@ -27,7 +40,19 @@ private:
 
 	ExperimentParameters param;
 	ExperimentData data;
+	ExperimentStatistics stats;
 	Signals signals;
+
+	std::unordered_map<double, int> hueToAngleMap = {
+		{00.00,  15},
+		{40.6034, 40},
+		{60.00,  65},
+		{120.00, 90},
+		{240.00, 115},
+		{274.146, 140},
+		{284.791, 165}
+	};
+
 public:
 	ExperimentHandler(const ExperimentParameters& param);
 	~ExperimentHandler() = default;
@@ -37,4 +62,16 @@ public:
 	void close();
 private:
 	void pickAndPlace();
+
+	void createShape();
+	void graspShape();
+	void placeShape();
+
+	void readShapeHue();
+	void readTargetAngle();
+
+	void cleanUpTrial();
+	void updateStatistics();
+
+	bool verifyDecision();
 };

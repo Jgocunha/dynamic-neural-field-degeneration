@@ -114,56 +114,8 @@ double NeuralField::calculateCentroid()
 				centroid = (centroid >= 0 ? centroid : centroid + static_cast<double>(size));
 		}
 	}
-
-	// Version 6.0 {50, 22.50}
-	//double centroid = 0.0;
-
-	//if (*std::max_element(components["output"].begin(), components["output"].end()) > 0)
-	//{
-	//	double integral = 0.0;
-	//	double norm = 0.0;
-
-	//	// Compute the integral and normalization factor
-	//	for (int i = 0; i < size; i++)
-	//	{
-	//		double dx = 1.0; // Since the positions are evenly spaced (assumed to be 1)
-	//		double a = components["output"][i];
-	//		double b = components["output"][(i + 1) % size]; // Wrap around for circular field
-	//		integral += (a + b) * 0.5 * dx * ((i + 0.5) * size / static_cast<double>(size)); // Adjust for circular field
-	//		norm += components["output"][i]; // Sum up all the output values
-	//	}
-
-	//	// Compute the centroid
-	//	if (norm > 0.0)
-	//		centroid = (integral / norm);
-	//}
-
-	// Version 1.0
-	//double centroid = 0.0;
-
-	//if (*std::max_element(components["output"].begin(), components["output"].end()) > 0)
-	//{
-	//	double integral = 0.0;
-	//	double norm = 0.0;
-
-	//	// x positions array
-	//	std::vector<double> x(size);
-	//	for (int i = 0; i < size; i++)
-	//		x[i] = i;
-
-	//	// Compute the integral and normalization factor
-	//	for (int i = 0; i < size - 1; i++)
-	//	{
-	//		double dx = x[i + 1] - x[i];
-	//		double a = components["output"][i];
-	//		double b = components["output"][i + 1];
-	//		integral += (a + b) * 0.5 * dx * x[i];
-	//		norm += (a + b) * 0.5 * dx;
-	//	}
-
-	//	// Compute the centroid
-	//	centroid = (integral / norm) + 0.5;
-	//}
+	else
+		centroid = -1.0;
 
 	return centroid;
 }
