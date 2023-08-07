@@ -33,6 +33,8 @@ public:
 	void setDecisionFieldCentroid(const double& robotTargetAngle);
 	void setPerceptualFieldCentroid(const double& perceptualFieldCentroid);
 
+	void setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions);
+
 private:
 	void renderShapeDetails();
 	void renderExperimentStatistics();

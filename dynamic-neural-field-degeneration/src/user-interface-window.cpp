@@ -66,3 +66,10 @@ void ExperimentWindow::setPerceptualFieldCentroid(const double& perceptualFieldC
 {
 	expWinParams.perceptualFieldCentroid = perceptualFieldCentroid;
 }
+
+void ExperimentWindow::setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions)
+{
+	setCurrentTrial(currentTrial);
+	setDecisionRatio(decisionRatio);
+	setNumCorrectDecisions(numCorrectDecisions);
+}

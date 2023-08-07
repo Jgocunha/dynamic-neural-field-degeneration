@@ -68,6 +68,11 @@ bool DnfcomposerHandler::getHaveFieldsSettled()
 	return haveFieldsSettled;
 }
 
+std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
+{
+	return userInterfaceWindow;
+}
+
 void DnfcomposerHandler::setupUserInterface()
 {
 	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
@@ -118,6 +123,7 @@ void DnfcomposerHandler::updateFieldCentroids()
 void DnfcomposerHandler::updateUserInterface()
 {
 	userInterfaceWindow->setCuboidHue(simulationParameters.externalInputPosition);
+	userInterfaceWindow->setExpectedTargetAngle(simulationParameters.expectedOutputCentroid);
 	userInterfaceWindow->setPerceptualFieldCentroid(simulationParameters.inputFieldCentroid);
 	userInterfaceWindow->setDecisionFieldCentroid(simulationParameters.outputFieldCentroid);
 }

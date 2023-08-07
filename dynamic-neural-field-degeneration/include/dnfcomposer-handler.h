@@ -25,6 +25,7 @@ struct SimulationParameters
 	const int timeForFieldToSettle = 25;
 };
 
+
 class DnfcomposerHandler
 {
 private:
@@ -39,16 +40,6 @@ private:
 	bool wasExternalInputUpdated = false;
 	bool haveFieldsSettled = false;
 
-	std::unordered_map<double, int> hueToAngleMap = {
-		{00.00,  15},
-		{40.6034, 40},
-		{60.00,  65},
-		{120.00, 90},
-		{240.00, 115},
-		{274.146, 140},
-		{284.791, 165}
-	};
-
 public:
 	DnfcomposerHandler();
 	~DnfcomposerHandler() = default;
@@ -58,14 +49,16 @@ public:
 	void close();
 
 	void setExternalInput(const double& position);
+
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();
 	bool getHaveFieldsSettled();
+
+	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 private:
 	void setupUserInterface();
 
 	void updateExternalInput();
 	void updateFieldCentroids();
-
 	void updateUserInterface();
 };

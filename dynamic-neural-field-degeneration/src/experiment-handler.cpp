@@ -120,6 +120,8 @@ void ExperimentHandler::updateStatistics()
 		stats.numIncorrectDecisions++;
 
 	stats.decisionRatio = (static_cast<double>(stats.numCorrectDecisions) / stats.numDecisions) * 100;
+
+	dnfcomposerHandler.getUserInterfaceWindow()->setStatistics(stats.numDecisions, stats.decisionRatio, stats.numCorrectDecisions);
 }
 
 bool ExperimentHandler::verifyDecision()
