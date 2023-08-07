@@ -12,7 +12,7 @@ struct ExperimentParameters
 {
 	const int numberOfShapesPerTrial = 7;
 	const int decisionTolerance = 5;
-
+	const int numberOfTrials = 10;
 };
 
 struct ExperimentData
@@ -29,6 +29,7 @@ struct ExperimentStatistics
 	int numCorrectDecisions = 0;
 	int numIncorrectDecisions = 0;
 	double decisionRatio = 0.0;
+	int numOfRelearningCycles = 0;
 };
 
 class ExperimentHandler
@@ -62,6 +63,7 @@ public:
 	void close();
 private:
 	void pickAndPlace();
+	void pickAndPlaceWithLearning();
 
 	void createShape();
 	void graspShape();
@@ -74,4 +76,5 @@ private:
 	void updateStatistics();
 
 	bool verifyDecision();
+	void relearningProcedure();
 };

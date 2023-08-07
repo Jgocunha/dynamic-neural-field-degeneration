@@ -20,6 +20,10 @@ void ExperimentHandler::step()
 	// degenerate
 
 	// do re-learning cycle
+	for (int i = 0; i < param.numberOfTrials; i++)
+	{
+		pickAndPlaceWithLearning();
+	}
 }
 
 void ExperimentHandler::close()
@@ -36,6 +40,23 @@ void ExperimentHandler::pickAndPlace()
 		readShapeHue();
 		graspShape();
 		readTargetAngle();
+		verifyDecision();
+		placeShape();
+		updateStatistics();
+		cleanUpTrial();
+	}
+}
+
+void ExperimentHandler::pickAndPlaceWithLearning()
+{
+	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
+	{
+		createShape();
+		readShapeHue();
+		graspShape();
+		readTargetAngle();
+		if (!verifyDecision())
+			relearningProcedure();
 		placeShape();
 		updateStatistics();
 		cleanUpTrial();
@@ -113,11 +134,6 @@ void ExperimentHandler::cleanUpTrial()
 void ExperimentHandler::updateStatistics()
 {
 	stats.numDecisions++;
-	// Increment numCorrectDecisions or numIncorrectDecisions based on verifyRobotAngle()
-	if (verifyDecision())
-		stats.numCorrectDecisions++;
-	else
-		stats.numIncorrectDecisions++;
 
 	stats.decisionRatio = (static_cast<double>(stats.numCorrectDecisions) / stats.numDecisions) * 100;
 
@@ -143,9 +159,23 @@ bool ExperimentHandler::verifyDecision()
 	if (closestHueIter != hueToAngleMap.end())
 	{
 		double target_angle = closestHueIter->second;
+		stats.numCorrectDecisions++; // Increment numCorrectDecisions if the robotTargetAngle is within the decisionTolerance of the target_angle.
 		return std::abs(target_angle - data.outputFieldCentroid) <= param.decisionTolerance;
 	}
 
+	stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	return false;
+}
+
+void ExperimentHandler::relearningProcedure()
+{
+	static bool isCorrectDecision = false;
+	do {
+		// re-train
+		// give stimulus again
+		readTargetAngle();
+		isCorrectDecision = verifyDecision();
+		stats.numOfRelearningCycles++;
+	} while (!isCorrectDecision);
 }
