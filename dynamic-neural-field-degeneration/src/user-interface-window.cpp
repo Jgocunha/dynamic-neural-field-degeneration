@@ -73,3 +73,16 @@ void ExperimentWindow::setStatistics(const int& currentTrial, const double& deci
 	setDecisionRatio(decisionRatio);
 	setNumCorrectDecisions(numCorrectDecisions);
 }
+
+void ExperimentWindow::setData(const double& cuboidHue, const double& expectedTargetAngle)
+{
+	setCuboidHue(cuboidHue);
+	setExpectedTargetAngle(expectedTargetAngle);
+
+}
+
+void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid)
+{
+	setPerceptualFieldCentroid(perceptualFieldCentroid);
+	setDecisionFieldCentroid(decisionFieldCentroid);
+}

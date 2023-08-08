@@ -24,18 +24,19 @@ public:
 	void render() override;
 	~ExperimentWindow() = default;
 
+	void setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions);
+	void setData(const double& cuboidHue, const double& expectedTargetAngle);
+	void setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid);
+
+private:
 	void setDecisionRatio(const double& decisionRatio);
 	void setCurrentTrial(const int& currentTrial);
-	
 	void setCuboidHue(const double& cuboidHue);
 	void setExpectedTargetAngle(const double& expectedTargetAngle);
 	void setNumCorrectDecisions(const int& numCorrectDecisions);
 	void setDecisionFieldCentroid(const double& robotTargetAngle);
 	void setPerceptualFieldCentroid(const double& perceptualFieldCentroid);
 
-	void setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions);
-
-private:
 	void renderShapeDetails();
 	void renderExperimentStatistics();
 };

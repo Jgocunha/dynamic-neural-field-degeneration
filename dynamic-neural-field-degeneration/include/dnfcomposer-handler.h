@@ -60,5 +60,4 @@ private:
 
 	void updateExternalInput();
 	void updateFieldCentroids();
-	void updateUserInterface();
 };

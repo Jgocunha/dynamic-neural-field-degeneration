@@ -7,10 +7,10 @@ int main()
     try
     {
         ExperimentParameters params;
-        params.numberOfShapesPerTrial = 7;
+        params.numberOfShapesPerTrial = 2;
         params.numberOfTrials = 1;
-        params.percentageOfDegeneration = 65;
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.percentageOfDegeneration = 20;
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
 
         ExperimentHandler experiment { params };
 

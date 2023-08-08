@@ -32,7 +32,6 @@ void DnfcomposerHandler::step()
 		if(wasExternalInputUpdated)
 			updateExternalInput();
 		updateFieldCentroids();
-		updateUserInterface();
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -139,12 +138,6 @@ void DnfcomposerHandler::updateFieldCentroids()
 {
 	simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
 	simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
-}
 
-void DnfcomposerHandler::updateUserInterface()
-{
-	userInterfaceWindow->setCuboidHue(simulationParameters.externalInputPosition);
-	userInterfaceWindow->setExpectedTargetAngle(simulationParameters.expectedOutputCentroid);
-	userInterfaceWindow->setPerceptualFieldCentroid(simulationParameters.inputFieldCentroid);
-	userInterfaceWindow->setDecisionFieldCentroid(simulationParameters.outputFieldCentroid);
+	userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 }

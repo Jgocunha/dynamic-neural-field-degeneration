@@ -118,12 +118,15 @@ void ExperimentHandler::readTargetAngle()
 	// wait for the target angle
 	do
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-	while (signals.targetAngle == UNDEFINED);
+	while (signals.targetAngle == data.lastOutputFieldCentroid);
 
 	data.outputFieldCentroid = signals.targetAngle;
+	data.lastOutputFieldCentroid = signals.targetAngle;
 
 	// set the target angle for coppelia
 	coppeliasimHandler.setSignals(signals);
+
+	dnfcomposerHandler.getUserInterfaceWindow()->setData(data.shapeHue, data.expectedTargetAngle);
 }
 
 void ExperimentHandler::cleanUpTrial()
@@ -158,12 +161,17 @@ bool ExperimentHandler::verifyDecision()
 
 	if (closestHueIter != hueToAngleMap.end())
 	{
-		double target_angle = closestHueIter->second;
-		stats.numCorrectDecisions++; // Increment numCorrectDecisions if the robotTargetAngle is within the decisionTolerance of the target_angle.
-		return std::abs(target_angle - data.outputFieldCentroid) <= param.decisionTolerance;
+		data.expectedTargetAngle = closestHueIter->second;
+		dnfcomposerHandler.getUserInterfaceWindow()->setData(data.shapeHue, data.expectedTargetAngle);
+		bool isCorrectDecision = std::abs(data.expectedTargetAngle - data.outputFieldCentroid) <= param.decisionTolerance;
+		if (isCorrectDecision)
+		{
+			stats.numCorrectDecisions++; // Increment numCorrectDecisions if the robotTargetAngle is within the decisionTolerance of the target_angle.
+			return true;
+		}
 	}
 
-	stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
+	//stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	return false;
 }
@@ -197,7 +205,7 @@ void ExperimentHandler::degenerationProcedure()
 		return;
 	}
 	int numberOfElementsToDegenerate = param.percentageOfDegeneration * size / 100;
-	std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
+	//std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
 }

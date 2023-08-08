@@ -21,6 +21,7 @@ struct ExperimentData
 {
 	double inputFieldCentroid = UNDEFINED;
 	double outputFieldCentroid = UNDEFINED;
+	double lastOutputFieldCentroid = UNDEFINED;
 	double shapeHue = UNDEFINED;
 	double expectedTargetAngle = UNDEFINED;
 };
