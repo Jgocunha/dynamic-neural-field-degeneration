@@ -47,6 +47,27 @@ void DnfcomposerHandler::close()
 		std::cout << "Dnfcomposer Handler: Thread has finished its execution.\n";
 }
 
+void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType)
+{
+	switch (degeneracyType)
+	{
+	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+		simulationElements.inputField->setDegeneracyType(degeneracyType);
+		simulationElements.inputField->startDegeneration();
+		break;
+	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+		simulationElements.fieldCoupling->setDegeneracyType(degeneracyType);
+		simulationElements.fieldCoupling->startDegeneration();
+		break;
+	default:
+		break;
+	}
+
+	simulation->step();
+}
+
 void DnfcomposerHandler::setExternalInput(const double& position)
 {
 	this->simulationParameters.externalInputPosition = position;
@@ -89,7 +110,7 @@ void DnfcomposerHandler::setupUserInterface()
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
-	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
 
 void DnfcomposerHandler::updateExternalInput()

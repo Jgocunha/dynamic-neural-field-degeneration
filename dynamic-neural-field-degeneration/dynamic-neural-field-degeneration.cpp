@@ -7,6 +7,11 @@ int main()
     try
     {
         ExperimentParameters params;
+        params.numberOfShapesPerTrial = 7;
+        params.numberOfTrials = 1;
+        params.percentageOfDegeneration = 65;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+
         ExperimentHandler experiment { params };
 
         experiment.init();

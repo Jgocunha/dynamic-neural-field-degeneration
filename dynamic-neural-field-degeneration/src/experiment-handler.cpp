@@ -17,13 +17,13 @@ void ExperimentHandler::step()
 {
 	// do a complete task
 	pickAndPlace();
+
 	// degenerate
+	degenerationProcedure();
 
 	// do re-learning cycle
 	for (int i = 0; i < param.numberOfTrials; i++)
-	{
 		pickAndPlaceWithLearning();
-	}
 }
 
 void ExperimentHandler::close()
@@ -178,4 +178,26 @@ void ExperimentHandler::relearningProcedure()
 		isCorrectDecision = verifyDecision();
 		stats.numOfRelearningCycles++;
 	} while (!isCorrectDecision);
+}
+
+void ExperimentHandler::degenerationProcedure()
+{
+	int size = 0;
+	switch (param.degeneracyType)
+	{
+	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+		size = 360; // completely hardcoded
+		break;
+	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case ElementDegeneracyType::WEIGHTS_REDUCE: 
+		size = 360 * 180; // completely hardcoded
+		break;
+	default:
+		return;
+	}
+	int numberOfElementsToDegenerate = param.percentageOfDegeneration * size / 100;
+	std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
+	for (int i = 0; i < numberOfElementsToDegenerate; i++)
+		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
 }

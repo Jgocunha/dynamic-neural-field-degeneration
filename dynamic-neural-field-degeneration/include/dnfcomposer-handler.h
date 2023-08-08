@@ -48,12 +48,12 @@ public:
 	void step();
 	void close();
 
+	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
 
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();
 	bool getHaveFieldsSettled();
-
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 private:
 	void setupUserInterface();

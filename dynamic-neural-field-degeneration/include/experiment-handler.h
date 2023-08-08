@@ -10,9 +10,11 @@
 
 struct ExperimentParameters
 {
-	const int numberOfShapesPerTrial = 7;
-	const int decisionTolerance = 5;
-	const int numberOfTrials = 10;
+	int numberOfShapesPerTrial = 2;
+	int decisionTolerance = 5;
+	int numberOfTrials = 10;
+	int percentageOfDegeneration = 65;
+	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 };
 
 struct ExperimentData
@@ -77,4 +79,5 @@ private:
 
 	bool verifyDecision();
 	void relearningProcedure();
+	void degenerationProcedure();
 };

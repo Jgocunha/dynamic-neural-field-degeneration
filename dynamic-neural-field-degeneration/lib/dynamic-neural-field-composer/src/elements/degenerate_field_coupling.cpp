@@ -174,7 +174,6 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 			indicesForDegeneration.erase(pair);
 			weights[row_idx][col_idx] = 0;
 			uniqueCombinationFound = true;
-			std::cout << "Weight deactivated " << row_idx << " " << col_idx << std::endl;
 		}
 		else if (!(indicesForDegeneration.size()))
 		{
