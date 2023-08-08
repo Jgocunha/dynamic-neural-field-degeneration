@@ -185,13 +185,18 @@ void ExperimentHandler::relearningProcedure()
 	static bool isCorrectDecision = false;
 	do {
 		// re-train
-		std::cout << "relearning" << std::endl;
 		dnfcomposerHandler.setRelearning();
-		std::cout << "relearning done" << std::endl;
-		// give stimulus again
+		std::cout << "Relearning..." << std::endl;
+		bool isTrainingFinished = false;
+		do
+			isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
+		while (!isTrainingFinished);
+		readShapeHue();
 		readTargetAngle();
 		isCorrectDecision = verifyDecision();
+		std::cout << "Correct decision: " << isCorrectDecision << std::endl;
 		stats.numOfRelearningCycles++;
+		std::cout << "Relearning cycle: " << stats.numOfRelearningCycles << std::endl;
 	} while (!isCorrectDecision);
 }
 
@@ -212,11 +217,9 @@ void ExperimentHandler::degenerationProcedure()
 		return;
 	}
 	int numberOfElementsToDegenerate = param.percentageOfDegeneration * size / 100;
-	std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		std::cout << "Degeneration iteration " << i << std::endl;
 		Sleep(10);
 	}
 }

@@ -42,6 +42,7 @@ private:
 	bool wasDegenerationRequested = false;
 	bool wasRelearningRequested = false;
 	bool haveFieldsSettled = false;
+	bool hasRelearningFinished = false;
 
 public:
 	DnfcomposerHandler();
@@ -58,6 +59,7 @@ public:
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();
 	bool getHaveFieldsSettled();
+	bool getHasRelearningFinished();
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 private:
 	void setupUserInterface();

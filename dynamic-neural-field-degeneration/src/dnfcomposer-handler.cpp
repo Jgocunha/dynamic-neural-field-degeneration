@@ -64,46 +64,7 @@ void DnfcomposerHandler::setExternalInput(const double& position)
 
 void DnfcomposerHandler::setRelearning()
 {
-	// set up the field coupling wizard
-	FieldCouplingWizard fcpw{ simulation, "per - dec" };
-
-	// add gaussian inputs
-	double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 15, 20 };
-
-	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-	{
-	    { 00.00 + offset }, // red
-	    { 40.60 + offset }, // orange
-	    { 60.00 + offset }, // yellow
-	    { 120.00 + offset }, // green
-	    { 240.00 + offset }, // blue
-	    { 274.15 + offset }, // indigo
-	    { 281.79 + offset } // violet
-	};
-	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	{
-	    { 22.50 + offset },
-	    { 45.00 + offset },
-	    { 67.50 + offset },
-	    { 90.00 + offset },
-	    { 112.5 + offset },
-	    { 135.0 + offset },
-	    { 157.5 + offset }
-	};
-
-	fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-
-	gsp.amplitude = 15;
-	gsp.sigma = 3;
-
-	fcpw.setGaussStimulusParameters(gsp);
-
-	fcpw.simulateAssociation();
-
-	// only 1 iteration of training
-	fcpw.trainWeights(1);
+	wasRelearningRequested = true;
 }
 
 double DnfcomposerHandler::getInputFieldCentroid()
@@ -119,6 +80,11 @@ double DnfcomposerHandler::getOutputFieldCentroid()
 bool DnfcomposerHandler::getHaveFieldsSettled()
 {
 	return haveFieldsSettled;
+}
+
+bool DnfcomposerHandler::getHasRelearningFinished()
+{
+	return hasRelearningFinished;
 }
 
 std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
@@ -198,11 +164,55 @@ void DnfcomposerHandler::activateDegeneration()
 
 void DnfcomposerHandler::activateRelearning()
 {
+	hasRelearningFinished = false;
 
+	// set up the field coupling wizard
+	FieldCouplingWizard fcpw{ simulation, "per - dec" };
+	
+	// add gaussian inputs
+	double offset = 1.0;
+	GaussStimulusParameters gsp = { 3, 15, 20 };
+	
+	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	{
+		{ 00.00 + offset }, // red
+		{ 40.60 + offset }, // orange
+		{ 60.00 + offset }, // yellow
+		{ 120.00 + offset }, // green
+		{ 240.00 + offset }, // blue
+		{ 274.15 + offset }, // indigo
+		{ 281.79 + offset } // violet
+	};
+	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	{
+		{ 22.50 + offset },
+		{ 45.00 + offset },
+		{ 67.50 + offset },
+		{ 90.00 + offset },
+		{ 112.5 + offset },
+		{ 135.0 + offset },
+		{ 157.5 + offset }
+	};
+	
+	fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+	fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+	
+	std::cout << "Finished setting up the field coupling wizard.\n";
+
+	gsp.amplitude = 15;
+	gsp.sigma = 3;
+	
+	fcpw.setGaussStimulusParameters(gsp);
+	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+
+	fcpw.simulateAssociation();
+	std::cout << "Finished simulating association.\n";
+	
+	// only 1 iteration of training
+	fcpw.trainWeights(1);
+	std::cout << "Finished training weights.\n";
+
+	wasRelearningRequested = false;
+	hasRelearningFinished = true;
 }
 
-//
-
-//}
-//
-//simulation->step();
