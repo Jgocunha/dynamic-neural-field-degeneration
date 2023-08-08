@@ -20,6 +20,7 @@ void ExperimentHandler::step()
 
 	// degenerate
 	degenerationProcedure();
+	std::cout << "Degeneration procedure finished." << std::endl;
 
 	// do re-learning cycle
 	for (int i = 0; i < param.numberOfTrials; i++)
@@ -56,7 +57,10 @@ void ExperimentHandler::pickAndPlaceWithLearning()
 		graspShape();
 		readTargetAngle();
 		if (!verifyDecision())
+		{
+			std::cout << "Incorrect decision, relearning procedure started." << std::endl;
 			relearningProcedure();
+		}
 		placeShape();
 		updateStatistics();
 		cleanUpTrial();
@@ -171,7 +175,7 @@ bool ExperimentHandler::verifyDecision()
 		}
 	}
 
-	//stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
+	stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	return false;
 }
@@ -181,6 +185,9 @@ void ExperimentHandler::relearningProcedure()
 	static bool isCorrectDecision = false;
 	do {
 		// re-train
+		std::cout << "relearning" << std::endl;
+		dnfcomposerHandler.setRelearning();
+		std::cout << "relearning done" << std::endl;
 		// give stimulus again
 		readTargetAngle();
 		isCorrectDecision = verifyDecision();
@@ -205,7 +212,11 @@ void ExperimentHandler::degenerationProcedure()
 		return;
 	}
 	int numberOfElementsToDegenerate = param.percentageOfDegeneration * size / 100;
-	//std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
+	std::cout << "numberOfElementsToDegenerate: " << numberOfElementsToDegenerate << std::endl;
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
+	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
+		std::cout << "Degeneration iteration " << i << std::endl;
+		Sleep(10);
+	}
 }

@@ -23,6 +23,7 @@ struct SimulationParameters
 	double externalInputPosition, expectedOutputCentroid;
 	double inputFieldCentroid, outputFieldCentroid;
 	const int timeForFieldToSettle = 25;
+	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 };
 
 
@@ -38,6 +39,8 @@ private:
 	SimulationParameters simulationParameters;
 
 	bool wasExternalInputUpdated = false;
+	bool wasDegenerationRequested = false;
+	bool wasRelearningRequested = false;
 	bool haveFieldsSettled = false;
 
 public:
@@ -50,6 +53,7 @@ public:
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
+	void setRelearning();
 
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();
@@ -60,4 +64,7 @@ private:
 
 	void updateExternalInput();
 	void updateFieldCentroids();
+
+	void activateDegeneration();
+	void activateRelearning();
 };
