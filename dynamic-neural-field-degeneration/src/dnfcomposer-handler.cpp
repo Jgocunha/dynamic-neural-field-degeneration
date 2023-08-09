@@ -19,6 +19,8 @@ void DnfcomposerHandler::init()
 	if(DEBUG)
 		std::cout << "Dnfcomposer Handler: Thread will start.\n";
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
+
+	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
@@ -29,13 +31,13 @@ void DnfcomposerHandler::step()
 	while (!userRequestClose)
 	{
 		application->step();
+		//updateFieldCentroids();
 		if(wasExternalInputUpdated)
 			updateExternalInput();
 		if(wasDegenerationRequested)
 			activateDegeneration();
 		if (wasRelearningRequested)
 			activateRelearning();
-		updateFieldCentroids();
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -46,6 +48,7 @@ void DnfcomposerHandler::close()
 {
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
+	readCentroidsThread.join();
 	if (DEBUG)
 		std::cout << "Dnfcomposer Handler: Thread has finished its execution.\n";
 }
@@ -62,9 +65,21 @@ void DnfcomposerHandler::setExternalInput(const double& position)
 	wasExternalInputUpdated = true;
 }
 
-void DnfcomposerHandler::setRelearning()
+//void DnfcomposerHandler::setRelearning()
+//{
+//	wasRelearningRequested = true;
+//}
+
+void DnfcomposerHandler::setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid)
 {
+	relearningParameters.expectedInputCentroid = expectedInputCentroid;
+	relearningParameters.expectedOutputCentroid = expectedOutputCentroid;
 	wasRelearningRequested = true;
+}
+
+void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
+{
+	this->haveFieldsSettled = haveFieldsSettled;
 }
 
 double DnfcomposerHandler::getInputFieldCentroid()
@@ -135,10 +150,14 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-	simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
-
-	userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+	bool userRequestClose = false;
+	while (1)
+	{
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+		Sleep(20);
+	}
 }
 
 void DnfcomposerHandler::activateDegeneration()
@@ -164,35 +183,43 @@ void DnfcomposerHandler::activateDegeneration()
 
 void DnfcomposerHandler::activateRelearning()
 {
-	hasRelearningFinished = false;
-
 	// set up the field coupling wizard
 	FieldCouplingWizard fcpw{ simulation, "per - dec" };
 	
 	// add gaussian inputs
 	double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 15, 20 };
-	
+	GaussStimulusParameters gsp = { 3, 25, 20 };
+
 	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
-		{ 00.00 + offset }, // red
-		{ 40.60 + offset }, // orange
-		{ 60.00 + offset }, // yellow
-		{ 120.00 + offset }, // green
-		{ 240.00 + offset }, // blue
-		{ 274.15 + offset }, // indigo
-		{ 281.79 + offset } // violet
+		{relearningParameters.expectedInputCentroid + offset}
 	};
+
 	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	{
-		{ 22.50 + offset },
-		{ 45.00 + offset },
-		{ 67.50 + offset },
-		{ 90.00 + offset },
-		{ 112.5 + offset },
-		{ 135.0 + offset },
-		{ 157.5 + offset }
+		{relearningParameters.expectedOutputCentroid + offset}
 	};
+	
+	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	//{
+	//	{ 00.00 + offset }, // red
+	//	{ 40.60 + offset }, // orange
+	//	{ 60.00 + offset }, // yellow
+	//	{ 120.00 + offset }, // green
+	//	{ 240.00 + offset }, // blue
+	//	{ 274.00 + offset }, // indigo
+	//	{ 282.00 + offset } // violet
+	//};
+	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	//{
+	//	{ 15.00 + offset },
+	//	{ 40.00 + offset },
+	//	{ 65.00 + offset },
+	//	{ 90.00 + offset },
+	//	{ 115.00 + offset },
+	//	{ 140.00 + offset },
+	//	{ 165.00 + offset }
+	//};
 	
 	fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
@@ -211,13 +238,9 @@ void DnfcomposerHandler::activateRelearning()
 	// only 1 iteration of training
 	fcpw.trainWeights(1);
 	std::cout << "Finished training weights.\n";
-
-	std::cout << "Sleeping.\n";
-	Sleep(20000);
-	std::cout << "Finished sleeping.\n";
-
-
+	
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
+
 }
 

@@ -49,7 +49,7 @@ private:
 
 	std::unordered_map<double, int> hueToAngleMap = {
 		{00.00,  15},
-		{40.6034, 40},
+		{40.60,  40},
 		{60.00,  65},
 		{120.00, 90},
 		{240.00, 115},
@@ -58,6 +58,7 @@ private:
 	};
 
 public:
+	ExperimentHandler() = default;
 	ExperimentHandler(const ExperimentParameters& param);
 	~ExperimentHandler() = default;
 

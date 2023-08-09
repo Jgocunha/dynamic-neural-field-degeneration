@@ -19,7 +19,9 @@ add_executable(launch-dynamic-neural-field-degeneration ${SOURCES}
     "src/coppeliasim-handler.cpp"
     "src/experiment-handler.cpp"
     "src/dnfcomposer-handler.cpp"
- "src/dnf-architecture.cpp" "src/user-interface-window.cpp")
+    "src/dnf-architecture.cpp" 
+    "src/user-interface-window.cpp"
+)
 
 # Set the desired output directory relative to the project
 set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")

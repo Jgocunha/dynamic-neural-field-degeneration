@@ -118,11 +118,12 @@ void ExperimentHandler::readShapeHue()
 
 	// set the hue of the cuboid for dnfcomposer
 	dnfcomposerHandler.setExternalInput(signals.shapeHue);
-	data.shapeHue = signals.shapeHue; // !! calcute the expected target angle here
+	data.shapeHue = signals.shapeHue;
 	signals.shapeHue = UNDEFINED;
 
 	// wait for the shape hue to be read
 	while (!dnfcomposerHandler.getHaveFieldsSettled());
+	dnfcomposerHandler.setHaveFieldsSettled(false);
 }
 
 void ExperimentHandler::readTargetAngle()
@@ -130,8 +131,8 @@ void ExperimentHandler::readTargetAngle()
 	// wait for the target angle
 	do
 	{
-		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 		Sleep(50);
+		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 		std::cout << "Target angle: " << signals.targetAngle << std::endl;
 	}
 	while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
@@ -198,19 +199,24 @@ void ExperimentHandler::relearningProcedure()
 {
 	static bool isCorrectDecision = false;
 	do {
-	//	dnfcomposerHandler.setRelearning();
-	//	std::cout << "Relearning..." << std::endl;
-	//	bool isTrainingFinished = false;
-	//	do
-	//	{
-	//		isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
-	//		Sleep(100);
-	//		std::cout << "Training finished: " << isTrainingFinished << std::endl;
-	//	}
-	//	while (!isTrainingFinished);
+		//dnfcomposerHandler.setRelearning();
+		dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
+		std::cout << "Relearning..." << std::endl;
+		//bool isTrainingFinished = false;
+		//do
+		//{
+		//	isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
+		//	Sleep(200);
+		//	std::cout << "Training finished: " << isTrainingFinished << std::endl;
+		//}
+		//while (!isTrainingFinished);
+
+		while (!dnfcomposerHandler.getHasRelearningFinished());
+
 		std::cout << "Relearning finished." << std::endl;											
 		readShapeHue();
 		std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+		Sleep(100);
 		readTargetAngle();
 		std::cout << "Target angle: " << signals.targetAngle << std::endl;
 		isCorrectDecision = verifyDecision();

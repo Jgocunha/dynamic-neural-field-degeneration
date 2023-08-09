@@ -26,17 +26,23 @@ struct SimulationParameters
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 };
 
+struct RelearningParameters
+{
+	double expectedInputCentroid = 0.0, expectedOutputCentroid = 0.0;
+};
 
 class DnfcomposerHandler
 {
 private:
 	std::thread dnfcomposerThread;
+	std::thread readCentroidsThread;
 	std::unique_ptr<Application> application;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<ExperimentWindow> userInterfaceWindow;
 
 	SimulationElements simulationElements;
 	SimulationParameters simulationParameters;
+	RelearningParameters relearningParameters;
 
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
@@ -54,7 +60,9 @@ public:
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
-	void setRelearning();
+	//void setRelearning();
+	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
+	void setHaveFieldsSettled(bool haveFieldsSettled);
 
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();
