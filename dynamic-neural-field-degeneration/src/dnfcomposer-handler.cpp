@@ -212,6 +212,11 @@ void DnfcomposerHandler::activateRelearning()
 	fcpw.trainWeights(1);
 	std::cout << "Finished training weights.\n";
 
+	std::cout << "Sleeping.\n";
+	Sleep(20000);
+	std::cout << "Finished sleeping.\n";
+
+
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
 }

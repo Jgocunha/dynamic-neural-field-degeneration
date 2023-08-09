@@ -40,7 +40,11 @@ void ExperimentHandler::pickAndPlace()
 		createShape();
 		readShapeHue();
 		readTargetAngle();
-		verifyDecision();
+		if (!verifyDecision())
+		{
+			std::cout << "Incorrect decision, aborting..." << std::endl;
+			return;
+		}
 		graspShape();
 		placeShape();
 		updateStatistics();
@@ -105,7 +109,11 @@ void ExperimentHandler::readShapeHue()
 {
 	// wait for the hue of the cuboid
 	do
+	{
 		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
+		Sleep(50);
+		std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+	}
 	while (signals.shapeHue == UNDEFINED);
 
 	// set the hue of the cuboid for dnfcomposer
@@ -121,8 +129,14 @@ void ExperimentHandler::readTargetAngle()
 {
 	// wait for the target angle
 	do
+	{
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-	while (signals.targetAngle == data.lastOutputFieldCentroid);
+		Sleep(50);
+		std::cout << "Target angle: " << signals.targetAngle << std::endl;
+	}
+	while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
+	// This condition will ensure that the loop continues as long as signals.targetAngle is not equal to -1 
+	// and either equals data.lastOutputFieldCentroid or is less than 0.1. If signals.targetAngle becomes -1, the loop will stop.
 
 	data.outputFieldCentroid = signals.targetAngle;
 	data.lastOutputFieldCentroid = signals.targetAngle;
@@ -184,15 +198,21 @@ void ExperimentHandler::relearningProcedure()
 {
 	static bool isCorrectDecision = false;
 	do {
-		// re-train
-		dnfcomposerHandler.setRelearning();
-		std::cout << "Relearning..." << std::endl;
-		bool isTrainingFinished = false;
-		do
-			isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
-		while (!isTrainingFinished);
+	//	dnfcomposerHandler.setRelearning();
+	//	std::cout << "Relearning..." << std::endl;
+	//	bool isTrainingFinished = false;
+	//	do
+	//	{
+	//		isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
+	//		Sleep(100);
+	//		std::cout << "Training finished: " << isTrainingFinished << std::endl;
+	//	}
+	//	while (!isTrainingFinished);
+		std::cout << "Relearning finished." << std::endl;											
 		readShapeHue();
+		std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 		readTargetAngle();
+		std::cout << "Target angle: " << signals.targetAngle << std::endl;
 		isCorrectDecision = verifyDecision();
 		std::cout << "Correct decision: " << isCorrectDecision << std::endl;
 		stats.numOfRelearningCycles++;

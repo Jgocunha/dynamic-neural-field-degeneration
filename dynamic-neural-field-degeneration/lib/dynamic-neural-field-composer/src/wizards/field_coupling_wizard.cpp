@@ -147,7 +147,7 @@ void FieldCouplingWizard::saveFieldActivation(const std::vector<double>* fieldAc
         std::cout << "Failed to save data to " << filename << std::endl;
         return;
     }
-    std::cout << "Data saved to " << filename << std::endl;
+    //std::cout << "Data saved to " << filename << std::endl;
 }
 
 std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& filename, const int line)
