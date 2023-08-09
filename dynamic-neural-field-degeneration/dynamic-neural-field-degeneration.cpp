@@ -9,9 +9,9 @@ int main()
         ExperimentParameters params;
         params.numberOfShapesPerTrial = 4;
         params.numberOfTrials = 1;
-        params.percentageOfDegeneration = 30;
+        params.percentageOfDegeneration = 80;
         params.decisionTolerance = 2;
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 
         ExperimentHandler experiment { params };
 

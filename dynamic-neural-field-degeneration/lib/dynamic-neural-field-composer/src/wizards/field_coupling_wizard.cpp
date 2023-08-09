@@ -141,12 +141,13 @@ void FieldCouplingWizard::saveFieldActivation(const std::vector<double>* fieldAc
             file << element << " ";  // Write element to file separated by a space
         file << '\n';
         file.close();
-        std::cout << "Data saved to " << filename << std::endl;
     }
     else
     {
         std::cout << "Failed to save data to " << filename << std::endl;
+        return;
     }
+    std::cout << "Data saved to " << filename << std::endl;
 }
 
 std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& filename, const int line)

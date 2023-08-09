@@ -39,9 +39,9 @@ void ExperimentHandler::pickAndPlace()
 	{
 		createShape();
 		readShapeHue();
-		graspShape();
 		readTargetAngle();
 		verifyDecision();
+		graspShape();
 		placeShape();
 		updateStatistics();
 		cleanUpTrial();
@@ -54,13 +54,13 @@ void ExperimentHandler::pickAndPlaceWithLearning()
 	{
 		createShape();
 		readShapeHue();
-		graspShape();
 		readTargetAngle();
 		if (!verifyDecision())
 		{
 			std::cout << "Incorrect decision, relearning procedure started." << std::endl;
 			relearningProcedure();
 		}
+		graspShape();
 		placeShape();
 		updateStatistics();
 		cleanUpTrial();
@@ -220,6 +220,6 @@ void ExperimentHandler::degenerationProcedure()
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		Sleep(10);
+		Sleep(1);
 	}
 }
