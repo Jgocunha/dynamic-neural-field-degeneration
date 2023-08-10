@@ -15,16 +15,24 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	// do a complete task
+	if (INFO)
+		std::cout << "Starting a demonstration procedure." << std::endl;
 	pickAndPlace();
+	if(INFO)
+		std::cout << "Initial demonstration procedure finished." << std::endl << std::endl;
 
-	// degenerate
+	if (INFO)
+		std::cout << "Starting the degeneration procedure." << std::endl;
 	degenerationProcedure();
-	std::cout << "Degeneration procedure finished." << std::endl;
+	if (INFO)
+		std::cout << "Degeneration procedure finished." << std::endl;
 
-	// do re-learning cycle
+	if (INFO)
+		std::cout << "Starting the re-learning procedure." << std::endl;
 	for (int i = 0; i < param.numberOfTrials; i++)
 		pickAndPlaceWithLearning();
+	if (INFO)
+		std::cout << "Finished the re-learning procedure." << std::endl;
 }
 
 void ExperimentHandler::close()
@@ -42,7 +50,8 @@ void ExperimentHandler::pickAndPlace()
 		readTargetAngle();
 		if (!verifyDecision())
 		{
-			std::cout << "Incorrect decision, aborting..." << std::endl;
+			if (INFO)
+				std::cout << "Incorrect decision, aborting..." << std::endl;
 			return;
 		}
 		graspShape();
@@ -61,7 +70,8 @@ void ExperimentHandler::pickAndPlaceWithLearning()
 		readTargetAngle();
 		if (!verifyDecision())
 		{
-			std::cout << "Incorrect decision, relearning procedure started." << std::endl;
+			if (INFO)
+				std::cout << "Incorrect decision, relearning procedure started." << std::endl;
 			relearningProcedure();
 		}
 		graspShape();
@@ -110,9 +120,10 @@ void ExperimentHandler::readShapeHue()
 	// wait for the hue of the cuboid
 	do
 	{
-		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
 		Sleep(50);
-		std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
+		if (INFO)
+			std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 	}
 	while (signals.shapeHue == UNDEFINED);
 
@@ -133,7 +144,8 @@ void ExperimentHandler::readTargetAngle()
 	{
 		Sleep(50);
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-		std::cout << "Target angle: " << signals.targetAngle << std::endl;
+		if (INFO)
+			std::cout << "Target angle: " << signals.targetAngle << std::endl;
 	}
 	while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
 	// This condition will ensure that the loop continues as long as signals.targetAngle is not equal to -1 
@@ -199,30 +211,22 @@ void ExperimentHandler::relearningProcedure()
 {
 	static bool isCorrectDecision = false;
 	do {
-		//dnfcomposerHandler.setRelearning();
 		dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
-		std::cout << "Relearning..." << std::endl;
-		//bool isTrainingFinished = false;
-		//do
-		//{
-		//	isTrainingFinished = dnfcomposerHandler.getHasRelearningFinished();
-		//	Sleep(200);
-		//	std::cout << "Training finished: " << isTrainingFinished << std::endl;
-		//}
-		//while (!isTrainingFinished);
+		if (INFO)
+			std::cout << "Relearning..." << std::endl;
 
 		while (!dnfcomposerHandler.getHasRelearningFinished());
-
-		std::cout << "Relearning finished." << std::endl;											
+		if (INFO)
+			std::cout << "Relearning finished." << std::endl;											
 		readShapeHue();
-		std::cout << "Shape hue: " << signals.shapeHue << std::endl;
-		Sleep(100);
+		//Sleep(100);
 		readTargetAngle();
-		std::cout << "Target angle: " << signals.targetAngle << std::endl;
 		isCorrectDecision = verifyDecision();
-		std::cout << "Correct decision: " << isCorrectDecision << std::endl;
+		if (INFO)
+			std::cout << "Correct decision: " << isCorrectDecision << std::endl;
 		stats.numOfRelearningCycles++;
-		std::cout << "Relearning cycle: " << stats.numOfRelearningCycles << std::endl;
+		if (INFO)
+			std::cout << "Relearning cycle: " << stats.numOfRelearningCycles << std::endl;
 	} while (!isCorrectDecision);
 }
 
@@ -246,6 +250,6 @@ void ExperimentHandler::degenerationProcedure()
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		Sleep(1);
+		Sleep(5);
 	}
 }

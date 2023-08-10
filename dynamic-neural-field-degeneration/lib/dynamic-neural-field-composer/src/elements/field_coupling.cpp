@@ -153,3 +153,7 @@ void FieldCoupling::writeWeights()
 	}
 }
 
+void FieldCoupling::saveWeights()
+{
+	writeWeights();
+}

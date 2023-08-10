@@ -33,6 +33,7 @@ public:
 
 	void simulateAssociation();
 	void trainWeights(const int iterations);
+	void saveWeights();
 
 private:
 	void setFieldCoupling(const std::string& fieldCouplingUniqueId);

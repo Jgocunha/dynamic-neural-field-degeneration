@@ -22,7 +22,7 @@ struct SimulationParameters
 	std::string fieldCouplingId = "per - dec";
 	double externalInputPosition, expectedOutputCentroid;
 	double inputFieldCentroid, outputFieldCentroid;
-	const int timeForFieldToSettle = 25;
+	const int timeForFieldToSettle = 35;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 };
 

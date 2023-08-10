@@ -178,6 +178,7 @@ void DnfcomposerHandler::activateDegeneration()
 		break;
 	}
 	application->step();
+	simulationElements.fieldCoupling->saveWeights();
 	wasDegenerationRequested = false;
 }
 

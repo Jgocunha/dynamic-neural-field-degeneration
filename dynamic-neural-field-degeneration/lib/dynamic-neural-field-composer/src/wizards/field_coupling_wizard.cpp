@@ -219,3 +219,9 @@ void FieldCouplingWizard::setNeuralFieldPost()
 	std::shared_ptr<Element> outputElement = simulation->getElementsThatHaveSpecifiedElementAsInput(fieldCoupling->getUniqueIdentifier()).at(0);
 	neuralFieldPost = std::dynamic_pointer_cast<NeuralField>(outputElement);
 }
+
+
+void FieldCouplingWizard::saveWeights()
+{
+    fieldCoupling->saveWeights();
+}
