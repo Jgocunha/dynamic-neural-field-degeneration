@@ -13,8 +13,14 @@ struct ExperimentParameters
 	int numberOfShapesPerTrial = 2;
 	int decisionTolerance = 5;
 	int numberOfTrials = 10;
-	int percentageOfDegeneration = 65;
+	int initialPercentageOfDegeneration = 0;
+	int percentageOfDegeneration = 10;
+	int numberOfTenthsOfPercentageToDegenerate = 10; 
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+
+	std::string filePathPrefix = "../../../data/";
+	std::string degeneracyName = "deactivate-weights";
+	int accumulatedPercentageOfDegeneration = 0;
 };
 
 struct ExperimentData
@@ -72,14 +78,16 @@ private:
 	void createShape();
 	void graspShape();
 	void placeShape();
-
+	bool verifyDecision();
 	void readShapeHue();
 	void readTargetAngle();
 
 	void cleanUpTrial();
 	void updateStatistics();
 
-	bool verifyDecision();
 	void relearningProcedure();
 	void degenerationProcedure();
+	int computeNumberOfElementsToDegenerate();
+
+	void saveLearningCyclesPerTrial();
 };

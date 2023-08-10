@@ -36,6 +36,16 @@ void Application::close()
 		userInterface->close();
 }
 
+void Application::setActivateUserInterfaceAs(bool activateUserInterface)
+{
+	if (!activateUserInterface)
+		std::cout << "Deactivating User Interface. It will still be visible, but will not be interactable and will not reflect updated elements." << std::endl;
+	else
+		std::cout << "Activating User Interface." << std::endl;
+
+	this->activateUserInterface = activateUserInterface;
+}
+
 void Application::activateUserInterfaceWindow(const std::shared_ptr<UserInterfaceWindow> window)
 {
 	if (activateUserInterface)

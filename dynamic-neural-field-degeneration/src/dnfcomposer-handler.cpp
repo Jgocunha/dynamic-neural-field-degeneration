@@ -82,6 +82,11 @@ void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 	this->haveFieldsSettled = haveFieldsSettled;
 }
 
+void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive)
+{
+	application->setActivateUserInterfaceAs(isUserInterfaceActive);
+}
+
 double DnfcomposerHandler::getInputFieldCentroid()
 {
 	return simulationParameters.inputFieldCentroid;
@@ -178,7 +183,9 @@ void DnfcomposerHandler::activateDegeneration()
 		break;
 	}
 	application->step();
+	Sleep(2);
 	simulationElements.fieldCoupling->saveWeights();
+	Sleep(2);
 	wasDegenerationRequested = false;
 }
 

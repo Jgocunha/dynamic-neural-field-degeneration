@@ -21,6 +21,7 @@ public:
 	void close();
 
 	void activateUserInterfaceWindow(const std::shared_ptr<UserInterfaceWindow> window);
+	void setActivateUserInterfaceAs(bool activateUserInterface);
 
 	const bool getCloseUI();
 	~Application();

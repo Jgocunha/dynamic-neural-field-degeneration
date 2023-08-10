@@ -60,9 +60,9 @@ public:
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
-	//void setRelearning();
 	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
+	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive);
 
 	double getInputFieldCentroid();
 	double getOutputFieldCentroid();

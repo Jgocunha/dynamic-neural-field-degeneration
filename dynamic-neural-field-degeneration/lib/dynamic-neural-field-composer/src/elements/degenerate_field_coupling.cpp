@@ -115,20 +115,20 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	static int maxAttempts = components["output"].size() * components["input"].size();
+	//static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
 
-	for (int i = 0; i < maxAttempts; i++)
-	{
+	//while(1)
+	//{
 		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
 		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
-		if (weights[row_idx][col_idx] > 0)
-		{
-			double aux = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
-			weights[row_idx][col_idx] = aux;
-			break;
-		}
-	}
+		//if (weights[row_idx][col_idx] > 0)
+		//{
+		double aux = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
+		weights[row_idx][col_idx] = aux;
+		//break;
+		//}
+	//}
 }
 
 void DegenerateFieldCoupling::setWeightReductionFactor(const double& factor)
@@ -143,10 +143,10 @@ double DegenerateFieldCoupling::getWeightReductionFactor()
 
 void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 {
-	static int maxAttempts = components["output"].size() * components["input"].size();
+	//static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
 
-	for (int i = 0; i < maxAttempts; i++)
+	while(1)
 	{
 		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
 		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);

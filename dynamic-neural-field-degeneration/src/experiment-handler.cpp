@@ -15,24 +15,22 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	if (INFO)
-		std::cout << "Starting a demonstration procedure." << std::endl;
+	// Perform a small demonstration of the working architecture
 	pickAndPlace();
-	if(INFO)
-		std::cout << "Initial demonstration procedure finished." << std::endl << std::endl;
 
-	if (INFO)
-		std::cout << "Starting the degeneration procedure." << std::endl;
-	degenerationProcedure();
-	if (INFO)
-		std::cout << "Degeneration procedure finished." << std::endl;
+	// For an initial amount of degeneration
+	for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
+		degenerationProcedure();
+	param.accumulatedPercentageOfDegeneration = param.initialPercentageOfDegeneration;
 
-	if (INFO)
-		std::cout << "Starting the re-learning procedure." << std::endl;
-	for (int i = 0; i < param.numberOfTrials; i++)
-		pickAndPlaceWithLearning();
-	if (INFO)
-		std::cout << "Finished the re-learning procedure." << std::endl;
+	// For the amount of tenths of percentages we want the sim to run
+	for (int i = 0; i < param.numberOfTenthsOfPercentageToDegenerate; i++)
+	{
+		param.accumulatedPercentageOfDegeneration = param.accumulatedPercentageOfDegeneration + param.percentageOfDegeneration;
+		degenerationProcedure();
+		for (int i = 0; i < param.numberOfTrials; i++)
+			pickAndPlaceWithLearning();
+	}
 }
 
 void ExperimentHandler::close()
@@ -43,6 +41,9 @@ void ExperimentHandler::close()
 
 void ExperimentHandler::pickAndPlace()
 {
+	if (INFO)
+		std::cout << "Starting a demonstration procedure." << std::endl;
+
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
 	{
 		createShape();
@@ -74,6 +75,7 @@ void ExperimentHandler::pickAndPlaceWithLearning()
 				std::cout << "Incorrect decision, relearning procedure started." << std::endl;
 			relearningProcedure();
 		}
+		saveLearningCyclesPerTrial();
 		graspShape();
 		placeShape();
 		updateStatistics();
@@ -113,6 +115,7 @@ void ExperimentHandler::placeShape()
 
 	// when receive shape placed restart cycle
 	while (!coppeliasimHandler.getSignals().isShapePlaced);
+	coppeliasimHandler.setSignals(signals);
 }
 
 void ExperimentHandler::readShapeHue()
@@ -163,6 +166,11 @@ void ExperimentHandler::readTargetAngle()
 void ExperimentHandler::cleanUpTrial()
 {
 	coppeliasimHandler.resetSignals();
+	stats.numDecisions = 0;
+	stats.numCorrectDecisions = 0;
+	stats.numIncorrectDecisions = 0;
+	stats.decisionRatio = 0;
+	stats.numOfRelearningCycles = 0;
 }
 
 void ExperimentHandler::updateStatistics()
@@ -211,26 +219,49 @@ void ExperimentHandler::relearningProcedure()
 {
 	static bool isCorrectDecision = false;
 	do {
-		dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
 		if (INFO)
 			std::cout << "Relearning..." << std::endl;
+		
+		signals.targetAngle = UNDEFINED;
+		dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
 
-		while (!dnfcomposerHandler.getHasRelearningFinished());
-		if (INFO)
-			std::cout << "Relearning finished." << std::endl;											
+		while (!dnfcomposerHandler.getHasRelearningFinished());									
+		
 		readShapeHue();
-		//Sleep(100);
 		readTargetAngle();
+		
 		isCorrectDecision = verifyDecision();
-		if (INFO)
-			std::cout << "Correct decision: " << isCorrectDecision << std::endl;
+		
 		stats.numOfRelearningCycles++;
 		if (INFO)
 			std::cout << "Relearning cycle: " << stats.numOfRelearningCycles << std::endl;
-	} while (!isCorrectDecision);
+	} while (!isCorrectDecision && stats.numOfRelearningCycles < 200);
+	// Stop we reach the maximum of relearning cycles = 200 (arbitrary?)
 }
 
 void ExperimentHandler::degenerationProcedure()
+{
+	if (INFO)
+		std::cout << "Starting the degeneration procedure." << std::endl;
+
+	// Disable the user interface whilst degenerating to consume less time.
+	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
+
+	int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
+	for (int i = 0; i < numberOfElementsToDegenerate; i++)
+	{
+		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
+		Sleep(10);
+		if (i % 20 == 0)
+			if(INFO)
+				std::cout << "Number of elements degenerated: " << i << std::endl;
+	}
+
+	// Re-enable the UI.
+	dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
+}
+
+int ExperimentHandler::computeNumberOfElementsToDegenerate()
 {
 	int size = 0;
 	switch (param.degeneracyType)
@@ -240,16 +271,25 @@ void ExperimentHandler::degenerationProcedure()
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case ElementDegeneracyType::WEIGHTS_REDUCE: 
+	case ElementDegeneracyType::WEIGHTS_REDUCE:
 		size = 360 * 180; // completely hardcoded
 		break;
 	default:
-		return;
+		return 0;
 	}
-	int numberOfElementsToDegenerate = param.percentageOfDegeneration * size / 100;
-	for (int i = 0; i < numberOfElementsToDegenerate; i++)
-	{
-		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		Sleep(5);
+
+	return param.percentageOfDegeneration * size / 100;
+}
+
+void ExperimentHandler::saveLearningCyclesPerTrial() {
+	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.accumulatedPercentageOfDegeneration) + ".txt";
+	std::ofstream file(filename, std::ios::app); // Open the file in append mode
+	if (file.is_open()) {
+		file << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
+		file.close(); // Close the file
+		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
+	}
+	else {
+		std::cerr << "Unable to open file: " << filename << std::endl;
 	}
 }
