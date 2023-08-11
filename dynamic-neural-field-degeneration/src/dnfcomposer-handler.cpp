@@ -149,6 +149,8 @@ void DnfcomposerHandler::updateExternalInput()
 	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
 		application->step();
 
+	Sleep(2);
+
 	wasExternalInputUpdated = false;
 	haveFieldsSettled = true;
 }
@@ -207,27 +209,6 @@ void DnfcomposerHandler::activateRelearning()
 	{
 		{relearningParameters.expectedOutputCentroid + offset}
 	};
-	
-	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-	//{
-	//	{ 00.00 + offset }, // red
-	//	{ 40.60 + offset }, // orange
-	//	{ 60.00 + offset }, // yellow
-	//	{ 120.00 + offset }, // green
-	//	{ 240.00 + offset }, // blue
-	//	{ 274.00 + offset }, // indigo
-	//	{ 282.00 + offset } // violet
-	//};
-	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	//{
-	//	{ 15.00 + offset },
-	//	{ 40.00 + offset },
-	//	{ 65.00 + offset },
-	//	{ 90.00 + offset },
-	//	{ 115.00 + offset },
-	//	{ 140.00 + offset },
-	//	{ 165.00 + offset }
-	//};
 	
 	fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
