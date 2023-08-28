@@ -64,8 +64,6 @@ void ExperimentHandler::pickAndPlace()
 
 void ExperimentHandler::pickAndPlaceWithLearning()
 {
-	//dnfcomposerHandler.clearRelearning();
-
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
 	{
 		createShape();

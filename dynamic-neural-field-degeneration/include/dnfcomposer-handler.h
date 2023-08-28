@@ -81,5 +81,4 @@ private:
 
 	void activateDegeneration();
 	void activateRelearning();
-
 };

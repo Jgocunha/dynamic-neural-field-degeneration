@@ -30,10 +30,11 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	GaussKernelParameters gkp2;
 	gkp2.amplitude = 15;  // self-stabilized (with input)
 	gkp2.sigma = 2;
+	gkp1.amplitudeGlobal = -0.5;
 	std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
 	simulation->addElement(k_dec_dec);
 
-	std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.5, 0.02 }, LearningRule::DELTA_KROGH_HERTZ));
+	std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.5, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
 	simulation->addElement(w_per_dec);
 
 	// create noise stimulus and noise kernel
@@ -79,23 +80,23 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	//{
-	//    { 00.00 + offset }, // red
-	//    { 40.60 + offset }, // orange
-	//    { 60.00 + offset }, // yellow
-	//    { 120.00 + offset }, // green
-	//    { 240.00 + offset }, // blue
-	//    { 274.15 + offset }, // indigo
-	//    { 281.79 + offset } // violet
+	//	{ 00.00 + offset }, // red
+	//	{ 40.60 + offset }, // orange
+	//	{ 60.00 + offset }, // yellow
+	//	{ 120.00 + offset }, // green
+	//	{ 240.00 + offset }, // blue
+	//	{ 274.15 + offset }, // indigo
+	//	{ 281.79 + offset } // violet
 	//};
 	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	//{
-	//    { 22.50 + offset },
-	//    { 45.00 + offset },
-	//    { 67.50 + offset },
-	//    { 90.00 + offset },
-	//    { 112.5 + offset },
-	//    { 135.0 + offset },
-	//    { 157.5 + offset }
+	//	{ 15.00 + offset },
+	//	{ 40.00 + offset },
+	//	{ 65.00 + offset },
+	//	{ 90.00 + offset },
+	//	{ 115.00 + offset },
+	//	{ 140.00 + offset },
+	//	{ 165.00 + offset }
 	//};
 
 	//fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);

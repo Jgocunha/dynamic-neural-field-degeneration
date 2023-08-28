@@ -10,6 +10,8 @@ DnfcomposerHandler::DnfcomposerHandler()
 	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
 	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
 	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+
+	
 	simulationElements.fcpw = FieldCouplingWizard{simulation, "per - dec" };
 
 	setupUserInterface();
@@ -192,47 +194,97 @@ void DnfcomposerHandler::activateDegeneration()
 	wasDegenerationRequested = false;
 }
 
-void DnfcomposerHandler::activateRelearning()
-{
-	
-	// add gaussian inputs
-	double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 25, 20 };
-
-	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-	{
-		{relearningParameters.expectedInputCentroid + offset}
-	};
-
-	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	{
-		{relearningParameters.expectedOutputCentroid + offset}
-	};
-	
-	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-	
-	std::cout << "Finished setting up the field coupling wizard.\n";
-
-	gsp.amplitude = 15;
-	gsp.sigma = 3;
-	
-	simulationElements.fcpw.setGaussStimulusParameters(gsp);
-	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
-
-	simulationElements.fcpw.simulateAssociation();
-	std::cout << "Finished simulating association.\n";
-	
-	// only 1 iteration of training
-	simulationElements.fcpw.trainWeights(1);
-	std::cout << "Finished training weights.\n";
-	
-	wasRelearningRequested = false;
-	hasRelearningFinished = true;
-}
+//void DnfcomposerHandler::activateRelearning()
+//{
+//	
+//	// add gaussian inputs
+//	double offset = 1.0;
+//	GaussStimulusParameters gsp = { 3, 25, 20 };
+//
+//	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+//	{
+//		{relearningParameters.expectedInputCentroid + offset}
+//	};
+//
+//	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+//	{
+//		{relearningParameters.expectedOutputCentroid + offset}
+//	};
+//	
+//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+//	
+//	std::cout << "Finished setting up the field coupling wizard.\n";
+//
+//	gsp.amplitude = 15;
+//	gsp.sigma = 3;
+//	
+//	simulationElements.fcpw.setGaussStimulusParameters(gsp);
+//	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+//
+//	simulationElements.fcpw.simulateAssociation();
+//	std::cout << "Finished simulating association.\n";
+//	
+//	// only 1 iteration of training
+//	simulationElements.fcpw.trainWeights(1);
+//	std::cout << "Finished training weights.\n";
+//	
+//	wasRelearningRequested = false;
+//	hasRelearningFinished = true;
+//}
 
 void DnfcomposerHandler::clearRelearning()
 {
 	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
 }
 
+void DnfcomposerHandler::activateRelearning()
+{
+	clearRelearning();
+
+// add gaussian inputs
+	double offset = 1.0;
+	GaussStimulusParameters gsp = { 3, 15, 20 };
+
+	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	{
+		{ 00.00 + offset }, // red
+		{ 40.60 + offset }, // orange
+		{ 60.00 + offset }, // yellow
+		{ 120.00 + offset }, // green
+		{ 240.00 + offset }, // blue
+		{ 274.15 + offset }, // indigo
+		{ 281.79 + offset } // violet
+	};
+	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	{
+		{ 15.00 + offset },
+		{ 40.00 + offset },
+		{ 65.00 + offset },
+		{ 90.00 + offset },
+		{ 115.00 + offset },
+		{ 140.00 + offset },
+		{ 165.00 + offset }
+	};
+
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+		simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+		
+		std::cout << "Finished setting up the field coupling wizard.\n";
+	
+		gsp.amplitude = 15;
+		gsp.sigma = 3;
+		
+		simulationElements.fcpw.setGaussStimulusParameters(gsp);
+		std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+	
+		simulationElements.fcpw.simulateAssociation();
+		std::cout << "Finished simulating association.\n";
+		
+		// only 1 iteration of training
+		simulationElements.fcpw.trainWeights(1);
+		std::cout << "Finished training weights.\n";
+		
+		wasRelearningRequested = false;
+		hasRelearningFinished = true;
+}
