@@ -34,6 +34,7 @@ public:
 	void simulateAssociation();
 	void trainWeights(const int iterations);
 	void saveWeights();
+	void clearTargetPeakLocationsFromFiles();
 
 private:
 	void setFieldCoupling(const std::string& fieldCouplingUniqueId);

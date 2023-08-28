@@ -16,21 +16,21 @@ void ExperimentHandler::init()
 void ExperimentHandler::step()
 {
 	// Perform a small demonstration of the working architecture
-	pickAndPlace();
+	//pickAndPlace();
 
 	// For an initial amount of degeneration
-	for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
-		degenerationProcedure();
-	param.accumulatedPercentageOfDegeneration = param.initialPercentageOfDegeneration;
+	//for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
+	//	degenerationProcedure();
+	//param.accumulatedPercentageOfDegeneration = param.initialPercentageOfDegeneration;
 
 	// For the amount of tenths of percentages we want the sim to run
-	for (int i = 0; i < param.numberOfTenthsOfPercentageToDegenerate; i++)
-	{
-		param.accumulatedPercentageOfDegeneration = param.accumulatedPercentageOfDegeneration + param.percentageOfDegeneration;
-		degenerationProcedure();
+	//for (int i = 0; i < param.numberOfTenthsOfPercentageToDegenerate; i++)
+	//{
+		//param.accumulatedPercentageOfDegeneration = param.accumulatedPercentageOfDegeneration + param.percentageOfDegeneration;
+		//degenerationProcedure();
 		for (int i = 0; i < param.numberOfTrials; i++)
 			pickAndPlaceWithLearning();
-	}
+	//}
 }
 
 void ExperimentHandler::close()
@@ -64,6 +64,8 @@ void ExperimentHandler::pickAndPlace()
 
 void ExperimentHandler::pickAndPlaceWithLearning()
 {
+	//dnfcomposerHandler.clearRelearning();
+
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
 	{
 		createShape();

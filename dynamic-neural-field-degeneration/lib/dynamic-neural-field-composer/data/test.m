@@ -1,6 +1,6 @@
 filename = 'per - dec_perceptual field.txt';  % Replace with your filename
 %filename = 'u - v_temp_input.txt';  % Replace with your filename
-fieldSize = 104;
+fieldSize = 360;
 
 % Read the file
 fid = fopen(filename, 'r');

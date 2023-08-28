@@ -10,6 +10,7 @@ DnfcomposerHandler::DnfcomposerHandler()
 	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
 	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
 	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+	simulationElements.fcpw = FieldCouplingWizard{simulation, "per - dec" };
 
 	setupUserInterface();
 }
@@ -128,7 +129,7 @@ void DnfcomposerHandler::setupUserInterface()
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
-	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
 
 void DnfcomposerHandler::updateExternalInput()
@@ -193,8 +194,6 @@ void DnfcomposerHandler::activateDegeneration()
 
 void DnfcomposerHandler::activateRelearning()
 {
-	// set up the field coupling wizard
-	FieldCouplingWizard fcpw{ simulation, "per - dec" };
 	
 	// add gaussian inputs
 	double offset = 1.0;
@@ -210,26 +209,30 @@ void DnfcomposerHandler::activateRelearning()
 		{relearningParameters.expectedOutputCentroid + offset}
 	};
 	
-	fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 	
 	std::cout << "Finished setting up the field coupling wizard.\n";
 
 	gsp.amplitude = 15;
 	gsp.sigma = 3;
 	
-	fcpw.setGaussStimulusParameters(gsp);
+	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
-	fcpw.simulateAssociation();
+	simulationElements.fcpw.simulateAssociation();
 	std::cout << "Finished simulating association.\n";
 	
 	// only 1 iteration of training
-	fcpw.trainWeights(1);
+	simulationElements.fcpw.trainWeights(1);
 	std::cout << "Finished training weights.\n";
 	
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
+}
 
+void DnfcomposerHandler::clearRelearning()
+{
+	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
 }
 

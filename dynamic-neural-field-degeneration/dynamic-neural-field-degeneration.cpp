@@ -14,7 +14,7 @@ int main()
 
         params.initialPercentageOfDegeneration = 0;
         params.percentageOfDegeneration = 10;
-        params.numberOfTenthsOfPercentageToDegenerate = 20;
+        params.numberOfTenthsOfPercentageToDegenerate = 100;
 
         ExperimentHandler experiment { params };
 

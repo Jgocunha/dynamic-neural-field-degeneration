@@ -183,9 +183,15 @@ std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& 
 
 void FieldCouplingWizard::trainWeights(const int iterations)
 {
+    std::cout << "Saving pre field activation to: " << pathToFieldActivationPre << std::endl;
+	std::cout << "Saving post field activation to: " << pathToFieldActivationPost << std::endl;
+
     // check how much lines "temp_input.txt", and "temp_output.txt" have
     int numLinesInput = mathtools::countNumOfLinesInFile(pathToFieldActivationPre);
     int numLinesOutput = mathtools::countNumOfLinesInFile(pathToFieldActivationPost);
+    std::cout << "Number of lines in " << pathToFieldActivationPre << ": " << numLinesInput << std::endl;
+    std::cout << "Number of lines in " << pathToFieldActivationPost << ": " << numLinesOutput << std::endl;
+
     if (numLinesInput != numLinesOutput)
         std::cerr << "The files " << pathToFieldActivationPre << " and " << pathToFieldActivationPost << " have a different number of lines.\n";
 
@@ -224,4 +230,12 @@ void FieldCouplingWizard::setNeuralFieldPost()
 void FieldCouplingWizard::saveWeights()
 {
     fieldCoupling->saveWeights();
+}
+
+void FieldCouplingWizard::clearTargetPeakLocationsFromFiles()
+{
+    std::ofstream file(pathToFieldActivationPre);
+	file.close();
+	file.open(pathToFieldActivationPost);
+	file.close();
 }

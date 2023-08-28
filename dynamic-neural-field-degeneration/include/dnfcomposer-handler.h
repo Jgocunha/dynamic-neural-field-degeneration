@@ -13,6 +13,7 @@ struct SimulationElements
 {
 	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
 	std::shared_ptr<DegenerateFieldCoupling> fieldCoupling;
+	FieldCouplingWizard fcpw;
 };
 
 struct SimulationParameters
@@ -22,7 +23,7 @@ struct SimulationParameters
 	std::string fieldCouplingId = "per - dec";
 	double externalInputPosition, expectedOutputCentroid;
 	double inputFieldCentroid, outputFieldCentroid;
-	const int timeForFieldToSettle = 35;
+	const int timeForFieldToSettle = 55;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 };
 
@@ -68,6 +69,9 @@ public:
 	double getOutputFieldCentroid();
 	bool getHaveFieldsSettled();
 	bool getHasRelearningFinished();
+	
+	void clearRelearning();
+	
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 private:
 	void setupUserInterface();
@@ -77,4 +81,5 @@ private:
 
 	void activateDegeneration();
 	void activateRelearning();
+
 };
