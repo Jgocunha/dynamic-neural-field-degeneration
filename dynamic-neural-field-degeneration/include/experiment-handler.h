@@ -10,17 +10,19 @@
 
 struct ExperimentParameters
 {
+	std::string filePathPrefix = "../../../data/";
+	
 	int numberOfShapesPerTrial = 2;
 	int decisionTolerance = 5;
 	int numberOfTrials = 10;
-	int initialPercentageOfDegeneration = 0;
-	int percentageOfDegeneration = 10;
-	int numberOfTenthsOfPercentageToDegenerate = 10; 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 
-	std::string filePathPrefix = "../../../data/";
+	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 	std::string degeneracyName = "deactivate-weights";
-	int accumulatedPercentageOfDegeneration = 0;
+
+	int initialPercentageOfDegeneration = 0;
+	int targetPercentageOfDegeneration = 100;
+	int currentPercentageOfDegeneration = 0;
+	int incrementOfDegenerationPercentage = 10;
 };
 
 struct ExperimentData
@@ -72,8 +74,7 @@ public:
 	void step();
 	void close();
 private:
-	void pickAndPlace();
-	void pickAndPlaceWithLearning();
+	bool pickAndPlace();
 
 	void createShape();
 	void graspShape();
@@ -88,6 +89,10 @@ private:
 	void relearningProcedure();
 	void degenerationProcedure();
 	int computeNumberOfElementsToDegenerate();
+
+	void copyWeightsFile(const std::string& newFilename = "per - dec_weights - copy.txt");
+	void deleteBackupAndRenameWeightsFile();
+	bool doesBackupWeigthsFileExist();
 
 	void saveLearningCyclesPerTrial();
 };

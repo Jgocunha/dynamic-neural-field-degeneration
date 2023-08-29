@@ -15,22 +15,72 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	// Perform a small demonstration of the working architecture
+	// Perform a demonstration of the working architecture
 	//pickAndPlace();
+	
+	if (INFO)
+	{
+		std::cout << "Starting the experiment." << std::endl;
+		std::cout << "----------------------------------------" << std::endl;
+		std::cout << "Number of shapes per trial: " << param.numberOfShapesPerTrial << std::endl;
+		std::cout << "Number of trials: " << param.numberOfTrials << std::endl;
+		std::cout << "Decision tolerance: " << param.decisionTolerance << std::endl;
+		std::cout << "----------------------------------------" << std::endl;
+		std::cout << "Degeneracy type: " << param.degeneracyName << std::endl;
+		std::cout << "Initial percentage of degeneration: " << param.initialPercentageOfDegeneration << std::endl;
+		std::cout << "Target percentage of degeneration: " << param.targetPercentageOfDegeneration << std::endl;
+		std::cout << "----------------------------------------" << std::endl;
+		std::cout << "----------------------------------------" << std::endl << std::endl;
+	}
 
-	// For an initial amount of degeneration
-	//for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
-	//	degenerationProcedure();
-	//param.accumulatedPercentageOfDegeneration = param.initialPercentageOfDegeneration;
+	// If a percentage of degeneration is specified, perform the degeneration procedure
+	if(param.initialPercentageOfDegeneration)
+		for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
+			degenerationProcedure();
 
-	// For the amount of tenths of percentages we want the sim to run
-	//for (int i = 0; i < param.numberOfTenthsOfPercentageToDegenerate; i++)
-	//{
-		//param.accumulatedPercentageOfDegeneration = param.accumulatedPercentageOfDegeneration + param.percentageOfDegeneration;
-		//degenerationProcedure();
+	bool successfullPickAndPlace = true;
+	// Do until you reach the desired amount of degeneration
+	do
+	{
+		// For the number of specified trials
 		for (int i = 0; i < param.numberOfTrials; i++)
-			pickAndPlaceWithLearning();
-	//}
+		{
+			// Run the pick and place and the relearning procedures until the pick and place is successfull
+			do
+			{
+				if (INFO)
+					std::cout << "Starting the pick and place." << std::endl;
+				successfullPickAndPlace = pickAndPlace();
+				if (!successfullPickAndPlace)
+				{
+					if (INFO)
+						std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
+					if(!stats.numOfRelearningCycles)
+						copyWeightsFile(); // create a backup of the weights file
+					relearningProcedure();
+					stats.numOfRelearningCycles++;
+				}
+			} while (!successfullPickAndPlace);
+			
+			if(INFO)
+				std::cout << "Pick and place successful." << std::endl;
+
+			if (doesBackupWeigthsFileExist())
+				deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
+
+			cleanUpTrial();
+			saveLearningCyclesPerTrial();
+		}
+		// Once you have finished the specified number of trials for a given amount of degeneration, degenerate the weights
+		// and increase the amount of degeneration
+		std::string backupOfDegenerateWeightsFile = "per - dec_weights - percentage - " + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
+		copyWeightsFile(backupOfDegenerateWeightsFile); // create a backup of the weights file
+		if (INFO)
+			std::cout << "Starting the degeneration procedure." << std::endl << std::endl;
+		degenerationProcedure();
+		param.currentPercentageOfDegeneration = param.currentPercentageOfDegeneration + param.incrementOfDegenerationPercentage;
+	} while (param.currentPercentageOfDegeneration <= param.targetPercentageOfDegeneration);
+
 }
 
 void ExperimentHandler::close()
@@ -39,10 +89,12 @@ void ExperimentHandler::close()
 	coppeliasimHandler.close();
 }
 
-void ExperimentHandler::pickAndPlace()
+bool ExperimentHandler::pickAndPlace()
 {
-	if (INFO)
-		std::cout << "Starting a demonstration procedure." << std::endl;
+	if (DEBUG)
+		std::cout << "Starting a pick and place procedure." << std::endl;
+
+	bool successfullPickAndPlace = true;
 
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
 	{
@@ -50,37 +102,17 @@ void ExperimentHandler::pickAndPlace()
 		readShapeHue();
 		readTargetAngle();
 		if (!verifyDecision())
-		{
-			if (INFO)
-				std::cout << "Incorrect decision, aborting..." << std::endl;
-			return;
-		}
+			successfullPickAndPlace = false;
 		graspShape();
 		placeShape();
 		updateStatistics();
-		cleanUpTrial();
+		coppeliasimHandler.resetSignals();
 	}
-}
 
-void ExperimentHandler::pickAndPlaceWithLearning()
-{
-	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
-	{
-		createShape();
-		readShapeHue();
-		readTargetAngle();
-		if (!verifyDecision())
-		{
-			if (INFO)
-				std::cout << "Incorrect decision, relearning procedure started." << std::endl;
-			relearningProcedure();
-		}
-		saveLearningCyclesPerTrial();
-		graspShape();
-		placeShape();
-		updateStatistics();
-		cleanUpTrial();
-	}
+	if(DEBUG)
+		std::cout << "Pick and place procedure finished, with " << successfullPickAndPlace << " success." << std::endl;
+
+	return successfullPickAndPlace;
 }
 
 void ExperimentHandler::createShape()
@@ -125,7 +157,7 @@ void ExperimentHandler::readShapeHue()
 	{
 		Sleep(50);
 		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
-		if (INFO)
+		if (DEBUG)
 			std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 	}
 	while (signals.shapeHue == UNDEFINED);
@@ -147,7 +179,7 @@ void ExperimentHandler::readTargetAngle()
 	{
 		Sleep(50);
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-		if (INFO)
+		if (DEBUG)
 			std::cout << "Target angle: " << signals.targetAngle << std::endl;
 	}
 	while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
@@ -218,25 +250,14 @@ bool ExperimentHandler::verifyDecision()
 void ExperimentHandler::relearningProcedure()
 {
 	static bool isCorrectDecision = false;
+	dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
 	do {
-		if (INFO)
+		if (DEBUG)
 			std::cout << "Relearning..." << std::endl;
-		
 		signals.targetAngle = UNDEFINED;
-		dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
-
-		while (!dnfcomposerHandler.getHasRelearningFinished());									
-		
-		readShapeHue();
-		readTargetAngle();
-		
-		isCorrectDecision = verifyDecision();
-		
-		stats.numOfRelearningCycles++;
-		if (INFO)
-			std::cout << "Relearning cycle: " << stats.numOfRelearningCycles << std::endl;
-	} while (!isCorrectDecision && stats.numOfRelearningCycles < 200);
-	// Stop we reach the maximum of relearning cycles = 200 (arbitrary?)
+		Sleep(200);
+	} while (!dnfcomposerHandler.getHasRelearningFinished());
+	Sleep(200);
 }
 
 void ExperimentHandler::degenerationProcedure()
@@ -278,18 +299,64 @@ int ExperimentHandler::computeNumberOfElementsToDegenerate()
 		return 0;
 	}
 
-	return param.percentageOfDegeneration * size / 100;
+	return param.incrementOfDegenerationPercentage * size / 100;
 }
 
-void ExperimentHandler::saveLearningCyclesPerTrial() {
-	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.accumulatedPercentageOfDegeneration) + ".txt";
+void ExperimentHandler::copyWeightsFile(const std::string& newFilename)
+{
+	std::string filename = param.filePathPrefix + "per - dec_weights.txt";
+	std::string filenameCopy = param.filePathPrefix + newFilename;
+
+	std::ifstream source(filename, std::ios::binary);
+	std::ofstream dest(filenameCopy, std::ios::binary);
+
+	dest << source.rdbuf();
+
+	source.close();
+	dest.close();
+}
+
+void ExperimentHandler::deleteBackupAndRenameWeightsFile()
+{
+	std::string oldname = param.filePathPrefix + "per - dec_weights - copy.txt";
+	std::string newname = param.filePathPrefix + "per - dec_weights.txt";
+
+	try {
+		std::remove(newname.c_str());
+	}
+	catch (...) {}
+
+	int result = std::rename(oldname.c_str(), newname.c_str());
+
+	if (result == 0)
+		puts("File successfully renamed.");
+	else
+		perror("Error renaming file.");
+}
+
+bool ExperimentHandler::doesBackupWeigthsFileExist()
+{
+	std::string filename = param.filePathPrefix + "per - dec_weights - copy.txt";
+	std::ifstream file(filename);
+
+	if (file.good())
+		return true;
+	else
+		return false;
+}
+
+void ExperimentHandler::saveLearningCyclesPerTrial() 
+{
+	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
-	if (file.is_open()) {
+	if (file.is_open()) 
+	{
 		file << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
 		file.close(); // Close the file
 		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
 	}
-	else {
+	else 
+	{
 		std::cerr << "Unable to open file: " << filename << std::endl;
 	}
 }

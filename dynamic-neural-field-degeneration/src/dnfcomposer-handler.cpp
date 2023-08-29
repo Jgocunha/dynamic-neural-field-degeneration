@@ -270,20 +270,20 @@ void DnfcomposerHandler::activateRelearning()
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 		simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 		
-		std::cout << "Finished setting up the field coupling wizard.\n";
+		//std::cout << "Finished setting up the field coupling wizard.\n";
 	
 		gsp.amplitude = 15;
 		gsp.sigma = 3;
 		
 		simulationElements.fcpw.setGaussStimulusParameters(gsp);
-		std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+		//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 	
 		simulationElements.fcpw.simulateAssociation();
-		std::cout << "Finished simulating association.\n";
+		//std::cout << "Finished simulating association.\n";
 		
 		// only 1 iteration of training
 		simulationElements.fcpw.trainWeights(1);
-		std::cout << "Finished training weights.\n";
+		//std::cout << "Finished training weights.\n";
 		
 		wasRelearningRequested = false;
 		hasRelearningFinished = true;

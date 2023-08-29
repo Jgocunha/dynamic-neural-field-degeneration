@@ -7,14 +7,14 @@ int main()
     {
         ExperimentParameters params;
         params.numberOfShapesPerTrial = 7;
-        params.numberOfTrials = 5;
+        params.numberOfTrials = 1;
         params.decisionTolerance = 2;
+
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
         params.degeneracyName = "weights-randomize";
 
         params.initialPercentageOfDegeneration = 0;
-        params.percentageOfDegeneration = 10;
-        params.numberOfTenthsOfPercentageToDegenerate = 100;
+        params.targetPercentageOfDegeneration = 50;
 
         ExperimentHandler experiment { params };
 
