@@ -6,15 +6,16 @@ int main()
     try
     {
         ExperimentParameters params;
-        params.numberOfShapesPerTrial = 7;
+        params.numberOfShapesPerTrial = 1;
         params.numberOfTrials = 1;
         params.decisionTolerance = 2;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
-        params.degeneracyName = "weights-randomize";
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.degeneracyName = "WEIGHTS_DEACTIVATE";
 
         params.initialPercentageOfDegeneration = 0;
-        params.targetPercentageOfDegeneration = 50;
+        params.targetPercentageOfDegeneration = 100;
+        params.incrementOfDegenerationPercentage = 10;
 
         ExperimentHandler experiment { params };
 

@@ -30,6 +30,12 @@ void DegenerateFieldCoupling::startDegeneration()
 	degenerate = true;
 }
 
+void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
+{
+	weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
+	writeWeights();
+}
+
 void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.01; // 1 percent
@@ -180,4 +186,48 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 			uniqueCombinationFound = true;
 		}
 	}
+}
+
+std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
+	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate)
+{
+
+	double deltaT = 1.0;
+	double tau_w = 5.0;
+	double eta = 0.5;
+
+	size_t inputSize = input.size();
+	size_t outputSize = targetOutput.size(); //fixed from int to size_t
+
+	// Calculate the activation levels of the fields based on the input values and current weights
+	std::vector<double> actualOutput(outputSize, 0.0);
+	for (size_t j = 0; j < outputSize; ++j) {
+		for (size_t i = 0; i < inputSize; ++i) {
+			actualOutput[j] += input[i] * weights[i][j];
+		}
+	}
+
+	// Calculate the error between the target output and the actual output
+	std::vector<double> error(outputSize, 0.0);
+	for (size_t j = 0; j < outputSize; ++j) {
+		error[j] = targetOutput[j] - actualOutput[j];
+	}
+
+	// Update the weights based on the error and current activation levels of the fields
+	for (size_t i = 0; i < inputSize; ++i) {
+		for (size_t j = 0; j < outputSize; ++j)
+		{
+			std::pair<int, int> pair(i, j);
+			auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
+
+			// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
+			//if (it != indicesForDegeneration.end())
+			//{
+				weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
+			//}
+			// else do nothing
+		}
+	}
+
+	return weights;
 }

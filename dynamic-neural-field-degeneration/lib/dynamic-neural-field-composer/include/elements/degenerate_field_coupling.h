@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include <algorithm>
 #include "./field_coupling.h"
 
 class DegenerateFieldCoupling : public FieldCoupling
@@ -23,6 +25,7 @@ public:
 	void setWeightReductionFactor(const double& factor);
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	ElementDegeneracyType getDegeneracyType();
+	void updateWeights(const std::vector<double> input, const std::vector<double> output);
 private:
 	void populateIndicesForDegeneration();
 	void setRandomWeightToRandomValue();
@@ -30,4 +33,7 @@ private:
 	void setRandomUniqueWeightToZero();
 	void findMinMaxWeightValues();
 	double getWeightReductionFactor();
+
+	std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
+		const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
 };

@@ -16,7 +16,7 @@ void ExperimentHandler::init()
 void ExperimentHandler::step()
 {
 	// Perform a demonstration of the working architecture
-	//pickAndPlace();
+	pickAndPlace();
 	
 	if (INFO)
 	{
@@ -43,43 +43,51 @@ void ExperimentHandler::step()
 	do
 	{
 		// For the number of specified trials
-		for (int i = 0; i < param.numberOfTrials; i++)
-		{
-			// Run the pick and place and the relearning procedures until the pick and place is successfull
-			do
-			{
-				if (INFO)
-					std::cout << "Starting the pick and place." << std::endl;
-				successfullPickAndPlace = pickAndPlace();
-				if (!successfullPickAndPlace)
-				{
-					if (INFO)
-						std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
-					if(!stats.numOfRelearningCycles)
-						copyWeightsFile(); // create a backup of the weights file
-					relearningProcedure();
-					stats.numOfRelearningCycles++;
-				}
-			} while (!successfullPickAndPlace);
+		//for (int i = 0; i < param.numberOfTrials; i++)
+		//{
+			//// Run the pick and place and the relearning procedures until the pick and place is successfull
+			//do
+			//{
+			//	if (INFO)
+			//		std::cout << "Executing the pick and place procedure." << std::endl;
+			//	successfullPickAndPlace = pickAndPlace();
+			//	if (!successfullPickAndPlace)
+			//	{
+			//		if (INFO)
+			//			std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
+			//		if(!stats.numOfRelearningCycles)
+			//			copyWeightsFile(); // create a backup of the weights file
+			//		relearningProcedure();
+			//		stats.numOfRelearningCycles++;
+			//	}
+			//} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < 100));
 			
-			if(INFO)
-				std::cout << "Pick and place successful." << std::endl;
+			/*if(INFO)
+				std::cout << "Pick and place successful." << std::endl;*/
 
-			if (doesBackupWeigthsFileExist())
-				deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
+			//if (doesBackupWeigthsFileExist())
+				//deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
 
-			cleanUpTrial();
-			saveLearningCyclesPerTrial();
-		}
+			//saveLearningCyclesPerTrial();
+			//cleanUpTrial();
+		//}
 		// Once you have finished the specified number of trials for a given amount of degeneration, degenerate the weights
 		// and increase the amount of degeneration
 		std::string backupOfDegenerateWeightsFile = "per - dec_weights - percentage - " + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
 		copyWeightsFile(backupOfDegenerateWeightsFile); // create a backup of the weights file
+
+		//pickAndPlace();
+		//cleanUpTrial();
 		if (INFO)
-			std::cout << "Starting the degeneration procedure." << std::endl << std::endl;
-		degenerationProcedure();
+			std::cout << "Pick and place successful." << std::endl;
+		if (INFO)
+			std::cout << std::endl << "--" << std::endl << "Starting the degeneration procedure." << std::endl;
 		param.currentPercentageOfDegeneration = param.currentPercentageOfDegeneration + param.incrementOfDegenerationPercentage;
-	} while (param.currentPercentageOfDegeneration <= param.targetPercentageOfDegeneration);
+		degenerationProcedure();
+		if (INFO)
+			std::cout << "Degenerated " << param.incrementOfDegenerationPercentage << "% of the weights." 
+			<< "The current percentage of degeneration is " << param.currentPercentageOfDegeneration << "%" << std::endl << "--" << std::endl;
+	} while (param.currentPercentageOfDegeneration < param.targetPercentageOfDegeneration);
 
 }
 
@@ -262,19 +270,20 @@ void ExperimentHandler::relearningProcedure()
 
 void ExperimentHandler::degenerationProcedure()
 {
-	if (INFO)
+	if (DEBUG)
 		std::cout << "Starting the degeneration procedure." << std::endl;
 
 	// Disable the user interface whilst degenerating to consume less time.
 	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
 
 	int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
+	std::cout << "Number of elements to degenerate: " << numberOfElementsToDegenerate << std::endl;
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		Sleep(10);
+		Sleep(110);
 		if (i % 20 == 0)
-			if(INFO)
+			if(DEBUG)
 				std::cout << "Number of elements degenerated: " << i << std::endl;
 	}
 

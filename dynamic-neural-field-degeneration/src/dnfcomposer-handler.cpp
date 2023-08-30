@@ -131,7 +131,7 @@ void DnfcomposerHandler::setupUserInterface()
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
-	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
 
 void DnfcomposerHandler::updateExternalInput()
