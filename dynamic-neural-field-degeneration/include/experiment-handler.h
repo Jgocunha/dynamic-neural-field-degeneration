@@ -74,6 +74,9 @@ public:
 	void step();
 	void close();
 private:
+
+	void printSetupToConsole();
+
 	bool pickAndPlace();
 
 	void createShape();

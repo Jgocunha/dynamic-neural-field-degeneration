@@ -13,25 +13,27 @@ void ExperimentHandler::init()
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
+void ExperimentHandler::printSetupToConsole()
+{
+	std::cout << "Starting the experiment." << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "Number of shapes per trial: " << param.numberOfShapesPerTrial << std::endl;
+	std::cout << "Number of trials: " << param.numberOfTrials << std::endl;
+	std::cout << "Decision tolerance: " << param.decisionTolerance << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "Degeneracy type: " << param.degeneracyName << std::endl;
+	std::cout << "Initial percentage of degeneration: " << param.initialPercentageOfDegeneration << std::endl;
+	std::cout << "Target percentage of degeneration: " << param.targetPercentageOfDegeneration << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "----------------------------------------" << std::endl << std::endl;
+}
+
 void ExperimentHandler::step()
 {
+	printSetupToConsole();
+	
 	// Perform a demonstration of the working architecture
 	pickAndPlace();
-	
-	if (INFO)
-	{
-		std::cout << "Starting the experiment." << std::endl;
-		std::cout << "----------------------------------------" << std::endl;
-		std::cout << "Number of shapes per trial: " << param.numberOfShapesPerTrial << std::endl;
-		std::cout << "Number of trials: " << param.numberOfTrials << std::endl;
-		std::cout << "Decision tolerance: " << param.decisionTolerance << std::endl;
-		std::cout << "----------------------------------------" << std::endl;
-		std::cout << "Degeneracy type: " << param.degeneracyName << std::endl;
-		std::cout << "Initial percentage of degeneration: " << param.initialPercentageOfDegeneration << std::endl;
-		std::cout << "Target percentage of degeneration: " << param.targetPercentageOfDegeneration << std::endl;
-		std::cout << "----------------------------------------" << std::endl;
-		std::cout << "----------------------------------------" << std::endl << std::endl;
-	}
 
 	// If a percentage of degeneration is specified, perform the degeneration procedure
 	if(param.initialPercentageOfDegeneration)
@@ -43,50 +45,39 @@ void ExperimentHandler::step()
 	do
 	{
 		// For the number of specified trials
-		//for (int i = 0; i < param.numberOfTrials; i++)
-		//{
-			//// Run the pick and place and the relearning procedures until the pick and place is successfull
-			//do
-			//{
-			//	if (INFO)
-			//		std::cout << "Executing the pick and place procedure." << std::endl;
-			//	successfullPickAndPlace = pickAndPlace();
-			//	if (!successfullPickAndPlace)
-			//	{
-			//		if (INFO)
-			//			std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
-			//		if(!stats.numOfRelearningCycles)
-			//			copyWeightsFile(); // create a backup of the weights file
-			//		relearningProcedure();
-			//		stats.numOfRelearningCycles++;
-			//	}
-			//} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < 100));
-			
-			/*if(INFO)
-				std::cout << "Pick and place successful." << std::endl;*/
+		for (int i = 0; i < param.numberOfTrials; i++)
+		{
+			// Run the pick and place and the relearning procedures until the pick and place is successfull
+			do
+			{
+				successfullPickAndPlace = pickAndPlace();
+				if (!successfullPickAndPlace)
+				{
+					if(!stats.numOfRelearningCycles)
+						copyWeightsFile(); // create a backup of the weights file
+					relearningProcedure();
+					stats.numOfRelearningCycles++;
+				}
+			} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < 100));
 
-			//if (doesBackupWeigthsFileExist())
-				//deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
+			if (doesBackupWeigthsFileExist())
+				deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
 
-			//saveLearningCyclesPerTrial();
-			//cleanUpTrial();
-		//}
+			saveLearningCyclesPerTrial();
+			cleanUpTrial();
+		}
 		// Once you have finished the specified number of trials for a given amount of degeneration, degenerate the weights
 		// and increase the amount of degeneration
 		std::string backupOfDegenerateWeightsFile = "per - dec_weights - percentage - " + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
 		copyWeightsFile(backupOfDegenerateWeightsFile); // create a backup of the weights file
-
-		//pickAndPlace();
-		//cleanUpTrial();
-		if (INFO)
-			std::cout << "Pick and place successful." << std::endl;
-		if (INFO)
-			std::cout << std::endl << "--" << std::endl << "Starting the degeneration procedure." << std::endl;
+			
 		param.currentPercentageOfDegeneration = param.currentPercentageOfDegeneration + param.incrementOfDegenerationPercentage;
 		degenerationProcedure();
-		if (INFO)
-			std::cout << "Degenerated " << param.incrementOfDegenerationPercentage << "% of the weights." 
-			<< "The current percentage of degeneration is " << param.currentPercentageOfDegeneration << "%" << std::endl << "--" << std::endl;
+
+		std::cout << "Degenerated " << param.incrementOfDegenerationPercentage << "% of the weights." 
+			<< "The current percentage of degeneration is " << param.currentPercentageOfDegeneration 
+			<< "%" << std::endl << "--" << std::endl;
+
 	} while (param.currentPercentageOfDegeneration < param.targetPercentageOfDegeneration);
 
 }
@@ -97,10 +88,10 @@ void ExperimentHandler::close()
 	coppeliasimHandler.close();
 }
 
+
 bool ExperimentHandler::pickAndPlace()
 {
-	if (DEBUG)
-		std::cout << "Starting a pick and place procedure." << std::endl;
+	std::cout << "Executing the pick and place procedure." << std::endl;
 
 	bool successfullPickAndPlace = true;
 
@@ -117,8 +108,7 @@ bool ExperimentHandler::pickAndPlace()
 		coppeliasimHandler.resetSignals();
 	}
 
-	if(DEBUG)
-		std::cout << "Pick and place procedure finished, with " << successfullPickAndPlace << " success." << std::endl;
+	std::cout << "Pick and place procedure finished, with " << successfullPickAndPlace << " success." << std::endl;
 
 	return successfullPickAndPlace;
 }
@@ -257,11 +247,12 @@ bool ExperimentHandler::verifyDecision()
 
 void ExperimentHandler::relearningProcedure()
 {
+	std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
+
 	static bool isCorrectDecision = false;
 	dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
 	do {
-		if (DEBUG)
-			std::cout << "Relearning..." << std::endl;
+		//std::cout << "Relearning..." << std::endl;
 		signals.targetAngle = UNDEFINED;
 		Sleep(200);
 	} while (!dnfcomposerHandler.getHasRelearningFinished());
@@ -270,8 +261,7 @@ void ExperimentHandler::relearningProcedure()
 
 void ExperimentHandler::degenerationProcedure()
 {
-	if (DEBUG)
-		std::cout << "Starting the degeneration procedure." << std::endl;
+	std::cout << "Starting the degeneration procedure." << std::endl;
 
 	// Disable the user interface whilst degenerating to consume less time.
 	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
@@ -282,9 +272,7 @@ void ExperimentHandler::degenerationProcedure()
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
 		Sleep(110);
-		if (i % 20 == 0)
-			if(DEBUG)
-				std::cout << "Number of elements degenerated: " << i << std::endl;
+		//std::cout << "Degenerating..." << std::endl;
 	}
 
 	// Re-enable the UI.
