@@ -38,8 +38,9 @@ void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, con
 
 void DegenerateFieldCoupling::applyDegeneracy()
 {
-	double percentage = 0.01; // 1 percent
-	double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
+	double percentage = 0.1; // 1 percent
+	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
+	double numWeightsToDegenerate = 648;
 	switch (degeneracyType)
 	{
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -166,27 +167,74 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {
+	// Initialize the maximum number of attempts to find unique combinations
 	static int maxAttempts = components["output"].size() * components["input"].size();
-	int row_idx, col_idx;
-	bool uniqueCombinationFound = false;
+
+	int row_idx, col_idx; // Indices for rows and columns
+	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
 	int numIndices = static_cast<int>((components["output"].size() * components["input"].size()) / 10.0);
+
+	// Loop until a unique combination is found or indicesForDegeneration is empty
 	while (!uniqueCombinationFound)
 	{
+		// Generate random row and column indices
 		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
 		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
+
+		// Create a pair of indices representing a combination
 		std::pair<int, int> pair(row_idx, col_idx);
+
+		// Check if the combination is in the set of indices for degeneration
 		if (indicesForDegeneration.find(pair) != indicesForDegeneration.end())
 		{
-			indicesForDegeneration.erase(pair);
-			weights[row_idx][col_idx] = 0;
-			uniqueCombinationFound = true;
+			// If combination found, update data and exit loop
+			indicesForDegeneration.erase(pair); // Remove combination from set
+			weights[row_idx][col_idx] = 0;      // Set weight at combination to 0
+			uniqueCombinationFound = true;      // Set flag to indicate combination found
 		}
+		// Check if all desired combinations have been found and processed
 		else if (!(indicesForDegeneration.size()))
 		{
-			uniqueCombinationFound = true;
+			uniqueCombinationFound = true; // Set flag to exit loop
 		}
 	}
 }
+
+//void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
+//{
+//	static int maxAttempts = components["output"].size() * components["input"].size();
+//
+//	std::vector<std::pair<int, int>> validCombinations;
+//	for (int row_idx = 0; row_idx < components["input"].size(); ++row_idx)
+//	{
+//		for (int col_idx = 0; col_idx < components["output"].size(); ++col_idx)
+//		{
+//			std::pair<int, int> pair(row_idx, col_idx);
+//			if (indicesForDegeneration.find(pair) != indicesForDegeneration.end())
+//			{
+//				validCombinations.push_back(pair);
+//			}
+//		}
+//	}
+//
+//	// Shuffle the vector of valid combinations
+//	std::random_device rd;
+//	std::mt19937 gen(rd());
+//	std::shuffle(validCombinations.begin(), validCombinations.end(), gen);
+//
+//	for (const auto& combination : validCombinations)
+//	{
+//		int row_idx = combination.first;
+//		int col_idx = combination.second;
+//
+//		indicesForDegeneration.erase(combination);
+//		weights[row_idx][col_idx] = 0;
+//		if (!indicesForDegeneration.size())
+//		{
+//			break; // Exit loop if all combinations processed
+//		}
+//	}
+//}
 
 std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
 	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate)

@@ -6,12 +6,12 @@ int main()
     try
     {
         ExperimentParameters params;
-        params.numberOfShapesPerTrial = 1;
-        params.numberOfTrials = 1;
+        params.numberOfShapesPerTrial = 7;
+        params.numberOfTrials = 2;
         params.decisionTolerance = 2;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
-        params.degeneracyName = "WEIGHTS_DEACTIVATE";
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.degeneracyName = "NEURONS_DEACTIVATE";
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;

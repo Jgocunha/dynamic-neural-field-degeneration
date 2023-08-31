@@ -28,6 +28,26 @@ void ExperimentHandler::printSetupToConsole()
 	std::cout << "----------------------------------------" << std::endl << std::endl;
 }
 
+//// for debug
+//void ExperimentHandler::step()
+//{
+//	pickAndPlace();
+//	cleanUpTrial();
+//	pickAndPlace();
+//
+//	//do 
+//	//{
+//	//	param.currentPercentageOfDegeneration = param.currentPercentageOfDegeneration + param.incrementOfDegenerationPercentage;
+//	//	degenerationProcedure();
+//	//	dnfcomposerHandler.saveWeightsToFile();
+//	//	std::string backupOfDegenerateWeightsFile = "per - dec_weights - percentage - " + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
+//	//	copyWeightsFile(backupOfDegenerateWeightsFile); // create a backup of the weights file
+//	//	Sleep(2);
+//	//} while (param.currentPercentageOfDegeneration < param.targetPercentageOfDegeneration);
+//
+//	//}
+//}
+
 void ExperimentHandler::step()
 {
 	printSetupToConsole();
@@ -87,7 +107,6 @@ void ExperimentHandler::close()
 	dnfcomposerHandler.close();
 	coppeliasimHandler.close();
 }
-
 
 bool ExperimentHandler::pickAndPlace()
 {
@@ -155,7 +174,7 @@ void ExperimentHandler::readShapeHue()
 	{
 		Sleep(50);
 		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
-		if (DEBUG)
+		if (INFO)
 			std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 	}
 	while (signals.shapeHue == UNDEFINED);
@@ -173,14 +192,21 @@ void ExperimentHandler::readShapeHue()
 void ExperimentHandler::readTargetAngle()
 {
 	// wait for the target angle
-	do
+	//do
 	{
 		Sleep(50);
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-		if (DEBUG)
+		if (INFO)
 			std::cout << "Target angle: " << signals.targetAngle << std::endl;
 	}
-	while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
+	if (signals.targetAngle == -1)
+	{
+		signals.targetAngle = 0;
+		if (INFO)
+			std::cout << "New target angle: " << signals.targetAngle << std::endl;
+	}
+	//while (signals.targetAngle != -1 && (signals.targetAngle == data.lastOutputFieldCentroid || signals.targetAngle < 0.1));
+	//while (signals.targetAngle == -1);
 	// This condition will ensure that the loop continues as long as signals.targetAngle is not equal to -1 
 	// and either equals data.lastOutputFieldCentroid or is less than 0.1. If signals.targetAngle becomes -1, the loop will stop.
 
@@ -271,7 +297,8 @@ void ExperimentHandler::degenerationProcedure()
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
 		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
-		Sleep(110);
+		Sleep(25);
+		//dnfcomposerHandler.clearDegeneration();
 		//std::cout << "Degenerating..." << std::endl;
 	}
 
@@ -286,11 +313,13 @@ int ExperimentHandler::computeNumberOfElementsToDegenerate()
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		size = 360; // completely hardcoded
+		return 36;
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
 		size = 360 * 180; // completely hardcoded
+		return 6480;
 		break;
 	default:
 		return 0;
