@@ -21,14 +21,14 @@ To address these research questions, we designed two distinct experimental scena
 
 ## Methodology
 
-![neural-architecture](https://ibb.co/8sQjQZx)
+![neural-architecture](https://github.com/Jgocunha/dynamic-neural-field-degeneration/assets/63354863/ad8de05f-8bde-42df-a5f2-0008500ea0c4)
 
 *Two coupled dynamic neural fields - the perceptual and the decision fields.
 The perceptual field receives inputs from the vision system, while the decision field obtains stimulus through inter-field weights. 
 Each neural position within the perceptual field establishes connections with every neural position in the decision field.
 The decision field encodes the target placement angle for the robotic arm.*
 
-![simulation-setup](https://ibb.co/xXQfzqD)
+![simulation-setup](https://github.com/Jgocunha/dynamic-neural-field-degeneration/assets/63354863/a1c5271f-b352-43b5-b05c-6374d972fb41)
 
 *The left side of the figure offers insight into the dynamic responses within the activation of the neural fields upon encountering input from a yellow cuboid. 
 The perceptual field captures the cuboid's distinct hue. This stimulus cascades into the decision field, fostering the emergence of a corresponding bump. 
