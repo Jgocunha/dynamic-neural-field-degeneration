@@ -78,7 +78,7 @@ void ExperimentHandler::step()
 					relearningProcedure();
 					stats.numOfRelearningCycles++;
 				}
-			} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < 100));
+			} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < param.maximumAmountOfRelearningCycles));
 
 			if (doesBackupWeigthsFileExist())
 				deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
@@ -112,6 +112,7 @@ bool ExperimentHandler::pickAndPlace()
 {
 	std::cout << "Executing the pick and place procedure." << std::endl;
 
+	stats.shapesPlacedIncorrectly = 0; // binary representation
 	bool successfullPickAndPlace = true;
 
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
@@ -120,13 +121,20 @@ bool ExperimentHandler::pickAndPlace()
 		readShapeHue();
 		readTargetAngle();
 		if (!verifyDecision())
+		{
 			successfullPickAndPlace = false;
+			stats.shapesPlacedIncorrectly = stats.shapesPlacedIncorrectly << 1;
+		}
+		else
+			stats.shapesPlacedIncorrectly = (stats.shapesPlacedIncorrectly << 1) | 1;
 		graspShape();
 		placeShape();
 		updateStatistics();
 		coppeliasimHandler.resetSignals();
+
 	}
 
+	std::cout << "Binary representation of placed boxes: " << std::bitset<7>(stats.shapesPlacedIncorrectly) << std::endl;
 	std::cout << "Pick and place procedure finished, with " << successfullPickAndPlace << " success." << std::endl;
 
 	return successfullPickAndPlace;
@@ -377,11 +385,27 @@ void ExperimentHandler::saveLearningCyclesPerTrial()
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 	if (file.is_open()) 
 	{
-		file << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
+		file << " - " << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
 		file.close(); // Close the file
 		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
 	}
 	else 
+	{
+		std::cerr << "Unable to open file: " << filename << std::endl;
+	}
+}
+
+void ExperimentHandler::saveNumberOfIncorrectlyPlacedBoxes()
+{
+	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
+	std::ofstream file(filename, std::ios::app); // Open the file in append mode
+	if (file.is_open())
+	{
+		file << stats.shapesPlacedIncorrectly << " "; // Write the integer followed by a newline
+		file.close(); // Close the file
+		std::cout << "Number of shapes placed incorrectly saved to file: " << stats.numOfRelearningCycles << std::endl;
+	}
+	else
 	{
 		std::cerr << "Unable to open file: " << filename << std::endl;
 	}

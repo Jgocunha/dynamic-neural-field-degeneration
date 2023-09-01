@@ -17,6 +17,8 @@ int main()
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 
+        params.maximumAmountOfRelearningCycles = 5;
+
         ExperimentHandler experiment { params };
 
         experiment.init();
