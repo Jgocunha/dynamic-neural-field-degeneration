@@ -53,7 +53,7 @@ void ExperimentHandler::step()
 	printSetupToConsole();
 	
 	// Perform a demonstration of the working architecture
-	pickAndPlace();
+	//pickAndPlace();
 
 	// If a percentage of degeneration is specified, perform the degeneration procedure
 	if(param.initialPercentageOfDegeneration)
