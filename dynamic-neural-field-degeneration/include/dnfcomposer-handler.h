@@ -13,7 +13,6 @@ struct SimulationElements
 {
 	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
 	std::shared_ptr<DegenerateFieldCoupling> fieldCoupling;
-	FieldCouplingWizard fcpw;
 };
 
 struct SimulationParameters
@@ -21,15 +20,10 @@ struct SimulationParameters
 	std::string inputFieldId = "perceptual field";
 	std::string outputFieldId = "decision field";
 	std::string fieldCouplingId = "per - dec";
-	double externalInputPosition, expectedOutputCentroid;
+	double externalInputPosition = 0;
 	double inputFieldCentroid, outputFieldCentroid;
-	const int timeForFieldToSettle = 75;
+	const int timeForFieldToSettle = 20;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
-};
-
-struct RelearningParameters
-{
-	double expectedInputCentroid = 0.0, expectedOutputCentroid = 0.0;
 };
 
 class DnfcomposerHandler
@@ -37,19 +31,19 @@ class DnfcomposerHandler
 private:
 	std::thread dnfcomposerThread;
 	std::thread readCentroidsThread;
+	std::thread applicationThread;
+
 	std::unique_ptr<Application> application;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<ExperimentWindow> userInterfaceWindow;
 
 	SimulationElements simulationElements;
 	SimulationParameters simulationParameters;
-	RelearningParameters relearningParameters;
 
+	bool wasIntializationRequested = false;
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
-	bool wasRelearningRequested = false;
 	bool haveFieldsSettled = false;
-	bool hasRelearningFinished = false;
 
 public:
 	DnfcomposerHandler();
@@ -59,29 +53,25 @@ public:
 	void step();
 	void close();
 
+
 	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
-	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
-	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive);
+	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+	void setInitializeFields();
 
-	double getInputFieldCentroid();
-	double getOutputFieldCentroid();
-	bool getHaveFieldsSettled();
-	bool getHasRelearningFinished();
+	double getInputFieldCentroid() const;
+	double getOutputFieldCentroid() const;
+	bool getHaveFieldsSettled() const;
 	
-	void clearRelearning();
-	void clearDegeneration();
 	
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 	
-	void saveWeightsToFile();
 private:
+	void initializeFields();
 	void setupUserInterface();
-
 	void updateExternalInput();
 	void updateFieldCentroids();
-
 	void activateDegeneration();
-	void activateRelearning();
+	void waitForFieldsToSettle() const;
 };
