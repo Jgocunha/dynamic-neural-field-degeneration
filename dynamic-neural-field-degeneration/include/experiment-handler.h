@@ -5,27 +5,27 @@
 #include <thread>
 
 #include "./dnfcomposer-handler.h"
-
+#include "macros.h"
 
 struct ExperimentParameters
 {
-	std::string filePathPrefix = "../../../data/";
+	std::string filePathPrefix = "../../../data/"; //
 	
-	int decisionTolerance = 5;
-	int numberOfTrials = 10;
+	int decisionTolerance = 5; //
+	int numberOfTrials = 10; //
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
-	std::string degeneracyName = "deactivate-weights";
+	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE; //
+	std::string degeneracyName = "deactivate-weights"; //
 
-	double targetExternalStimulusPosition = 20;
+	double targetExternalStimulusPosition = 20; //
 
-	int initialPercentageOfDegeneration = 0;
-	int targetPercentageOfDegeneration = 100;
-	int currentPercentageOfDegeneration = 0;
-	int incrementOfDegenerationPercentage = 10;
+	int initialPercentageOfDegeneration = 0; //
+	int targetPercentageOfDegeneration = 100; //
+	int currentPercentageOfDegeneration = 0; //
 
-	bool isDataToBeSaved = true;
-	bool isVisualisationToBeShown = true;
+	bool isDataSavingOn = false;
+	bool isVisualisationOn = true;
+	bool isDebugModeOn = true;
 };
 
 struct ExperimentData

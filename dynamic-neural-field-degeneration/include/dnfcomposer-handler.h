@@ -5,9 +5,7 @@
 
 #include "../lib/dynamic-neural-field-composer/include/application/application.h"
 #include "./dnf-architecture.h"
-#include "./macros.h"
 #include "./user-interface-window.h"
-
 
 struct SimulationElements
 {
@@ -24,6 +22,9 @@ struct SimulationParameters
 	double inputFieldCentroid, outputFieldCentroid;
 	const int timeForFieldToSettle = 20;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
+
+	bool isDebugMode = false;
+	bool isUserInterfaceActive = false;
 };
 
 class DnfcomposerHandler
@@ -47,24 +48,24 @@ private:
 
 public:
 	DnfcomposerHandler();
+	DnfcomposerHandler(bool isUserInterfaceActive);
+
 	~DnfcomposerHandler() = default;
 	
 	void init();
 	void step();
 	void close();
 
+	void closeSimulation() const;
 
-	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setExternalInput(const double& position);
+	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
-	void setInitializeFields();
 
 	double getInputFieldCentroid() const;
 	double getOutputFieldCentroid() const;
 	bool getHaveFieldsSettled() const;
-	
-	
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 	
 private:

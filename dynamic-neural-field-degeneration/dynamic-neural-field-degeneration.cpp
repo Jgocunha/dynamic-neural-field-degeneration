@@ -16,7 +16,10 @@ int main()
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
-        params.incrementOfDegenerationPercentage = 10;
+
+        params.isDataSavingOn = true;
+        params.isVisualisationOn = false;
+        params.isDebugModeOn = true;
 
         ExperimentHandler experiment { params };
 

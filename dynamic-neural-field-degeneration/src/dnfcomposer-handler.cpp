@@ -14,6 +14,21 @@ DnfcomposerHandler::DnfcomposerHandler()
 	setupUserInterface();
 }
 
+DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
+{
+	simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
+
+	simulation = getExperimentSimulation();
+	application = std::make_unique<Application>(simulation, simulationParameters.isUserInterfaceActive);
+
+	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+
+	if(simulationParameters.isUserInterfaceActive)
+		setupUserInterface();
+}
+
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
@@ -31,8 +46,6 @@ void DnfcomposerHandler::step()
 			activateDegeneration();
 		else if(wasExternalInputUpdated)
 			updateExternalInput();
-		else if(wasIntializationRequested)
-			initializeFields();
 		else
 			application->step();
 
@@ -47,6 +60,11 @@ void DnfcomposerHandler::close()
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
 	readCentroidsThread.join();
+}
+
+void DnfcomposerHandler::closeSimulation() const
+{
+	simulation->close();
 }
 
 void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType)
@@ -71,10 +89,6 @@ void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) 
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
 }
 
-void DnfcomposerHandler::setInitializeFields()
-{
-	wasIntializationRequested = true;
-}
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
@@ -122,6 +136,11 @@ void DnfcomposerHandler::setupUserInterface()
 
 void DnfcomposerHandler::updateExternalInput()
 {
+
+	initializeFields();
+
+	Sleep(100);
+
 	static double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 25, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
@@ -146,7 +165,9 @@ void DnfcomposerHandler::updateFieldCentroids()
 	{
 		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
 		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
-		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+
+		if(simulationParameters.isUserInterfaceActive)
+			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
 		userRequestClose = application->getCloseUI();
 		Sleep(20);
