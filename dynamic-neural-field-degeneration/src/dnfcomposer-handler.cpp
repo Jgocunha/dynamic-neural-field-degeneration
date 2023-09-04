@@ -62,8 +62,9 @@ void DnfcomposerHandler::close()
 	readCentroidsThread.join();
 }
 
-void DnfcomposerHandler::closeSimulation() const
+void DnfcomposerHandler::closeSimulation()
 {
+	numberOfDegeneratedElements = 0;
 	simulation->close();
 }
 
@@ -71,6 +72,22 @@ void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType)
 {
 	simulationParameters.degeneracyType = degeneracyType;
 	wasDegenerationRequested = true;
+}
+
+void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType, 
+	const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const
+{
+	userInterfaceWindow->setExperimentSetupData(currentDegenerationType, maximumAllowedDeviation, typeOfElementsDegenerated);
+}
+
+void DnfcomposerHandler::setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const
+{
+	userInterfaceWindow->setExpectedCentroids(targetPerceptualFieldCentroid, targetDecisionFieldCentroid);
+}
+
+void DnfcomposerHandler::setTrial(const int& trial) const
+{
+	userInterfaceWindow->setCurrentTrial(trial);
 }
 
 void DnfcomposerHandler::setExternalInput(const double& position)
@@ -136,7 +153,6 @@ void DnfcomposerHandler::setupUserInterface()
 
 void DnfcomposerHandler::updateExternalInput()
 {
-
 	initializeFields();
 
 	Sleep(100);
@@ -176,28 +192,33 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 void DnfcomposerHandler::activateDegeneration()
 {
-	static int elementCount = 0;
-	elementCount++;
+	//static int elementCount = 0;
+	numberOfDegeneratedElements++;
 
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.inputField->startDegeneration();
-		std::cout << "Deactivated " << elementCount << " neurons." << std::endl;
+		if(simulationParameters.isDebugMode)
+			std::cout << "Deactivated " << numberOfDegeneratedElements << " neurons." << std::endl;
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
-		std::cout << "Deactivated " << elementCount << " weights." << std::endl;
+		if (simulationParameters.isDebugMode)
+			std::cout << "Deactivated " << numberOfDegeneratedElements << " weights." << std::endl;
 		break;
 	default:
 		break;
 	}
 
 	waitForFieldsToSettle();
+
+	if(simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setNumberOfDegeneratedElements(numberOfDegeneratedElements);
 
 	haveFieldsSettled = true;
 	wasDegenerationRequested = false;

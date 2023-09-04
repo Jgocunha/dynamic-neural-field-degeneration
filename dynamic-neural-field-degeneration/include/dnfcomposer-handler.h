@@ -41,6 +41,8 @@ private:
 	SimulationElements simulationElements;
 	SimulationParameters simulationParameters;
 
+	int numberOfDegeneratedElements = 0;
+
 	bool wasIntializationRequested = false;
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
@@ -56,8 +58,12 @@ public:
 	void step();
 	void close();
 
-	void closeSimulation() const;
+	void closeSimulation();
 
+	void setExperimentSetupData(const std::string& currentDegenerationType,
+		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
+	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
+	void setTrial(const int& trial) const;
 	void setExternalInput(const double& position);
 	void setDegeneracy(ElementDegeneracyType degeneracyType);
 	void setHaveFieldsSettled(bool haveFieldsSettled);

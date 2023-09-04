@@ -9,19 +9,21 @@
 
 struct ExperimentParameters
 {
-	std::string filePathPrefix = "../../../data/"; //
+	std::string filePathPrefix = "../../../data/";
 	
-	int decisionTolerance = 5; //
-	int numberOfTrials = 10; //
+	int decisionTolerance = 5;
+	int numberOfTrials = 10;
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE; //
-	std::string degeneracyName = "deactivate-weights"; //
+	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+	std::string degeneracyName = "deactivate-weights";
+	std::string typeOfElementsDegenerated = "weights";
 
-	double targetExternalStimulusPosition = 20; //
+	double targetExternalStimulusPosition = 0;
+	double targetOutputCentroid = 20;
 
-	int initialPercentageOfDegeneration = 0; //
-	int targetPercentageOfDegeneration = 100; //
-	int currentPercentageOfDegeneration = 0; //
+	int initialPercentageOfDegeneration = 0;
+	int targetPercentageOfDegeneration = 100;
+	int currentPercentageOfDegeneration = 0;
 
 	bool isDataSavingOn = false;
 	bool isVisualisationOn = true;
@@ -56,8 +58,10 @@ public:
 
 private:
 	void printExperimentSetupToConsole() const;
+	void setExperimentSetupData() const;
+	void setExpectedFieldBehaviour() const;
 
-	void setupProcedure();
+	void setupProcedure(const int& trial);
 	void degenerationProcedure();
 	void cleanUpTrial();
 

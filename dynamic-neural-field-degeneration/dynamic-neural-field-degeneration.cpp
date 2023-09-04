@@ -11,15 +11,17 @@ int main()
 
         params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
         params.degeneracyName = "NEURONS_DEACTIVATE";
+        params.typeOfElementsDegenerated = "neurons";
 
         params.targetExternalStimulusPosition = 0;
+        params.targetOutputCentroid = 15;
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
 
         params.isDataSavingOn = true;
-        params.isVisualisationOn = false;
-        params.isDebugModeOn = true;
+        params.isVisualisationOn = true;
+        params.isDebugModeOn = false;
 
         ExperimentHandler experiment { params };
 

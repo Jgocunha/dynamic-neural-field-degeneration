@@ -25,6 +25,16 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	std::cout << "----------------------------------------" << std::endl << std::endl;
 }
 
+ void ExperimentHandler::setExperimentSetupData() const
+ {
+	 dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
+ }
+
+ void ExperimentHandler::setExpectedFieldBehaviour() const
+ {
+	 dnfcomposerHandler.setExpectedFieldBehavior(params.targetExternalStimulusPosition, params.targetOutputCentroid);
+ }
+
 void ExperimentHandler::init()
 {
 	dnfcomposerHandler.init();
@@ -34,13 +44,15 @@ void ExperimentHandler::init()
 void ExperimentHandler::step()
 {
 	printExperimentSetupToConsole();
+	setExperimentSetupData();
+	setExpectedFieldBehaviour();
 
 	for(int i = 0; i < params.numberOfTrials; i++)
 	{
 		if (params.isDebugModeOn)
 			std::cout << "Trial: " << i << std::endl;
 
-		setupProcedure();
+		setupProcedure(i);
 		degenerationProcedure();
 		cleanUpTrial();
 	}
@@ -53,8 +65,10 @@ void ExperimentHandler::close()
 }
 
 
-void ExperimentHandler::setupProcedure()
+void ExperimentHandler::setupProcedure(const int& trial)
 {
+	dnfcomposerHandler.setTrial(trial);
+
 	// add and remove stimulus and wait for the fields to settle
 	dnfcomposerHandler.setExternalInput(params.targetExternalStimulusPosition);
 
@@ -76,7 +90,8 @@ void ExperimentHandler::degenerationProcedure()
 		// apply degeneration and wait for the fields to settle
 		dnfcomposerHandler.setDegeneracy(params.degeneracyType);
 
-		while(!dnfcomposerHandler.getHaveFieldsSettled());
+		while (!dnfcomposerHandler.getHaveFieldsSettled());
+
 		dnfcomposerHandler.setHaveFieldsSettled(false);
 
 		isOutputFieldDegenerated = hasOutputFieldDegenerated();
