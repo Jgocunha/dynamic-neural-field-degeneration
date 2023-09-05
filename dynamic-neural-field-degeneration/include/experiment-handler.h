@@ -130,4 +130,6 @@ private:
 
 	void degenerationProcedure();
 	int getNumberOfElementsToDegenerate() const;
+
+	void relearningProcedure();
 };

@@ -11,10 +11,10 @@ int main()
         params.numberOfTrials = 1;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
         params.fieldToDegenerate = "perceptual";
 
-        params.initialPercentageOfDegeneration = 10;
+        params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 

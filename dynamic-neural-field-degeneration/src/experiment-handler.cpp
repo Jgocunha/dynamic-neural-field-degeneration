@@ -42,14 +42,30 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	if(params.isLinkToCoppeliaSimOn)
-		bonafidePickAndPlace();
-	else
-		mockPickAndPlace();
-
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < params.numberOfTrials; i++)
 	{
-		degenerationProcedure();
+		do
+		{
+			if(params.isDebugModeOn)
+				std::cout << "Trial " << i + 1 << " started." << std::endl;
+
+			bool successfulPickAndPlace = false;
+
+			if(params.isLinkToCoppeliaSimOn)
+				successfulPickAndPlace = bonafidePickAndPlace();
+			else
+				successfulPickAndPlace = mockPickAndPlace();
+
+			if(!successfulPickAndPlace)
+				relearningProcedure();
+			else
+			{
+				degenerationProcedure();
+				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+			}
+		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration);
+
+		cleanupTrial();
 	}
 
 }
@@ -289,6 +305,23 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	default:
 		return 0;
 	}
+}
+
+void ExperimentHandler::relearningProcedure()
+{
+	if (params.isDebugModeOn)
+		std::cout << "Relearning procedure started." << std::endl;
+
+}
+
+void ExperimentHandler::cleanupTrial()
+{
+	stats.numOfRelearningCycles = 0;
+	stats.shapesPlacedIncorrectly = 0;
+	if(params.isLinkToCoppeliaSimOn)
+		coppeliasimHandler.resetSignals();
+	if(params.isDebugModeOn)
+		std::cout << "Trial finished." << std::endl;
 }
 
 
