@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <thread>
+#include <bitset>
 
 #include "./coppeliasim-handler.h"
 #include "./dnfcomposer-handler.h"
@@ -26,6 +27,8 @@ struct ExperimentParameters
 	int currentPercentageOfDegeneration = 0;
 	int incrementOfDegenerationPercentage = 10;
 
+	int maximumAmountOfRelearningCycles = 10;
+
 	bool isDataSavingOn = false;
 	bool isVisualisationOn = true;
 	bool isDebugModeOn = true;
@@ -47,6 +50,7 @@ struct ExperimentStatistics
 	int numIncorrectDecisions = 0;
 	double decisionRatio = 0.0;
 	int numOfRelearningCycles = 0;
+	int shapesPlacedIncorrectly = 0;
 };
 
 class ExperimentHandler
@@ -80,6 +84,9 @@ public:
 	void step();
 	void close();
 private:
+
+	void printSetupToConsole();
+
 	bool pickAndPlace();
 
 	void createShape();
@@ -101,4 +108,5 @@ private:
 	bool doesBackupWeigthsFileExist();
 
 	void saveLearningCyclesPerTrial();
+	void saveNumberOfIncorrectlyPlacedBoxes();
 };

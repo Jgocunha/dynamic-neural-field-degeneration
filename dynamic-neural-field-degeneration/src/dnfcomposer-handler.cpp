@@ -30,14 +30,17 @@ void DnfcomposerHandler::step()
 	bool userRequestClose = false;
 	while (!userRequestClose)
 	{
-		application->step();
-		//updateFieldCentroids();
-		if(wasExternalInputUpdated)
-			updateExternalInput();
 		if(wasDegenerationRequested)
 			activateDegeneration();
-		if (wasRelearningRequested)
-			activateRelearning();
+		else
+		{
+			application->step();
+			//updateFieldCentroids();
+			if(wasExternalInputUpdated)
+				updateExternalInput();
+			if (wasRelearningRequested)
+				activateRelearning();
+		}
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -62,11 +65,6 @@ void DnfcomposerHandler::setExternalInput(const double& position)
 	this->simulationParameters.externalInputPosition = position;
 	wasExternalInputUpdated = true;
 }
-
-//void DnfcomposerHandler::setRelearning()
-//{
-//	wasRelearningRequested = true;
-//}
 
 void DnfcomposerHandler::setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid)
 {
@@ -167,25 +165,28 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 void DnfcomposerHandler::activateDegeneration()
 {
+	static int elementCount = 0;
+	elementCount++;
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.inputField->startDegeneration();
+		std::cout << "Deactivated " << elementCount << " neurons." << std::endl;
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
+		std::cout << "Deactivated " << elementCount << " weights." << std::endl;
 		break;
 	default:
 		break;
 	}
-	application->step();
-	Sleep(2);
-	simulationElements.fieldCoupling->saveWeights();
-	Sleep(2);
+	//Sleep(2);
+	//application->step();
+	//Sleep(2);
 	wasDegenerationRequested = false;
 }
 
@@ -233,11 +234,16 @@ void DnfcomposerHandler::clearRelearning()
 	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
 }
 
+void DnfcomposerHandler::clearDegeneration()
+{
+	wasDegenerationRequested = false;
+}
+
 void DnfcomposerHandler::activateRelearning()
 {
 	clearRelearning();
 
-// add gaussian inputs
+	// add gaussian inputs
 	double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
 
@@ -263,23 +269,28 @@ void DnfcomposerHandler::activateRelearning()
 	};
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-		simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 		
-		//std::cout << "Finished setting up the field coupling wizard.\n";
+	//std::cout << "Finished setting up the field coupling wizard.\n";
 	
-		gsp.amplitude = 15;
-		gsp.sigma = 3;
+	gsp.amplitude = 15;
+	gsp.sigma = 3;
 		
-		simulationElements.fcpw.setGaussStimulusParameters(gsp);
-		//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+	simulationElements.fcpw.setGaussStimulusParameters(gsp);
+	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 	
-		simulationElements.fcpw.simulateAssociation();
-		//std::cout << "Finished simulating association.\n";
+	simulationElements.fcpw.simulateAssociation();
+	//std::cout << "Finished simulating association.\n";
 		
-		// only 1 iteration of training
-		simulationElements.fcpw.trainWeights(1);
-		//std::cout << "Finished training weights.\n";
+	// only 1 iteration of training
+	simulationElements.fcpw.trainWeights(1);
+	//std::cout << "Finished training weights.\n";
 		
-		wasRelearningRequested = false;
-		hasRelearningFinished = true;
+	wasRelearningRequested = false;
+	hasRelearningFinished = true;
+}
+
+void DnfcomposerHandler::saveWeightsToFile()
+{
+	simulationElements.fieldCoupling->saveWeights();
 }

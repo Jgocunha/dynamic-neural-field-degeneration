@@ -71,8 +71,11 @@ public:
 	bool getHasRelearningFinished();
 	
 	void clearRelearning();
+	void clearDegeneration();
 	
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
+	
+	void saveWeightsToFile();
 private:
 	void setupUserInterface();
 
