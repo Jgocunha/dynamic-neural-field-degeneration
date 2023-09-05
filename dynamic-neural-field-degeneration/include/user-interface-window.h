@@ -54,6 +54,7 @@ private:
 	void renderExperimentDetails() const;
 	void renderFieldAnalysis() const;
 	void renderDegenerationStatistics() const;
+	void renderFieldCentroidOverTime() const;
 
 public:
 	static double calculateFieldCentroidDeviation(const double &fieldCentroid, const double &expectedFieldCentroid);

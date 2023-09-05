@@ -18,6 +18,10 @@ void ExperimentWindow::render()
 	if (ImGui::Begin("Degeneration statistics"))
 		renderDegenerationStatistics();
 	ImGui::End();
+
+	if (ImGui::Begin("Plot of decision field centroid plot over time"))
+		renderFieldCentroidOverTime();
+	ImGui::End();
 }
 
 void ExperimentWindow::renderExperimentDetails() const
@@ -80,6 +84,42 @@ void ExperimentWindow::renderDegenerationStatistics() const
 {
 	ImGui::Text("Number of degenerated elements is %d.", expWinParams.numberOfDegeneratedElements);
 	ImGui::Text("Type of elements degenerated is %s.", expWinParams.typeOfElementsDegenerated.c_str());
+}
+
+void ExperimentWindow::renderFieldCentroidOverTime() const
+{
+	static std::vector<double> decisionFieldCentroidValue;
+	static int iteration = 0;
+
+
+	if (expWinParams.decisionFieldCentroid > 0.0)
+	{
+		decisionFieldCentroidValue.push_back(expWinParams.decisionFieldCentroid);
+	}
+	else
+	{
+		decisionFieldCentroidValue.clear();
+		iteration = 0;
+	}
+
+	ImPlotStyle& style = ImPlot::GetStyle();
+	style.LineWeight = 3.0f;
+
+
+	if (ImPlot::BeginPlot("Decision field centroid plot over time"))
+	{
+		ImPlot::SetupAxes("Simulation iterations", "Value of centroid");
+		ImPlot::SetupLegend(ImPlotLocation_NorthEast, ImPlotLegendFlags_Outside);
+
+		const std::string labelInputField = "Centroid of decision field";
+		ImPlot::SetupAxisLimits(ImAxis_Y1, 35, 45, ImGuiCond_Always);
+		ImPlot::SetupAxisLimits(ImAxis_X1, 0, decisionFieldCentroidValue.size(), ImGuiCond_Always);
+		ImPlot::PlotLine(labelInputField.c_str(), &decisionFieldCentroidValue[0], decisionFieldCentroidValue.size());
+
+	}
+
+	ImPlot::EndPlot();
+	iteration++;
 }
 
 void ExperimentWindow::setCurrentTrial(const int& currentTrial)

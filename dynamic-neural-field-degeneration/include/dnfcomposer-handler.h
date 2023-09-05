@@ -20,8 +20,9 @@ struct SimulationParameters
 	std::string fieldCouplingId = "per - dec";
 	double externalInputPosition = 0;
 	double inputFieldCentroid, outputFieldCentroid;
-	const int timeForFieldToSettle = 20;
+	int timeForFieldToSettle = 5;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
+	std::string fieldToDegenerate = "perceptual";
 
 	bool isDebugMode = false;
 	bool isUserInterfaceActive = false;
@@ -47,6 +48,7 @@ private:
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
 	bool haveFieldsSettled = false;
+	bool hasExperimentFinished = false;
 
 public:
 	DnfcomposerHandler();
@@ -57,6 +59,7 @@ public:
 	void init();
 	void step();
 	void close();
+	void stop();
 
 	void closeSimulation();
 
@@ -65,7 +68,7 @@ public:
 	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
 	void setTrial(const int& trial) const;
 	void setExternalInput(const double& position);
-	void setDegeneracy(ElementDegeneracyType degeneracyType);
+	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
 

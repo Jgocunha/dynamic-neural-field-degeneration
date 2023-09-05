@@ -4,7 +4,7 @@
 std::shared_ptr<Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(5, 0, 0);
+	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(20, 0, 0);
 
 	const int perceptualFieldSize = 360;
 	const int decisionFieldSize = 180;

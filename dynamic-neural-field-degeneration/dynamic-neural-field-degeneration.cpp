@@ -1,28 +1,61 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
+ExperimentParameters setExperimentParameters()
+{
+    ExperimentParameters params;
+
+	params.numberOfTrials = 1000;
+    params.decisionTolerance = 0.1;
+
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
+    params.fieldToDegenerate = "decision";
+    setDegeneracyNameAndTypeOfElements(params);
+
+    params.targetExternalStimulusPosition = 41;
+    params.targetOutputCentroid = 40;
+
+    params.isDataSavingOn = true;
+    params.isVisualisationOn = false;
+    params.isDebugModeOn = true;
+
+    return params;
+}
+
+void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
+{
+    switch(params.degeneracyType)
+    {
+		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+    		params.degeneracyName = "deactivate";
+            params.typeOfElementsDegenerated = "weights";
+    		break;
+	    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+    		params.degeneracyName = "randomize";
+            params.typeOfElementsDegenerated = "weights";
+    		break;
+        case ElementDegeneracyType::WEIGHTS_REDUCE:
+            params.degeneracyName = "reduce 0.4";
+            params.typeOfElementsDegenerated = "weights";
+            break;
+	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
+            if(params.fieldToDegenerate == "perceptual")
+				params.typeOfElementsDegenerated = "pre-synaptic neurons";
+			else if(params.fieldToDegenerate == "decision")
+				params.typeOfElementsDegenerated = "post-synaptic neurons";
+            params.degeneracyName = "deactivate";
+    		break;
+	    default:
+            break;
+    }
+	params.degeneracyName = params.degeneracyName + " " + params.typeOfElementsDegenerated;
+}
+
 int main()
 {
     try
     {
-        ExperimentParameters params;
-        params.numberOfTrials = 2;
-        params.decisionTolerance = 2;
-
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.degeneracyName = "NEURONS_DEACTIVATE";
-        params.typeOfElementsDegenerated = "neurons";
-
-        params.targetExternalStimulusPosition = 0;
-        params.targetOutputCentroid = 15;
-
-        params.initialPercentageOfDegeneration = 0;
-        params.targetPercentageOfDegeneration = 100;
-
-        params.isDataSavingOn = true;
-        params.isVisualisationOn = true;
-        params.isDebugModeOn = false;
-
+        const ExperimentParameters params = setExperimentParameters();
         ExperimentHandler experiment { params };
 
         experiment.init();
