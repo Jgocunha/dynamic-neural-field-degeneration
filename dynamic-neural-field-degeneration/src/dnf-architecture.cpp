@@ -4,7 +4,7 @@
 std::shared_ptr<Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(5, 0, 0);
+	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(20, 0, 0);
 
 	const int perceptualFieldSize = 360;
 	const int decisionFieldSize = 180;
@@ -34,7 +34,9 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
 	simulation->addElement(k_dec_dec);
 
-	std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.5, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
+	std::shared_ptr<DegenerateFieldCoupling> w_per_dec
+	(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, 
+		{ 0.5, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
 	simulation->addElement(w_per_dec);
 
 	// create noise stimulus and noise kernel

@@ -6,22 +6,22 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-    params.numberOfShapesPerTrial = 1;
-    params.numberOfTrials = 1000;
-    params.decisionTolerance = 0.1;
+    params.numberOfShapesPerTrial = 7;
+    params.numberOfTrials = 1;
+    params.decisionTolerance = 5;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
+    params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
     params.fieldToDegenerate = "decision";
     setDegeneracyNameAndTypeOfElements(params);
 
-    params.initialPercentageOfDegeneration = 0;
+    params.initialPercentageOfDegeneration = 10;
     params.targetPercentageOfDegeneration = 100;
     params.incrementOfDegenerationPercentage = 10;
 
     params.maximumAmountOfRelearningCycles = 10;
 
     params.isDataSavingOn = true;
-    params.isVisualisationOn = false;
+    params.isVisualisationOn = true;
     params.isDebugModeOn = true;
 
     return params;

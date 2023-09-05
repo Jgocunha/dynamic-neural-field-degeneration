@@ -21,10 +21,17 @@ struct SimulationParameters
 	std::string inputFieldId = "perceptual field";
 	std::string outputFieldId = "decision field";
 	std::string fieldCouplingId = "per - dec";
-	double externalInputPosition, expectedOutputCentroid;
-	double inputFieldCentroid, outputFieldCentroid;
-	const int timeForFieldToSettle = 75;
+
+	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
+	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
+
+	const int timeForFieldToSettle = 20;
+
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
+	std::string fieldToDegenerate = "perceptual";
+
+	bool isDebugMode = false;
+	bool isUserInterfaceActive = false;
 };
 
 struct RelearningParameters
@@ -37,6 +44,7 @@ class DnfcomposerHandler
 private:
 	std::thread dnfcomposerThread;
 	std::thread readCentroidsThread;
+
 	std::unique_ptr<Application> application;
 	std::shared_ptr<Simulation> simulation;
 	std::shared_ptr<ExperimentWindow> userInterfaceWindow;
@@ -45,43 +53,58 @@ private:
 	SimulationParameters simulationParameters;
 	RelearningParameters relearningParameters;
 
+	int numberOfDegeneratedElements = 0;
+	int numberOfRelearningCycles = 0;
+
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
 	bool wasRelearningRequested = false;
 	bool haveFieldsSettled = false;
 	bool hasRelearningFinished = false;
+	bool hasExperimentFinished = false;
 
 public:
 	DnfcomposerHandler();
+	DnfcomposerHandler(bool isUserInterfaceActive);
+
 	~DnfcomposerHandler() = default;
 	
 	void init();
 	void step();
 	void close();
+	void stop();
 
-	void setDegeneracy(ElementDegeneracyType degeneracyType);
+	void closeSimulation();
+
+	void setExperimentSetupData(const std::string& currentDegenerationType,
+		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
+	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
+	void setTrial(const int& trial) const;
+
+
+	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
 	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
-	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive);
+	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
 
-	double getInputFieldCentroid();
-	double getOutputFieldCentroid();
-	bool getHaveFieldsSettled();
-	bool getHasRelearningFinished();
+	double getInputFieldCentroid() const;
+	double getOutputFieldCentroid() const;
+	bool getHaveFieldsSettled() const;
+	bool getHasRelearningFinished() const;
+	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 	
 	void clearRelearning();
 	void clearDegeneration();
 	
-	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 	
-	void saveWeightsToFile();
+	void saveWeightsToFile() const;
 private:
 	void setupUserInterface();
-
 	void updateExternalInput();
 	void updateFieldCentroids();
-
 	void activateDegeneration();
 	void activateRelearning();
+	void waitForFieldsToSettle() const;
+
 };

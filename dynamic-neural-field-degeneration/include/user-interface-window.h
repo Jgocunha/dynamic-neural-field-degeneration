@@ -6,11 +6,21 @@
 struct ExperimentWindowParameters
 {
 	int currentTrial = 0;
+	std::string currentDegenerationType = "null";
+	double maximumAllowedDeviation = 0.0;
+
 	double perceptualFieldCentroid = 0.0, decisionFieldCentroid = 0.0;
-	double cuboidHue = 0.0, expectedTargetAngle = 0.0;
-	double correctDecisionRatio = 0.0;
-	int numCorrectDecisions = 0;
-	std::string currentDegeneration = "null";
+	double expectedPerceptualFieldCentroid = 0.0, expectedDecisionFieldCentroid = 0.0;
+	double perceptualFieldCentroidDeviation = 0.0, decisionFieldCentroidDeviation = 0.0;
+
+	int numberOfDegeneratedElements = 0;
+	std::string typeOfElementsDegenerated = "null";
+
+	bool isRelearningActive = false;
+	int numOfRelearningCycles = 0;
+	//double correctDecisionRatio = 0.0;
+	//int numCorrectDecisions = 0;
+
 };
 
 
@@ -24,19 +34,33 @@ public:
 	void render() override;
 	~ExperimentWindow() = default;
 
-	void setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions);
-	void setData(const double& cuboidHue, const double& expectedTargetAngle);
+
+	void setExperimentSetupData(const std::string& currentDegenerationType,
+		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated);
+	void setCurrentTrial(const int& currentTrial);
 	void setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid);
+	void setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid);
+	void setNumberOfDegeneratedElements(const int& numberOfDegeneratedElements);
 
 private:
-	void setDecisionRatio(const double& decisionRatio);
-	void setCurrentTrial(const int& currentTrial);
-	void setCuboidHue(const double& cuboidHue);
-	void setExpectedTargetAngle(const double& expectedTargetAngle);
-	void setNumCorrectDecisions(const int& numCorrectDecisions);
-	void setDecisionFieldCentroid(const double& robotTargetAngle);
-	void setPerceptualFieldCentroid(const double& perceptualFieldCentroid);
 
-	void renderShapeDetails();
-	void renderExperimentStatistics();
+	static double calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid);
+
+	void setCurrentDegenerationType(const std::string& currentDegenerationType);
+	void setMaximumAllowedDeviation(const double& maximumAllowedDeviation);
+	void setTypeOfElementsDegenerated(const std::string& typeOfElementsDegenerated);
+
+	void setPerceptualFieldCentroid(const double& perceptualFieldCentroid);
+	void setDecisionFieldCentroid(const double& decisionFieldCentroid);
+
+	void setExpectedPerceptualFieldCentroid(const double& expectedPerceptualFieldCentroid);
+	void setExpectedDecisionFieldCentroid(const double& expectedDecisionFieldCentroid);
+
+	void setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation);
+	void setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation);
+private:
+	void renderExperimentDetails() const;
+	void renderFieldAnalysis() const;
+	void renderDegenerationStatistics() const;
+	void renderRelearningStatistics() const;
 };

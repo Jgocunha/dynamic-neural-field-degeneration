@@ -7,39 +7,101 @@ ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation
 
 void ExperimentWindow::render()
 {
-	if (ImGui::Begin("Field analysis"))
-		renderShapeDetails();
+	if (ImGui::Begin("Setup details"))
+		renderExperimentDetails();
 	ImGui::End();
 
-	if (ImGui::Begin("Experiment statistics"))
-		renderExperimentStatistics();
+	if (ImGui::Begin("Field analysis"))
+		renderFieldAnalysis();
 	ImGui::End();
+
+	if (ImGui::Begin("Degeneration statistics"))
+		renderDegenerationStatistics();
+	ImGui::End();
+
+	if (ImGui::Begin("Relearning statistics"))
+		renderRelearningStatistics();
+	ImGui::End();
+
 }
 
-void ExperimentWindow::renderExperimentStatistics()
+// render functions
+
+void ExperimentWindow::renderExperimentDetails() const
 {
 	ImGui::Text("Current trial is %d", expWinParams.currentTrial);
-	ImGui::Text("Number of correct decisions is %d", expWinParams.numCorrectDecisions);
-	ImGui::Text("Correct decision percentage %.2f", expWinParams.correctDecisionRatio);
+	ImGui::Text("Current degeneration type is %s", expWinParams.currentDegenerationType.c_str());
 }
 
-void ExperimentWindow::renderShapeDetails()
+void ExperimentWindow::renderFieldAnalysis() const
 {
-	ImGui::Text("Cuboid hue is %.2f", expWinParams.cuboidHue);
-	ImGui::Text("Perceptual field centroid is %.2f", expWinParams.perceptualFieldCentroid);
+	ImGui::Text("Perceptual field centroid is %.2f.", expWinParams.perceptualFieldCentroid);
+	ImGui::Text("Expected perceptual field centroid is %.2f.", expWinParams.expectedPerceptualFieldCentroid);
+	ImGui::Text("Maximum allowed deviation is %.2f.", expWinParams.maximumAllowedDeviation);
 
-	ImGui::Text("Expected place angle is %.2f", expWinParams.expectedTargetAngle);
+	// Check the condition and set the font color accordingly
+	if (expWinParams.perceptualFieldCentroidDeviation > expWinParams.maximumAllowedDeviation)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color
+		ImGui::Text("Perceptual field centroid is not within limits.");
+	}
+	else
+	{
+		// green color
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		ImGui::Text("Perceptual field centroid is within limits.");
+	}
+
+	ImGui::Text("Current deviation is %.2f.", expWinParams.perceptualFieldCentroidDeviation);
+
+	// Reset the font color to the default
+	ImGui::PopStyleColor();
+
+	// Custom vertical spacing using a dummy element with a specific size
+	ImGui::Dummy(ImVec2(0.0f, 20.0f)); // Adjust the second parameter for the desired vertical spacing size
+
 	ImGui::Text("Decision field centroid is %.2f", expWinParams.decisionFieldCentroid);
+	ImGui::Text("Expected decision field centroid is %.2f", expWinParams.expectedDecisionFieldCentroid);
+	ImGui::Text("Maximum allowed deviation is %.2f", expWinParams.maximumAllowedDeviation);
+
+	// Check the condition and set the font color accordingly
+	if (expWinParams.decisionFieldCentroidDeviation > expWinParams.maximumAllowedDeviation)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color
+		ImGui::Text("Decision field centroid is not within limits.");
+	}
+	else
+	{
+		// green color
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		ImGui::Text("Decision field centroid is within limits.");
+	}
+
+	ImGui::Text("Current deviation is %.2f.", expWinParams.decisionFieldCentroidDeviation);
+
+	// Reset the font color to the default
+	ImGui::PopStyleColor();
 }
 
-void ExperimentWindow::setCuboidHue(const double& cuboidHue)
+void ExperimentWindow::renderDegenerationStatistics() const
 {
-	expWinParams.cuboidHue = cuboidHue;
+	ImGui::Text("Number of degenerated elements is %d.", expWinParams.numberOfDegeneratedElements);
+	ImGui::Text("Type of elements degenerated is %s.", expWinParams.typeOfElementsDegenerated.c_str());
 }
 
-void ExperimentWindow::setDecisionFieldCentroid(const double& decisionFieldCentroid)
+void ExperimentWindow::renderRelearningStatistics() const
 {
-	expWinParams.decisionFieldCentroid = decisionFieldCentroid;
+	ImGui::Text("Relearning is active: %s.", expWinParams.isRelearningActive ? "true" : "false");
+	ImGui::Text("Number of relearning cycles is %d.", expWinParams.numOfRelearningCycles);
+}
+
+// public set functions
+
+void ExperimentWindow::setExperimentSetupData(const std::string& currentDegenerationType, const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated)
+{
+	setCurrentDegenerationType(currentDegenerationType);
+	setMaximumAllowedDeviation(maximumAllowedDeviation);
+	setTypeOfElementsDegenerated(typeOfElementsDegenerated);
 }
 
 void ExperimentWindow::setCurrentTrial(const int& currentTrial)
@@ -47,19 +109,48 @@ void ExperimentWindow::setCurrentTrial(const int& currentTrial)
 	expWinParams.currentTrial = currentTrial;
 }
 
-void ExperimentWindow::setDecisionRatio(const double& decisionRatio)
+void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid)
 {
-	expWinParams.correctDecisionRatio = decisionRatio;
+	setPerceptualFieldCentroid(perceptualFieldCentroid);
+	setDecisionFieldCentroid(decisionFieldCentroid);
+
+	setPerceptualFieldCentroidDeviation(calculateFieldCentroidDeviation(perceptualFieldCentroid, expWinParams.expectedPerceptualFieldCentroid));
+	setDecisionFieldCentroidDeviation(calculateFieldCentroidDeviation(decisionFieldCentroid, expWinParams.expectedDecisionFieldCentroid));
 }
 
-void ExperimentWindow::setNumCorrectDecisions(const int& numCorrectDecisions)
+void ExperimentWindow::setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid)
 {
-	expWinParams.numCorrectDecisions = numCorrectDecisions;
+	setExpectedPerceptualFieldCentroid(expectedPerceptualFieldCentroid);
+	setExpectedDecisionFieldCentroid(expectedDecisionFieldCentroid);
 }
 
-void ExperimentWindow::setExpectedTargetAngle(const double& expectedTargetAngle)
+void ExperimentWindow::setNumberOfDegeneratedElements(const int& numberOfDegeneratedElements)
 {
-	expWinParams.expectedTargetAngle = expectedTargetAngle;
+	expWinParams.numberOfDegeneratedElements = numberOfDegeneratedElements;
+}
+
+// auxiliary functions
+
+double ExperimentWindow::calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid)
+{
+	return std::abs(fieldCentroid - expectedFieldCentroid);
+}
+
+// private set functions
+
+void ExperimentWindow::setCurrentDegenerationType(const std::string& currentDegenerationType)
+{
+	expWinParams.currentDegenerationType = currentDegenerationType;
+}
+
+void ExperimentWindow::setMaximumAllowedDeviation(const double& maximumAllowedDeviation)
+{
+	expWinParams.maximumAllowedDeviation = maximumAllowedDeviation;
+}
+
+void ExperimentWindow::setTypeOfElementsDegenerated(const std::string& typeOfElementsDegenerated)
+{
+	expWinParams.typeOfElementsDegenerated = typeOfElementsDegenerated;
 }
 
 void ExperimentWindow::setPerceptualFieldCentroid(const double& perceptualFieldCentroid)
@@ -67,22 +158,27 @@ void ExperimentWindow::setPerceptualFieldCentroid(const double& perceptualFieldC
 	expWinParams.perceptualFieldCentroid = perceptualFieldCentroid;
 }
 
-void ExperimentWindow::setStatistics(const int& currentTrial, const double& decisionRatio, const int& numCorrectDecisions)
+void ExperimentWindow::setDecisionFieldCentroid(const double& decisionFieldCentroid)
 {
-	setCurrentTrial(currentTrial);
-	setDecisionRatio(decisionRatio);
-	setNumCorrectDecisions(numCorrectDecisions);
+	expWinParams.decisionFieldCentroid = decisionFieldCentroid;
 }
 
-void ExperimentWindow::setData(const double& cuboidHue, const double& expectedTargetAngle)
+void ExperimentWindow::setExpectedPerceptualFieldCentroid(const double& expectedPerceptualFieldCentroid)
 {
-	setCuboidHue(cuboidHue);
-	setExpectedTargetAngle(expectedTargetAngle);
-
+	expWinParams.expectedPerceptualFieldCentroid = expectedPerceptualFieldCentroid;
 }
 
-void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid)
+void ExperimentWindow::setExpectedDecisionFieldCentroid(const double& expectedDecisionFieldCentroid)
 {
-	setPerceptualFieldCentroid(perceptualFieldCentroid);
-	setDecisionFieldCentroid(decisionFieldCentroid);
+	expWinParams.expectedDecisionFieldCentroid = expectedDecisionFieldCentroid;
+}
+
+void ExperimentWindow::setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation)
+{
+	expWinParams.perceptualFieldCentroidDeviation = perceptualFieldCentroidDeviation;
+}
+
+void ExperimentWindow::setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation)
+{
+	expWinParams.decisionFieldCentroidDeviation = decisionFieldCentroidDeviation;
 }

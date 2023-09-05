@@ -2,18 +2,12 @@
 #include "../include/experiment-handler.h"
 
 ExperimentHandler::ExperimentHandler(const ExperimentParameters& param)
-	:param(param)
+	: dnfcomposerHandler(DnfcomposerHandler(param.isVisualisationOn)), param(param)
 {
 }
 
-void ExperimentHandler::init()
-{
-	dnfcomposerHandler.init();
-	coppeliasimHandler.init();
-	experimentThread = std::thread(&ExperimentHandler::step, this);
-}
-
-void ExperimentHandler::printSetupToConsole()
+// UI updates
+void ExperimentHandler::printExperimentSetupToConsole() const
 {
 	std::cout << "Starting the experiment." << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
@@ -28,9 +22,37 @@ void ExperimentHandler::printSetupToConsole()
 	std::cout << "----------------------------------------" << std::endl << std::endl;
 }
 
-//// for debug
+void ExperimentHandler::setExperimentSetupData() const
+{
+	dnfcomposerHandler.setExperimentSetupData(param.degeneracyName, param.decisionTolerance, param.typeOfElementsDegenerated);
+}
+
+void ExperimentHandler::setExpectedFieldBehaviour() const
+{
+	dnfcomposerHandler.setExpectedFieldBehavior(data.shapeHue, data.expectedTargetAngle);
+}
+
+void ExperimentHandler::setExperimentAsEnded()
+{
+	dnfcomposerHandler.stop();
+}
+
+// init step and close methods
+
+void ExperimentHandler::init()
+{
+	dnfcomposerHandler.init();
+	coppeliasimHandler.init();
+	experimentThread = std::thread(&ExperimentHandler::step, this);
+}
+
+// for debug
 //void ExperimentHandler::step()
 //{
+//	printExperimentSetupToConsole();
+//	setExperimentSetupData();
+//	//setExpectedFieldBehaviour();
+//
 //	pickAndPlace();
 //	cleanUpTrial();
 //	pickAndPlace();
@@ -50,37 +72,38 @@ void ExperimentHandler::printSetupToConsole()
 
 void ExperimentHandler::step()
 {
-	printSetupToConsole();
+	printExperimentSetupToConsole();
+	setExperimentSetupData();
 	
 	// Perform a demonstration of the working architecture
-	//pickAndPlace();
+	pickAndPlace();
 
 	// If a percentage of degeneration is specified, perform the degeneration procedure
 	if(param.initialPercentageOfDegeneration)
 		for (int i = 0; i < param.initialPercentageOfDegeneration/10; i++)
 			degenerationProcedure();
 
-	bool successfullPickAndPlace = true;
+	bool successfulPickAndPlace = true;
 	// Do until you reach the desired amount of degeneration
 	do
 	{
 		// For the number of specified trials
 		for (int i = 0; i < param.numberOfTrials; i++)
 		{
-			// Run the pick and place and the relearning procedures until the pick and place is successfull
+			// Run the pick and place and the relearning procedures until the pick and place is successful
 			do
 			{
-				successfullPickAndPlace = pickAndPlace();
-				if (!successfullPickAndPlace)
+				successfulPickAndPlace = pickAndPlace();
+				if (!successfulPickAndPlace)
 				{
 					if(!stats.numOfRelearningCycles)
 						copyWeightsFile(); // create a backup of the weights file
 					relearningProcedure();
 					stats.numOfRelearningCycles++;
 				}
-			} while (!successfullPickAndPlace && (stats.numOfRelearningCycles < param.maximumAmountOfRelearningCycles));
+			} while (!successfulPickAndPlace && (stats.numOfRelearningCycles < param.maximumAmountOfRelearningCycles));
 
-			if (doesBackupWeigthsFileExist())
+			if (doesBackupWeightsFileExist())
 				deleteBackupAndRenameWeightsFile(); // delete the backup and rename the weights file
 
 			saveLearningCyclesPerTrial();
@@ -100,6 +123,7 @@ void ExperimentHandler::step()
 
 	} while (param.currentPercentageOfDegeneration < param.targetPercentageOfDegeneration);
 
+	setExperimentAsEnded();
 }
 
 void ExperimentHandler::close()
@@ -108,12 +132,14 @@ void ExperimentHandler::close()
 	coppeliasimHandler.close();
 }
 
+
+
 bool ExperimentHandler::pickAndPlace()
 {
 	std::cout << "Executing the pick and place procedure." << std::endl;
 
 	stats.shapesPlacedIncorrectly = 0; // binary representation
-	bool successfullPickAndPlace = true;
+	bool successfulPickAndPlace = true;
 
 	for (int i = 0; i < param.numberOfShapesPerTrial; i++)
 	{
@@ -122,22 +148,22 @@ bool ExperimentHandler::pickAndPlace()
 		readTargetAngle();
 		if (!verifyDecision())
 		{
-			successfullPickAndPlace = false;
+			successfulPickAndPlace = false;
 			stats.shapesPlacedIncorrectly = stats.shapesPlacedIncorrectly << 1;
 		}
 		else
 			stats.shapesPlacedIncorrectly = (stats.shapesPlacedIncorrectly << 1) | 1;
 		graspShape();
 		placeShape();
-		updateStatistics();
+		//updateStatistics();
 		coppeliasimHandler.resetSignals();
 
 	}
 
 	std::cout << "Binary representation of placed boxes: " << std::bitset<7>(stats.shapesPlacedIncorrectly) << std::endl;
-	std::cout << "Pick and place procedure finished, with " << successfullPickAndPlace << " success." << std::endl;
+	std::cout << "Pick and place procedure finished, with " << successfulPickAndPlace << " success." << std::endl;
 
-	return successfullPickAndPlace;
+	return successfulPickAndPlace;
 }
 
 void ExperimentHandler::createShape()
@@ -175,6 +201,42 @@ void ExperimentHandler::placeShape()
 	coppeliasimHandler.setSignals(signals);
 }
 
+bool ExperimentHandler::verifyDecision()
+{
+	// Check if cuboidHue exists in the map
+	auto closestHueIter = hueToAngleMap.end();
+	double minDifference = param.decisionTolerance;
+
+	for (auto it = hueToAngleMap.begin(); it != hueToAngleMap.end(); ++it)
+	{
+		double difference = std::abs(data.shapeHue - it->first);
+		if (difference <= param.decisionTolerance && difference < minDifference)
+		{
+			minDifference = difference;
+			closestHueIter = it;
+		}
+	}
+
+	if (closestHueIter != hueToAngleMap.end())
+	{
+		data.expectedTargetAngle = closestHueIter->second;
+
+		if (param.isVisualisationOn)
+			setExpectedFieldBehaviour();
+
+		bool isCorrectDecision = std::abs(data.expectedTargetAngle - data.outputFieldCentroid) <= param.decisionTolerance;
+		if (isCorrectDecision)
+		{
+			stats.numCorrectDecisions++; // Increment numCorrectDecisions if the robotTargetAngle is within the decisionTolerance of the target_angle.
+			return true;
+		}
+	}
+
+	stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
+	// No matching rules for the given cuboidHue and robotTargetAngle.
+	return false;
+}
+
 void ExperimentHandler::readShapeHue()
 {
 	// wait for the hue of the cuboid
@@ -202,7 +264,7 @@ void ExperimentHandler::readTargetAngle()
 	// wait for the target angle
 	//do
 	{
-		Sleep(50);
+		//Sleep(50);
 		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 		if (INFO)
 			std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -223,9 +285,8 @@ void ExperimentHandler::readTargetAngle()
 
 	// set the target angle for coppelia
 	coppeliasimHandler.setSignals(signals);
-
-	dnfcomposerHandler.getUserInterfaceWindow()->setData(data.shapeHue, data.expectedTargetAngle);
 }
+
 
 void ExperimentHandler::cleanUpTrial()
 {
@@ -239,45 +300,14 @@ void ExperimentHandler::cleanUpTrial()
 
 void ExperimentHandler::updateStatistics()
 {
-	stats.numDecisions++;
+	//stats.numDecisions++;
 
-	stats.decisionRatio = (static_cast<double>(stats.numCorrectDecisions) / stats.numDecisions) * 100;
+	//stats.decisionRatio = (static_cast<double>(stats.numCorrectDecisions) / stats.numDecisions) * 100;
 
-	dnfcomposerHandler.getUserInterfaceWindow()->setStatistics(stats.numDecisions, stats.decisionRatio, stats.numCorrectDecisions);
+	//dnfcomposerHandler.getUserInterfaceWindow()->setStatistics(stats.numDecisions, stats.decisionRatio, stats.numCorrectDecisions);
 }
 
-bool ExperimentHandler::verifyDecision()
-{
-	// Check if cuboidHue exists in the map
-	auto closestHueIter = hueToAngleMap.end();
-	double minDifference = param.decisionTolerance;
 
-	for (auto it = hueToAngleMap.begin(); it != hueToAngleMap.end(); ++it)
-	{
-		double difference = std::abs(data.shapeHue - it->first);
-		if (difference <= param.decisionTolerance && difference < minDifference)
-		{
-			minDifference = difference;
-			closestHueIter = it;
-		}
-	}
-
-	if (closestHueIter != hueToAngleMap.end())
-	{
-		data.expectedTargetAngle = closestHueIter->second;
-		dnfcomposerHandler.getUserInterfaceWindow()->setData(data.shapeHue, data.expectedTargetAngle);
-		bool isCorrectDecision = std::abs(data.expectedTargetAngle - data.outputFieldCentroid) <= param.decisionTolerance;
-		if (isCorrectDecision)
-		{
-			stats.numCorrectDecisions++; // Increment numCorrectDecisions if the robotTargetAngle is within the decisionTolerance of the target_angle.
-			return true;
-		}
-	}
-
-	stats.numIncorrectDecisions++; // Increment numIncorrectDecisions if the robotTargetAngle is not within the decisionTolerance of the target_angle.
-	// No matching rules for the given cuboidHue and robotTargetAngle.
-	return false;
-}
 
 void ExperimentHandler::relearningProcedure()
 {
@@ -293,6 +323,8 @@ void ExperimentHandler::relearningProcedure()
 	Sleep(200);
 }
 
+// DEGENERATION FUNCTIONS
+// ================================================================================
 void ExperimentHandler::degenerationProcedure()
 {
 	std::cout << "Starting the degeneration procedure." << std::endl;
@@ -304,7 +336,7 @@ void ExperimentHandler::degenerationProcedure()
 	std::cout << "Number of elements to degenerate: " << numberOfElementsToDegenerate << std::endl;
 	for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	{
-		dnfcomposerHandler.setDegeneracy(param.degeneracyType);
+		dnfcomposerHandler.setDegeneracy(param.degeneracyType, param.fieldToDegenerate);
 		Sleep(25);
 		//dnfcomposerHandler.clearDegeneration();
 		//std::cout << "Degenerating..." << std::endl;
@@ -314,7 +346,7 @@ void ExperimentHandler::degenerationProcedure()
 	dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
 }
 
-int ExperimentHandler::computeNumberOfElementsToDegenerate()
+int ExperimentHandler::computeNumberOfElementsToDegenerate() const
 {
 	int size = 0;
 	switch (param.degeneracyType)
@@ -335,8 +367,13 @@ int ExperimentHandler::computeNumberOfElementsToDegenerate()
 
 	return param.incrementOfDegenerationPercentage * size / 100;
 }
+// ================================================================================
 
-void ExperimentHandler::copyWeightsFile(const std::string& newFilename)
+
+
+// DATA COLLECTION FUNCTIONS
+// ================================================================================
+void ExperimentHandler::copyWeightsFile(const std::string& newFilename) const
 {
 	std::string filename = param.filePathPrefix + "per - dec_weights.txt";
 	std::string filenameCopy = param.filePathPrefix + newFilename;
@@ -350,7 +387,7 @@ void ExperimentHandler::copyWeightsFile(const std::string& newFilename)
 	dest.close();
 }
 
-void ExperimentHandler::deleteBackupAndRenameWeightsFile()
+void ExperimentHandler::deleteBackupAndRenameWeightsFile() const
 {
 	std::string oldname = param.filePathPrefix + "per - dec_weights - copy.txt";
 	std::string newname = param.filePathPrefix + "per - dec_weights.txt";
@@ -368,7 +405,7 @@ void ExperimentHandler::deleteBackupAndRenameWeightsFile()
 		perror("Error renaming file.");
 }
 
-bool ExperimentHandler::doesBackupWeigthsFileExist()
+bool ExperimentHandler::doesBackupWeightsFileExist() const 
 {
 	std::string filename = param.filePathPrefix + "per - dec_weights - copy.txt";
 	std::ifstream file(filename);
@@ -379,7 +416,7 @@ bool ExperimentHandler::doesBackupWeigthsFileExist()
 		return false;
 }
 
-void ExperimentHandler::saveLearningCyclesPerTrial() 
+void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
 	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
@@ -395,7 +432,7 @@ void ExperimentHandler::saveLearningCyclesPerTrial()
 	}
 }
 
-void ExperimentHandler::saveNumberOfIncorrectlyPlacedBoxes()
+void ExperimentHandler::saveNumberOfIncorrectlyPlacedBoxes() const
 {
 	std::string filename = param.filePathPrefix + param.degeneracyName + "-" + std::to_string(param.currentPercentageOfDegeneration) + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
@@ -410,3 +447,5 @@ void ExperimentHandler::saveNumberOfIncorrectlyPlacedBoxes()
 		std::cerr << "Unable to open file: " << filename << std::endl;
 	}
 }
+
+// ================================================================================

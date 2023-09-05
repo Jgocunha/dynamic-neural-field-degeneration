@@ -10,12 +10,30 @@ DnfcomposerHandler::DnfcomposerHandler()
 	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
 	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
 	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
-
 	
 	simulationElements.fcpw = FieldCouplingWizard{simulation, "per - dec" };
 
 	setupUserInterface();
 }
+
+DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
+{
+	simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
+
+	simulation = getExperimentSimulation();
+	application = std::make_unique<Application>(simulation, simulationParameters.isUserInterfaceActive);
+
+	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+
+	simulationElements.fcpw = FieldCouplingWizard{ simulation, "per - dec" };
+
+	if (simulationParameters.isUserInterfaceActive)
+		setupUserInterface();
+}
+
+// init step close and stop methods
 
 void DnfcomposerHandler::init()
 {
@@ -28,19 +46,17 @@ void DnfcomposerHandler::step()
 	application->init();
 	
 	bool userRequestClose = false;
-	while (!userRequestClose)
+	while (!userRequestClose && !hasExperimentFinished)
 	{
-		if(wasDegenerationRequested)
+		if (wasDegenerationRequested)
 			activateDegeneration();
+		else if (wasExternalInputUpdated)
+			updateExternalInput();
+		else if (wasRelearningRequested)
+			activateRelearning();
 		else
-		{
 			application->step();
-			//updateFieldCentroids();
-			if(wasExternalInputUpdated)
-				updateExternalInput();
-			if (wasRelearningRequested)
-				activateRelearning();
-		}
+
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -54,9 +70,68 @@ void DnfcomposerHandler::close()
 	readCentroidsThread.join();
 }
 
-void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType)
+void DnfcomposerHandler::stop()
+{
+	hasExperimentFinished = true;
+}
+
+// other methods
+
+void DnfcomposerHandler::closeSimulation()
+{
+	numberOfDegeneratedElements = 0;
+	numberOfRelearningCycles = 0;
+	//simulation->close();
+}
+
+// UI setup
+
+void DnfcomposerHandler::setupUserInterface()
+{
+	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
+	visualization->addPlottingData("perceptual field", "activation");
+	PlotDimensions pd;
+	pd = { 0, 360, -25, 30 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
+
+	visualization = std::make_shared<Visualization>(simulation);
+	visualization->addPlottingData("decision field", "activation");
+	pd = { 0, 180, -15, 25 };
+	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
+
+	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
+	application->activateUserInterfaceWindow(userInterfaceWindow);
+
+	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+}
+
+// public set methods for UI
+
+void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType,
+	const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const
+{
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setExperimentSetupData(currentDegenerationType, maximumAllowedDeviation, typeOfElementsDegenerated);
+}
+
+void DnfcomposerHandler::setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const
+{
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setExpectedCentroids(targetPerceptualFieldCentroid, targetDecisionFieldCentroid);
+}
+
+void DnfcomposerHandler::setTrial(const int& trial) const
+{
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setCurrentTrial(trial);
+}
+
+// public set methods for control flags
+
+void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
 {
 	simulationParameters.degeneracyType = degeneracyType;
+	simulationParameters.fieldToDegenerate = fieldToDegenerate;
 	wasDegenerationRequested = true;
 }
 
@@ -78,27 +153,29 @@ void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 	this->haveFieldsSettled = haveFieldsSettled;
 }
 
-void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive)
+void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
 {
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
 }
 
-double DnfcomposerHandler::getInputFieldCentroid()
+// public get methods
+
+double DnfcomposerHandler::getInputFieldCentroid() const
 {
 	return simulationParameters.inputFieldCentroid;
 }
 
-double DnfcomposerHandler::getOutputFieldCentroid()
+double DnfcomposerHandler::getOutputFieldCentroid() const
 {
 	return simulationParameters.outputFieldCentroid;
 }
 
-bool DnfcomposerHandler::getHaveFieldsSettled()
+bool DnfcomposerHandler::getHaveFieldsSettled() const
 {
 	return haveFieldsSettled;
 }
 
-bool DnfcomposerHandler::getHasRelearningFinished()
+bool DnfcomposerHandler::getHasRelearningFinished() const
 {
 	return hasRelearningFinished;
 }
@@ -108,60 +185,7 @@ std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
 	return userInterfaceWindow;
 }
 
-void DnfcomposerHandler::setupUserInterface()
-{
-	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
-	visualization->addPlottingData("perceptual field", "activation");
-	PlotDimensions pd;
-	pd = { 0, 360, -25, 30 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
-
-	visualization = std::make_shared<Visualization>(simulation);
-	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -15, 25 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
-
-	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
-	application->activateUserInterfaceWindow(userInterfaceWindow);
-
-	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
-}
-
-void DnfcomposerHandler::updateExternalInput()
-{
-	static double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 25, 20 };
-	gsp.position = simulationParameters.externalInputPosition + offset;
-	std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));
-
-	simulation->addElement(stimulus);
-	simulationElements.inputField->addInput(stimulus);
-
-	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
-		application->step();
-
-	simulation->removeElement("stimulus");
-
-	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
-		application->step();
-
-	Sleep(2);
-
-	wasExternalInputUpdated = false;
-	haveFieldsSettled = true;
-}
-
-void DnfcomposerHandler::updateFieldCentroids()
-{
-	bool userRequestClose = false;
-	while (1)
-	{
-		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
-		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
-		Sleep(20);
-	}
-}
+// Degeneration
 
 void DnfcomposerHandler::activateDegeneration()
 {
@@ -189,6 +213,8 @@ void DnfcomposerHandler::activateDegeneration()
 	//Sleep(2);
 	wasDegenerationRequested = false;
 }
+
+// Relearning
 
 //void DnfcomposerHandler::activateRelearning()
 //{
@@ -228,16 +254,6 @@ void DnfcomposerHandler::activateDegeneration()
 //	wasRelearningRequested = false;
 //	hasRelearningFinished = true;
 //}
-
-void DnfcomposerHandler::clearRelearning()
-{
-	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
-}
-
-void DnfcomposerHandler::clearDegeneration()
-{
-	wasDegenerationRequested = false;
-}
 
 void DnfcomposerHandler::activateRelearning()
 {
@@ -283,14 +299,68 @@ void DnfcomposerHandler::activateRelearning()
 	//std::cout << "Finished simulating association.\n";
 		
 	// only 1 iteration of training
-	simulationElements.fcpw.trainWeights(1);
+	simulationElements.fcpw.trainWeights(10);
 	//std::cout << "Finished training weights.\n";
 		
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
 }
 
-void DnfcomposerHandler::saveWeightsToFile()
+void DnfcomposerHandler::updateExternalInput()
+{
+	static double offset = 1.0;
+	GaussStimulusParameters gsp = { 3, 25, 20 };
+	gsp.position = simulationParameters.externalInputPosition + offset;
+	const std::shared_ptr<GaussStimulus> stimulus
+		(new GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));
+
+	simulation->addElement(stimulus);
+	simulationElements.inputField->addInput(stimulus);
+	waitForFieldsToSettle();
+
+	simulation->removeElement("stimulus");
+	waitForFieldsToSettle();
+
+	haveFieldsSettled = true;
+	wasExternalInputUpdated = false;
+}
+
+void DnfcomposerHandler::updateFieldCentroids()
+{
+	bool userRequestClose = false;
+	while (!userRequestClose && !hasExperimentFinished)
+	{
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+
+		if (simulationParameters.isUserInterfaceActive)
+			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+
+		Sleep(20);
+	}
+}
+
+// clear methods
+
+void DnfcomposerHandler::clearRelearning()
+{
+	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
+}
+
+void DnfcomposerHandler::clearDegeneration()
+{
+	wasDegenerationRequested = false;
+}
+
+// other methods
+
+void DnfcomposerHandler::saveWeightsToFile() const
 {
 	simulationElements.fieldCoupling->saveWeights();
+}
+
+void DnfcomposerHandler::waitForFieldsToSettle() const
+{
+	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
+		application->step();
 }

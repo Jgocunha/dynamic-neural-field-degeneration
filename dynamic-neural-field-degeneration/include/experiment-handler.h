@@ -80,15 +80,21 @@ public:
 	ExperimentHandler(const ExperimentParameters& param);
 	~ExperimentHandler() = default;
 
+	// init step close functions
 	void init();
 	void step();
 	void close();
+
+private:
+	// ui setup functions
+	void printExperimentSetupToConsole() const;
+	void setExperimentSetupData() const;
+	void setExpectedFieldBehaviour() const;
+	void setExperimentAsEnded();
 private:
 
-	void printSetupToConsole();
-
+	// control functions
 	bool pickAndPlace();
-
 	void createShape();
 	void graspShape();
 	void placeShape();
@@ -96,17 +102,20 @@ private:
 	void readShapeHue();
 	void readTargetAngle();
 
+	// cleanup functions
 	void cleanUpTrial();
 	void updateStatistics();
 
+	// relearning functions
 	void relearningProcedure();
+	// degeneration functions
 	void degenerationProcedure();
-	int computeNumberOfElementsToDegenerate();
+	int computeNumberOfElementsToDegenerate() const;
 
-	void copyWeightsFile(const std::string& newFilename = "per - dec_weights - copy.txt");
-	void deleteBackupAndRenameWeightsFile();
-	bool doesBackupWeigthsFileExist();
-
-	void saveLearningCyclesPerTrial();
-	void saveNumberOfIncorrectlyPlacedBoxes();
+	// data collection functions
+	void copyWeightsFile(const std::string& newFilename = "per - dec_weights - copy.txt") const;
+	void deleteBackupAndRenameWeightsFile() const;
+	bool doesBackupWeightsFileExist() const;
+	void saveLearningCyclesPerTrial() const;
+	void saveNumberOfIncorrectlyPlacedBoxes() const;
 };
