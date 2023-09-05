@@ -1,66 +1,30 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
-
-ExperimentParameters setExperimentParameters()
-{
-    ExperimentParameters params;
-
-    params.numberOfShapesPerTrial = 7;
-    params.numberOfTrials = 1;
-    params.decisionTolerance = 5;
-
-    params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-    params.fieldToDegenerate = "decision";
-    setDegeneracyNameAndTypeOfElements(params);
-
-    params.initialPercentageOfDegeneration = 10;
-    params.targetPercentageOfDegeneration = 100;
-    params.incrementOfDegenerationPercentage = 10;
-
-    params.maximumAmountOfRelearningCycles = 10;
-
-    params.isDataSavingOn = true;
-    params.isVisualisationOn = true;
-    params.isDebugModeOn = true;
-
-    return params;
-}
-
-void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
-{
-    switch (params.degeneracyType)
-    {
-    case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-        params.degeneracyName = "deactivate";
-        params.typeOfElementsDegenerated = "weights";
-        break;
-    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-        params.degeneracyName = "randomize";
-        params.typeOfElementsDegenerated = "weights";
-        break;
-    case ElementDegeneracyType::WEIGHTS_REDUCE:
-        params.degeneracyName = "reduce 0.4";
-        params.typeOfElementsDegenerated = "weights";
-        break;
-    case ElementDegeneracyType::NEURONS_DEACTIVATE:
-        if (params.fieldToDegenerate == "perceptual")
-            params.typeOfElementsDegenerated = "pre-synaptic neurons";
-        else if (params.fieldToDegenerate == "decision")
-            params.typeOfElementsDegenerated = "post-synaptic neurons";
-        params.degeneracyName = "deactivate";
-        break;
-    default:
-        break;
-    }
-    params.degeneracyName = params.degeneracyName + " " + params.typeOfElementsDegenerated;
-}
-
 int main()
 {
     try
     {
-        const ExperimentParameters params = setExperimentParameters();
+        ExperimentParameters params;
+
+        params.numberOfShapesPerTrial = 7;
+        params.numberOfTrials = 1;
+        params.decisionTolerance = 5;
+
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.fieldToDegenerate = "decision";
+
+        params.initialPercentageOfDegeneration = 10;
+        params.targetPercentageOfDegeneration = 100;
+        params.incrementOfDegenerationPercentage = 10;
+
+        params.maximumAmountOfRelearningCycles = 10;
+
+        params.isDataSavingOn = true;
+        params.isComposerVisualizationOn = true;
+        params.isDebugModeOn = true;
+        params.isLinkToCoppeliaSimOn = false;
+
         ExperimentHandler experiment{ params };
 
         experiment.init();

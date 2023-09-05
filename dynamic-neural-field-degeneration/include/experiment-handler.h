@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -12,9 +11,9 @@
 struct ExperimentParameters
 {
 	std::string filePathPrefix = "../../../data/";
-	
+
 	int numberOfShapesPerTrial = 2;
-	double decisionTolerance = 0.5;
+	double decisionTolerance = 0;
 	int numberOfTrials = 10;
 
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
@@ -30,8 +29,38 @@ struct ExperimentParameters
 	int maximumAmountOfRelearningCycles = 10;
 
 	bool isDataSavingOn = false;
-	bool isVisualisationOn = true;
+	bool isComposerVisualizationOn = true;
 	bool isDebugModeOn = true;
+	bool isLinkToCoppeliaSimOn = true;
+
+	void setOtherDegeneracyParameters()
+	{
+		switch (degeneracyType)
+		{
+		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+			degeneracyName = "deactivate";
+			typeOfElementsDegenerated = "weights";
+			break;
+		case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+			degeneracyName = "randomize";
+			typeOfElementsDegenerated = "weights";
+			break;
+		case ElementDegeneracyType::WEIGHTS_REDUCE:
+			degeneracyName = "reduce 0.4";
+			typeOfElementsDegenerated = "weights";
+			break;
+		case ElementDegeneracyType::NEURONS_DEACTIVATE:
+			if (fieldToDegenerate == "perceptual")
+				typeOfElementsDegenerated = "pre-synaptic neurons";
+			else if (fieldToDegenerate == "decision")
+				typeOfElementsDegenerated = "post-synaptic neurons";
+			degeneracyName = "deactivate";
+			break;
+		default:
+			break;
+		}
+		degeneracyName = degeneracyName + " " + typeOfElementsDegenerated;
+	}
 };
 
 struct ExperimentData
@@ -45,10 +74,6 @@ struct ExperimentData
 
 struct ExperimentStatistics
 {
-	int numDecisions = 0;
-	int numCorrectDecisions = 0;
-	int numIncorrectDecisions = 0;
-	double decisionRatio = 0.0;
 	int numOfRelearningCycles = 0;
 	int shapesPlacedIncorrectly = 0;
 };
@@ -56,11 +81,11 @@ struct ExperimentStatistics
 class ExperimentHandler
 {
 private:
+	std::thread experimentThread;
 	CoppeliasimHandler coppeliasimHandler;
 	DnfcomposerHandler dnfcomposerHandler;
-	std::thread experimentThread;
 
-	ExperimentParameters param;
+	ExperimentParameters params;
 	ExperimentData data;
 	ExperimentStatistics stats;
 	Signals signals;
@@ -74,48 +99,32 @@ private:
 		{274.00, 140},
 		{282.00, 165}
 	};
+	std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
 
 public:
 	ExperimentHandler() = default;
 	ExperimentHandler(const ExperimentParameters& param);
 	~ExperimentHandler() = default;
 
-	// init step close functions
+private:
+	void printExperimentParameters() const;
+
+public:
 	void init();
 	void step();
 	void close();
 
 private:
-	// ui setup functions
-	void printExperimentSetupToConsole() const;
-	void setExperimentSetupData() const;
-	void setExpectedFieldBehaviour() const;
-	void setExperimentAsEnded();
-private:
-
-	// control functions
-	bool pickAndPlace();
+	bool bonafidePickAndPlace();
 	void createShape();
 	void graspShape();
 	void placeShape();
 	bool verifyDecision();
 	void readShapeHue();
 	void readTargetAngle();
+	void getExpectedTargetAngle();
 
-	// cleanup functions
-	void cleanUpTrial();
-	void updateStatistics();
-
-	// relearning functions
-	void relearningProcedure();
-	// degeneration functions
-	void degenerationProcedure();
-	int computeNumberOfElementsToDegenerate() const;
-
-	// data collection functions
-	void copyWeightsFile(const std::string& newFilename = "per - dec_weights - copy.txt") const;
-	void deleteBackupAndRenameWeightsFile() const;
-	bool doesBackupWeightsFileExist() const;
-	void saveLearningCyclesPerTrial() const;
-	void saveNumberOfIncorrectlyPlacedBoxes() const;
+	bool mockPickAndPlace();
+	void mockReadShapeHue();
+	void mockReadTargetAngle();
 };
