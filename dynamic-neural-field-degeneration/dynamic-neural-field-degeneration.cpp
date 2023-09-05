@@ -7,8 +7,8 @@ int main()
     {
         ExperimentParameters params;
 
-        params.numberOfShapesPerTrial = 1;
-        params.numberOfTrials = 1;
+        params.numberOfShapesPerTrial = 7;
+        params.numberOfTrials = 2;
         params.decisionTolerance = 5;
 
         params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
@@ -18,7 +18,7 @@ int main()
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 
-        params.maximumAmountOfRelearningCycles = 10;
+        params.maximumAmountOfRelearningCycles = 3;
 
         params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;

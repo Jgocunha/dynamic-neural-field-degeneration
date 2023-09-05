@@ -132,4 +132,7 @@ private:
 	int getNumberOfElementsToDegenerate() const;
 
 	void relearningProcedure();
+
+	void cleanupTrial();
+	void saveLearningCyclesPerTrial() const;
 };

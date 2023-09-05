@@ -63,8 +63,10 @@ void ExperimentHandler::step()
 				degenerationProcedure();
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
 			}
-		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration);
+		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration 
+				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
 
+		saveLearningCyclesPerTrial();
 		cleanupTrial();
 	}
 
@@ -312,6 +314,13 @@ void ExperimentHandler::relearningProcedure()
 	if (params.isDebugModeOn)
 		std::cout << "Relearning procedure started." << std::endl;
 
+	// make sure to test two alternatives
+	// 1. use the 7 inputs
+	// 2. use only the inputs from the incorrect correspondence
+	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
+	// And the learning rate
+
+	stats.numOfRelearningCycles++;
 }
 
 void ExperimentHandler::cleanupTrial()
@@ -324,4 +333,19 @@ void ExperimentHandler::cleanupTrial()
 		std::cout << "Trial finished." << std::endl;
 }
 
-
+void ExperimentHandler::saveLearningCyclesPerTrial() const
+{
+	const std::string filename = 
+		params.filePathPrefix + params.degeneracyName + "-" + std::to_string(params.currentPercentageOfDegeneration) + ".txt";
+	std::ofstream file(filename, std::ios::app); // Open the file in append mode
+	if (file.is_open())
+	{
+		file << " - " << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
+		file.close(); // Close the file
+		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
+	}
+	else
+	{
+		std::cerr << "Unable to open file: " << filename << std::endl;
+	}
+}
