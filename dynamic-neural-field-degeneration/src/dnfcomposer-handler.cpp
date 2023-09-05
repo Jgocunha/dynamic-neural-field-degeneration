@@ -189,28 +189,43 @@ std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
 
 void DnfcomposerHandler::activateDegeneration()
 {
-	static int elementCount = 0;
-	elementCount++;
+
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
-		simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
-		simulationElements.inputField->startDegeneration();
-		std::cout << "Deactivated " << elementCount << " neurons." << std::endl;
+		numberOfDegeneratedElements = numberOfDegeneratedElements + 1; // hardcoded to 1
+		if (simulationParameters.fieldToDegenerate == "perceptual")
+		{
+			simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
+			simulationElements.inputField->startDegeneration();
+		}
+		else
+		{
+			simulationElements.outputField->setDegeneracyType(simulationParameters.degeneracyType);
+			simulationElements.outputField->startDegeneration();
+		}
+		if (simulationParameters.isDebugMode)
+			std::cout << "Deactivated " << numberOfDegeneratedElements << " neurons." << std::endl;
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+		numberOfDegeneratedElements = numberOfDegeneratedElements + 100; // hardcoded to 100
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
-		std::cout << "Deactivated " << elementCount << " weights." << std::endl;
+		if (simulationParameters.isDebugMode)
+			std::cout << "Deactivated " << numberOfDegeneratedElements << " weights." << std::endl;
 		break;
 	default:
 		break;
 	}
-	//Sleep(2);
-	//application->step();
-	//Sleep(2);
+
+	waitForFieldsToSettle();
+
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setNumberOfDegeneratedElements(numberOfDegeneratedElements);
+
+	haveFieldsSettled = true;
 	wasDegenerationRequested = false;
 }
 

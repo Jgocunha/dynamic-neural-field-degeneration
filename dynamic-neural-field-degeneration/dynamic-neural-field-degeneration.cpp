@@ -7,12 +7,12 @@ int main()
     {
         ExperimentParameters params;
 
-        params.numberOfShapesPerTrial = 7;
+        params.numberOfShapesPerTrial = 1;
         params.numberOfTrials = 1;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "decision";
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 10;
         params.targetPercentageOfDegeneration = 100;

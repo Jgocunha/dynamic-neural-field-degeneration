@@ -46,6 +46,12 @@ void ExperimentHandler::step()
 		bonafidePickAndPlace();
 	else
 		mockPickAndPlace();
+
+	for(int i = 0; i < 10; i++)
+	{
+		degenerationProcedure();
+	}
+
 }
 
 void ExperimentHandler::close()
@@ -238,6 +244,51 @@ void ExperimentHandler::mockReadTargetAngle()
 	data.lastOutputFieldCentroid = signals.targetAngle;
 
 	getExpectedTargetAngle();
+}
+
+void ExperimentHandler::degenerationProcedure()
+{
+	if(params.isDebugModeOn)
+		std::cout << "Degeneration procedure started." << std::endl;
+
+	// Disable the user interface whilst degenerating to consume less time.
+	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
+
+	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
+	// we kill 1 neuron per iteration
+	// we kill 100 weights per iteration
+	const int numberOfElementsToDegenerate = getNumberOfElementsToDegenerate();
+
+	if (params.isDebugModeOn)
+		std::cout << "Number of elements to degenerate: " << numberOfElementsToDegenerate << std::endl;
+
+	for (int i = 0; i < numberOfElementsToDegenerate; i++)
+	{
+		dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
+		while (!dnfcomposerHandler.getHaveFieldsSettled());
+		dnfcomposerHandler.setHaveFieldsSettled(false);
+	}
+
+	// Re-enable the UI.
+	dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
+}
+
+int ExperimentHandler::getNumberOfElementsToDegenerate() const
+{
+	switch (params.degeneracyType)
+	{
+	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+		if(params.fieldToDegenerate == "perceptual")
+			return 36; 
+		if (params.fieldToDegenerate == "decision")
+			return 18; 
+	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case ElementDegeneracyType::WEIGHTS_REDUCE:
+		return 65; //64.8
+	default:
+		return 0;
+	}
 }
 
 

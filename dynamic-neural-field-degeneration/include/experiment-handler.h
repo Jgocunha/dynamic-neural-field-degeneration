@@ -127,4 +127,7 @@ private:
 	bool mockPickAndPlace();
 	void mockReadShapeHue();
 	void mockReadTargetAngle();
+
+	void degenerationProcedure();
+	int getNumberOfElementsToDegenerate() const;
 };
