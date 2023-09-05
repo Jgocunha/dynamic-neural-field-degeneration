@@ -13,16 +13,22 @@ struct ExperimentParameters
 	std::string filePathPrefix = "../../../data/";
 	
 	int numberOfShapesPerTrial = 2;
-	int decisionTolerance = 5;
+	double decisionTolerance = 0.5;
 	int numberOfTrials = 10;
 
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 	std::string degeneracyName = "deactivate-weights";
+	std::string typeOfElementsDegenerated = "weights";
+	std::string fieldToDegenerate = "perceptual";
 
 	int initialPercentageOfDegeneration = 0;
 	int targetPercentageOfDegeneration = 100;
 	int currentPercentageOfDegeneration = 0;
 	int incrementOfDegenerationPercentage = 10;
+
+	bool isDataSavingOn = false;
+	bool isVisualisationOn = true;
+	bool isDebugModeOn = true;
 };
 
 struct ExperimentData

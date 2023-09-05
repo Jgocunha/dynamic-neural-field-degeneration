@@ -19,10 +19,7 @@ DnfcomposerHandler::DnfcomposerHandler()
 
 void DnfcomposerHandler::init()
 {
-	if(DEBUG)
-		std::cout << "Dnfcomposer Handler: Thread will start.\n";
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-
 	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
@@ -52,8 +49,6 @@ void DnfcomposerHandler::close()
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
 	readCentroidsThread.join();
-	if (DEBUG)
-		std::cout << "Dnfcomposer Handler: Thread has finished its execution.\n";
 }
 
 void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType)
@@ -131,7 +126,7 @@ void DnfcomposerHandler::setupUserInterface()
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
-	application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
 
 void DnfcomposerHandler::updateExternalInput()
