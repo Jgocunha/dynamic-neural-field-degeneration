@@ -1,61 +1,24 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
-ExperimentParameters setExperimentParameters()
-{
-    ExperimentParameters params;
-
-	params.numberOfTrials = 1000;
-    params.decisionTolerance = 0.1;
-
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
-    params.fieldToDegenerate = "decision";
-    setDegeneracyNameAndTypeOfElements(params);
-
-    params.targetExternalStimulusPosition = 41;
-    params.targetOutputCentroid = 40;
-
-    params.isDataSavingOn = false;
-    params.isVisualisationOn = true;
-    params.isDebugModeOn = true;
-
-    return params;
-}
-
-void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
-{
-    switch(params.degeneracyType)
-    {
-		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-    		params.degeneracyName = "deactivate";
-            params.typeOfElementsDegenerated = "weights";
-    		break;
-	    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-    		params.degeneracyName = "randomize";
-            params.typeOfElementsDegenerated = "weights";
-    		break;
-        case ElementDegeneracyType::WEIGHTS_REDUCE:
-            params.degeneracyName = "reduce 0.4";
-            params.typeOfElementsDegenerated = "weights";
-            break;
-	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
-            if(params.fieldToDegenerate == "perceptual")
-				params.typeOfElementsDegenerated = "pre-synaptic neurons";
-			else if(params.fieldToDegenerate == "decision")
-				params.typeOfElementsDegenerated = "post-synaptic neurons";
-            params.degeneracyName = "deactivate";
-    		break;
-	    default:
-            break;
-    }
-	params.degeneracyName = params.degeneracyName + " " + params.typeOfElementsDegenerated;
-}
 
 int main()
 {
     try
     {
-        const ExperimentParameters params = setExperimentParameters();
+        ExperimentParameters params;
+
+        params.numberOfStimulusPerTrial = 7;
+        params.numberOfTrials = 1000;
+        params.decisionTolerance = 5;
+
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.fieldToDegenerate = "perceptual";
+
+        params.isDataSavingOn = false;
+        params.isVisualizationOn = true;
+        params.isDebugModeOn = true;
+
         ExperimentHandler experiment { params };
 
         experiment.init();

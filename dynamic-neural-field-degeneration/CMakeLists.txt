@@ -16,7 +16,7 @@ set(SOURCES
 
 # Add executable
 add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} 
-    "src/coppeliasim-handler.cpp"
+    
     "src/experiment-handler.cpp"
     "src/dnfcomposer-handler.cpp"
     "src/dnf-architecture.cpp" 
