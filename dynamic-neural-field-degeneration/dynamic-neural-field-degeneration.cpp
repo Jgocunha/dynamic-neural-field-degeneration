@@ -15,8 +15,8 @@ ExperimentParameters setExperimentParameters()
     params.targetExternalStimulusPosition = 41;
     params.targetOutputCentroid = 40;
 
-    params.isDataSavingOn = true;
-    params.isVisualisationOn = false;
+    params.isDataSavingOn = false;
+    params.isVisualisationOn = true;
     params.isDebugModeOn = true;
 
     return params;
