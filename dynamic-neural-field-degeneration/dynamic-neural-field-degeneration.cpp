@@ -8,17 +8,20 @@ int main()
         ExperimentParameters params;
 
         params.numberOfShapesPerTrial = 7;
-        params.numberOfTrials = 2;
+        params.numberOfTrials = 100;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
         params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 
-        params.maximumAmountOfRelearningCycles = 3;
+        params.relearningType = RelearningParameters::RelearningType::ALL_CASES;
+        params.learningRate = 0.01;
+        params.numberOfRelearningEpochs = 10;
+        params.maximumAmountOfRelearningCycles = 20;
 
         params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;

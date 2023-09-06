@@ -57,6 +57,7 @@ void DnfcomposerHandler::step()
 		else
 			application->step();
 
+		Sleep(1);
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -126,6 +127,13 @@ void DnfcomposerHandler::setTrial(const int& trial) const
 		userInterfaceWindow->setCurrentTrial(trial);
 }
 
+void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, const double& learningRate)
+{
+	relearningParameters.relearningType = relearningType;
+	relearningParameters.numberOfRelearningEpochs = numberOfRelearningEpochs;
+	relearningParameters.learningRate = learningRate;
+}
+
 // public set methods for control flags
 
 void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
@@ -151,6 +159,11 @@ void DnfcomposerHandler::setRelearning(const double& expectedInputCentroid, cons
 void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 {
 	this->haveFieldsSettled = haveFieldsSettled;
+}
+
+void DnfcomposerHandler::setHasRelearningFinished(bool hasRelearningFinished)
+{
+	this->hasRelearningFinished = hasRelearningFinished;
 }
 
 void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
@@ -272,13 +285,18 @@ void DnfcomposerHandler::activateDegeneration()
 
 void DnfcomposerHandler::activateRelearning()
 {
-	clearRelearning();
+	// NOW WE HAVE RELEARNING TYPE, LEARNING RATE, AND NUMBER OF ITERATIONS
+	// USE THIS INFORMATION TO TRAIN THE WEIGHTS
+	simulationElements.fieldCoupling->setLearningRate(relearningParameters.learningRate);
+
+	// Remove previously written target peak locations from files
+	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
 
 	// add gaussian inputs
-	double offset = 1.0;
+	constexpr double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 15, 20 };
 
-	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
 		{ 00.00 + offset }, // red
 		{ 40.60 + offset }, // orange
@@ -288,7 +306,7 @@ void DnfcomposerHandler::activateRelearning()
 		{ 274.15 + offset }, // indigo
 		{ 281.79 + offset } // violet
 	};
-	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	{
 		{ 15.00 + offset },
 		{ 40.00 + offset },
@@ -306,6 +324,7 @@ void DnfcomposerHandler::activateRelearning()
 	
 	gsp.amplitude = 15;
 	gsp.sigma = 3;
+
 		
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
@@ -314,9 +333,10 @@ void DnfcomposerHandler::activateRelearning()
 	//std::cout << "Finished simulating association.\n";
 		
 	// only 1 iteration of training
-	simulationElements.fcpw.trainWeights(10);
+	simulationElements.fcpw.trainWeights(relearningParameters.numberOfRelearningEpochs);
 	//std::cout << "Finished training weights.\n";
-		
+
+	//saveWeightsToFile();
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
 }
@@ -353,18 +373,6 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 		Sleep(20);
 	}
-}
-
-// clear methods
-
-void DnfcomposerHandler::clearRelearning()
-{
-	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
-}
-
-void DnfcomposerHandler::clearDegeneration()
-{
-	wasDegenerationRequested = false;
 }
 
 // other methods

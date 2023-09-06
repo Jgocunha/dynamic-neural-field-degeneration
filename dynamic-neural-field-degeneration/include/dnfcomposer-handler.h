@@ -36,6 +36,14 @@ struct SimulationParameters
 
 struct RelearningParameters
 {
+	enum class RelearningType
+	{
+		ALL_CASES = 0,
+		ONLY_DEGENERATED_CASES = 1,
+	};
+	RelearningType relearningType = RelearningType::ALL_CASES;
+	int numberOfRelearningEpochs = 0;
+	double learningRate = 0.0;
 	double expectedInputCentroid = 0.0, expectedOutputCentroid = 0.0;
 };
 
@@ -80,12 +88,15 @@ public:
 		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
 	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
 	void setTrial(const int& trial) const;
+	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
+		const int& numberOfRelearningEpochs, const double& learningRate);
 
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
 	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
+	void setHasRelearningFinished(bool hasRelearningFinished);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
 
 	double getInputFieldCentroid() const;
@@ -93,11 +104,7 @@ public:
 	bool getHaveFieldsSettled() const;
 	bool getHasRelearningFinished() const;
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
-	
-	void clearRelearning();
-	void clearDegeneration();
-	
-	
+
 	void saveWeightsToFile() const;
 private:
 	void setupUserInterface();
@@ -106,5 +113,4 @@ private:
 	void activateDegeneration();
 	void activateRelearning();
 	void waitForFieldsToSettle() const;
-
 };

@@ -30,11 +30,12 @@ void DegenerateFieldCoupling::startDegeneration()
 	degenerate = true;
 }
 
-void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
-{
-	weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
-	writeWeights();
-}
+//void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
+//{
+//	weights = (weights, input, output, parameters.learningRate);
+//	//weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
+//	writeWeights();
+//}
 
 void DegenerateFieldCoupling::applyDegeneracy()
 {
@@ -143,7 +144,6 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 		}
 	}
 }
-
 
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {

@@ -25,7 +25,7 @@ public:
 	void setWeightReductionFactor(const double& factor);
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	ElementDegeneracyType getDegeneracyType();
-	void updateWeights(const std::vector<double> input, const std::vector<double> output);
+	//void updateWeights(const std::vector<double> input, const std::vector<double> output);
 private:
 	void populateIndicesForDegeneration();
 	void setRandomWeightToRandomValue();

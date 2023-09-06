@@ -99,6 +99,12 @@ void FieldCoupling::updateWeights(const std::vector<double> input, const std::ve
 	writeWeights();
 }
 
+void FieldCoupling::setLearningRate(const double& learningRate)
+{
+	parameters.learningRate = learningRate;
+}
+
+
 const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
 {
 	return weights;

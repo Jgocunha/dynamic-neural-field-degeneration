@@ -6,6 +6,9 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 {
 	this->params.setOtherDegeneracyParameters();
 	printExperimentParameters();
+	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
+	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate);
+
 }
 
 void ExperimentHandler::printExperimentParameters() const
@@ -44,29 +47,37 @@ void ExperimentHandler::step()
 {
 	for(int i = 0; i < params.numberOfTrials; i++)
 	{
+		if(params.isDebugModeOn)
+			std::cout << "Trial " << i + 1 << " started." << std::endl;
+
 		do
 		{
-			if(params.isDebugModeOn)
-				std::cout << "Trial " << i + 1 << " started." << std::endl;
-
 			bool successfulPickAndPlace = false;
-
-			if(params.isLinkToCoppeliaSimOn)
-				successfulPickAndPlace = bonafidePickAndPlace();
-			else
-				successfulPickAndPlace = mockPickAndPlace();
-
-			if(!successfulPickAndPlace)
-				relearningProcedure();
-			else
+			do
 			{
-				degenerationProcedure();
-				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-			}
-		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration 
+				if(params.isLinkToCoppeliaSimOn)
+					successfulPickAndPlace = bonafidePickAndPlace();
+				else
+					successfulPickAndPlace = mockPickAndPlace();
+
+				if(!successfulPickAndPlace)
+				{
+					if (!doesBackupWeightsFileExist())
+						backupWeightsFile();
+					relearningProcedure();
+				}
+			} while (!successfulPickAndPlace 
 				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
 
-		saveLearningCyclesPerTrial();
+			saveLearningCyclesPerTrial();
+
+			restoreWeightsFile();
+			degenerationProcedure();
+			dnfcomposerHandler.saveWeightsToFile();
+			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+			
+		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration );
+
 		cleanupTrial();
 	}
 
@@ -161,8 +172,8 @@ void ExperimentHandler::readShapeHue()
 	{
 		Sleep(50); // necessary?
 		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
-		if (params.isDebugModeOn)
-			std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+		//if (params.isDebugModeOn)
+			//std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 	} while (signals.shapeHue == UNDEFINED);
 
 	// set the hue of the cuboid for dnfcomposer
@@ -178,8 +189,8 @@ void ExperimentHandler::readShapeHue()
 void ExperimentHandler::readTargetAngle()
 {
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-	if (params.isDebugModeOn)
-		std::cout << "Target angle: " << signals.targetAngle << std::endl;
+	//if (params.isDebugModeOn)
+		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
 	data.outputFieldCentroid = signals.targetAngle;
 	data.lastOutputFieldCentroid = signals.targetAngle;
@@ -241,8 +252,8 @@ void ExperimentHandler::mockReadShapeHue()
 		hueToAngleIterator = hueToAngleMap.begin();
 
 	data.shapeHue = hueToAngleIterator->first;
-	if (params.isDebugModeOn)
-		std::cout << "External stimulus: " << data.shapeHue << std::endl;
+	//if (params.isDebugModeOn)
+		//std::cout << "External stimulus: " << data.shapeHue << std::endl;
 	++hueToAngleIterator;
 
 	dnfcomposerHandler.setExternalInput(data.shapeHue);
@@ -255,8 +266,8 @@ void ExperimentHandler::mockReadShapeHue()
 void ExperimentHandler::mockReadTargetAngle()
 {
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-	if (params.isDebugModeOn)
-		std::cout << "Target angle: " << signals.targetAngle << std::endl;
+	//if (params.isDebugModeOn)
+		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
 	data.outputFieldCentroid = signals.targetAngle;
 	data.lastOutputFieldCentroid = signals.targetAngle;
@@ -312,13 +323,19 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 void ExperimentHandler::relearningProcedure()
 {
 	if (params.isDebugModeOn)
-		std::cout << "Relearning procedure started." << std::endl;
+		std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
 
 	// make sure to test two alternatives
 	// 1. use the 7 inputs
 	// 2. use only the inputs from the incorrect correspondence
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
+
+	dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
+
+	while (!dnfcomposerHandler.getHasRelearningFinished());
+	dnfcomposerHandler.setHasRelearningFinished(false);
+	//Sleep(2000);
 
 	stats.numOfRelearningCycles++;
 }
@@ -336,11 +353,11 @@ void ExperimentHandler::cleanupTrial()
 void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
 	const std::string filename = 
-		params.filePathPrefix + params.degeneracyName + "-" + std::to_string(params.currentPercentageOfDegeneration) + ".txt";
+		params.filePathPrefix + params.degeneracyName + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 	if (file.is_open())
 	{
-		file << " - " << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
+		file << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
 		file.close(); // Close the file
 		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
 	}
@@ -348,4 +365,56 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 	{
 		std::cerr << "Unable to open file: " << filename << std::endl;
 	}
+}
+
+void ExperimentHandler::backupWeightsFile() const
+{
+	const std::string newFilename = "per - dec_weights - copy.txt";
+	std::string filename = params.filePathPrefix + "per - dec_weights.txt";
+	std::string filenameCopy = params.filePathPrefix + newFilename;
+
+	std::ifstream source(filename, std::ios::binary);
+	std::ofstream dest(filenameCopy, std::ios::binary);
+
+	dest << source.rdbuf();
+
+	//puts("Backing up weights file.");
+
+	source.close();
+	dest.close();
+}
+
+void ExperimentHandler::restoreWeightsFile() const
+{
+	const std::string oldFilename = params.filePathPrefix + "per - dec_weights - copy.txt";
+	const std::string newFilename = params.filePathPrefix + "per - dec_weights.txt";
+
+	int result = std::remove(newFilename.c_str());
+
+	//if (!result)
+		//puts("Previous weights file successfully deleted.");
+	//else
+		//perror("Error deleting previous weights file.");
+
+	result = std::rename(oldFilename.c_str(), newFilename.c_str());
+
+	//if (!result)
+		//puts("File successfully renamed.");
+	//else
+		//perror("Error renaming file.");
+}
+
+bool ExperimentHandler::doesBackupWeightsFileExist() const
+{
+	const std::string filename = params.filePathPrefix + "per - dec_weights - copy.txt";
+	const std::ifstream file(filename);
+
+	if (file.good())
+	{
+		//puts("Weights file exists.");
+		return true;
+	}
+
+	//puts("Weights file does not exist.");
+	return false;
 }

@@ -26,6 +26,9 @@ struct ExperimentParameters
 	int currentPercentageOfDegeneration = 0;
 	int incrementOfDegenerationPercentage = 10;
 
+	RelearningParameters::RelearningType relearningType = RelearningParameters::RelearningType::ALL_CASES;
+	double learningRate = 0.1;
+	int numberOfRelearningEpochs = 100;
 	int maximumAmountOfRelearningCycles = 10;
 
 	bool isDataSavingOn = false;
@@ -135,4 +138,8 @@ private:
 
 	void cleanupTrial();
 	void saveLearningCyclesPerTrial() const;
+
+	void backupWeightsFile() const;
+	void restoreWeightsFile() const;
+	bool doesBackupWeightsFileExist() const;
 };

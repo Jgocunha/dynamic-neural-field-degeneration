@@ -36,7 +36,9 @@ public:
 	void resetWeights();
 	void saveWeights();
 	void updateWeights(const std::vector<double> input, const std::vector<double> output);
-	
+
+	void setLearningRate(const double& learningRate);
+
 	const std::vector<std::vector<double>>& getWeights() const;
 
 	~FieldCoupling() = default;
