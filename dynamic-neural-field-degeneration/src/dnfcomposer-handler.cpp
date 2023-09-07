@@ -51,7 +51,7 @@ void DnfcomposerHandler::step()
 
 		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(10);
+		Sleep(20);
 	}
 
 	application->close();
@@ -198,7 +198,7 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 		if(simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(10);
+		Sleep(30);
 	}
 }
 

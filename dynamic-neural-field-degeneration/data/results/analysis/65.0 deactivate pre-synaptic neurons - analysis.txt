@@ -1,0 +1,14 @@
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.1
+Number of trials: 20
+Average number of iterations until disapearance of peak: 104.2
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 14.85
+--------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 120
+Average number of iterations until disapearance of peak: 29.5023
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------

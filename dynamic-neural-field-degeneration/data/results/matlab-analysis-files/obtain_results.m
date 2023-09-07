@@ -17,7 +17,7 @@ centroidsFilePath = '';
 resultsFilePath = '';
 plotFilePath = '../plots/';
 targetCentroids = {15.0; 40.0; 65.0; 90.0; 115.0; 140.0; 165.0};
-acceptableDeviation = 0.1;
+acceptableDeviation = 0.5;
 
 
 dataTable = table();
@@ -67,8 +67,9 @@ for position = 1:size(positions,1)
         end
         subTitle = ['Target centroid position ', positions{position}];
         plotData(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
-
     
+        %% Adapt values to percentages
+        [avgNumIterations, avgIterationsMisbehavior] = adaptToPercentage(experiments{experiment, 1}, avgNumIterations, avgIterationsMisbehavior);
         %% Store data in table
         newRow = table(cellstr(experiments{experiment, 1}), ...
                        targetCentroid, ...
