@@ -4,6 +4,7 @@
 ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	: dnfcomposerHandler(DnfcomposerHandler(params.isVisualisationOn)), params(params)
 {
+	data.outputFieldCentroidHistory.reserve(5000);
 }
 
  void ExperimentHandler::printExperimentSetupToConsole() const
