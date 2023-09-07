@@ -12,7 +12,7 @@ int main()
         params.numberOfTrials = 1000;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         params.fieldToDegenerate = "perceptual";
 
         params.isDataSavingOn = false;
