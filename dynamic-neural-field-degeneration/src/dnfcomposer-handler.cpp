@@ -50,6 +50,7 @@ void DnfcomposerHandler::step()
 			application->step();
 
 		userRequestClose = application->getCloseUI();
+		Sleep(5);
 	}
 
 	application->close();
@@ -195,7 +196,7 @@ void DnfcomposerHandler::updateFieldCentroids()
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
 		userRequestClose = application->getCloseUI();
-		Sleep(20);
+		Sleep(5);
 	}
 }
 
@@ -204,13 +205,13 @@ void DnfcomposerHandler::activateDegeneration()
 	//static int elementCount = 0;
 	//numberOfDegeneratedElements++;
 
-	numberOfDegeneratedElements = numberOfDegeneratedElements + 100;
 
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(simulationParameters.fieldToDegenerate == "perceptual")
 		{
+			numberOfDegeneratedElements = numberOfDegeneratedElements + 1;
 			simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.inputField->startDegeneration();
 		}
@@ -225,6 +226,7 @@ void DnfcomposerHandler::activateDegeneration()
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+		numberOfDegeneratedElements = numberOfDegeneratedElements + 100;
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
 		if (simulationParameters.isDebugMode)

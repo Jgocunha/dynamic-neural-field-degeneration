@@ -112,7 +112,7 @@ void ExperimentWindow::renderFieldCentroidOverTime() const
 		ImPlot::SetupLegend(ImPlotLocation_NorthEast, ImPlotLegendFlags_Outside);
 
 		const std::string labelInputField = "Centroid of decision field";
-		ImPlot::SetupAxisLimits(ImAxis_Y1, 35, 45, ImGuiCond_Always);
+		ImPlot::SetupAxisLimits(ImAxis_Y1, expWinParams.expectedDecisionFieldCentroid - 5, expWinParams.expectedDecisionFieldCentroid + 5, ImGuiCond_Always);
 		ImPlot::SetupAxisLimits(ImAxis_X1, 0, decisionFieldCentroidValue.size(), ImGuiCond_Always);
 		ImPlot::PlotLine(labelInputField.c_str(), &decisionFieldCentroidValue[0], decisionFieldCentroidValue.size());
 
@@ -152,11 +152,6 @@ void ExperimentWindow::setDecisionFieldCentroid(const double& decisionFieldCentr
 	expWinParams.decisionFieldCentroid = decisionFieldCentroid;
 }
 
-double ExperimentWindow::calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid)
-{
-	return std::abs(fieldCentroid - expectedFieldCentroid);
-}
-
 void ExperimentWindow::setExperimentSetupData(const std::string& currentDegenerationType, const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated)
 {
 	setCurrentDegenerationType(currentDegenerationType);
@@ -169,8 +164,8 @@ void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const
 	setPerceptualFieldCentroid(perceptualFieldCentroid);
 	setDecisionFieldCentroid(decisionFieldCentroid);
 
-	setPerceptualFieldCentroidDeviation(calculateFieldCentroidDeviation(perceptualFieldCentroid, expWinParams.expectedPerceptualFieldCentroid)) ;
-	setDecisionFieldCentroidDeviation(calculateFieldCentroidDeviation(decisionFieldCentroid, expWinParams.expectedDecisionFieldCentroid));
+	setPerceptualFieldCentroidDeviation() ;
+	setDecisionFieldCentroidDeviation();
 }
 
 void ExperimentWindow::setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid)
@@ -194,13 +189,26 @@ void ExperimentWindow::setExpectedDecisionFieldCentroid(const double& expectedDe
 	expWinParams.expectedDecisionFieldCentroid = expectedDecisionFieldCentroid;
 }
 
-void ExperimentWindow::setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation)
+void ExperimentWindow::setPerceptualFieldCentroidDeviation()
 {
-	expWinParams.perceptualFieldCentroidDeviation = perceptualFieldCentroidDeviation;
+	const double val1 = expWinParams.perceptualFieldCentroid;
+	const double val2 = expWinParams.expectedPerceptualFieldCentroid;
+	constexpr double size = 360.0;
+	expWinParams.perceptualFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }
 
-void ExperimentWindow::setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation)
+void ExperimentWindow::setDecisionFieldCentroidDeviation()
 {
-	expWinParams.decisionFieldCentroidDeviation = decisionFieldCentroidDeviation;
+	const double val1 = expWinParams.decisionFieldCentroid;
+	const double val2 = expWinParams.expectedDecisionFieldCentroid;
+	constexpr double size = 180.0;
+	expWinParams.decisionFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }
+
+double ExperimentWindow::calculateDeviation(const double& val1, const double& val2, const double& size)
+{
+	const double diff = std::fmod(val2 - val1 + size, size);
+	return (diff <= size / 2.0) ? diff : size - diff;
+}
+
 

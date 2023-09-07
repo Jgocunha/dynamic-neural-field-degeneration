@@ -12,11 +12,10 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Data saving is " << (params.isDataSavingOn ? "on" : "off") << std::endl;
 	std::cout << "Debug mode is " << (params.isDebugModeOn ? "on" : "off") << std::endl;
-	std::cout << "Visualisation is " << (params.isVisualisationOn ? "on" : "off") << std::endl;
+	std::cout << "Visualization is " << (params.isVisualisationOn ? "on" : "off") << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Number of trials: " << params.numberOfTrials << std::endl;
 	std::cout << "Decision tolerance: " << params.decisionTolerance << std::endl;
-	std::cout << "Target external stimulus position: " << params.targetExternalStimulusPosition << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Degeneracy type: " << params.degeneracyName << std::endl;
 	std::cout << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
@@ -30,9 +29,19 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	 dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
  }
 
- void ExperimentHandler::setExpectedFieldBehaviour() const
+ void ExperimentHandler::setExpectedFieldBehaviour()
  {
-	 dnfcomposerHandler.setExpectedFieldBehavior(params.targetExternalStimulusPosition, params.targetOutputCentroid);
+	 if (hueToAngleIterator == hueToAngleMap.end())
+		 hueToAngleIterator = hueToAngleMap.begin();
+
+	 data.targetInputFieldCentroid = hueToAngleIterator->first;
+	 data.targetOutputFieldCentroid = hueToAngleIterator->second;
+
+	 //if (params.isDebugModeOn)
+		 //std::cout << "External stimulus: " << data.shapeHue << std::endl;
+	 ++hueToAngleIterator;
+
+	 dnfcomposerHandler.setExpectedFieldBehavior(data.targetInputFieldCentroid, data.targetOutputFieldCentroid);
  }
 
  void ExperimentHandler::setExperimentAsEnded()
@@ -46,70 +55,30 @@ void ExperimentHandler::init()
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
-// debug step
-//void ExperimentHandler::step()
-//{
-//	printExperimentSetupToConsole();
-//	setExperimentSetupData();
-//	setExpectedFieldBehaviour();
-//
-//	setupProcedure(0);
-//
-//	for (int i = 0; i < 648; i++)
-//	{
-//		if (params.isDebugModeOn)
-//			std::cout << "Trial: " << i << std::endl;
-//
-//		degenerationProcedure();
-//		//cleanUpTrial();
-//	}
-//
-//	std::cout << "Experiment ended." << std::endl;
-//	setExperimentAsEnded();
-//}
-
 void ExperimentHandler::step()
 {
 	printExperimentSetupToConsole();
 	setExperimentSetupData();
-	setExpectedFieldBehaviour();
 
-	for(int i = 0; i < params.numberOfTrials; i++)
+	for(int k = 0; k < hueToAngleMap.size(); k++)
 	{
-		if (params.isDebugModeOn)
-			std::cout << "Trial: " << i << std::endl;
+		setExpectedFieldBehaviour();
 
-		setupProcedure(i);
-		Sleep(20);
-		degenerationProcedure();
-		cleanUpTrial();
+		for(int i = 0; i < params.numberOfTrials; i++)
+		{
+			if (params.isDebugModeOn)
+				std::cout << "Trial: " << i << std::endl;
+			dnfcomposerHandler.setTrial(i);
+
+			setupProcedure();
+			Sleep(20);
+			degenerationProcedure();
+			cleanUpTrial();
+		}
 	}
 
 	setExperimentAsEnded();
 }
-
-// debug degeneration
-//void ExperimentHandler::degenerationProcedure()
-//{
-//	bool isOutputFieldDegenerated = hasOutputFieldDegenerated();
-//
-//	//while (1)
-//	{
-//		// save centroid of the output field
-//		data.outputFieldCentroidHistory.push_back(dnfcomposerHandler.getOutputFieldCentroid());
-//		//if (params.isDebugModeOn)
-//			//std::cout << "Output field centroid: " << dnfcomposerHandler.getOutputFieldCentroid() << std::endl;
-//
-//		// apply degeneration and wait for the fields to settle
-//		dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
-//
-//		while (!dnfcomposerHandler.getHaveFieldsSettled());
-//
-//		dnfcomposerHandler.setHaveFieldsSettled(false);
-//
-//		isOutputFieldDegenerated = hasOutputFieldDegenerated();
-//	}
-//}
 
 void ExperimentHandler::close()
 {
@@ -117,12 +86,10 @@ void ExperimentHandler::close()
 	dnfcomposerHandler.close();
 }
 
-void ExperimentHandler::setupProcedure(const int& trial)
+void ExperimentHandler::setupProcedure()
 {
-	dnfcomposerHandler.setTrial(trial);
-
 	// add and remove stimulus and wait for the fields to settle
-	dnfcomposerHandler.setExternalInput(params.targetExternalStimulusPosition);
+	dnfcomposerHandler.setExternalInput(data.targetInputFieldCentroid);
 
 	while (!dnfcomposerHandler.getHaveFieldsSettled());
 	dnfcomposerHandler.setHaveFieldsSettled(false);
@@ -157,7 +124,6 @@ void ExperimentHandler::cleanUpTrial()
 	if (params.isDataSavingOn)
 		saveOutputFieldCentroidToFile();
 	data.outputFieldCentroidHistory.clear();
-
 	dnfcomposerHandler.closeSimulation();
 }
 
@@ -173,7 +139,12 @@ bool ExperimentHandler::hasOutputFieldDegenerated() const
 
 void ExperimentHandler::saveOutputFieldCentroidToFile() const
 {
-	const std::string filename = params.filePathPrefix + params.degeneracyName + " - centroids.txt";
+	// Convert the double to a string with 1 decimal place
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(1) << data.targetOutputFieldCentroid;
+	const std::string decimalString = ss.str();
+
+	const std::string filename = params.filePathPrefix + "results/" + decimalString + " "+ params.degeneracyName + " - centroids.txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 
 	if (!file.is_open())
