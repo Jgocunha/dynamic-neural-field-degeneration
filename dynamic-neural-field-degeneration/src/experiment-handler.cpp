@@ -71,9 +71,9 @@ void ExperimentHandler::step()
 			degenerationProcedure();
 		} while (!hasOutputFieldDegenerated());
 
+		cleanUpTrial();
 	}
 
-		cleanUpTrial();
 	setExperimentAsEnded();
 }
 
