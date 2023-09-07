@@ -76,8 +76,8 @@ void ExperimentHandler::step()
 			degenerationProcedure();
 			cleanUpTrial();
 		}
+		Sleep(100);
 	}
-
 	setExperimentAsEnded();
 }
 

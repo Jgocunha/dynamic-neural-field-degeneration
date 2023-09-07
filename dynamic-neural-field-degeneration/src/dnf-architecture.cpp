@@ -4,10 +4,10 @@
 std::shared_ptr<Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(20, 0, 0);
+	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(30, 0, 0);
 
-	const int perceptualFieldSize = 360;
-	const int decisionFieldSize = 180;
+	int perceptualFieldSize = 360;
+	int decisionFieldSize = 180;
 
 	// create neural fields
 	ActivationFunctionParameters afp = { ActivationFunctionType::Heaviside, 0.0, 0.2 };
