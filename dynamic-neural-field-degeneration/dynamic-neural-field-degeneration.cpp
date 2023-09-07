@@ -5,10 +5,10 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 1000;
+	params.numberOfTrials = 250;
     params.decisionTolerance = 0.1;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
     params.fieldToDegenerate = "decision";
     setDegeneracyNameAndTypeOfElements(params);
 
@@ -35,7 +35,7 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
             params.typeOfElementsDegenerated = "weights";
     		break;
         case ElementDegeneracyType::WEIGHTS_REDUCE:
-            params.degeneracyName = "reduce 0.4";
+            params.degeneracyName = "reduce 0.8";
             params.typeOfElementsDegenerated = "weights";
             break;
 	    case ElementDegeneracyType::NEURONS_DEACTIVATE:

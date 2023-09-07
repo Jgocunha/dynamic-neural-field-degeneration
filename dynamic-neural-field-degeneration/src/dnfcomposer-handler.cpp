@@ -48,7 +48,7 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else
 			application->step();
-
+		Sleep(5);
 		userRequestClose = application->getCloseUI();
 	}
 
