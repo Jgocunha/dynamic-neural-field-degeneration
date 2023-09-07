@@ -11,7 +11,7 @@ int main()
         params.numberOfTrials = 100;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
         params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 0;
@@ -23,7 +23,7 @@ int main()
         params.numberOfRelearningEpochs = 10;
         params.maximumAmountOfRelearningCycles = 20;
 
-        params.isDataSavingOn = true;
+        params.isDataSavingOn = false;
         params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
