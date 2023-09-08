@@ -51,7 +51,7 @@ void DnfcomposerHandler::step()
 
 		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(20);
+		Sleep(10);
 	}
 
 	application->close();
@@ -115,6 +115,13 @@ void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
 {
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
+}
+
+void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed)
+{
+	Sleep(2);
+	this->isCentroidDataBeingAccessed = isCentroidDataBeingAccessed;
+	Sleep(2);
 }
 
 
@@ -190,15 +197,18 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		if (!isCentroidDataBeingAccessed)
+		{
+			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		}
 
 		if(simulationParameters.isUserInterfaceActive)
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
 		if(simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(30);
+		Sleep(20);
 	}
 }
 

@@ -5,15 +5,16 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 10;
+	params.numberOfTrials = 50;
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
     params.fieldToDegenerate = "decision";
     setDegeneracyNameAndTypeOfElements(params);
 
-    params.isDataSavingOn = false;
-    params.isVisualisationOn = true;
+    params.startingExternalStimulus = 1;
+    params.isDataSavingOn = true;
+    params.isVisualisationOn = false;
     params.isDebugModeOn = true;
 
     return params;
