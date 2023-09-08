@@ -29,7 +29,7 @@ int main()
         params.isLinkToCoppeliaSimOn = false;
 
         ExperimentHandler experiment{ params };
-
+        
         experiment.init();
         experiment.close();
 
