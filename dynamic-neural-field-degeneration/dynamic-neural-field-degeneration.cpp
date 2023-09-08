@@ -5,16 +5,13 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 250;
-    params.decisionTolerance = 0.1;
+	params.numberOfTrials = 100;
+    params.decisionTolerance = 0.5;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
     params.fieldToDegenerate = "decision";
     setDegeneracyNameAndTypeOfElements(params);
-
-    params.targetExternalStimulusPosition = 41;
-    params.targetOutputCentroid = 40;
-
+    params.startingExternalStimulus = 1;
     params.isDataSavingOn = true;
     params.isVisualisationOn = false;
     params.isDebugModeOn = true;

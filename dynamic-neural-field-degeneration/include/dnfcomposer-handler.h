@@ -49,6 +49,7 @@ private:
 	bool wasDegenerationRequested = false;
 	bool haveFieldsSettled = false;
 	bool hasExperimentFinished = false;
+	bool isCentroidDataBeingAccessed = false;
 
 public:
 	DnfcomposerHandler();
@@ -71,6 +72,7 @@ public:
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+	void setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed);
 
 	double getInputFieldCentroid() const;
 	double getOutputFieldCentroid() const;

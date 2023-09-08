@@ -48,8 +48,10 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else
 			application->step();
-		Sleep(5);
-		userRequestClose = application->getCloseUI();
+
+		if (simulationParameters.isUserInterfaceActive)
+			userRequestClose = application->getCloseUI();
+		Sleep(10);
 	}
 
 	application->close();
@@ -113,6 +115,11 @@ void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
 {
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
+}
+
+void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed)
+{
+	this->isCentroidDataBeingAccessed = isCentroidDataBeingAccessed;
 }
 
 
@@ -188,13 +195,17 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		if (!isCentroidDataBeingAccessed)
+		{
+			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		}
 
 		if(simulationParameters.isUserInterfaceActive)
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
-		userRequestClose = application->getCloseUI();
+		if(simulationParameters.isUserInterfaceActive)
+			userRequestClose = application->getCloseUI();
 		Sleep(20);
 	}
 }
@@ -204,13 +215,13 @@ void DnfcomposerHandler::activateDegeneration()
 	//static int elementCount = 0;
 	//numberOfDegeneratedElements++;
 
-	numberOfDegeneratedElements = numberOfDegeneratedElements + 100;
 
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(simulationParameters.fieldToDegenerate == "perceptual")
 		{
+			numberOfDegeneratedElements = numberOfDegeneratedElements + 1;
 			simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.inputField->startDegeneration();
 		}
@@ -225,6 +236,7 @@ void DnfcomposerHandler::activateDegeneration()
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+		numberOfDegeneratedElements = numberOfDegeneratedElements + 100;
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
 		if (simulationParameters.isDebugMode)

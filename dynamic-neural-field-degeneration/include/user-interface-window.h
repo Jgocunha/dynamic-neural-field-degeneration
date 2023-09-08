@@ -47,15 +47,14 @@ private:
 	void setExpectedPerceptualFieldCentroid(const double& expectedPerceptualFieldCentroid);
 	void setExpectedDecisionFieldCentroid(const double& expectedDecisionFieldCentroid);
 
-	void setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation);
-	void setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation);
+	void setPerceptualFieldCentroidDeviation();
+	void setDecisionFieldCentroidDeviation();
 
 private:
+	static double calculateDeviation(const double& val1, const double& val2, const double& size);
+
 	void renderExperimentDetails() const;
 	void renderFieldAnalysis() const;
 	void renderDegenerationStatistics() const;
 	void renderFieldCentroidOverTime() const;
-
-public:
-	static double calculateFieldCentroidDeviation(const double &fieldCentroid, const double &expectedFieldCentroid);
 };
