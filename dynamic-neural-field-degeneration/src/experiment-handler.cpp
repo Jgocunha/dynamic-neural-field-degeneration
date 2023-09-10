@@ -45,6 +45,7 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
+
 	for(int i = 0; i < params.numberOfTrials; i++)
 	{
 		if(params.isDebugModeOn)
