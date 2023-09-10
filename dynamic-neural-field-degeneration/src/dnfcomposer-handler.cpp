@@ -119,9 +119,9 @@ void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) 
 
 void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed)
 {
-	Sleep(2);
+	//Sleep(4);
 	this->isCentroidDataBeingAccessed = isCentroidDataBeingAccessed;
-	Sleep(2);
+	//Sleep(4);
 }
 
 
@@ -173,7 +173,7 @@ void DnfcomposerHandler::updateExternalInput()
 {
 	initializeFields();
 
-	Sleep(100);
+	Sleep(50);
 
 	static double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 25, 20 };

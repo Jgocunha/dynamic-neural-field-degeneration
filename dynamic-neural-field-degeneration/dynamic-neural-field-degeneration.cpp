@@ -9,7 +9,7 @@ ExperimentParameters setExperimentParameters()
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
-    params.fieldToDegenerate = "decision";
+    params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);
 
     params.startingExternalStimulus = 1;

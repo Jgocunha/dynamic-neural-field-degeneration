@@ -20,7 +20,7 @@ struct SimulationParameters
 	std::string fieldCouplingId = "per - dec";
 	double externalInputPosition = 0;
 	double inputFieldCentroid, outputFieldCentroid;
-	int timeForFieldToSettle = 5;
+	int timeForFieldToSettle = 10;
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
 

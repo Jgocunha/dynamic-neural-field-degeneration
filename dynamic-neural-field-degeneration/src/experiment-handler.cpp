@@ -4,7 +4,7 @@
 ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	: dnfcomposerHandler(DnfcomposerHandler(params.isVisualisationOn)), params(params)
 {
-	data.outputFieldCentroidHistory.reserve(20000);
+	data.outputFieldCentroidHistory.reserve(6000);
 	std::advance(hueToAngleIterator, params.startingExternalStimulus);
 	data.targetInputFieldCentroid = hueToAngleIterator->first;
 	data.targetOutputFieldCentroid = hueToAngleIterator->second;
@@ -109,9 +109,13 @@ void ExperimentHandler::degenerationProcedure()
 	while (!isOutputFieldDegenerated)
 	{
 		// save centroid of the output field
+		Sleep(2);
 		dnfcomposerHandler.setCentroidDataBeingAccessed(true);
+		Sleep(2);
 		data.outputFieldCentroidHistory.push_back(dnfcomposerHandler.getOutputFieldCentroid());
+		Sleep(2);
 		dnfcomposerHandler.setCentroidDataBeingAccessed(false);
+		Sleep(2);
 		//if (params.isDebugModeOn)
 			//std::cout << "Output field centroid: " << dnfcomposerHandler.getOutputFieldCentroid() << std::endl;
 
@@ -140,8 +144,10 @@ void ExperimentHandler::cleanUpTrial()
 bool ExperimentHandler::hasOutputFieldDegenerated()
 {
 	dnfcomposerHandler.setCentroidDataBeingAccessed(true);
+	Sleep(4);
 	const double outputFieldCentroid = dnfcomposerHandler.getOutputFieldCentroid();
 	dnfcomposerHandler.setCentroidDataBeingAccessed(false);
+	Sleep(4);
 
 	if (outputFieldCentroid < 0)
 		return true;
