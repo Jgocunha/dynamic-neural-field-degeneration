@@ -12,9 +12,9 @@ int main()
         params.decisionTolerance = 5;
 
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
-        params.fieldToDegenerate = "perceptual";
+        params.fieldToDegenerate = "decision";
 
-        params.initialPercentageOfDegeneration = 40;
+        params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 

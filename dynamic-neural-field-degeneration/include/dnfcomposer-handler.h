@@ -44,7 +44,7 @@ struct RelearningParameters
 	RelearningType relearningType = RelearningType::ALL_CASES;
 	int numberOfRelearningEpochs = 0;
 	double learningRate = 0.0;
-	double expectedInputCentroid = 0.0, expectedOutputCentroid = 0.0;
+	int targetRelearningPositions;
 };
 
 class DnfcomposerHandler
@@ -71,6 +71,28 @@ private:
 	bool hasRelearningFinished = false;
 	bool hasExperimentFinished = false;
 
+	const double offset = 1.0;
+	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	{
+		{ 00.00 + offset }, // red
+		{ 40.60 + offset }, // orange
+		{ 60.00 + offset }, // yellow
+		{ 120.00 + offset }, // green
+		{ 240.00 + offset }, // blue
+		{ 274.15 + offset }, // indigo
+		{ 281.79 + offset } // violet
+	};
+	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	{
+		{ 15.00 + offset },
+		{ 40.00 + offset },
+		{ 65.00 + offset },
+		{ 90.00 + offset },
+		{ 115.00 + offset },
+		{ 140.00 + offset },
+		{ 165.00 + offset }
+	};
+
 public:
 	DnfcomposerHandler();
 	DnfcomposerHandler(bool isUserInterfaceActive);
@@ -94,7 +116,7 @@ public:
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
-	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
+	void setRelearning(const int& targetRelearningPositions);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setHasRelearningFinished(bool hasRelearningFinished);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
@@ -113,4 +135,7 @@ private:
 	void activateDegeneration();
 	void activateRelearning();
 	void waitForFieldsToSettle() const;
+
+	void allCasesRelearning();
+	void onlyDegeneratedCasesRelearning();
 };

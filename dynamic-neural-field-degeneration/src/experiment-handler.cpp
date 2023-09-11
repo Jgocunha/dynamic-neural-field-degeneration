@@ -26,6 +26,9 @@ void ExperimentHandler::printExperimentParameters() const
 	std::cout << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
 	std::cout << "Increment of degeneration percentage: " << params.incrementOfDegenerationPercentage << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "Relearning type: " << (params.relearningType == RelearningParameters::RelearningType::ALL_CASES ? "All cases" : "Only degenerated cases") << std::endl;
+	std::cout << "Learning rate: " << params.learningRate << std::endl;
+	std::cout << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
 	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfRelearningCycles << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
@@ -45,6 +48,20 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
+	mockPickAndPlace();
+
+	while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
+	{
+		params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+		degenerationProcedure();
+		std::cout << "Degeneration percentage: " << params.currentPercentageOfDegeneration << std::endl;
+		Sleep(100);
+
+		dnfcomposerHandler.saveWeightsToFile();
+		//Sleep(200);
+	}
+
+	Sleep(200);
 
 	for(int i = 0; i < params.numberOfTrials; i++)
 	{
@@ -332,7 +349,7 @@ void ExperimentHandler::relearningProcedure()
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
 
-	dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
+	dnfcomposerHandler.setRelearning(stats.shapesPlacedIncorrectly);
 
 	while (!dnfcomposerHandler.getHasRelearningFinished());
 	dnfcomposerHandler.setHasRelearningFinished(false);

@@ -27,8 +27,9 @@ void FieldCoupling::init()
 	else
 	{
 		mathtools::resizeMatrix(weights, components["input"].size(), components["output"].size());
-		mathtools::fillMatrixWithRandomValues(weights, -1, 1);
+		mathtools::fillMatrixWithRandomValues(weights, 0.0, 0.0);
 		trained = false;
+		writeWeights();
 	}
 }
 
@@ -82,7 +83,7 @@ void FieldCoupling::resetWeights()
 	mathtools::fillMatrixWithRandomValues(weights, 0, 0);
 }
 
-void FieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
+void FieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
 {
 	switch (learningRule)
 	{
@@ -103,7 +104,6 @@ void FieldCoupling::setLearningRate(const double& learningRate)
 {
 	parameters.learningRate = learningRate;
 }
-
 
 const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
 {
