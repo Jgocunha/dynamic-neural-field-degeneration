@@ -83,6 +83,7 @@ public:
 private:
 	void initializeFields();
 	void setupUserInterface();
+	void cleanUpTrial();
 	void updateExternalInput();
 	void updateFieldCentroids();
 	void activateDegeneration();

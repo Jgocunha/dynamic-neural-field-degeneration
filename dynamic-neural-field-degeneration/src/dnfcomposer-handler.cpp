@@ -48,10 +48,8 @@ void DnfcomposerHandler::step()
 		else if(wasExternalInputUpdated)
 			updateExternalInput();
 		else if(hasTrialFinished)
-		{
-			simulation->close();
-			hasTrialFinished = false;
-		} else
+			cleanUpTrial();
+		else
 			application->step();
 
 		if (simulationParameters.isUserInterfaceActive)
@@ -65,7 +63,7 @@ void DnfcomposerHandler::step()
 void DnfcomposerHandler::close()
 {
 	dnfcomposerThread.join();
-	if (simulationParameters.isUserInterfaceActive)
+	if(simulationParameters.isUserInterfaceActive)
 		readCentroidsThread.join();
 }
 
@@ -76,9 +74,7 @@ void DnfcomposerHandler::stop()
 
 void DnfcomposerHandler::closeSimulation()
 {
-	numberOfDegeneratedElements = 0;
 	hasTrialFinished = true;
-	//simulation->close();
 }
 
 void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
@@ -130,11 +126,15 @@ void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAc
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
+	if (!simulationParameters.isUserInterfaceActive)
+		return simulationElements.inputField->calculateCentroid();
 	return simulationParameters.inputFieldCentroid;
 }
 
 double DnfcomposerHandler::getOutputFieldCentroid() const
 {
+	if(!simulationParameters.isUserInterfaceActive)
+		return simulationElements.outputField->calculateCentroid();
 	return simulationParameters.outputFieldCentroid;
 }
 
@@ -172,11 +172,18 @@ void DnfcomposerHandler::setupUserInterface()
 	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
 
+void DnfcomposerHandler::cleanUpTrial()
+{
+	numberOfDegeneratedElements = 0;
+	simulation->close();
+	hasTrialFinished = false;
+}
+
 void DnfcomposerHandler::updateExternalInput()
 {
 	initializeFields();
 
-	Sleep(50);
+	Sleep(100);
 
 	static double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 25, 20 };
@@ -200,18 +207,15 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		if (!isCentroidDataBeingAccessed)
-		{
-			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
-		}
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
 
 		if(simulationParameters.isUserInterfaceActive)
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
 		if(simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(20);
+		Sleep(5);
 	}
 }
 

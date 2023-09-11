@@ -5,7 +5,7 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 100;
+	params.numberOfTrials = 2;
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
@@ -13,7 +13,7 @@ ExperimentParameters setExperimentParameters()
     setDegeneracyNameAndTypeOfElements(params);
 
     params.startingExternalStimulus = 0;
-    params.isDataSavingOn = true;
+    params.isDataSavingOn = false;
     params.isVisualisationOn = false;
     params.isDebugModeOn = true;
 
