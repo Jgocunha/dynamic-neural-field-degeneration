@@ -78,11 +78,10 @@ void ExperimentHandler::step()
 			dnfcomposerHandler.setTrial(i);
 
 			setupProcedure();
-			//Sleep(20);
 			degenerationProcedure();
 			cleanUpTrial();
 		}
-		Sleep(20);
+		Sleep(5);
 	}
 	setExperimentAsEnded();
 }
@@ -109,13 +108,9 @@ void ExperimentHandler::degenerationProcedure()
 	while (!isOutputFieldDegenerated)
 	{
 		// save centroid of the output field
-		Sleep(2);
-		dnfcomposerHandler.setCentroidDataBeingAccessed(true);
-		Sleep(2);
+		//dnfcomposerHandler.setCentroidDataBeingAccessed(true);
 		data.outputFieldCentroidHistory.push_back(dnfcomposerHandler.getOutputFieldCentroid());
-		Sleep(2);
-		dnfcomposerHandler.setCentroidDataBeingAccessed(false);
-		Sleep(2);
+		//dnfcomposerHandler.setCentroidDataBeingAccessed(false);
 		//if (params.isDebugModeOn)
 			//std::cout << "Output field centroid: " << dnfcomposerHandler.getOutputFieldCentroid() << std::endl;
 
@@ -129,7 +124,8 @@ void ExperimentHandler::degenerationProcedure()
 		isOutputFieldDegenerated = hasOutputFieldDegenerated();
 	}
 
-	std::cout << "Number of degeneration steps: " << data.outputFieldCentroidHistory.size() << std::endl;
+	if (params.isDebugModeOn)
+		std::cout << "Number of degeneration steps: " << data.outputFieldCentroidHistory.size() << std::endl;
  }
 
 void ExperimentHandler::cleanUpTrial()
@@ -143,11 +139,10 @@ void ExperimentHandler::cleanUpTrial()
 
 bool ExperimentHandler::hasOutputFieldDegenerated()
 {
-	dnfcomposerHandler.setCentroidDataBeingAccessed(true);
-	Sleep(4);
+	//dnfcomposerHandler.setCentroidDataBeingAccessed(true);
+	//Sleep(4);
 	const double outputFieldCentroid = dnfcomposerHandler.getOutputFieldCentroid();
-	dnfcomposerHandler.setCentroidDataBeingAccessed(false);
-	Sleep(4);
+	//dnfcomposerHandler.setCentroidDataBeingAccessed(false);
 
 	if (outputFieldCentroid < 0)
 		return true;

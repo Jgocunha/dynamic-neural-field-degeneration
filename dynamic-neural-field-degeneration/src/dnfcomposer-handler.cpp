@@ -32,7 +32,8 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
+	if(simulationParameters.isUserInterfaceActive)
+		readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
@@ -46,12 +47,16 @@ void DnfcomposerHandler::step()
 			activateDegeneration();
 		else if(wasExternalInputUpdated)
 			updateExternalInput();
-		else
+		else if(hasTrialFinished)
+		{
+			simulation->close();
+			hasTrialFinished = false;
+		} else
 			application->step();
 
 		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(10);
+		Sleep(5);
 	}
 
 	application->close();
@@ -59,9 +64,9 @@ void DnfcomposerHandler::step()
 
 void DnfcomposerHandler::close()
 {
-	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
-	readCentroidsThread.join();
+	if (simulationParameters.isUserInterfaceActive)
+		readCentroidsThread.join();
 }
 
 void DnfcomposerHandler::stop()
@@ -72,7 +77,8 @@ void DnfcomposerHandler::stop()
 void DnfcomposerHandler::closeSimulation()
 {
 	numberOfDegeneratedElements = 0;
-	simulation->close();
+	hasTrialFinished = true;
+	//simulation->close();
 }
 
 void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
@@ -119,11 +125,8 @@ void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) 
 
 void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed)
 {
-	//Sleep(4);
 	this->isCentroidDataBeingAccessed = isCentroidDataBeingAccessed;
-	//Sleep(4);
 }
-
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
@@ -214,10 +217,6 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 void DnfcomposerHandler::activateDegeneration()
 {
-	//static int elementCount = 0;
-	//numberOfDegeneratedElements++;
-
-
 	switch (simulationParameters.degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:

@@ -48,6 +48,7 @@ private:
 	bool wasExternalInputUpdated = false;
 	bool wasDegenerationRequested = false;
 	bool haveFieldsSettled = false;
+	bool hasTrialFinished = false;
 	bool hasExperimentFinished = false;
 	bool isCentroidDataBeingAccessed = false;
 
