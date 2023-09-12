@@ -5,15 +5,15 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 2;
+	params.numberOfTrials = 20;
     params.decisionTolerance = 0.5;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
     params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);
 
     params.startingExternalStimulus = 0;
-    params.isDataSavingOn = false;
+    params.isDataSavingOn = true;
     params.isVisualisationOn = false;
     params.isDebugModeOn = true;
 
@@ -33,7 +33,7 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
             params.typeOfElementsDegenerated = "weights";
     		break;
         case ElementDegeneracyType::WEIGHTS_REDUCE:
-            params.degeneracyName = "reduce 0.4";
+            params.degeneracyName = "reduce 0.8";
             params.typeOfElementsDegenerated = "weights";
             break;
 	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
