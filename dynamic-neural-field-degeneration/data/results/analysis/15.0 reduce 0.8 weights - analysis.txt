@@ -1,0 +1,21 @@
+Experiment reduce 0.8 weights
+Target centroid value: 15| Acceptable deviation: 0.5
+Number of trials: 20
+Average number of iterations until disapearance of peak: 787.9244
+Overall maximum deviation from target centroid: 1.5
+Average number of iterations until misbehavior: 476.2577
+--------------
+Experiment reduce 0.8 weights
+Target centroid value: 15| Acceptable deviation: 0.5
+Number of trials: 20
+Average number of iterations until disapearance of peak: 787.9244
+Overall maximum deviation from target centroid: 1.5
+Average number of iterations until misbehavior: 476.2577
+--------------
+Experiment reduce 0.8 weights
+Target centroid value: 15| Acceptable deviation: 0.5
+Number of trials: 20
+Average number of iterations until disapearance of peak: 787.9244
+Overall maximum deviation from target centroid: 1.5
+Average number of iterations until misbehavior: 476.2577
+--------------

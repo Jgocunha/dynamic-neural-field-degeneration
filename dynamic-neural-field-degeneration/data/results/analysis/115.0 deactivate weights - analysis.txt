@@ -1,0 +1,14 @@
+Experiment deactivate weights
+Target centroid value: 115| Acceptable deviation: 0.5
+Number of trials: 27
+Average number of iterations until disapearance of peak: 179.2695
+Overall maximum deviation from target centroid: 116
+Average number of iterations until misbehavior: 67.3868
+--------------
+Experiment deactivate weights
+Target centroid value: 115| Acceptable deviation: 0.5
+Number of trials: 16
+Average number of iterations until disapearance of peak: 156.385
+Overall maximum deviation from target centroid: 2
+Average number of iterations until misbehavior: 60.1562
+--------------

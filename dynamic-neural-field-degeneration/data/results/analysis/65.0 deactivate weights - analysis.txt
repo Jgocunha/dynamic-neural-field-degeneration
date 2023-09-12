@@ -5,3 +5,24 @@ Average number of iterations until disapearance of peak: 80.7465
 Overall maximum deviation from target centroid: 66
 Average number of iterations until misbehavior: 55.6393
 --------------
+Experiment deactivate weights
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 59
+Average number of iterations until disapearance of peak: 80.7465
+Overall maximum deviation from target centroid: 66
+Average number of iterations until misbehavior: 55.6393
+--------------
+Experiment deactivate weights
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 26
+Average number of iterations until disapearance of peak: 183.2324
+Overall maximum deviation from target centroid: 66
+Average number of iterations until misbehavior: 57.0513
+--------------
+Experiment deactivate weights
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 16
+Average number of iterations until disapearance of peak: 160.6674
+Overall maximum deviation from target centroid: 2.5
+Average number of iterations until misbehavior: 56.7226
+--------------

@@ -4,10 +4,10 @@ clc;
 
 %% Setup variables
 experiments = {'deactivate weights', 'weight'; ...
-               %'reduce 0.4 weights', 'weight'; ...
-               %'reduce 0.6 weights', 'weight'; ...
-               %'reduce 0.8 weights', 'weight'; ...
-               'randomize weights', 'weight'; ...
+               'reduce 0.4 weights', 'weight'; ...
+               'reduce 0.6 weights', 'weight'; ...
+               'reduce 0.8 weights', 'weight'; ...
+               %'randomize weights', 'weight'; ...
                'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
                'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
@@ -34,7 +34,23 @@ for position = 1:size(positions,1)
      
          %% Read data
          data = readData(centroidsFilePath);
-     
+
+        %% Remove negative values from the cell array
+        newData = {};  % Initialize a new cell array to store filtered values
+        for i = 1:numel(data)
+            if isnumeric(data{i})
+                if data{i} >= 0
+                    % Keep only non-negative numeric values
+                    newData{end+1} = data{i};
+                end
+            elseif islogical(data{i}) || ischar(data{i})
+                % Keep logical and char values as-is
+                newData{end+1} = data{i};
+            end
+            % You can add more data type checks as needed
+        end
+        data = newData;  % Replace the original data with the filtered data
+        
          %% Analyse data
      
          % get number of trials

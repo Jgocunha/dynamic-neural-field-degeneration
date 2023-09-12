@@ -23,3 +23,17 @@ Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback
 Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m', 36)" style="font-weight:bold">obtain_results</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m',36,0)">line 36</a>)
          data = readData(centroidsFilePath);
 } 
+Experiment deactivate post-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 90
+Average number of iterations until disapearance of peak: 72.3148
+Overall maximum deviation from target centroid: 3.5
+Average number of iterations until misbehavior: 15.8333
+--------------
+Experiment deactivate post-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 90
+Average number of iterations until disapearance of peak: 72.3148
+Overall maximum deviation from target centroid: 3.5
+Average number of iterations until misbehavior: 15.8333
+--------------
