@@ -72,6 +72,9 @@ private:
 	bool hasRelearningFinished = false;
 	bool hasExperimentFinished = false;
 
+	bool wasStartSimulationRequested = false;
+	bool wasCloseSimulationRequested = false;
+
 	const double offset = 1.0;
 	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
@@ -105,6 +108,7 @@ public:
 	void close();
 	void stop();
 
+	void startSimulation() const;
 	void closeSimulation();
 
 	void setExperimentSetupData(const std::string& currentDegenerationType,
@@ -113,7 +117,7 @@ public:
 	void setTrial(const int& trial) const;
 	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
 		const int& numberOfRelearningEpochs, const double& learningRate, const bool updateAllWeights);
-
+	
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
@@ -121,6 +125,9 @@ public:
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setHasRelearningFinished(bool hasRelearningFinished);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+
+	void setWasStartSimulationRequested(bool wasStartSimulationRequested);
+	void setWasCloseSimulationRequested(bool wasCloseSimulationRequested);
 
 	double getInputFieldCentroid() const;
 	double getOutputFieldCentroid() const;

@@ -8,14 +8,14 @@ int main()
         ExperimentParameters params;
 
         params.numberOfShapesPerTrial = 7;
-        params.numberOfTrials = 100;
+        params.numberOfTrials = 2;
         params.decisionTolerance = 5;
 
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         params.fieldToDegenerate = "decision";
 
         params.initialPercentageOfDegeneration = 0;
-        params.targetPercentageOfDegeneration = 100;
+        params.targetPercentageOfDegeneration = 10;
         params.incrementOfDegenerationPercentage = 10;
 
         params.relearningType = RelearningParameters::RelearningType::ALL_CASES;

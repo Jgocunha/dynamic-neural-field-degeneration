@@ -80,6 +80,7 @@ struct ExperimentStatistics
 {
 	int numOfRelearningCycles = 0;
 	int shapesPlacedIncorrectly = 0;
+	std::vector<int> learningCyclesPerTrialHistory;
 };
 
 class ExperimentHandler
@@ -137,10 +138,11 @@ private:
 
 	void relearningProcedure();
 
-	void cleanupTrial();
+	void cleanupPickAndPlace();
 	void saveLearningCyclesPerTrial() const;
 
 	void backupWeightsFile() const;
 	void restoreWeightsFile() const;
 	bool doesBackupWeightsFileExist() const;
+	void getOriginalWeightsFile() const;
 };

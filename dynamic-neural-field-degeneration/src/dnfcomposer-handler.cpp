@@ -54,6 +54,10 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
+		else if (wasStartSimulationRequested)
+			startSimulation();
+		else if(wasCloseSimulationRequested)
+			closeSimulation();
 		else
 			application->step();
 
@@ -78,10 +82,16 @@ void DnfcomposerHandler::stop()
 
 // other methods
 
+void DnfcomposerHandler::startSimulation() const
+{
+	simulation->init();
+}
+
 void DnfcomposerHandler::closeSimulation()
 {
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
+	simulationElements.fieldCoupling->readWeights();
 	//simulation->close();
 }
 
@@ -172,6 +182,17 @@ void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) 
 {
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
 }
+
+void DnfcomposerHandler::setWasStartSimulationRequested(bool wasStartSimulationRequested)
+{
+	this->wasStartSimulationRequested = wasStartSimulationRequested;
+}
+
+void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationRequested)
+{
+	this->wasCloseSimulationRequested = wasCloseSimulationRequested;
+}
+
 
 // public get methods
 
@@ -340,8 +361,11 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		if(!(wasStartSimulationRequested || wasCloseSimulationRequested))
+		{
+			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+		}
 
 		if (simulationParameters.isUserInterfaceActive)
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);

@@ -34,6 +34,7 @@ public:
 	void step(const double& t, const double& deltaT) override;
 	void close() override;
 
+	bool readWeights();
 	void resetWeights();
 	void saveWeights() const;
 	virtual void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
@@ -50,7 +51,6 @@ protected:
 	void computeOutput();
 	void scaleOutput();
 
-	bool readWeights();
 	void writeWeights() const;
 
 	std::vector<std::vector<double>> degeneratedLearningRule(std::vector<std::vector<double>>& weights,

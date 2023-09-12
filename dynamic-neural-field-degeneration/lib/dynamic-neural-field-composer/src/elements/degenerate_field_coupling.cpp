@@ -34,12 +34,12 @@ void DegenerateFieldCoupling::updateWeights(const std::vector<double>& input, co
 {
 	if(!updateAllWeights)
 	{
-		std::cout << "Updating only degenerated weights!" << std::endl;
+		//std::cout << "Updating only degenerated weights!" << std::endl;
 		weights = learningRuleDegenerate(input, output);
 	}
 	else
 	{
-		std::cout << "Updating all weights!" << std::endl;
+		//std::cout << "Updating all weights!" << std::endl;
 		weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
 	}
 
@@ -52,7 +52,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
 	constexpr double numWeightsToDegenerate = 100;
 
-	std::cout << "Indices for degeneration size: " << indicesForDegeneration.size() << std::endl;
+	//std::cout << "Indices for degeneration size: " << indicesForDegeneration.size() << std::endl;
 	switch (degeneracyType)
 	{
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -74,7 +74,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 		std::cout << "Degeneracy type not supported" << std::endl;
 		break;
 	}
-	std::cout << "After degeneration indices size: " << indicesForDegeneration.size() << std::endl;
+	//std::cout << "After degeneration indices size: " << indicesForDegeneration.size() << std::endl;
 
 }
 
@@ -229,8 +229,8 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 		}
 	}
 
-	std::cout << "Contain count: " << containCount << std::endl;
-	std::cout << "Not contain count: " << notContainCount << std::endl;
+	//std::cout << "Contain count: " << containCount << std::endl;
+	//std::cout << "Not contain count: " << notContainCount << std::endl;
 
 	return weights;
 }
