@@ -22,6 +22,7 @@ int main()
         params.learningRate = 0.01;
         params.numberOfRelearningEpochs = 10;
         params.maximumAmountOfRelearningCycles = 20;
+        params.updateAllWeights = false;
 
         params.isDataSavingOn = false;
         params.isComposerVisualizationOn = true;

@@ -30,6 +30,7 @@ struct ExperimentParameters
 	double learningRate = 0.1;
 	int numberOfRelearningEpochs = 100;
 	int maximumAmountOfRelearningCycles = 10;
+	bool updateAllWeights = true;
 
 	bool isDataSavingOn = false;
 	bool isComposerVisualizationOn = true;

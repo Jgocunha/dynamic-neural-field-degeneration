@@ -7,7 +7,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	this->params.setOtherDegeneracyParameters();
 	printExperimentParameters();
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
-	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate);
+	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, params.updateAllWeights);
 
 }
 
@@ -30,6 +30,7 @@ void ExperimentHandler::printExperimentParameters() const
 	std::cout << "Learning rate: " << params.learningRate << std::endl;
 	std::cout << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
 	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfRelearningCycles << std::endl;
+	std::cout << "Update all weights: " << (params.updateAllWeights ? "true" : "false") << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
 	std::cout << "Is dnf-composer visualization on: " << (params.isComposerVisualizationOn ? "true" : "false") << std::endl;

@@ -127,11 +127,14 @@ void DnfcomposerHandler::setTrial(const int& trial) const
 		userInterfaceWindow->setCurrentTrial(trial);
 }
 
-void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, const double& learningRate)
+void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, 
+	const double& learningRate, const bool updateAllWeights)
 {
 	relearningParameters.relearningType = relearningType;
 	relearningParameters.numberOfRelearningEpochs = numberOfRelearningEpochs;
 	relearningParameters.learningRate = learningRate;
+	relearningParameters.updateAllWeights = updateAllWeights;
+	simulationElements.fieldCoupling->setUpdateAllWeights(updateAllWeights);
 }
 
 // public set methods for control flags
@@ -303,6 +306,12 @@ void DnfcomposerHandler::activateRelearning()
 		break;
 	}
 
+	simulationElements.fcpw.simulateAssociation();
+	//std::cout << "Finished simulating association.\n";
+
+	simulationElements.fcpw.trainWeights(relearningParameters.numberOfRelearningEpochs);
+	//std::cout << "Finished training weights.\n";
+
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
 }
@@ -359,7 +368,6 @@ void DnfcomposerHandler::allCasesRelearning()
 	// add gaussian inputs
 	GaussStimulusParameters gsp = { 3, 25, 20 };
 
-
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
@@ -369,11 +377,6 @@ void DnfcomposerHandler::allCasesRelearning()
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
-	simulationElements.fcpw.simulateAssociation();
-	//std::cout << "Finished simulating association.\n";
-
-	simulationElements.fcpw.trainWeights(relearningParameters.numberOfRelearningEpochs);
-	//std::cout << "Finished training weights.\n";
 }
 
 void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
@@ -401,10 +404,5 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	gsp.sigma = 3;
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
-
-	simulationElements.fcpw.simulateAssociation();
-	//std::cout << "Finished simulating association.\n";
-
-	simulationElements.fcpw.trainWeights(relearningParameters.numberOfRelearningEpochs);
 
 }

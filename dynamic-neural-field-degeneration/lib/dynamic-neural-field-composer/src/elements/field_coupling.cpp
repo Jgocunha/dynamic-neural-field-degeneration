@@ -83,8 +83,14 @@ void FieldCoupling::resetWeights()
 	mathtools::fillMatrixWithRandomValues(weights, 0, 0);
 }
 
+void FieldCoupling::setUpdateAllWeights(const bool& updateAllWeights)
+{
+		this->updateAllWeights = updateAllWeights;
+}
+
 void FieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
 {
+	std::cout << "Updating weights" << std::endl;
 	switch (learningRule)
 	{
 	case LearningRule::HEBBIAN:
@@ -97,6 +103,7 @@ void FieldCoupling::updateWeights(const std::vector<double>& input, const std::v
 		weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
 		break;
 	}
+
 	writeWeights();
 }
 
@@ -112,7 +119,7 @@ const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
 
 bool FieldCoupling::readWeights()
 {
-	std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
+	const std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
 	std::ifstream file(filepath);  // Open file for reading
 
 	if (file.is_open()) {
@@ -137,9 +144,9 @@ bool FieldCoupling::readWeights()
 	return false;
 }
 
-void FieldCoupling::writeWeights()
+void FieldCoupling::writeWeights() const
 {
-	std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
+	const std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
 	std::ofstream file(filepath); // Open file for writing
 
 	if (file.is_open()) {
@@ -159,7 +166,7 @@ void FieldCoupling::writeWeights()
 	}
 }
 
-void FieldCoupling::saveWeights()
+void FieldCoupling::saveWeights() const
 {
 	writeWeights();
 }

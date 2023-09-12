@@ -25,6 +25,7 @@ protected:
 	FieldCouplingParameters parameters;
 	std::vector<std::vector<double>> weights;
 	bool trained;
+	bool updateAllWeights;
 	LearningRule learningRule;
 public:
 	FieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
@@ -34,10 +35,11 @@ public:
 	void close() override;
 
 	void resetWeights();
-	void saveWeights();
-	void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
+	void saveWeights() const;
+	virtual void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
 
 	void setLearningRate(const double& learningRate);
+	void setUpdateAllWeights(const bool& updateAllWeights);
 
 	const std::vector<std::vector<double>>& getWeights() const;
 
@@ -49,5 +51,8 @@ protected:
 	void scaleOutput();
 
 	bool readWeights();
-	void writeWeights();
+	void writeWeights() const;
+
+	std::vector<std::vector<double>> degeneratedLearningRule(std::vector<std::vector<double>>& weights,
+		const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
 };

@@ -8,12 +8,12 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const in
 
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;
+	populateIndicesForDegeneration();
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	populateIndicesForDegeneration();
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -30,18 +30,29 @@ void DegenerateFieldCoupling::startDegeneration()
 	degenerate = true;
 }
 
-//void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
-//{
-//	weights = (weights, input, output, parameters.learningRate);
-//	//weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
-//	writeWeights();
-//}
+void DegenerateFieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
+{
+	if(!updateAllWeights)
+	{
+		std::cout << "Updating only degenerated weights!" << std::endl;
+		weights = learningRuleDegenerate(input, output);
+	}
+	else
+	{
+		std::cout << "Updating all weights!" << std::endl;
+		weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
+	}
+
+	writeWeights();
+}
 
 void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1; // 1 percent
 	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
 	constexpr double numWeightsToDegenerate = 100;
+
+	std::cout << "Indices for degeneration size: " << indicesForDegeneration.size() << std::endl;
 	switch (degeneracyType)
 	{
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -63,6 +74,8 @@ void DegenerateFieldCoupling::applyDegeneracy()
 		std::cout << "Degeneracy type not supported" << std::endl;
 		break;
 	}
+	std::cout << "After degeneration indices size: " << indicesForDegeneration.size() << std::endl;
+
 }
 
 void DegenerateFieldCoupling::setDegeneracyType(ElementDegeneracyType degeneracyType)
@@ -169,16 +182,19 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 		//std::cout << "Attempting to find unique combination" << std::endl;
 }
 
-std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate)
+std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(
+	const std::vector<double>& input, const std::vector<double>& targetOutput)
 {
 
 	double deltaT = 1.0;
 	double tau_w = 5.0;
 	double eta = 0.5;
 
-	size_t inputSize = input.size();
-	size_t outputSize = targetOutput.size(); //fixed from int to size_t
+	int containCount = 0;
+	int notContainCount = 0;
+
+	const size_t inputSize = input.size();
+	const size_t outputSize = targetOutput.size(); //fixed from int to size_t
 
 	// Calculate the activation levels of the fields based on the input values and current weights
 	std::vector<double> actualOutput(outputSize, 0.0);
@@ -198,17 +214,23 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 	for (size_t i = 0; i < inputSize; ++i) {
 		for (size_t j = 0; j < outputSize; ++j)
 		{
-			std::pair<int, int> pair(i, j);
-			auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
-
 			// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
-			//if (it != indicesForDegeneration.end())
-			//{
-			weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
-			//}
+			if(indicesForDegeneration.contains(std::make_pair(i, j)))
+			{
+				weights[i][j] += parameters.learningRate * (error[j] - eta * weights[i][j]) * input[i];
+				containCount++;
+
+			}
+			else
+			{
+				notContainCount++;
+			}
 			// else do nothing
 		}
 	}
+
+	std::cout << "Contain count: " << containCount << std::endl;
+	std::cout << "Not contain count: " << notContainCount << std::endl;
 
 	return weights;
 }

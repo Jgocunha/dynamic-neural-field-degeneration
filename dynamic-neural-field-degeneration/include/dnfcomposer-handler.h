@@ -44,7 +44,8 @@ struct RelearningParameters
 	RelearningType relearningType = RelearningType::ALL_CASES;
 	int numberOfRelearningEpochs = 0;
 	double learningRate = 0.0;
-	int targetRelearningPositions;
+	int targetRelearningPositions = 0;
+	bool updateAllWeights = true;
 };
 
 class DnfcomposerHandler
@@ -111,7 +112,7 @@ public:
 	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
 	void setTrial(const int& trial) const;
 	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
-		const int& numberOfRelearningEpochs, const double& learningRate);
+		const int& numberOfRelearningEpochs, const double& learningRate, const bool updateAllWeights);
 
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
