@@ -139,6 +139,7 @@ private:
 	void relearningProcedure();
 
 	void cleanupPickAndPlace();
+	void cleanupTrial();
 	void saveLearningCyclesPerTrial() const;
 
 	void backupWeightsFile() const;

@@ -61,7 +61,7 @@ void DnfcomposerHandler::step()
 		else
 			application->step();
 
-		Sleep(1);
+		Sleep(5);
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -82,9 +82,10 @@ void DnfcomposerHandler::stop()
 
 // other methods
 
-void DnfcomposerHandler::startSimulation() const
+void DnfcomposerHandler::startSimulation()
 {
 	simulation->init();
+	wasStartSimulationRequested = false;
 }
 
 void DnfcomposerHandler::closeSimulation()
@@ -92,7 +93,7 @@ void DnfcomposerHandler::closeSimulation()
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
 	simulationElements.fieldCoupling->readWeights();
-	//simulation->close();
+	wasCloseSimulationRequested = false;
 }
 
 // UI setup
@@ -137,14 +138,22 @@ void DnfcomposerHandler::setTrial(const int& trial) const
 		userInterfaceWindow->setCurrentTrial(trial);
 }
 
+void DnfcomposerHandler::setRelearningCycles(const int& relearningCycles) const
+{
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setRelearningCycles(relearningCycles);
+}
+
 void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, 
-	const double& learningRate, const bool updateAllWeights)
+	const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
 {
 	relearningParameters.relearningType = relearningType;
 	relearningParameters.numberOfRelearningEpochs = numberOfRelearningEpochs;
 	relearningParameters.learningRate = learningRate;
 	relearningParameters.updateAllWeights = updateAllWeights;
 	simulationElements.fieldCoupling->setUpdateAllWeights(updateAllWeights);
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setRelearningParameters(static_cast<int>(relearningType), numberOfRelearningEpochs, learningRate, maximumRelearningCycles, updateAllWeights);
 }
 
 // public set methods for control flags
@@ -361,16 +370,19 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		if(!(wasStartSimulationRequested || wasCloseSimulationRequested))
+		if(!(wasStartSimulationRequested || wasCloseSimulationRequested || hasExperimentFinished))
 		{
 			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
 			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+
+			if (simulationParameters.isUserInterfaceActive)
+				userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 		}
 
 		if (simulationParameters.isUserInterfaceActive)
-			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+			userRequestClose = application->getCloseUI();
 
-		Sleep(20);
+		Sleep(5);
 	}
 }
 

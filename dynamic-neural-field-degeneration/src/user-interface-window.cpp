@@ -91,8 +91,15 @@ void ExperimentWindow::renderDegenerationStatistics() const
 
 void ExperimentWindow::renderRelearningStatistics() const
 {
-	ImGui::Text("Relearning is active: %s.", expWinParams.isRelearningActive ? "true" : "false");
-	ImGui::Text("Number of relearning cycles is %d.", expWinParams.numOfRelearningCycles);
+	ImGui::Text("Relearning type is %s.", expWinParams.relearningType ? "only degenerated cases" : "all cases");
+	ImGui::Text("Relearning epochs is %d.", expWinParams.relearningEpochs);
+	ImGui::Text("Learning rate is %.2f.", expWinParams.learningRate);
+	ImGui::Text("Update all weights is %s.", expWinParams.updateAllWeights ? "true" : "false");
+
+	// Custom vertical spacing using a dummy element with a specific size
+	ImGui::Dummy(ImVec2(0.0f, 20.0f)); // Adjust the second parameter for the desired vertical spacing size
+
+	ImGui::Text("Current number of relearning cycles is %d.", expWinParams.numOfRelearningCycles);
 }
 
 // public set functions
@@ -127,6 +134,20 @@ void ExperimentWindow::setExpectedCentroids(const double& expectedPerceptualFiel
 void ExperimentWindow::setNumberOfDegeneratedElements(const int& numberOfDegeneratedElements)
 {
 	expWinParams.numberOfDegeneratedElements = numberOfDegeneratedElements;
+}
+
+void ExperimentWindow::setRelearningParameters(const int& relearningType, const int& relearningEpochs, const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
+{
+	expWinParams.relearningType = relearningType;
+	expWinParams.relearningEpochs = relearningEpochs;
+	expWinParams.learningRate = learningRate;
+	expWinParams.updateAllWeights = updateAllWeights;
+	expWinParams.maximumRelearningCycles = maximumRelearningCycles;
+}
+
+void ExperimentWindow::setRelearningCycles(const int& numOfRelearningCycles)
+{
+	expWinParams.numOfRelearningCycles = numOfRelearningCycles;
 }
 
 // auxiliary functions

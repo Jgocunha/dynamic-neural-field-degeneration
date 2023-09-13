@@ -7,7 +7,8 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	this->params.setOtherDegeneracyParameters();
 	printExperimentParameters();
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
-	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, params.updateAllWeights);
+	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
+		params.maximumAmountOfRelearningCycles, params.updateAllWeights);
 
 }
 
@@ -65,13 +66,16 @@ void ExperimentHandler::step()
 			std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
 	}
 
-	for(int trial = 0; trial < params.numberOfTrials; trial++)
+	for(int trial = 1; trial <= params.numberOfTrials; trial++)
 	{
 		if (params.isDebugModeOn)
 		{
-			std::cout << std::endl << "Trial " << trial + 1 << std::endl;
+			std::cout << std::endl << "Trial " << trial << std::endl;
 			std::cout << "----------------------------------------" << std::endl;
 		}
+
+		if(params.isComposerVisualizationOn)
+			dnfcomposerHandler.setTrial(trial);
 
 		do
 		{
@@ -98,17 +102,15 @@ void ExperimentHandler::step()
 					backupWeightsFile();
 				relearningProcedure();
 			}
+			if (params.isComposerVisualizationOn)
+				dnfcomposerHandler.setRelearningCycles(stats.numOfRelearningCycles);
 			cleanupPickAndPlace();
 
 		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration);
-		saveLearningCyclesPerTrial();
-		stats.learningCyclesPerTrialHistory.clear();
-		getOriginalWeightsFile();
-		Sleep(10);
-		dnfcomposerHandler.setWasCloseSimulationRequested(true);
-		//dnfcomposerHandler.startSimulation();
-	}
 
+		cleanupTrial();
+	}
+	dnfcomposerHandler.stop();
 }
 
 //void ExperimentHandler::step()
@@ -428,10 +430,21 @@ void ExperimentHandler::cleanupPickAndPlace()
 		coppeliasimHandler.resetSignals();
 }
 
+void ExperimentHandler::cleanupTrial()
+{
+	saveLearningCyclesPerTrial();
+	stats.learningCyclesPerTrialHistory.clear();
+	params.currentPercentageOfDegeneration = 0;
+	getOriginalWeightsFile();
+	Sleep(50);
+	dnfcomposerHandler.setWasCloseSimulationRequested(true);
+	Sleep(50);
+}
+
 void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
 	const std::string filename = 
-		params.filePathPrefix + params.degeneracyName + ".txt";
+		params.filePathPrefix + "results/" + params.degeneracyName + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 	if (file.is_open())
 	{
