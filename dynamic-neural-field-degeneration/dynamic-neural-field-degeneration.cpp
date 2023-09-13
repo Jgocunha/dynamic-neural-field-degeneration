@@ -5,16 +5,23 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
+<<<<<<< HEAD
 	params.numberOfTrials = 20;
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
+=======
+	params.numberOfTrials = 2;
+    params.decisionTolerance = 0.5;
+
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+>>>>>>> 3e49278d4162a9639f680e38007813d7b1012cb7
     params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);
 
     params.startingExternalStimulus = 0;
-    params.isDataSavingOn = true;
-    params.isVisualisationOn = false;
+    params.isDataSavingOn = false;
+    params.isVisualisationOn = true;
     params.isDebugModeOn = true;
 
     return params;

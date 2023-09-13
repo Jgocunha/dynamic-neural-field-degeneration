@@ -26,3 +26,38 @@ Average number of iterations until disapearance of peak: 29.8738
 Overall maximum deviation from target centroid: 0.5
 Average number of iterations until misbehavior: 0
 --------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 306
+Average number of iterations until disapearance of peak: 29.8738
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 306
+Average number of iterations until disapearance of peak: 107.5458
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 306
+Average number of iterations until disapearance of peak: 29.8738
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 306
+Average number of iterations until disapearance of peak: 29.8738
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------
+Experiment deactivate pre-synaptic neurons
+Target centroid value: 65| Acceptable deviation: 0.5
+Number of trials: 306
+Average number of iterations until disapearance of peak: 29.8738
+Overall maximum deviation from target centroid: 0.5
+Average number of iterations until misbehavior: 0
+--------------
