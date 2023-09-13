@@ -12,3 +12,24 @@ Average number of iterations until disapearance of peak: 403.0724
 Overall maximum deviation from target centroid: 16
 Average number of iterations until misbehavior: 141.5918
 --------------
+{Operation terminated by user during matlab.graphics.controls.ToolbarController
+
+
+In matlab.graphics.controls.DesktopToolbarController
+
+In matlab.graphics.controls.DesktopToolbarController.getInstance
+
+In matlab.graphics.controls.internal.ToolbarFactory/getToolbar
+
+In matlab.graphics.controls.CanvasPlugin/createCanvas
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('hold', 'C:\Program Files\MATLAB\R2023a\toolbox\matlab\graphics\axis\hold.m', 54)" style="font-weight:bold">hold</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023a\toolbox\matlab\graphics\axis\hold.m',54,0)">line 54</a>)
+        ax = gca;
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plotData', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\plotData.m', 4)" style="font-weight:bold">plotData</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\plotData.m',4,0)">line 4</a>)
+hold on;
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m', 85)" style="font-weight:bold">obtain_results</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m',85,0)">line 85</a>)
+        plotData(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
+} 
+obtain_results
