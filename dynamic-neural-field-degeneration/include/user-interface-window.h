@@ -48,7 +48,7 @@ public:
 
 private:
 
-	static double calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid);
+	static double calculateDeviation(const double& val1, const double& val2, const double& size);
 
 	void setCurrentDegenerationType(const std::string& currentDegenerationType);
 	void setMaximumAllowedDeviation(const double& maximumAllowedDeviation);
@@ -60,8 +60,8 @@ private:
 	void setExpectedPerceptualFieldCentroid(const double& expectedPerceptualFieldCentroid);
 	void setExpectedDecisionFieldCentroid(const double& expectedDecisionFieldCentroid);
 
-	void setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation);
-	void setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation);
+	void setPerceptualFieldCentroidDeviation();
+	void setDecisionFieldCentroidDeviation();
 private:
 	void renderExperimentDetails() const;
 	void renderFieldAnalysis() const;

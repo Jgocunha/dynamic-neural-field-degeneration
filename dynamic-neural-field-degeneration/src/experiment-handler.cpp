@@ -276,6 +276,8 @@ void ExperimentHandler::readShapeHue()
 
 void ExperimentHandler::readTargetAngle()
 {
+	dnfcomposerHandler.updateFieldCentroids();
+	Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -363,6 +365,7 @@ void ExperimentHandler::mockReadTargetAngle()
 	data.lastOutputFieldCentroid = signals.targetAngle;
 
 	getExpectedTargetAngle();
+	dnfcomposerHandler.updateFieldCentroids();
 }
 
 void ExperimentHandler::degenerationProcedure()
@@ -461,7 +464,7 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 			file << cycles << " "; // Write the integer followed by a newline
 		file << "\n";
 		file.close(); // Close the file
-		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
+		std::cout << "Number of relearning cycles needed saved to file." << std::endl;
 	}
 	else
 	{

@@ -121,8 +121,8 @@ void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const
 	setPerceptualFieldCentroid(perceptualFieldCentroid);
 	setDecisionFieldCentroid(decisionFieldCentroid);
 
-	setPerceptualFieldCentroidDeviation(calculateFieldCentroidDeviation(perceptualFieldCentroid, expWinParams.expectedPerceptualFieldCentroid));
-	setDecisionFieldCentroidDeviation(calculateFieldCentroidDeviation(decisionFieldCentroid, expWinParams.expectedDecisionFieldCentroid));
+	setPerceptualFieldCentroidDeviation();
+	setDecisionFieldCentroidDeviation();
 }
 
 void ExperimentWindow::setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid)
@@ -152,11 +152,11 @@ void ExperimentWindow::setRelearningCycles(const int& numOfRelearningCycles)
 
 // auxiliary functions
 
-double ExperimentWindow::calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid)
+double ExperimentWindow::calculateDeviation(const double& val1, const double& val2, const double& size)
 {
-	return std::abs(fieldCentroid - expectedFieldCentroid);
+	const double diff = std::fmod(val2 - val1 + size, size);
+	return (diff <= size / 2.0) ? diff : size - diff;
 }
-
 // private set functions
 
 void ExperimentWindow::setCurrentDegenerationType(const std::string& currentDegenerationType)
@@ -194,12 +194,18 @@ void ExperimentWindow::setExpectedDecisionFieldCentroid(const double& expectedDe
 	expWinParams.expectedDecisionFieldCentroid = expectedDecisionFieldCentroid;
 }
 
-void ExperimentWindow::setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation)
+void ExperimentWindow::setPerceptualFieldCentroidDeviation()
 {
-	expWinParams.perceptualFieldCentroidDeviation = perceptualFieldCentroidDeviation;
+	const double val1 = expWinParams.perceptualFieldCentroid;
+	const double val2 = expWinParams.expectedPerceptualFieldCentroid;
+	constexpr double size = 360.0;
+	expWinParams.perceptualFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }
 
-void ExperimentWindow::setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation)
+void ExperimentWindow::setDecisionFieldCentroidDeviation()
 {
-	expWinParams.decisionFieldCentroidDeviation = decisionFieldCentroidDeviation;
+	const double val1 = expWinParams.decisionFieldCentroid;
+	const double val2 = expWinParams.expectedDecisionFieldCentroid;
+	constexpr double size = 180.0;
+	expWinParams.decisionFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }
