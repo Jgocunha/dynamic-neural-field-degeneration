@@ -92,8 +92,10 @@ void ExperimentHandler::step()
 					restoreWeightsFile();
 				degenerationProcedure();
 				dnfcomposerHandler.saveWeightsToFile();
-				stats.numOfRelearningCycles = 0;
+				if (stats.numOfRelearningCycles >= params.maximumAmountOfRelearningCycles)
+					data.isFieldDead = true;
 				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
+				stats.numOfRelearningCycles = 0;
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
 			}
 			else
@@ -106,7 +108,7 @@ void ExperimentHandler::step()
 				dnfcomposerHandler.setRelearningCycles(stats.numOfRelearningCycles);
 			cleanupPickAndPlace();
 
-		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration);
+		} while ((params.currentPercentageOfDegeneration < params.targetPercentageOfDegeneration) && !(data.isFieldDead));
 
 		cleanupTrial();
 	}
@@ -351,6 +353,8 @@ void ExperimentHandler::mockReadShapeHue()
 
 void ExperimentHandler::mockReadTargetAngle()
 {
+	dnfcomposerHandler.updateFieldCentroids();
+	Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -414,6 +418,9 @@ void ExperimentHandler::relearningProcedure()
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
 
+	if(params.isDebugModeOn)
+		std::cout << "Relearning procedure started." << std::endl;
+
 	dnfcomposerHandler.setRelearning(stats.shapesPlacedIncorrectly);
 
 	while (!dnfcomposerHandler.getHasRelearningFinished());
@@ -432,9 +439,11 @@ void ExperimentHandler::cleanupPickAndPlace()
 
 void ExperimentHandler::cleanupTrial()
 {
-	saveLearningCyclesPerTrial();
+	if(params.isDataSavingOn)
+		saveLearningCyclesPerTrial();
 	stats.learningCyclesPerTrialHistory.clear();
 	params.currentPercentageOfDegeneration = 0;
+	data.isFieldDead = false;
 	getOriginalWeightsFile();
 	Sleep(50);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);

@@ -38,7 +38,7 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
+	//readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
@@ -61,7 +61,7 @@ void DnfcomposerHandler::step()
 		else
 			application->step();
 
-		Sleep(5);
+		Sleep(1);
 		userRequestClose = application->getCloseUI();
 	}
 
@@ -93,6 +93,7 @@ void DnfcomposerHandler::closeSimulation()
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
 	simulationElements.fieldCoupling->readWeights();
+	simulationElements.fieldCoupling->populateIndicesForDegeneration();
 	wasCloseSimulationRequested = false;
 }
 
@@ -367,23 +368,11 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	bool userRequestClose = false;
-	while (!userRequestClose && !hasExperimentFinished)
-	{
-		if(!(wasStartSimulationRequested || wasCloseSimulationRequested || hasExperimentFinished))
-		{
-			simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-			simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+	simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+	simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
 
-			if (simulationParameters.isUserInterfaceActive)
-				userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
-		}
-
-		if (simulationParameters.isUserInterfaceActive)
-			userRequestClose = application->getCloseUI();
-
-		Sleep(5);
-	}
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 }
 
 // other methods

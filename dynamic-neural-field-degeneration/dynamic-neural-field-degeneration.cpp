@@ -9,7 +9,7 @@ int main()
 
         params.numberOfShapesPerTrial = 7;
         params.numberOfTrials = 100;
-        params.decisionTolerance = 0.5;
+        params.decisionTolerance = 5;
 
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         params.fieldToDegenerate = "perceptual";
@@ -24,7 +24,7 @@ int main()
         params.maximumAmountOfRelearningCycles = 20;
         params.updateAllWeights = false;
 
-        params.isDataSavingOn = false;
+        params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;

@@ -28,8 +28,8 @@ public:
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	ElementDegeneracyType getDegeneracyType();
 	void updateWeights(const std::vector<double>& input, const std::vector<double>& output) override;
-private:
 	void populateIndicesForDegeneration();
+private:
 	void setRandomWeightToRandomValue();
 	void setRandomWeightToReduceValue();
 	void setRandomUniqueWeightToZero();

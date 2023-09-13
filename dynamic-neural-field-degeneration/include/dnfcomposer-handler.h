@@ -137,10 +137,11 @@ public:
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 
 	void saveWeightsToFile() const;
+
+	void updateFieldCentroids();
 private:
 	void setupUserInterface();
 	void updateExternalInput();
-	void updateFieldCentroids();
 	void activateDegeneration();
 	void activateRelearning();
 	void waitForFieldsToSettle() const;

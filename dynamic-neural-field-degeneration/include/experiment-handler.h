@@ -74,6 +74,7 @@ struct ExperimentData
 	double lastOutputFieldCentroid = UNDEFINED;
 	double shapeHue = UNDEFINED;
 	double expectedTargetAngle = UNDEFINED;
+	bool isFieldDead = false;
 };
 
 struct ExperimentStatistics
