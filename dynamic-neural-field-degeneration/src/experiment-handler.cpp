@@ -50,7 +50,6 @@ void ExperimentHandler::init()
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
-
 void ExperimentHandler::step()
 {
 	if(params.initialPercentageOfDegeneration != 0)
@@ -455,8 +454,10 @@ void ExperimentHandler::cleanupTrial()
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
-	const std::string filename = 
-		params.filePathPrefix + "results/" + params.degeneracyName + ".txt";
+	//const std::string filename = 
+		//params.filePathPrefix + "results/" + params.degeneracyName + ".txt";
+	const std::string filename = params.getSavePath();
+
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 	if (file.is_open())
 	{

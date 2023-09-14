@@ -5,24 +5,25 @@ int main()
 {
     try
     {
+        //<----- parameters that change the experiment completely
         ExperimentParameters params;
 
         params.numberOfShapesPerTrial = 7;
         params.numberOfTrials = 100;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
         params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 
-        params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
+        params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
         params.learningRate = 0.01;
-        params.numberOfRelearningEpochs = 10;
-        params.maximumAmountOfRelearningCycles = 20;
-        params.updateAllWeights = false;
+        params.numberOfRelearningEpochs = 100; //<------
+        params.maximumAmountOfRelearningCycles = 5; //<------
+        params.updateAllWeights = false; //<------
 
         params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;

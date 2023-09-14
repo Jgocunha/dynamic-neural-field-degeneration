@@ -65,6 +65,29 @@ struct ExperimentParameters
 		}
 		degeneracyName = degeneracyName + " " + typeOfElementsDegenerated;
 	}
+	std::string getSavePath() const
+	{
+		std::string filename = filePathPrefix + "results/";
+
+		filename = filename + degeneracyName;
+
+		switch(relearningType)
+		{
+		case  RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES:
+			filename = filename + " Only-degenerated-cases ";
+			break;
+		case RelearningParameters::RelearningType::ALL_CASES:
+			filename = filename + "All-cases ";
+			break;
+		}
+
+		filename = filename + " Epochs-" + std::to_string(numberOfRelearningEpochs);
+		filename = filename + " MaxCycles-" + std::to_string(maximumAmountOfRelearningCycles);
+		filename = filename + " Update-all-weights-" + std::to_string(updateAllWeights);
+		filename = filename + ".txt";
+
+		return filename;
+	}
 };
 
 struct ExperimentData
