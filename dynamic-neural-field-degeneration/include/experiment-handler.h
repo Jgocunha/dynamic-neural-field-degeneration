@@ -30,6 +30,7 @@ struct ExperimentParameters
 	double learningRate = 0.1;
 	int numberOfRelearningEpochs = 100;
 	int maximumAmountOfRelearningCycles = 10;
+	bool updateAllWeights = true;
 
 	bool isDataSavingOn = false;
 	bool isComposerVisualizationOn = true;
@@ -73,12 +74,14 @@ struct ExperimentData
 	double lastOutputFieldCentroid = UNDEFINED;
 	double shapeHue = UNDEFINED;
 	double expectedTargetAngle = UNDEFINED;
+	bool isFieldDead = false;
 };
 
 struct ExperimentStatistics
 {
 	int numOfRelearningCycles = 0;
 	int shapesPlacedIncorrectly = 0;
+	std::vector<int> learningCyclesPerTrialHistory;
 };
 
 class ExperimentHandler
@@ -136,10 +139,12 @@ private:
 
 	void relearningProcedure();
 
+	void cleanupPickAndPlace();
 	void cleanupTrial();
 	void saveLearningCyclesPerTrial() const;
 
 	void backupWeightsFile() const;
 	void restoreWeightsFile() const;
 	bool doesBackupWeightsFileExist() const;
+	void getOriginalWeightsFile() const;
 };

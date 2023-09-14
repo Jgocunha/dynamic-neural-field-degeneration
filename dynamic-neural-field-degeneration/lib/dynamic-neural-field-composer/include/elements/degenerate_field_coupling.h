@@ -2,7 +2,9 @@
 
 
 #include <algorithm>
+#include <unordered_set>
 #include "./field_coupling.h"
+
 
 class DegenerateFieldCoupling : public FieldCoupling
 {
@@ -25,15 +27,15 @@ public:
 	void setWeightReductionFactor(const double& factor);
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	ElementDegeneracyType getDegeneracyType();
-	//void updateWeights(const std::vector<double> input, const std::vector<double> output);
-private:
+	void updateWeights(const std::vector<double>& input, const std::vector<double>& output) override;
 	void populateIndicesForDegeneration();
+private:
 	void setRandomWeightToRandomValue();
 	void setRandomWeightToReduceValue();
 	void setRandomUniqueWeightToZero();
 	void findMinMaxWeightValues();
 	double getWeightReductionFactor();
 
-	std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-		const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
+	std::vector<std::vector<double>> learningRuleDegenerate(
+		const std::vector<double>& input, const std::vector<double>& targetOutput);
 };

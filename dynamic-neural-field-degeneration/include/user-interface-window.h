@@ -16,10 +16,12 @@ struct ExperimentWindowParameters
 	int numberOfDegeneratedElements = 0;
 	std::string typeOfElementsDegenerated = "null";
 
-	bool isRelearningActive = false;
+	int relearningType = 0;
+	int relearningEpochs = 0;
+	double learningRate = 0.0;
+	bool updateAllWeights = false;
+	int maximumRelearningCycles = 0;
 	int numOfRelearningCycles = 0;
-	//double correctDecisionRatio = 0.0;
-	//int numCorrectDecisions = 0;
 
 };
 
@@ -41,10 +43,12 @@ public:
 	void setCentroids(const double& perceptualFieldCentroid, const double& decisionFieldCentroid);
 	void setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid);
 	void setNumberOfDegeneratedElements(const int& numberOfDegeneratedElements);
+	void setRelearningParameters(const int& relearningType, const int& relearningEpochs, const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights);
+	void setRelearningCycles(const int& numOfRelearningCycles);
 
 private:
 
-	static double calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid);
+	static double calculateDeviation(const double& val1, const double& val2, const double& size);
 
 	void setCurrentDegenerationType(const std::string& currentDegenerationType);
 	void setMaximumAllowedDeviation(const double& maximumAllowedDeviation);
@@ -56,8 +60,8 @@ private:
 	void setExpectedPerceptualFieldCentroid(const double& expectedPerceptualFieldCentroid);
 	void setExpectedDecisionFieldCentroid(const double& expectedDecisionFieldCentroid);
 
-	void setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation);
-	void setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation);
+	void setPerceptualFieldCentroidDeviation();
+	void setDecisionFieldCentroidDeviation();
 private:
 	void renderExperimentDetails() const;
 	void renderFieldAnalysis() const;

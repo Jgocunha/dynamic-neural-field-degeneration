@@ -7,7 +7,8 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	this->params.setOtherDegeneracyParameters();
 	printExperimentParameters();
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
-	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate);
+	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
+		params.maximumAmountOfRelearningCycles, params.updateAllWeights);
 
 }
 
@@ -26,62 +27,149 @@ void ExperimentHandler::printExperimentParameters() const
 	std::cout << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
 	std::cout << "Increment of degeneration percentage: " << params.incrementOfDegenerationPercentage << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "Relearning type: " << (params.relearningType == RelearningParameters::RelearningType::ALL_CASES ? "All cases" : "Only degenerated cases") << std::endl;
+	std::cout << "Learning rate: " << params.learningRate << std::endl;
+	std::cout << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
 	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfRelearningCycles << std::endl;
+	std::cout << "Update all weights: " << (params.updateAllWeights ? "true" : "false") << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
 	std::cout << "Is dnf-composer visualization on: " << (params.isComposerVisualizationOn ? "true" : "false") << std::endl;
 	std::cout << "Is debug mode on: " << (params.isDebugModeOn ? "true" : "false") << std::endl;
 	std::cout << "Is link to CoppeliaSim on: " << (params.isLinkToCoppeliaSimOn ? "true" : "false") << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "----------------------------------------" << std::endl << std::endl;
 }
 
 void ExperimentHandler::init()
 {
+	getOriginalWeightsFile();
 	dnfcomposerHandler.init();
 	if(params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.init();
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
+
 void ExperimentHandler::step()
 {
-	for(int i = 0; i < params.numberOfTrials; i++)
+	if(params.initialPercentageOfDegeneration != 0)
 	{
+		mockPickAndPlace();
+		while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
+		{
+			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+			degenerationProcedure();
+			dnfcomposerHandler.saveWeightsToFile();
+		}
 		if(params.isDebugModeOn)
-			std::cout << "Trial " << i + 1 << " started." << std::endl;
+			std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
+	}
+
+	for(int trial = 1; trial <= params.numberOfTrials; trial++)
+	{
+		if (params.isDebugModeOn)
+		{
+			std::cout << std::endl << "Trial " << trial << std::endl;
+			std::cout << "----------------------------------------" << std::endl;
+		}
+
+		if(params.isComposerVisualizationOn)
+			dnfcomposerHandler.setTrial(trial);
 
 		do
 		{
 			bool successfulPickAndPlace = false;
-			do
+
+			if(params.isLinkToCoppeliaSimOn)
+				successfulPickAndPlace = bonafidePickAndPlace();
+			else
+				successfulPickAndPlace = mockPickAndPlace();
+
+			if (successfulPickAndPlace || (stats.numOfRelearningCycles >= params.maximumAmountOfRelearningCycles))
 			{
-				if(params.isLinkToCoppeliaSimOn)
-					successfulPickAndPlace = bonafidePickAndPlace();
-				else
-					successfulPickAndPlace = mockPickAndPlace();
+				if (doesBackupWeightsFileExist())
+					restoreWeightsFile();
+				degenerationProcedure();
+				dnfcomposerHandler.saveWeightsToFile();
+				if (stats.numOfRelearningCycles >= params.maximumAmountOfRelearningCycles)
+					data.isFieldDead = true;
+				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
+				stats.numOfRelearningCycles = 0;
+				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+			}
+			else
+			{
+				if(!doesBackupWeightsFileExist())
+					backupWeightsFile();
+				relearningProcedure();
+			}
+			if (params.isComposerVisualizationOn)
+				dnfcomposerHandler.setRelearningCycles(stats.numOfRelearningCycles);
+			cleanupPickAndPlace();
 
-				if(!successfulPickAndPlace)
-				{
-					if (!doesBackupWeightsFileExist())
-						backupWeightsFile();
-					relearningProcedure();
-				}
-			} while (!successfulPickAndPlace 
-				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
-
-			saveLearningCyclesPerTrial();
-
-			restoreWeightsFile();
-			degenerationProcedure();
-			dnfcomposerHandler.saveWeightsToFile();
-			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-			
-		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration );
+		} while ((params.currentPercentageOfDegeneration < params.targetPercentageOfDegeneration) && !(data.isFieldDead));
 
 		cleanupTrial();
 	}
-
+	dnfcomposerHandler.stop();
 }
+
+//void ExperimentHandler::step()
+//{
+//	//mockPickAndPlace();
+//
+//	//while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
+//	//{
+//	//	params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+//	//	degenerationProcedure();
+//	//	std::cout << "Degeneration percentage: " << params.currentPercentageOfDegeneration << std::endl;
+//	//	Sleep(10);
+//	//	dnfcomposerHandler.saveWeightsToFile();
+//	//}
+//
+//	//Sleep(200);
+//
+//	for(int i = 0; i < params.numberOfTrials; i++)
+//	{
+//		if(params.isDebugModeOn)
+//		{
+//			std::cout << "Trial " << i + 1 << " started." << std::endl;
+//			std::cout << "----------------------------------------" << std::endl;
+//		}
+//
+//		do
+//		{
+//			bool successfulPickAndPlace = false;
+//			do
+//			{
+//				if(params.isLinkToCoppeliaSimOn)
+//					successfulPickAndPlace = bonafidePickAndPlace();
+//				else
+//					successfulPickAndPlace = mockPickAndPlace();
+//
+//				if(!successfulPickAndPlace)
+//				{
+//					if (!doesBackupWeightsFileExist())
+//						backupWeightsFile();
+//					relearningProcedure();
+//				}
+//			} while (!successfulPickAndPlace 
+//				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
+//
+//			saveLearningCyclesPerTrial();
+//
+//			restoreWeightsFile();
+//			degenerationProcedure();
+//			dnfcomposerHandler.saveWeightsToFile();
+//			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+//			
+//		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration );
+//
+//		cleanupTrial();
+//	}
+//
+//}
 
 void ExperimentHandler::close()
 {
@@ -188,6 +276,8 @@ void ExperimentHandler::readShapeHue()
 
 void ExperimentHandler::readTargetAngle()
 {
+	dnfcomposerHandler.updateFieldCentroids();
+	Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -265,6 +355,8 @@ void ExperimentHandler::mockReadShapeHue()
 
 void ExperimentHandler::mockReadTargetAngle()
 {
+	dnfcomposerHandler.updateFieldCentroids();
+	Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -273,6 +365,7 @@ void ExperimentHandler::mockReadTargetAngle()
 	data.lastOutputFieldCentroid = signals.targetAngle;
 
 	getExpectedTargetAngle();
+	dnfcomposerHandler.updateFieldCentroids();
 }
 
 void ExperimentHandler::degenerationProcedure()
@@ -322,16 +415,16 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 
 void ExperimentHandler::relearningProcedure()
 {
-	if (params.isDebugModeOn)
-		std::cout << "Pick and place unsuccessful, starting the relearning procedure." << std::endl;
-
 	// make sure to test two alternatives
 	// 1. use the 7 inputs
 	// 2. use only the inputs from the incorrect correspondence
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
 
-	dnfcomposerHandler.setRelearning(signals.shapeHue, signals.targetAngle);
+	if(params.isDebugModeOn)
+		std::cout << "Relearning procedure started." << std::endl;
+
+	dnfcomposerHandler.setRelearning(stats.shapesPlacedIncorrectly);
 
 	while (!dnfcomposerHandler.getHasRelearningFinished());
 	dnfcomposerHandler.setHasRelearningFinished(false);
@@ -340,26 +433,38 @@ void ExperimentHandler::relearningProcedure()
 	stats.numOfRelearningCycles++;
 }
 
-void ExperimentHandler::cleanupTrial()
+void ExperimentHandler::cleanupPickAndPlace()
 {
-	stats.numOfRelearningCycles = 0;
 	stats.shapesPlacedIncorrectly = 0;
 	if(params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.resetSignals();
-	if(params.isDebugModeOn)
-		std::cout << "Trial finished." << std::endl;
+}
+
+void ExperimentHandler::cleanupTrial()
+{
+	if(params.isDataSavingOn)
+		saveLearningCyclesPerTrial();
+	stats.learningCyclesPerTrialHistory.clear();
+	params.currentPercentageOfDegeneration = 0;
+	data.isFieldDead = false;
+	getOriginalWeightsFile();
+	Sleep(50);
+	dnfcomposerHandler.setWasCloseSimulationRequested(true);
+	Sleep(50);
 }
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
 	const std::string filename = 
-		params.filePathPrefix + params.degeneracyName + ".txt";
+		params.filePathPrefix + "results/" + params.degeneracyName + ".txt";
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 	if (file.is_open())
 	{
-		file << stats.numOfRelearningCycles << "\n"; // Write the integer followed by a newline
+		for (const int cycles : stats.learningCyclesPerTrialHistory) 
+			file << cycles << " "; // Write the integer followed by a newline
+		file << "\n";
 		file.close(); // Close the file
-		std::cout << "Number of relearning cycles needed saved to file: " << stats.numOfRelearningCycles << std::endl;
+		std::cout << "Number of relearning cycles needed saved to file." << std::endl;
 	}
 	else
 	{
@@ -417,4 +522,15 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 	//puts("Weights file does not exist.");
 	return false;
+}
+
+void ExperimentHandler::getOriginalWeightsFile() const
+{
+	const std::string sourceFileName = params.filePathPrefix + "weights-backup/weights-original/per - dec_weights.txt";
+	const std::ifstream sourceFile(sourceFileName);
+
+	const std::string destFileName = params.filePathPrefix + "per - dec_weights.txt";
+	std::ofstream destFile(destFileName);
+
+	destFile << sourceFile.rdbuf();
 }

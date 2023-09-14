@@ -38,7 +38,7 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
+	//readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
@@ -54,6 +54,10 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
+		else if (wasStartSimulationRequested)
+			startSimulation();
+		else if(wasCloseSimulationRequested)
+			closeSimulation();
 		else
 			application->step();
 
@@ -78,11 +82,19 @@ void DnfcomposerHandler::stop()
 
 // other methods
 
+void DnfcomposerHandler::startSimulation()
+{
+	simulation->init();
+	wasStartSimulationRequested = false;
+}
+
 void DnfcomposerHandler::closeSimulation()
 {
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
-	//simulation->close();
+	simulationElements.fieldCoupling->readWeights();
+	simulationElements.fieldCoupling->populateIndicesForDegeneration();
+	wasCloseSimulationRequested = false;
 }
 
 // UI setup
@@ -127,11 +139,22 @@ void DnfcomposerHandler::setTrial(const int& trial) const
 		userInterfaceWindow->setCurrentTrial(trial);
 }
 
-void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, const double& learningRate)
+void DnfcomposerHandler::setRelearningCycles(const int& relearningCycles) const
+{
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setRelearningCycles(relearningCycles);
+}
+
+void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, 
+	const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
 {
 	relearningParameters.relearningType = relearningType;
 	relearningParameters.numberOfRelearningEpochs = numberOfRelearningEpochs;
 	relearningParameters.learningRate = learningRate;
+	relearningParameters.updateAllWeights = updateAllWeights;
+	simulationElements.fieldCoupling->setUpdateAllWeights(updateAllWeights);
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setRelearningParameters(static_cast<int>(relearningType), numberOfRelearningEpochs, learningRate, maximumRelearningCycles, updateAllWeights);
 }
 
 // public set methods for control flags
@@ -149,10 +172,9 @@ void DnfcomposerHandler::setExternalInput(const double& position)
 	wasExternalInputUpdated = true;
 }
 
-void DnfcomposerHandler::setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid)
+void DnfcomposerHandler::setRelearning(const int& targetRelearningPositions)
 {
-	relearningParameters.expectedInputCentroid = expectedInputCentroid;
-	relearningParameters.expectedOutputCentroid = expectedOutputCentroid;
+	relearningParameters.targetRelearningPositions = targetRelearningPositions;
 	wasRelearningRequested = true;
 }
 
@@ -170,6 +192,17 @@ void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) 
 {
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
 }
+
+void DnfcomposerHandler::setWasStartSimulationRequested(bool wasStartSimulationRequested)
+{
+	this->wasStartSimulationRequested = wasStartSimulationRequested;
+}
+
+void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationRequested)
+{
+	this->wasCloseSimulationRequested = wasCloseSimulationRequested;
+}
+
 
 // public get methods
 
@@ -292,51 +325,24 @@ void DnfcomposerHandler::activateRelearning()
 	// Remove previously written target peak locations from files
 	simulationElements.fcpw.clearTargetPeakLocationsFromFiles();
 
-	// add gaussian inputs
-	constexpr double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 15, 20 };
-
-	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	switch(relearningParameters.relearningType)
 	{
-		{ 00.00 + offset }, // red
-		{ 40.60 + offset }, // orange
-		{ 60.00 + offset }, // yellow
-		{ 120.00 + offset }, // green
-		{ 240.00 + offset }, // blue
-		{ 274.15 + offset }, // indigo
-		{ 281.79 + offset } // violet
-	};
-	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	{
-		{ 15.00 + offset },
-		{ 40.00 + offset },
-		{ 65.00 + offset },
-		{ 90.00 + offset },
-		{ 115.00 + offset },
-		{ 140.00 + offset },
-		{ 165.00 + offset }
-	};
+		case RelearningParameters::RelearningType::ALL_CASES:
+			allCasesRelearning();
+		break;
+		case RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES:
+			onlyDegeneratedCasesRelearning();
+		break;
+		default:
+		break;
+	}
 
-	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-		
-	//std::cout << "Finished setting up the field coupling wizard.\n";
-	
-	gsp.amplitude = 15;
-	gsp.sigma = 3;
-
-		
-	simulationElements.fcpw.setGaussStimulusParameters(gsp);
-	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
-	
 	simulationElements.fcpw.simulateAssociation();
 	//std::cout << "Finished simulating association.\n";
-		
-	// only 1 iteration of training
+
 	simulationElements.fcpw.trainWeights(relearningParameters.numberOfRelearningEpochs);
 	//std::cout << "Finished training weights.\n";
 
-	//saveWeightsToFile();
 	wasRelearningRequested = false;
 	hasRelearningFinished = true;
 }
@@ -362,17 +368,11 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	bool userRequestClose = false;
-	while (!userRequestClose && !hasExperimentFinished)
-	{
-		simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-		simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+	simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
+	simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
 
-		if (simulationParameters.isUserInterfaceActive)
-			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
-
-		Sleep(20);
-	}
+	if (simulationParameters.isUserInterfaceActive)
+		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 }
 
 // other methods
@@ -386,4 +386,48 @@ void DnfcomposerHandler::waitForFieldsToSettle() const
 {
 	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
 		application->step();
+}
+
+void DnfcomposerHandler::allCasesRelearning()
+{
+	// add gaussian inputs
+	GaussStimulusParameters gsp = { 3, 25, 20 };
+
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+	//std::cout << "Finished setting up the field coupling wizard.\n";
+
+	gsp.amplitude = 25;
+	gsp.sigma = 3;
+	simulationElements.fcpw.setGaussStimulusParameters(gsp);
+	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+
+}
+
+void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
+{
+	// add gaussian inputs
+	GaussStimulusParameters gsp = { 3, 25, 20 };
+
+	std::vector<std::vector<double>> inputSelected;
+	std::vector<std::vector<double>> outputSelected;
+
+	for (int i = 0; i < inputTargetPeaksForCoupling.size(); ++i) 
+	{
+		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
+		{
+			inputSelected.push_back(inputTargetPeaksForCoupling[i]);
+			outputSelected.push_back(outputTargetPeaksForCoupling[i]);
+		}
+	}
+
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
+	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
+	//std::cout << "Finished setting up the field coupling wizard.\n";
+
+	gsp.amplitude = 25;
+	gsp.sigma = 3;
+	simulationElements.fcpw.setGaussStimulusParameters(gsp);
+	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+
 }

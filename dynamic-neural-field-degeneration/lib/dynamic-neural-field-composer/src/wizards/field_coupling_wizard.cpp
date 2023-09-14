@@ -36,7 +36,7 @@ void FieldCouplingWizard::simulateAssociation()
         // Create Gaussian stimuli in the input field
         for (int j = 0; j < targetPeakLocationsForNeuralFieldPre[i].size(); j++)
         {
-            std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
+            const std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
             gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPre[i][j];
             std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus(stimulusName, neuralFieldPre->getSize(), gaussStimulusParameters));
             simulation->addElement(stimulus);
@@ -51,7 +51,7 @@ void FieldCouplingWizard::simulateAssociation()
         // Create Gaussian stimuli in the output field
         for (int j = 0; j < targetPeakLocationsForNeuralFieldPost[i].size(); j++)
         {
-            std::string stimulusName = "Output Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
+            const std::string stimulusName = "Output Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
             gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPost[i][j];
             std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus(stimulusName, neuralFieldPost->getSize(), gaussStimulusParameters));
             simulation->addElement(stimulus);
@@ -80,8 +80,8 @@ void FieldCouplingWizard::simulateAssociation()
         std::vector<double>* input = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "activation");
         std::vector<double>* output = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "activation");
 
-        auto inputRestingLevel = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "resting level");
-        auto outputRestingLevel = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "resting level");
+        const auto inputRestingLevel = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "resting level");
+        const auto outputRestingLevel = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "resting level");
 
         // normalize data (remove resting level and normalize between -1 and 1))
         *input = normalizeFieldActivation(*input, (*inputRestingLevel)[0]);
@@ -117,8 +117,8 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
     //double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
     //double minVal = -2;
 
-    double maxVal = 20; // these are hardcoded...
-    double minVal = -30;
+    constexpr double maxVal = 20; // these are hardcoded...
+    constexpr double minVal = -30;
 
 
     // Normalize the vector
@@ -184,8 +184,8 @@ std::vector<double> FieldCouplingWizard::readFieldActivation(const std::string& 
 void FieldCouplingWizard::trainWeights(const int iterations)
 {
     // check how much lines "temp_input.txt", and "temp_output.txt" have
-    int numLinesInput = mathtools::countNumOfLinesInFile(pathToFieldActivationPre);
-    int numLinesOutput = mathtools::countNumOfLinesInFile(pathToFieldActivationPost);
+    const int numLinesInput = mathtools::countNumOfLinesInFile(pathToFieldActivationPre);
+    const int numLinesOutput = mathtools::countNumOfLinesInFile(pathToFieldActivationPost);
 
     if (numLinesInput != numLinesOutput)
         std::cerr << "The files " << pathToFieldActivationPre << " and " << pathToFieldActivationPost << " have a different number of lines.\n";

@@ -91,8 +91,15 @@ void ExperimentWindow::renderDegenerationStatistics() const
 
 void ExperimentWindow::renderRelearningStatistics() const
 {
-	ImGui::Text("Relearning is active: %s.", expWinParams.isRelearningActive ? "true" : "false");
-	ImGui::Text("Number of relearning cycles is %d.", expWinParams.numOfRelearningCycles);
+	ImGui::Text("Relearning type is %s.", expWinParams.relearningType ? "only degenerated cases" : "all cases");
+	ImGui::Text("Relearning epochs is %d.", expWinParams.relearningEpochs);
+	ImGui::Text("Learning rate is %.2f.", expWinParams.learningRate);
+	ImGui::Text("Update all weights is %s.", expWinParams.updateAllWeights ? "true" : "false");
+
+	// Custom vertical spacing using a dummy element with a specific size
+	ImGui::Dummy(ImVec2(0.0f, 20.0f)); // Adjust the second parameter for the desired vertical spacing size
+
+	ImGui::Text("Current number of relearning cycles is %d.", expWinParams.numOfRelearningCycles);
 }
 
 // public set functions
@@ -114,8 +121,8 @@ void ExperimentWindow::setCentroids(const double& perceptualFieldCentroid, const
 	setPerceptualFieldCentroid(perceptualFieldCentroid);
 	setDecisionFieldCentroid(decisionFieldCentroid);
 
-	setPerceptualFieldCentroidDeviation(calculateFieldCentroidDeviation(perceptualFieldCentroid, expWinParams.expectedPerceptualFieldCentroid));
-	setDecisionFieldCentroidDeviation(calculateFieldCentroidDeviation(decisionFieldCentroid, expWinParams.expectedDecisionFieldCentroid));
+	setPerceptualFieldCentroidDeviation();
+	setDecisionFieldCentroidDeviation();
 }
 
 void ExperimentWindow::setExpectedCentroids(const double& expectedPerceptualFieldCentroid, const double& expectedDecisionFieldCentroid)
@@ -129,13 +136,27 @@ void ExperimentWindow::setNumberOfDegeneratedElements(const int& numberOfDegener
 	expWinParams.numberOfDegeneratedElements = numberOfDegeneratedElements;
 }
 
-// auxiliary functions
-
-double ExperimentWindow::calculateFieldCentroidDeviation(const double& fieldCentroid, const double& expectedFieldCentroid)
+void ExperimentWindow::setRelearningParameters(const int& relearningType, const int& relearningEpochs, const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
 {
-	return std::abs(fieldCentroid - expectedFieldCentroid);
+	expWinParams.relearningType = relearningType;
+	expWinParams.relearningEpochs = relearningEpochs;
+	expWinParams.learningRate = learningRate;
+	expWinParams.updateAllWeights = updateAllWeights;
+	expWinParams.maximumRelearningCycles = maximumRelearningCycles;
 }
 
+void ExperimentWindow::setRelearningCycles(const int& numOfRelearningCycles)
+{
+	expWinParams.numOfRelearningCycles = numOfRelearningCycles;
+}
+
+// auxiliary functions
+
+double ExperimentWindow::calculateDeviation(const double& val1, const double& val2, const double& size)
+{
+	const double diff = std::fmod(val2 - val1 + size, size);
+	return (diff <= size / 2.0) ? diff : size - diff;
+}
 // private set functions
 
 void ExperimentWindow::setCurrentDegenerationType(const std::string& currentDegenerationType)
@@ -173,12 +194,18 @@ void ExperimentWindow::setExpectedDecisionFieldCentroid(const double& expectedDe
 	expWinParams.expectedDecisionFieldCentroid = expectedDecisionFieldCentroid;
 }
 
-void ExperimentWindow::setPerceptualFieldCentroidDeviation(const double& perceptualFieldCentroidDeviation)
+void ExperimentWindow::setPerceptualFieldCentroidDeviation()
 {
-	expWinParams.perceptualFieldCentroidDeviation = perceptualFieldCentroidDeviation;
+	const double val1 = expWinParams.perceptualFieldCentroid;
+	const double val2 = expWinParams.expectedPerceptualFieldCentroid;
+	constexpr double size = 360.0;
+	expWinParams.perceptualFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }
 
-void ExperimentWindow::setDecisionFieldCentroidDeviation(const double& decisionFieldCentroidDeviation)
+void ExperimentWindow::setDecisionFieldCentroidDeviation()
 {
-	expWinParams.decisionFieldCentroidDeviation = decisionFieldCentroidDeviation;
+	const double val1 = expWinParams.decisionFieldCentroid;
+	const double val2 = expWinParams.expectedDecisionFieldCentroid;
+	constexpr double size = 180.0;
+	expWinParams.decisionFieldCentroidDeviation = calculateDeviation(val1, val2, size);
 }

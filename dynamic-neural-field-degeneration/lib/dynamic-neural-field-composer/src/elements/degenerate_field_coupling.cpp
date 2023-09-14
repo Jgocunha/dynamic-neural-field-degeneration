@@ -8,12 +8,12 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const std::string& id, const in
 
 	degeneracyType = ElementDegeneracyType::NONE;
 	degenerate = false;
+	populateIndicesForDegeneration();
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	populateIndicesForDegeneration();
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -30,18 +30,29 @@ void DegenerateFieldCoupling::startDegeneration()
 	degenerate = true;
 }
 
-//void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
-//{
-//	weights = (weights, input, output, parameters.learningRate);
-//	//weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
-//	writeWeights();
-//}
+void DegenerateFieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
+{
+	if(!updateAllWeights)
+	{
+		//std::cout << "Updating only degenerated weights!" << std::endl;
+		weights = learningRuleDegenerate(input, output);
+	}
+	else
+	{
+		//std::cout << "Updating all weights!" << std::endl;
+		weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
+	}
+
+	writeWeights();
+}
 
 void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1; // 1 percent
 	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
 	constexpr double numWeightsToDegenerate = 100;
+
+	//std::cout << "Indices for degeneration size: " << indicesForDegeneration.size() << std::endl;
 	switch (degeneracyType)
 	{
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -63,6 +74,8 @@ void DegenerateFieldCoupling::applyDegeneracy()
 		std::cout << "Degeneracy type not supported" << std::endl;
 		break;
 	}
+	//std::cout << "After degeneration indices size: " << indicesForDegeneration.size() << std::endl;
+
 }
 
 void DegenerateFieldCoupling::setDegeneracyType(ElementDegeneracyType degeneracyType)
@@ -102,20 +115,11 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	//static int maxAttempts = components["output"].size() * components["input"].size();
-	int row_idx, col_idx;
+	const int row_idx = mathtools::generateRandomNumber(0, static_cast<int>(components["input"].size()) - 1);
+	const int col_idx = mathtools::generateRandomNumber(0, static_cast<int>(components["output"].size()) - 1);
 
-	//while(1)
-	//{
-	row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
-	col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
-	//if (weights[row_idx][col_idx] > 0)
-	//{
-	double aux = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
-	weights[row_idx][col_idx] = aux;
-	//break;
-	//}
-//}
+	const double newValue = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
+	weights[row_idx][col_idx] = newValue;
 }
 
 void DegenerateFieldCoupling::setWeightReductionFactor(const double& factor)
@@ -130,14 +134,11 @@ double DegenerateFieldCoupling::getWeightReductionFactor()
 
 void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 {
-	//static int maxAttempts = components["output"].size() * components["input"].size();
-	int row_idx, col_idx;
-
-	while (1)
+	while (true)
 	{
-		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
-		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
-		if (weights[row_idx][col_idx] != 0)
+		const int row_idx = mathtools::generateRandomNumber(0, static_cast<int>(components["input"].size()) - 1);
+		const int col_idx = mathtools::generateRandomNumber(0, static_cast<int>(components["output"].size()) - 1);
+		if (weights[row_idx][col_idx] != 0.0)
 		{
 			weights[row_idx][col_idx] = weights[row_idx][col_idx] * weightReductionFactor;
 			break;
@@ -148,7 +149,7 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {
 	// Initialize the maximum number of attempts to find unique combinations
-	static int maxAttempts = components["output"].size() * components["input"].size();
+	//static int maxAttempts = static_cast<int>(components["output"].size()) * static_cast<int>(components["input"].size());
 
 	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
 
@@ -172,106 +173,28 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 		weights[row_idx][col_idx] = 0;
 
 		uniqueCombinationFound = true; // Set flag to indicate combination found
-		std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+		//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
 	}
 
 	if (indicesForDegeneration.empty())
-	{
 		std::cout << "No more unique combinations to degenerate" << std::endl;
-	}
-	/*else
-	{
-		std::cout << "Attempting to find unique combination" << std::endl;
-	}*/
+	//else 
+		//std::cout << "Attempting to find unique combination" << std::endl;
 }
 
-//void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
-//{
-//	// Initialize the maximum number of attempts to find unique combinations
-//	static int maxAttempts = components["output"].size() * components["input"].size();
-//
-//	int row_idx, col_idx; // Indices for rows and columns
-//	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
-//	//int numIndices = static_cast<int>((components["output"].size() * components["input"].size()) / 10.0);
-//
-//	// Loop until a unique combination is found or indicesForDegeneration is empty
-//	while (!uniqueCombinationFound)
-//	{
-//		// Generate random row and column indices
-//		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
-//		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
-//
-//		// Create a pair of indices representing a combination
-//		std::pair<int, int> pair(row_idx, col_idx);
-//
-//		// Check if the combination is in the set of indices for degeneration
-//		//if (indicesForDegeneration.find(pair) != indicesForDegeneration.end())
-//		if (indicesForDegeneration.contains(pair))
-//		{
-//			// If combination found, update data and exit loop
-//			indicesForDegeneration.erase(pair); // Remove combination from set
-//			weights[row_idx][col_idx] = 0;      // Set weight at combination to 0
-//			uniqueCombinationFound = true;      // Set flag to indicate combination found
-//			std::cout << "Unique combination found " << row_idx << " " << col_idx  << std::endl;
-//
-//		}
-//		// Check if all desired combinations have been found and processed
-//		//else if (!(indicesForDegeneration.size
-//		else if (indicesForDegeneration.empty())
-//		{
-//			uniqueCombinationFound = true; // Set flag to exit loop
-//			std::cout << "No more unique combinations to degenerate" << std::endl;
-//		}
-//		std::cout << "Attempting to find unique combination" << std::endl;
-//	}
-//}
-
-//void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
-//{
-//	static int maxAttempts = components["output"].size() * components["input"].size();
-//
-//	std::vector<std::pair<int, int>> validCombinations;
-//	for (int row_idx = 0; row_idx < components["input"].size(); ++row_idx)
-//	{
-//		for (int col_idx = 0; col_idx < components["output"].size(); ++col_idx)
-//		{
-//			std::pair<int, int> pair(row_idx, col_idx);
-//			if (indicesForDegeneration.find(pair) != indicesForDegeneration.end())
-//			{
-//				validCombinations.push_back(pair);
-//			}
-//		}
-//	}
-//
-//	// Shuffle the vector of valid combinations
-//	std::random_device rd;
-//	std::mt19937 gen(rd());
-//	std::shuffle(validCombinations.begin(), validCombinations.end(), gen);
-//
-//	for (const auto& combination : validCombinations)
-//	{
-//		int row_idx = combination.first;
-//		int col_idx = combination.second;
-//
-//		indicesForDegeneration.erase(combination);
-//		weights[row_idx][col_idx] = 0;
-//		if (!indicesForDegeneration.size())
-//		{
-//			break; // Exit loop if all combinations processed
-//		}
-//	}
-//}
-
-std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate)
+std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(
+	const std::vector<double>& input, const std::vector<double>& targetOutput)
 {
 
 	double deltaT = 1.0;
 	double tau_w = 5.0;
 	double eta = 0.5;
 
-	size_t inputSize = input.size();
-	size_t outputSize = targetOutput.size(); //fixed from int to size_t
+	int containCount = 0;
+	int notContainCount = 0;
+
+	const size_t inputSize = input.size();
+	const size_t outputSize = targetOutput.size(); //fixed from int to size_t
 
 	// Calculate the activation levels of the fields based on the input values and current weights
 	std::vector<double> actualOutput(outputSize, 0.0);
@@ -291,17 +214,23 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 	for (size_t i = 0; i < inputSize; ++i) {
 		for (size_t j = 0; j < outputSize; ++j)
 		{
-			std::pair<int, int> pair(i, j);
-			auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
-
 			// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
-			//if (it != indicesForDegeneration.end())
-			//{
-			weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
-			//}
+			if(indicesForDegeneration.contains(std::make_pair(i, j)))
+			{
+				weights[i][j] += parameters.learningRate * (error[j] - eta * weights[i][j]) * input[i];
+				containCount++;
+
+			}
+			else
+			{
+				notContainCount++;
+			}
 			// else do nothing
 		}
 	}
+
+	//std::cout << "Contain count: " << containCount << std::endl;
+	//std::cout << "Not contain count: " << notContainCount << std::endl;
 
 	return weights;
 }

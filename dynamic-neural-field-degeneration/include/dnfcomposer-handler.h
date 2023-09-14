@@ -44,7 +44,8 @@ struct RelearningParameters
 	RelearningType relearningType = RelearningType::ALL_CASES;
 	int numberOfRelearningEpochs = 0;
 	double learningRate = 0.0;
-	double expectedInputCentroid = 0.0, expectedOutputCentroid = 0.0;
+	int targetRelearningPositions = 0;
+	bool updateAllWeights = true;
 };
 
 class DnfcomposerHandler
@@ -71,6 +72,31 @@ private:
 	bool hasRelearningFinished = false;
 	bool hasExperimentFinished = false;
 
+	bool wasStartSimulationRequested = false;
+	bool wasCloseSimulationRequested = false;
+
+	const double offset = 1.0;
+	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	{
+		{ 00.00 + offset }, // red
+		{ 40.60 + offset }, // orange
+		{ 60.00 + offset }, // yellow
+		{ 120.00 + offset }, // green
+		{ 240.00 + offset }, // blue
+		{ 274.15 + offset }, // indigo
+		{ 281.79 + offset } // violet
+	};
+	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	{
+		{ 15.00 + offset },
+		{ 40.00 + offset },
+		{ 65.00 + offset },
+		{ 90.00 + offset },
+		{ 115.00 + offset },
+		{ 140.00 + offset },
+		{ 165.00 + offset }
+	};
+
 public:
 	DnfcomposerHandler();
 	DnfcomposerHandler(bool isUserInterfaceActive);
@@ -82,22 +108,27 @@ public:
 	void close();
 	void stop();
 
+	void startSimulation();
 	void closeSimulation();
 
 	void setExperimentSetupData(const std::string& currentDegenerationType,
 		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
 	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
 	void setTrial(const int& trial) const;
+	void setRelearningCycles(const int& relearningCycles) const;
 	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
-		const int& numberOfRelearningEpochs, const double& learningRate);
-
+		const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
+	
 
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
-	void setRelearning(const double& expectedInputCentroid, const double& expectedOutputCentroid);
+	void setRelearning(const int& targetRelearningPositions);
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setHasRelearningFinished(bool hasRelearningFinished);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+
+	void setWasStartSimulationRequested(bool wasStartSimulationRequested);
+	void setWasCloseSimulationRequested(bool wasCloseSimulationRequested);
 
 	double getInputFieldCentroid() const;
 	double getOutputFieldCentroid() const;
@@ -106,11 +137,15 @@ public:
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 
 	void saveWeightsToFile() const;
+
+	void updateFieldCentroids();
 private:
 	void setupUserInterface();
 	void updateExternalInput();
-	void updateFieldCentroids();
 	void activateDegeneration();
 	void activateRelearning();
 	void waitForFieldsToSettle() const;
+
+	void allCasesRelearning();
+	void onlyDegeneratedCasesRelearning();
 };
