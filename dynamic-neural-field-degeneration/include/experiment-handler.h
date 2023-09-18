@@ -55,7 +55,7 @@ private:
 		{120.00, 90}, // green
 		{240.00, 115}, // orange
 		{274.00, 140}, // indigo
-		{282.00, 165} // violet
+		//{282.00, 165} // violet
 	};
 	std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
 

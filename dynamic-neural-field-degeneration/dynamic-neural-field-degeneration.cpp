@@ -8,7 +8,7 @@ ExperimentParameters setExperimentParameters()
 	params.numberOfTrials = 200;
     params.decisionTolerance = 0.5;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
+    params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
     params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);
 
