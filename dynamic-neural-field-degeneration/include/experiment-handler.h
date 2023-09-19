@@ -29,7 +29,7 @@ struct ExperimentParameters
 	RelearningParameters::RelearningType relearningType = RelearningParameters::RelearningType::ALL_CASES;
 	double learningRate = 0.1;
 	int numberOfRelearningEpochs = 100;
-	int maximumAmountOfRelearningCycles = 10;
+	int maximumAmountOfDemonstrations = 10;
 	bool updateAllWeights = true;
 
 	bool isDataSavingOn = false;
@@ -82,7 +82,7 @@ struct ExperimentParameters
 		}
 
 		filename = filename + " Epochs-" + std::to_string(numberOfRelearningEpochs);
-		filename = filename + " MaxCycles-" + std::to_string(maximumAmountOfRelearningCycles);
+		filename = filename + " MaxCycles-" + std::to_string(maximumAmountOfDemonstrations);
 		filename = filename + " Update-all-weights-" + std::to_string(updateAllWeights);
 		filename = filename + ".txt";
 

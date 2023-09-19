@@ -87,12 +87,12 @@ for col = 1:size(dataMatrix, 2)
 end
 
 disp(['Degeneracy type: ', degeneracyType]);
-disp(['Relearning type: ', relearningType]);
+disp(['Training dataset: ', relearningType]);
 disp(['Update all weights: ', num2str(updateAllWeights)]);
 disp(['Epochs: ', num2str(epochs)]);
-disp(['Max. relearning cycles: ', num2str(maximumLearningCycles)]);
+disp(['Max. demonstrations: ', num2str(maximumLearningCycles)]);
 disp(['Number of trials: ', num2str(size(dataMatrix, 1))]);
-disp('---------------------------------------------------');
+disp('-----------------------------------------------------------------------------------------------------------------------------');
 
 % Create a table
 dataTable = table(degenerationPercentages, ...

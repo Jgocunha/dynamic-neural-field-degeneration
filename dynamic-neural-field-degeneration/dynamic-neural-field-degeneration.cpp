@@ -22,7 +22,7 @@ int main()
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
         params.learningRate = 0.01;
         params.numberOfRelearningEpochs = 100; //<------
-        params.maximumAmountOfRelearningCycles = 5; //<------
+        params.maximumAmountOfDemonstrations = 5; //<------
         params.updateAllWeights = false; //<------
 
         params.isDataSavingOn = true;

@@ -136,13 +136,13 @@ void ExperimentWindow::setNumberOfDegeneratedElements(const int& numberOfDegener
 	expWinParams.numberOfDegeneratedElements = numberOfDegeneratedElements;
 }
 
-void ExperimentWindow::setRelearningParameters(const int& relearningType, const int& relearningEpochs, const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
+void ExperimentWindow::setRelearningParameters(const int& relearningType, const int& relearningEpochs, const double& learningRate, const int& maximumAmountOfDemonstrations, const bool updateAllWeights)
 {
 	expWinParams.relearningType = relearningType;
 	expWinParams.relearningEpochs = relearningEpochs;
 	expWinParams.learningRate = learningRate;
 	expWinParams.updateAllWeights = updateAllWeights;
-	expWinParams.maximumRelearningCycles = maximumRelearningCycles;
+	expWinParams.maximumAmountOfDemonstrations = maximumAmountOfDemonstrations;
 }
 
 void ExperimentWindow::setRelearningCycles(const int& numOfRelearningCycles)

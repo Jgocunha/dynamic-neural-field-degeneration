@@ -20,7 +20,7 @@ struct ExperimentWindowParameters
 	int relearningEpochs = 0;
 	double learningRate = 0.0;
 	bool updateAllWeights = false;
-	int maximumRelearningCycles = 0;
+	int maximumAmountOfDemonstrations = 0;
 	int numOfRelearningCycles = 0;
 
 };

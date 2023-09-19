@@ -8,7 +8,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	printExperimentParameters();
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
 	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
-		params.maximumAmountOfRelearningCycles, params.updateAllWeights);
+		params.maximumAmountOfDemonstrations, params.updateAllWeights);
 
 }
 
@@ -30,7 +30,7 @@ void ExperimentHandler::printExperimentParameters() const
 	std::cout << "Relearning type: " << (params.relearningType == RelearningParameters::RelearningType::ALL_CASES ? "All cases" : "Only degenerated cases") << std::endl;
 	std::cout << "Learning rate: " << params.learningRate << std::endl;
 	std::cout << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
-	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfRelearningCycles << std::endl;
+	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfDemonstrations << std::endl;
 	std::cout << "Update all weights: " << (params.updateAllWeights ? "true" : "false") << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
@@ -85,13 +85,13 @@ void ExperimentHandler::step()
 			else
 				successfulPickAndPlace = mockPickAndPlace();
 
-			if (successfulPickAndPlace || (stats.numOfRelearningCycles >= params.maximumAmountOfRelearningCycles))
+			if (successfulPickAndPlace || (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations))
 			{
 				if (doesBackupWeightsFileExist())
 					restoreWeightsFile();
 				degenerationProcedure();
 				dnfcomposerHandler.saveWeightsToFile();
-				if (stats.numOfRelearningCycles >= params.maximumAmountOfRelearningCycles)
+				if (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations)
 					data.isFieldDead = true;
 				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
 				stats.numOfRelearningCycles = 0;
