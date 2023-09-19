@@ -33,3 +33,29 @@ Average number of iterations until disapearance of peak: 309.7222
 Overall maximum deviation from target centroid: 2.5
 Average number of iterations until misbehavior: 178.2562
 --------------
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('fgets')" style="font-weight:bold">fgets</a>
+Invalid file identifier. Use fopen to generate a valid file identifier.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('fgetl', 'C:\Program Files\MATLAB\R2023a\toolbox\matlab\iofun\fgetl.m', 32)" style="font-weight:bold">fgetl</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023a\toolbox\matlab\iofun\fgetl.m',32,0)">line 32</a>)
+[tline,lt] = fgets(fid);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('readData', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\readData.m', 9)" style="font-weight:bold">readData</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\readData.m',9,0)">line 9</a>)
+        tline = fgetl(fid);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m', 36)" style="font-weight:bold">obtain_results</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m',36,0)">line 36</a>)
+         data = readData(centroidsFilePath);
+} 
+obtain_results
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('fgets')" style="font-weight:bold">fgets</a>
+Invalid file identifier. Use fopen to generate a valid file identifier.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('fgetl', 'C:\Program Files\MATLAB\R2023a\toolbox\matlab\iofun\fgetl.m', 32)" style="font-weight:bold">fgetl</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2023a\toolbox\matlab\iofun\fgetl.m',32,0)">line 32</a>)
+[tline,lt] = fgets(fid);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('readData', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\readData.m', 9)" style="font-weight:bold">readData</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\statistics-functions\readData.m',9,0)">line 9</a>)
+        tline = fgetl(fid);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m', 36)" style="font-weight:bold">obtain_results</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m',36,0)">line 36</a>)
+         data = readData(centroidsFilePath);
+} 
+obtain_results
