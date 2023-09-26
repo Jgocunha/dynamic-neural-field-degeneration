@@ -207,3 +207,27 @@ Average number of iterations until disapearance of peak: 76.1555
 Overall maximum deviation from target centroid: 3
 Average number of iterations until misbehavior: 39.5921
 --------------
+{'readData' is not found in the current folder or on the MATLAB path, but exists in:
+    C:\dev-files\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab
+
+<a href = "matlab:internal.matlab.desktop.commandwindow.executeCommandForUser('cd ''C:\dev-files\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab''')">Change the MATLAB current folder</a> or <a href = "matlab:internal.matlab.desktop.commandwindow.executeCommandForUser('addpath ''C:\dev-files\dynamic-neural-field-composer\dynamic-neural-field-composer\data\degeneracy_experiment\analysis-matlab''')">add its folder to the MATLAB path</a>.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results', 'C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m', 37)" style="font-weight:bold">obtain_results</a> (<a href="matlab: opentoline('C:\dev-files\dynamic-neural-field-degeneration\dynamic-neural-field-degeneration\data\results\matlab-analysis-files\obtain_results.m',37,0)">line 37</a>)
+         data = readData(centroidsFilePath);
+} 
+obtain_results
+Experiment deactivate weights
+Target centroid value: 15| Acceptable deviation: 0.5
+Number of trials: 158
+Average number of iterations until disapearance of peak: 76.1555
+Overall maximum deviation from target centroid: 3
+Average number of iterations until misbehavior: 39.5921
+--------------
+Experiment deactivate weights
+Target centroid value: 15| Acceptable deviation: 0.5
+Number of trials: 158
+Average number of iterations until disapearance of peak: 76.1555
+Overall maximum deviation from target centroid: 3
+Average number of iterations until misbehavior: 39.5921
+--------------
+--------------

@@ -51,3 +51,7 @@ Average number of iterations until disapearance of peak: 310.6836
 Overall maximum deviation from target centroid: 12
 Average number of iterations until misbehavior: 65.2538
 --------------
+--------------
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obtain_results')" style="font-weight:bold">obtain_results</a>
+} 
+obtain_results
