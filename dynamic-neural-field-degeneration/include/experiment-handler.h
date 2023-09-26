@@ -49,7 +49,7 @@ private:
 	ExperimentData data;
 
 	std::unordered_map<double, int> hueToAngleMap = {
-		{00.00,  15}, // red
+		//{00.00,  15}, // red
 		{41.00,  40}, // blue
 		{60.00,  65}, // yellow
 		{120.00, 90}, // green

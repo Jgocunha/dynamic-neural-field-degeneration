@@ -56,6 +56,9 @@ void DegenerateNeuralField::applyDegeneracy()
 	constexpr double percentage = 0.01; // 1 percent
 	double numNeuronsToDegenerate = size * percentage;
 
+	if(bumpRange.empty())
+		calculateBumpRange();
+
 	switch (degeneracyType)
 	{
 		case ElementDegeneracyType::NEURONS_DEACTIVATE:
@@ -119,5 +122,28 @@ void DegenerateNeuralField::close()
 	indicesForDegeneration.clear();
 	degeneratedIndices.clear();
 	degenerate = false;
+	bumpRange.clear();
 }
 
+void DegenerateNeuralField::calculateBumpRange()
+{
+	for (int i = 0; i < size; i++)
+		if (components["activation"][i] > 0)
+		{
+			bumpRange.push_back(i);
+			break;
+		}
+
+	for (int i = bumpRange[0]; i < size; i++)
+		if (components["activation"][i] < 0)
+		{
+			bumpRange.push_back(i);
+			break;
+		}
+	std::cout << "Bump range: " << bumpRange[0] << " " << bumpRange[1] << std::endl;
+
+	indicesForDegeneration.clear();
+
+	for(int i = bumpRange[0]; i < bumpRange[1]; i++)
+		indicesForDegeneration.push_back(i);
+}

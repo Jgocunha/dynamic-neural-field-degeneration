@@ -10,6 +10,7 @@ private:
 	bool degenerate;
 	std::vector<int> indicesForDegeneration;
 	std::vector<int> degeneratedIndices;
+	std::vector<int> bumpRange;
 public:
     DegenerateNeuralField(const std::string& id, const int& size, const NeuralFieldParameters& parameters,
 		const ActivationFunctionParameters& activationFunctionParameters);
@@ -27,4 +28,5 @@ private:
 	void populateIndicesForDegeneration();
 	void setRandomUniqueNeuronToZero();
 	void calculateActivation(const double& t, const double& deltaT);
+	void calculateBumpRange();
 };
