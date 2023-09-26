@@ -3,12 +3,21 @@ clear;
 clc;
 
 %% Setup variables
+<<<<<<< HEAD
+experiments = {'deactivate weights', 'weight'; ...
+               'reduce 0.4 weights', 'weight'; ...
+               'reduce 0.6 weights', 'weight'; ...
+               'reduce 0.8 weights', 'weight'; ...
+               'randomize weights', 'weight'; ...
+               'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
+=======
 experiments = {%'deactivate weights', 'weight'; ...
                %'reduce 0.4 weights', 'weight'; ...
                %'reduce 0.6 weights', 'weight'; ...
                %'reduce 0.8 weights', 'weight'; ...
                %'randomize weights', 'weight'; ...
                %'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
+>>>>>>> d7ea654abaed3061f4253709a0faed3076c4954e
                'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
 
@@ -20,11 +29,15 @@ targetCentroids = {15.0; 40.0; 65.0; 90.0; 115.0; 140.0; 165.0};
 acceptableDeviation = 0.5;
 
 
-dataTable = table();
+
 
 %% Run analysis
-for position = 1:size(positions,1)
-    for experiment = 1:size(experiments,1)
+
+for experiment = 1:size(experiments,1)
+    % Initialize a variable to keep track of the total number of trials
+    totalNumTrials = 0;
+    dataTable = table();
+    for position = 1:size(positions,1)
         %% Variable setup
         centroidsFilePath = ['../', positions{position}, ' ', experiments{experiment}, ' - centroids.txt'];
         resultsFilePath = ['../analysis/', positions{position}, ' ', experiments{experiment}, ' - analysis.txt'];
@@ -100,33 +113,54 @@ for position = 1:size(positions,1)
                                          'NumTrials', ...
                                          'AvgNumIterations', ...
                                          'AvgIterationsMisbehavior', ...
-                                         'MaxDeviation ', ...
+                                         'MaxDeviation', ...
                                          });
         dataTable = [dataTable; newRow];
+
+        % Increment the total number of trials for this experiment
+        totalNumTrials = totalNumTrials + numTrials;
     
         %% Display results
-        disp(['Experiment ', experiments{experiment, 1}]);
-        disp(['Target centroid value: ' , num2str(targetCentroid), '| Acceptable deviation: ' , num2str(acceptableDeviation)]);
-        disp(['Number of trials: ', num2str(numTrials)]);
-        
-    
-        %disp('Amount of iterations per trial: ');
-        %disp(numIterationsPerTrial);
-        disp(['Average number of iterations until disapearance of peak: ', num2str(avgNumIterations)]);
-    
-        %disp("Maximum deviations from the target centroid:");
-        %disp(trialDeviations);
-        disp(['Overall maximum deviation from target centroid: ', num2str(maxDeviations)]);
-    
-        %disp("Iterations where centroid exceeds or falls below the threshold:");
-        %disp(aboveOrBelowThreshold);
-        disp(['Average number of iterations until misbehavior: ', num2str(avgIterationsMisbehavior(1))]);
-    
-        disp("--------------");
+        %disp(['Experiment ', experiments{experiment, 1}]);
+        %disp(['Target centroid value: ' , num2str(targetCentroid), '| Acceptable deviation: ' , num2str(acceptableDeviation)]);
+        %disp(['Number of trials: ', num2str(numTrials)]);
+        %disp(['Average number of iterations until disapearance of peak: ', num2str(avgNumIterations)]);
+        %disp(['Overall maximum deviation from target centroid: ', num2str(maxDeviations)]);
+        %disp(['Average number of iterations until misbehavior: ', num2str(avgIterationsMisbehavior(1))]);
+        %disp("--------------");
         diary off;
-        disp("===============");
+        %disp("===============");
     end
+
+%     %% Calculate and display average number of trials per experiment
+%     avgTrialsPerExperiment = mean(dataTable{:,'NumTrials'});
+%     disp(['Average number of trials per experiment: ', num2str(avgTrialsPerExperiment)]);
+%     %% Calculate and display the standard deviation of average trials
+%     stdDeviationAvgTrials = std(dataTable{:,'NumTrials'}, 1);
+%     disp(['Standard deviation of average trials: ', num2str(stdDeviationAvgTrials)]);
+
+    %% Calculate and display average AvgNumIterations per experiment
+    avgAvgNumIterations = mean(dataTable{:,'AvgNumIterations'});
+    disp(['Average AvgNumIterations per experiment: ', num2str(avgAvgNumIterations)]);
+    %% Calculate and display the standard deviation of AvgNumIterations
+    stdDeviationAvgNumIterations = std(dataTable{:,'AvgNumIterations'}, 1);
+    %disp(['Standard deviation of AvgNumIterations: ', num2str(stdDeviationAvgNumIterations)]);
+
+    %% Calculate and display average AvgIterationsMisbehavior per experiment
+    avgAvgIterationsMisbehavior = mean(dataTable{:,'AvgIterationsMisbehavior'});
+    disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
+    %% Calculate and display the standard deviation of AvgIterationsMisbehavior
+    stdDeviationAvgIterationsMisbehavior = std(dataTable{:,'AvgIterationsMisbehavior'}, 1);
+    %disp(['Standard deviation of AvgIterationsMisbehavior: ', num2str(stdDeviationAvgIterationsMisbehavior)]);
+
+    %% Calculate and display average MaxDeviation per experiment
+    avgMaxDeviation = mean(dataTable{:,'MaxDeviation'});
+    disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
+    %% Calculate and display the standard deviation of MaxDeviation
+    stdDeviationMaxDeviation = std(dataTable{:,'MaxDeviation'}, 1);
+    %disp(['Standard deviation of MaxDeviation: ', num2str(stdDeviationMaxDeviation)]);
+
+    %% Display table
+    disp(dataTable);
 end
 
-%% Display table
-disp(dataTable);
