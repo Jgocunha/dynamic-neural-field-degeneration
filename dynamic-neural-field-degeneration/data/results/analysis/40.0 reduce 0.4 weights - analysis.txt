@@ -89,6 +89,7 @@ Average number of iterations until disapearance of peak: 208.1523
 Overall maximum deviation from target centroid: 2.5
 Average number of iterations until misbehavior: 107.9677
 --------------
+<<<<<<< HEAD
 --------------
 {Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('str2double')" style="font-weight:bold">str2double</a>
 
@@ -103,3 +104,33 @@ In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('obta
          data = readData(centroidsFilePath);
 } 
 obtain_results
+=======
+Experiment reduce 0.4 weights
+Target centroid value: 40| Acceptable deviation: 0.5
+Number of trials: 260
+Average number of iterations until disapearance of peak: 208.1523
+Overall maximum deviation from target centroid: 2.5
+Average number of iterations until misbehavior: 107.9677
+--------------
+Experiment reduce 0.4 weights
+Target centroid value: 40| Acceptable deviation: 0.5
+Number of trials: 260
+Average number of iterations until disapearance of peak: 208.1523
+Overall maximum deviation from target centroid: 2.5
+Average number of iterations until misbehavior: 107.9677
+--------------
+Experiment reduce 0.4 weights
+Target centroid value: 40| Acceptable deviation: 0.5
+Number of trials: 260
+Average number of iterations until disapearance of peak: 208.1523
+Overall maximum deviation from target centroid: 2.5
+Average number of iterations until misbehavior: 107.9677
+--------------
+Experiment reduce 0.4 weights
+Target centroid value: 40| Acceptable deviation: 0.5
+Number of trials: 260
+Average number of iterations until disapearance of peak: 208.1523
+Overall maximum deviation from target centroid: 2.5
+Average number of iterations until misbehavior: 107.9677
+--------------
+>>>>>>> d7ea654abaed3061f4253709a0faed3076c4954e
