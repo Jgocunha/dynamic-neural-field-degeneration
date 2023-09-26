@@ -184,6 +184,7 @@ void DnfcomposerHandler::updateExternalInput()
 	initializeFields();
 
 	Sleep(50);
+	//waitForFieldsToSettle();
 
 	static double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 25, 20 };

@@ -11,7 +11,7 @@ function [avgNumIterationsPercentage, avgIterationsMisbehaviorPercentage] = adap
         case 'randomize weights'
             size = 648;
         case 'deactivate pre-synaptic neurons'
-            size = 360;
+            size = 9; % alteration!
         case 'deactivate post-synaptic neurons'
             size = 180;
     end

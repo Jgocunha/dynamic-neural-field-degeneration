@@ -1,7 +1,9 @@
 #include "./elements/degenerate_neural_field.h"
 
+#include "application/application.h"
+
 DegenerateNeuralField::DegenerateNeuralField(const std::string& id, const int& size, const NeuralFieldParameters& parameters
-, const ActivationFunctionParameters& activationFunctionParameters)
+                                             , const ActivationFunctionParameters& activationFunctionParameters)
 	: NeuralField(id, size, parameters, activationFunctionParameters)
 {
 	// Assert that the size is positive
@@ -140,10 +142,19 @@ void DegenerateNeuralField::calculateBumpRange()
 			bumpRange.push_back(i);
 			break;
 		}
+
+	if (bumpRange[0] == 0)
+		bumpRange[0] = - bumpRange[1] + 1;
+
 	std::cout << "Bump range: " << bumpRange[0] << " " << bumpRange[1] << std::endl;
 
 	indicesForDegeneration.clear();
 
 	for(int i = bumpRange[0]; i < bumpRange[1]; i++)
-		indicesForDegeneration.push_back(i);
+	{
+		if(i < 0)
+			indicesForDegeneration.push_back(i + size);
+		else
+			indicesForDegeneration.push_back(i);
+	}
 }

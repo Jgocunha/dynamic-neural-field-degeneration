@@ -70,6 +70,7 @@ void ExperimentHandler::step()
 	for(int k = 0; k < hueToAngleMap.size(); k++)
 	{
 		setExpectedFieldBehaviour();
+		Sleep(200);
 
 		for(int i = 0; i < params.numberOfTrials; i++)
 		{
@@ -80,8 +81,9 @@ void ExperimentHandler::step()
 			setupProcedure();
 			degenerationProcedure();
 			cleanUpTrial();
+			Sleep(10);
 		}
-		Sleep(200);
+		Sleep(100);
 	}
 	setExperimentAsEnded();
 }
