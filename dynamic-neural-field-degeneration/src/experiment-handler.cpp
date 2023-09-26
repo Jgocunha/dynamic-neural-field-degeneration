@@ -81,7 +81,7 @@ void ExperimentHandler::step()
 			degenerationProcedure();
 			cleanUpTrial();
 		}
-		Sleep(10);
+		Sleep(50);
 	}
 	setExperimentAsEnded();
 }
@@ -137,12 +137,9 @@ void ExperimentHandler::cleanUpTrial()
 	dnfcomposerHandler.closeSimulation();
 }
 
-bool ExperimentHandler::hasOutputFieldDegenerated()
+bool ExperimentHandler::hasOutputFieldDegenerated() const
 {
-	//dnfcomposerHandler.setCentroidDataBeingAccessed(true);
-	//Sleep(4);
 	const double outputFieldCentroid = dnfcomposerHandler.getOutputFieldCentroid();
-	//dnfcomposerHandler.setCentroidDataBeingAccessed(false);
 
 	if (outputFieldCentroid < 0)
 		return true;

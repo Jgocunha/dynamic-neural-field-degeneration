@@ -22,7 +22,7 @@ public:
 	void applyDegeneracy();
 
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
-	ElementDegeneracyType getDegeneracyType();
+	ElementDegeneracyType getDegeneracyType() const;
 private:
 	void populateIndicesForDegeneration();
 	void setRandomUniqueNeuronToZero();

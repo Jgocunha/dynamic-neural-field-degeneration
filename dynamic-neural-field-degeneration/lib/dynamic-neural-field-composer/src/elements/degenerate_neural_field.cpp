@@ -53,7 +53,7 @@ void DegenerateNeuralField::startDegeneration()
 
 void DegenerateNeuralField::applyDegeneracy()
 {
-	double percentage = 0.01; // 1 percent
+	constexpr double percentage = 0.01; // 1 percent
 	double numNeuronsToDegenerate = size * percentage;
 
 	switch (degeneracyType)
@@ -81,7 +81,7 @@ void DegenerateNeuralField::setDegeneracyType(ElementDegeneracyType degeneracyTy
 	this->degeneracyType = degeneracyType;
 }
 
-ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
+ElementDegeneracyType DegenerateNeuralField::getDegeneracyType() const
 {
 	return degeneracyType;
 }
@@ -104,7 +104,7 @@ void DegenerateNeuralField::setRandomUniqueNeuronToZero()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(0, indicesForDegeneration.size() - 1);
-	int randomIndex = indicesForDegeneration[dis(gen)];
+	const int randomIndex = indicesForDegeneration[dis(gen)];
 
 	// Push the random index to degeneratedIndices
 	degeneratedIndices.push_back(randomIndex);

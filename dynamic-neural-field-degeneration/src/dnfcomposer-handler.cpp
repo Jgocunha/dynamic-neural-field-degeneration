@@ -183,7 +183,7 @@ void DnfcomposerHandler::updateExternalInput()
 {
 	initializeFields();
 
-	Sleep(100);
+	Sleep(50);
 
 	static double offset = 1.0;
 	GaussStimulusParameters gsp = { 3, 25, 20 };
@@ -236,7 +236,7 @@ void DnfcomposerHandler::activateDegeneration()
 			simulationElements.outputField->startDegeneration();
 		}
 		if(simulationParameters.isDebugMode)
-			std::cout << "Deactivated " << numberOfDegeneratedElements << " neurons." << std::endl;
+			std::cout << "Deactivated " << numberOfDegeneratedElements << " neural positions." << std::endl;
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
