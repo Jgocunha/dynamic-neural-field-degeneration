@@ -6,9 +6,9 @@ clc;
 resultPath = '../results/';
 degeneracyType = 'deactivate weights';
 relearningType = 'Only-degenerated-cases';
-epochs = 100;
-maxCycles = 5;
-updateAllWeights = 0; % 0 || 1
+epochs = 10;
+maxCycles = 100;
+updateAllWeights = 1; % 0 || 1
 maximumLearningCycles = 5;
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
