@@ -12,18 +12,18 @@ int main()
         params.numberOfTrials = 100;
         params.decisionTolerance = 5;
 
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_REDUCE;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_RANDOMIZE;
         params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 0;
-        params.targetPercentageOfDegeneration = 100;
+        params.targetPercentageOfDegeneration = 300;
         params.incrementOfDegenerationPercentage = 10;
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
         params.learningRate = 0.01;
         params.numberOfRelearningEpochs = 100; //<------
-        params.maximumAmountOfDemonstrations = 5; //<------
-        params.updateAllWeights = false; //<------
+        params.maximumAmountOfDemonstrations = 10; //<------
+        params.updateAllWeights = true; //<------
 
         params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;
