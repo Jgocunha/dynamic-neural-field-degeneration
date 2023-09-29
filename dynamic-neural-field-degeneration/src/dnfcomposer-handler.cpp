@@ -158,12 +158,12 @@ void DnfcomposerHandler::setupUserInterface()
 {
 	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
-	PlotDimensions pd= { 0, 360, -25, 30 };
+	PlotDimensions pd= { 0, 360, -35, 30 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -15, 25 };
+	pd = { 0, 180, -20, 25 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
@@ -232,6 +232,7 @@ void DnfcomposerHandler::activateDegeneration()
 		}
 		else
 		{
+			numberOfDegeneratedElements = numberOfDegeneratedElements + 1;
 			simulationElements.outputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.outputField->startDegeneration();
 		}

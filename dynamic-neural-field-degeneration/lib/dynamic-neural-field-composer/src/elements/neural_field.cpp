@@ -75,7 +75,7 @@ void NeuralField::calculateOutput()
 			components["output"] = mathtools::heaviside(components["activation"], activationFunctionParameters.xShift);
 			break;
 		default:
-			// this should never happenl; return exception
+			// this should never happen; return exception
 			break;
 	}
 }
@@ -85,16 +85,20 @@ double NeuralField::calculateCentroid()
 
 	double centroid = 0.0;
 
-	if (*std::max_element(components["output"].begin(), components["output"].end()) > 0)
+	if (*std::max_element(components["output"].begin(), components["output"].end()) > 0.5)
 	{
 		bool isAtLimits = (components["output"][0] > 0) || (components["output"][size - 1] > 0);
 
 		double sumActivation = 0.0;
 		double sumWeightedPositions = 0.0;
 
+
+		std::vector<double> f_output = mathtools::heaviside(components["activation"], 0.1);
+
 		for (int i = 0; i < size; i++)
 		{
-			double activation = components["output"][i];
+			double activation = f_output[i];
+
 			sumActivation += activation;
 
 			// Calculate the circular distance from the midpoint to the position
