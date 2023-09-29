@@ -80,6 +80,7 @@ void ExperimentHandler::step()
 			setupProcedure();
 			degenerationProcedure();
 			cleanUpTrial();
+			Sleep(20);
 		}
 		Sleep(10);
 	}

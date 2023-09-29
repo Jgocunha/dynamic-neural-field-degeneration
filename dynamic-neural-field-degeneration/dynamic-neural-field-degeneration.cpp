@@ -8,7 +8,7 @@ ExperimentParameters setExperimentParameters()
 	params.numberOfTrials = 300;
     params.decisionTolerance = 0.5;
 
-    params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+    params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
     params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);
 
