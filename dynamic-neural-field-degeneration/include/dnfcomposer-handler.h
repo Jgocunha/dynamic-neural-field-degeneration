@@ -25,7 +25,7 @@ struct SimulationParameters
 	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
-	const int timeForFieldToSettle = 20;
+	const int timeForFieldToSettle = 30;
 
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
