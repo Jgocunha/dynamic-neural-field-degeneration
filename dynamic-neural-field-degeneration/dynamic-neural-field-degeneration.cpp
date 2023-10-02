@@ -5,7 +5,7 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 300;
+	params.numberOfTrials = 1;
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;

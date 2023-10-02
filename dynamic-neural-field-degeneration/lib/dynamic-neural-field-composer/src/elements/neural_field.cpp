@@ -84,20 +84,18 @@ double NeuralField::calculateCentroid()
 {
 
 	double centroid = 0.0;
+	const std::vector<double> f_output = mathtools::heaviside(components["activation"], 0.1);
 
-	if (*std::max_element(components["output"].begin(), components["output"].end()) > 0.5)
+	if (*std::max_element(f_output.begin(), f_output.end()) > 0)
 	{
-		bool isAtLimits = (components["output"][0] > 0) || (components["output"][size - 1] > 0);
+		const bool isAtLimits = (f_output[0] > 0) || (f_output[size - 1] > 0);
 
 		double sumActivation = 0.0;
 		double sumWeightedPositions = 0.0;
 
-
-		std::vector<double> f_output = mathtools::heaviside(components["activation"], 0.1);
-
 		for (int i = 0; i < size; i++)
 		{
-			double activation = f_output[i];
+			const double activation = f_output[i];
 
 			sumActivation += activation;
 

@@ -11,7 +11,6 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	// create neural fields
 	constexpr ActivationFunctionParameters afp = { ActivationFunctionType::Sigmoid, 10.0, 0 };
-	//ActivationFunctionParameters afp = { ActivationFunctionType::Sigmoid, 10.0, 0.0 };
 
 	constexpr NeuralFieldParameters nfp1 = { 25, -12 };
 	constexpr NeuralFieldParameters nfp2 = { 25, -10 };
@@ -32,7 +31,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	GaussKernelParameters gkp2;
 	gkp2.amplitude = 15;  // self-stabilized (with input)
 	gkp2.sigma = 2;
-	gkp2.amplitudeGlobal = -0.5;
+	gkp2.amplitudeGlobal = -0.2;
 	const std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
 	simulation->addElement(k_dec_dec);
 
@@ -77,17 +76,17 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	//// add gaussian inputs
 	//double offset = 1.0;
-	//GaussStimulusParameters gsp = { 3, 15, 20 };
+	//GaussStimulusParameters gsp = { 3, 25, 20 };
 
 	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	//{
 	//	{ 00.00 + offset }, // red
-	//	{ 40.60 + offset }, // orange
+	//	{ 41.00 + offset }, // orange
 	//	{ 60.00 + offset }, // yellow
 	//	{ 120.00 + offset }, // green
 	//	{ 240.00 + offset }, // blue
-	//	{ 274.15 + offset }, // indigo
-	//	{ 281.79 + offset } // violet
+	//	{ 274.00 + offset }, // indigo
+	//	{ 282.00 + offset } // violet
 	//};
 	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	//{
@@ -103,15 +102,17 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	//fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 
-	//gsp.amplitude = 15;
+	//gsp.amplitude = 25;
 	//gsp.sigma = 3;
 
 	//fcpw.setGaussStimulusParameters(gsp);
 
 	//fcpw.simulateAssociation();
 
-	//fcpw.trainWeights(100);
- 
+	//fcpw.trainWeights(200);
+
+	//fcpw.saveWeights();
+ //
 	return simulation;
 
 }

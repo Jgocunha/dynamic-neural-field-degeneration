@@ -117,7 +117,7 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
     //double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
     //double minVal = -2;
 
-    double maxVal = 20; // these are hardcoded...
+    double maxVal = 25; // these are hardcoded...
     double minVal = -30;
 
 
