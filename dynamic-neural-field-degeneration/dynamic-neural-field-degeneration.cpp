@@ -5,7 +5,7 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 1000;
+	params.numberOfTrials = 1;
     params.decisionTolerance = 0.5;
 
     params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
@@ -14,7 +14,7 @@ ExperimentParameters setExperimentParameters()
 
     params.startingExternalStimulus = 0;
     params.isDataSavingOn = true;
-    params.isVisualisationOn = false;
+    params.isVisualisationOn = true;
     params.isDebugModeOn = true;
 
     return params;

@@ -9,7 +9,7 @@ FieldCouplingWizard::FieldCouplingWizard(const std::shared_ptr<Simulation> simul
 	setNeuralFieldPost();
     fieldCoupling->resetWeights();
 
-    std::string pathPrefix = std::string(OUTPUT_DIRECTORY) + "/" + fieldCoupling->getUniqueIdentifier() + "_";
+    const std::string pathPrefix = std::string(OUTPUT_DIRECTORY) + "/" + fieldCoupling->getUniqueIdentifier() + "_";
     pathToFieldActivationPre = pathPrefix + neuralFieldPre->getUniqueIdentifier() + ".txt";
     pathToFieldActivationPost = pathPrefix + neuralFieldPost->getUniqueIdentifier() + ".txt";
 }
@@ -36,7 +36,7 @@ void FieldCouplingWizard::simulateAssociation()
         // Create Gaussian stimuli in the input field
         for (int j = 0; j < targetPeakLocationsForNeuralFieldPre[i].size(); j++)
         {
-            std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
+            const std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
             gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPre[i][j];
             std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus(stimulusName, neuralFieldPre->getSize(), gaussStimulusParameters));
             simulation->addElement(stimulus);
@@ -51,7 +51,7 @@ void FieldCouplingWizard::simulateAssociation()
         // Create Gaussian stimuli in the output field
         for (int j = 0; j < targetPeakLocationsForNeuralFieldPost[i].size(); j++)
         {
-            std::string stimulusName = "Output Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
+            const std::string stimulusName = "Output Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
             gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPost[i][j];
             std::shared_ptr<GaussStimulus> stimulus(new GaussStimulus(stimulusName, neuralFieldPost->getSize(), gaussStimulusParameters));
             simulation->addElement(stimulus);
@@ -80,8 +80,8 @@ void FieldCouplingWizard::simulateAssociation()
         std::vector<double>* input = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "activation");
         std::vector<double>* output = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "activation");
 
-        auto inputRestingLevel = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "resting level");
-        auto outputRestingLevel = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "resting level");
+        const auto inputRestingLevel = simulation->getComponentPtr(neuralFieldPre->getUniqueIdentifier(), "resting level");
+        const auto outputRestingLevel = simulation->getComponentPtr(neuralFieldPost->getUniqueIdentifier(), "resting level");
 
         // normalize data (remove resting level and normalize between -1 and 1))
         *input = normalizeFieldActivation(*input, (*inputRestingLevel)[0]);
@@ -108,24 +108,20 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
     // this removes the resting level
     // the code works without this  
     //for (double& val : vec)
-        //val += restingLevel;
+    //    val += restingLevel;
 
-    //int safetyFactor = 20;
-
+    const int safetyFactor = 0;
     // Find the minimum and maximum values in the vector
-    //double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
-    //double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
-    //double minVal = -2;
-
-    double maxVal = 25; // these are hardcoded...
-    double minVal = -30;
-
+    const double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
+    const double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
 
     // Normalize the vector
     std::vector<double> normalizedVec;
     for (const double& val : vec)
     {
-        double normalized_val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+        //double normalized_val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+        double normalized_val = (val - minVal) / (maxVal - minVal);
+
         normalizedVec.push_back(normalized_val);
     }
 

@@ -82,7 +82,7 @@ void ExperimentHandler::step()
 			cleanUpTrial();
 			Sleep(20);
 		}
-		Sleep(10);
+		Sleep(50);
 	}
 	setExperimentAsEnded();
 }

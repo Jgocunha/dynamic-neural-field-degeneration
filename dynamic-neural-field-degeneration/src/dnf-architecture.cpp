@@ -72,7 +72,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	// ==
 	// set up the field coupling wizard
-	//FieldCouplingWizard fcpw{ simulation, "per - dec" };
+	FieldCouplingWizard fcpw{ simulation, "per - dec" };
 
 	//// add gaussian inputs
 	//double offset = 1.0;
@@ -86,7 +86,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//	{ 120.00 + offset }, // green
 	//	{ 240.00 + offset }, // blue
 	//	{ 274.00 + offset }, // indigo
-	//	{ 282.00 + offset } // violet
+	//	{ 300.00 + offset } // violet
 	//};
 	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	//{
@@ -109,10 +109,10 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	//fcpw.simulateAssociation();
 
-	//fcpw.trainWeights(200);
+	fcpw.trainWeights(200);
 
-	//fcpw.saveWeights();
- //
+	fcpw.saveWeights();
+ 
 	return simulation;
 
 }
