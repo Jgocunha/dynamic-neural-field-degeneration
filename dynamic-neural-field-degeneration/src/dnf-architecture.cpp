@@ -72,7 +72,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	// ==
 	// set up the field coupling wizard
-	FieldCouplingWizard fcpw{ simulation, "per - dec" };
+	//FieldCouplingWizard fcpw{ simulation, "per - dec" };
 
 	//// add gaussian inputs
 	//double offset = 1.0;
@@ -109,9 +109,9 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	//fcpw.simulateAssociation();
 
-	fcpw.trainWeights(200);
+	//fcpw.trainWeights(200);
 
-	fcpw.saveWeights();
+	//fcpw.saveWeights();
  
 	return simulation;
 
