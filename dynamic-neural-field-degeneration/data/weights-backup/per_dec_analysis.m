@@ -1,8 +1,7 @@
 clear;
 clc;
-clf;
 
-path = './';
+path = '../';
 filename_perceptual = [path, 'per - dec_perceptual field.txt'];  
 filename_decision = [path, 'per - dec_decision field.txt'];
 fieldSize_perceptual = 360;
