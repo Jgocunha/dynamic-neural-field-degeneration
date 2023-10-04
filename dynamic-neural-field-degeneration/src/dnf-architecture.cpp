@@ -86,7 +86,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//	{ 120.00 + offset }, // green
 	//	{ 240.00 + offset }, // blue
 	//	{ 274.00 + offset }, // indigo
-	//	{ 282.00 + offset } // violet
+	//	{ 300.00 + offset } // violet
 	//};
 	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	//{
@@ -112,7 +112,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//fcpw.trainWeights(200);
 
 	//fcpw.saveWeights();
- //
+
 	return simulation;
 
 }

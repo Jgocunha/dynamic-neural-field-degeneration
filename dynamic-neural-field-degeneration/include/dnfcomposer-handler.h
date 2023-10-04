@@ -83,8 +83,8 @@ private:
 		{ 60.00 + offset }, // yellow
 		{ 120.00 + offset }, // green
 		{ 240.00 + offset }, // blue
-		{ 274.15 + offset }, // indigo
-		{ 281.79 + offset } // violet
+		{ 274.00 + offset }, // indigo
+		{ 300.00 + offset } // violet
 	};
 	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	{

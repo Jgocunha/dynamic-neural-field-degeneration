@@ -28,7 +28,7 @@ int main()
         params.isDataSavingOn = false;
         params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
-        params.isLinkToCoppeliaSimOn = false;
+        params.isLinkToCoppeliaSimOn = true;
 
         ExperimentHandler experiment{ params };
         
