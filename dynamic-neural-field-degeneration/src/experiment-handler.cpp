@@ -400,7 +400,7 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 36; 
+			return 4; 
 		if (params.fieldToDegenerate == "decision")
 			return 18; 
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
