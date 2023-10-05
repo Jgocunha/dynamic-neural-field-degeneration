@@ -373,7 +373,8 @@ void ExperimentHandler::degenerationProcedure()
 		std::cout << "Degeneration procedure started." << std::endl;
 
 	// Disable the user interface whilst degenerating to consume less time.
-	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
+	if (params.isComposerVisualizationOn)
+		dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
 
 	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
 	// we kill 1 neuron per iteration
@@ -391,7 +392,8 @@ void ExperimentHandler::degenerationProcedure()
 	}
 
 	// Re-enable the UI.
-	dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
+	if (params.isComposerVisualizationOn)
+		dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
 }
 
 int ExperimentHandler::getNumberOfElementsToDegenerate() const
@@ -400,7 +402,7 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 4; 
+			return 25; 
 		if (params.fieldToDegenerate == "decision")
 			return 18; 
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -450,6 +452,8 @@ void ExperimentHandler::cleanupTrial()
 	Sleep(50);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
 	Sleep(50);
+	dnfcomposerHandler.setWasStartSimulationRequested(true);
+	//Sleep(25);
 }
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
@@ -527,7 +531,7 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 void ExperimentHandler::getOriginalWeightsFile() const
 {
-	const std::string sourceFileName = params.filePathPrefix + "weights-backup/weights-original/per - dec_weights.txt";
+	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - dec_weights.txt";
 	const std::ifstream sourceFile(sourceFileName);
 
 	const std::string destFileName = params.filePathPrefix + "per - dec_weights.txt";

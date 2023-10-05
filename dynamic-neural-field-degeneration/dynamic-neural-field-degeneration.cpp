@@ -9,11 +9,11 @@ int main()
         ExperimentParameters params;
 
         params.numberOfShapesPerTrial = 7;
-        params.numberOfTrials = 100;
+        params.numberOfTrials = 10;
         params.decisionTolerance = 5;
 
         params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "decision";
+        params.fieldToDegenerate = "perceptual";
 
         params.initialPercentageOfDegeneration = 0;
         params.targetPercentageOfDegeneration = 100;
@@ -21,11 +21,11 @@ int main()
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
         params.learningRate = 0.01;
-        params.numberOfRelearningEpochs = 100; //<------
-        params.maximumAmountOfDemonstrations = 10; //<------
-        params.updateAllWeights = true; //<------
+        params.numberOfRelearningEpochs = 1; //<------
+        params.maximumAmountOfDemonstrations = 1; //<------
+        params.updateAllWeights = false; //<------
 
-        params.isDataSavingOn = false;
+        params.isDataSavingOn = true;
         params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;

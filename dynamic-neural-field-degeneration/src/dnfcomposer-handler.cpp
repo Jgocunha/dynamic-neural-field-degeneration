@@ -94,6 +94,8 @@ void DnfcomposerHandler::closeSimulation()
 	numberOfRelearningCycles = 0;
 	simulationElements.fieldCoupling->readWeights();
 	simulationElements.fieldCoupling->populateIndicesForDegeneration();
+	simulationElements.inputField->clearDegeneration();
+	simulationElements.outputField->clearDegeneration();
 	wasCloseSimulationRequested = false;
 }
 

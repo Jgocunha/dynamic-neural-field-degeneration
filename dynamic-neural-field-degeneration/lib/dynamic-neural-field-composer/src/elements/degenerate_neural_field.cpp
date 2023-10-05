@@ -20,6 +20,13 @@ void DegenerateNeuralField::init()
 	degenerate = false;
 }
 
+
+void DegenerateNeuralField::clearDegeneration()
+{
+	degeneratedIndices.clear();
+}
+
+
 void DegenerateNeuralField::calculateActivation(const double& t, const double& deltaT)
 {
 	for (int i = 0; i < size; i++)
