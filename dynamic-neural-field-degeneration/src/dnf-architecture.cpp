@@ -13,7 +13,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	constexpr ActivationFunctionParameters afp = { ActivationFunctionType::Sigmoid, 10.0, 0 };
 
 	constexpr NeuralFieldParameters nfp1 = { 25, -12 };
-	constexpr NeuralFieldParameters nfp2 = { 25, -10 };
+	constexpr NeuralFieldParameters nfp2 = { 25, -15 };
 	const std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
 	const std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
 
@@ -31,7 +31,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	GaussKernelParameters gkp2;
 	gkp2.amplitude = 15;  // self-stabilized (with input)
 	gkp2.sigma = 2;
-	gkp2.amplitudeGlobal = -0.2;
+	gkp2.amplitudeGlobal = -0.3;
 	const std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
 	simulation->addElement(k_dec_dec);
 

@@ -15,15 +15,15 @@ int main()
         params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
         params.fieldToDegenerate = "perceptual";
 
-        params.initialPercentageOfDegeneration = 0;
-        params.targetPercentageOfDegeneration = 100;
+        params.initialPercentageOfDegeneration = 10;
+        params.targetPercentageOfDegeneration = 180;
         params.incrementOfDegenerationPercentage = 1;
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
-        params.learningRate = 0.02;
+        params.learningRate = 0.05;
         params.numberOfRelearningEpochs = 200; //<------
         params.maximumAmountOfDemonstrations = 10; //<------
-        params.updateAllWeights = false; //<------
+        params.updateAllWeights = true; //<------
 
         params.isDataSavingOn = true;
         params.isComposerVisualizationOn = false;

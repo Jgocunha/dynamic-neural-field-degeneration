@@ -352,7 +352,7 @@ void DnfcomposerHandler::activateRelearning()
 void DnfcomposerHandler::updateExternalInput()
 {
 	static double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<GaussStimulus> stimulus
 		(new GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));

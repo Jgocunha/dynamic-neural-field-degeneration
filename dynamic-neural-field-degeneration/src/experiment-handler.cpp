@@ -52,18 +52,7 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	if(params.initialPercentageOfDegeneration != 0)
-	{
-		mockPickAndPlace();
-		while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
-		{
-			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-			degenerationProcedure();
-			dnfcomposerHandler.saveWeightsToFile();
-		}
-		if(params.isDebugModeOn)
-			std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
-	}
+	
 
 	for(int trial = 1; trial <= params.numberOfTrials; trial++)
 	{
@@ -75,6 +64,19 @@ void ExperimentHandler::step()
 
 		if(params.isComposerVisualizationOn)
 			dnfcomposerHandler.setTrial(trial);
+
+		if (params.initialPercentageOfDegeneration != 0)
+		{
+			mockPickAndPlace();
+			while (params.currentPercentageOfDegeneration < params.initialPercentageOfDegeneration)
+			{
+				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+				degenerationProcedure();
+				dnfcomposerHandler.saveWeightsToFile();
+			}
+			if (params.isDebugModeOn)
+				std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
+		}
 
 		do
 		{
@@ -402,13 +404,13 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 4; 
+			return 1; //10% - 36 / 1% - 3.6
 		if (params.fieldToDegenerate == "decision")
-			return 18; 
+			return 9; //10% - 18 / 5% - 9
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 65; //64.8
+		return 33; //10% - 64.8 / 5% - 33
 	default:
 		return 0;
 	}
