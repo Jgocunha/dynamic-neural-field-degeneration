@@ -79,7 +79,7 @@ private:
 	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
 		{ 00.00 + offset }, // red
-		{ 40.60 + offset }, // orange
+		{ 41.00 + offset }, // orange
 		{ 60.00 + offset }, // yellow
 		{ 120.00 + offset }, // green
 		{ 240.00 + offset }, // blue

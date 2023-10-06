@@ -37,7 +37,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	const std::shared_ptr<DegenerateFieldCoupling> w_per_dec(
 		new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, 
-			{ 0.5, 0.2 }, LearningRule::DELTA_KROGH_HERTZ));
+			{ 0.65, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
 	simulation->addElement(w_per_dec);
 
 	// create noise stimulus and noise kernel

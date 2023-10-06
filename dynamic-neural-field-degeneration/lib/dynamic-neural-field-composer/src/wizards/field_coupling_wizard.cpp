@@ -110,9 +110,9 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
     //for (double& val : vec)
     //    val += restingLevel;
 
-    //for (double& val : vec)
-    //    if (val < 0.1)
-    //        val = 0;
+    for (double& val : vec)
+        if (val < 0.01)
+            val = 0;
 
     constexpr int safetyFactor = 0;
     // Find the minimum and maximum values in the vector
@@ -121,12 +121,15 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
 
     // Normalize the vector
     std::vector<double> normalizedVec;
-    for (const double& val : vec)
+    for (double& val : vec)
     {
-        //double normalized_val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
-        double normalized_val = (val - minVal) / (maxVal - minVal);
+        if(val != 0.0)
+        {
+	        //double normalized_val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+            val = (val - minVal) / (maxVal - minVal);
+        }
 
-        normalizedVec.push_back(normalized_val);
+        normalizedVec.push_back(val);
     }
 
     return normalizedVec;

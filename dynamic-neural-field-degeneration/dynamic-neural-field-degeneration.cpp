@@ -20,13 +20,13 @@ int main()
         params.incrementOfDegenerationPercentage = 1;
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
-        params.learningRate = 0.01;
-        params.numberOfRelearningEpochs = 1; //<------
-        params.maximumAmountOfDemonstrations = 1; //<------
+        params.learningRate = 0.02;
+        params.numberOfRelearningEpochs = 200; //<------
+        params.maximumAmountOfDemonstrations = 10; //<------
         params.updateAllWeights = false; //<------
 
         params.isDataSavingOn = true;
-        params.isComposerVisualizationOn = true;
+        params.isComposerVisualizationOn = false;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
 
