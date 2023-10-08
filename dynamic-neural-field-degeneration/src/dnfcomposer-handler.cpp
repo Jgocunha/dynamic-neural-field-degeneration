@@ -106,12 +106,12 @@ void DnfcomposerHandler::setupUserInterface()
 	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
 	PlotDimensions pd;
-	pd = { 0, 360, -25, 30 };
+	pd = { 0, 360, -25, 35 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -15, 25 };
+	pd = { 0, 180, -25, 35 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
@@ -393,13 +393,13 @@ void DnfcomposerHandler::waitForFieldsToSettle() const
 void DnfcomposerHandler::allCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 25;
+	gsp.amplitude = 35;
 	gsp.sigma = 3;
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
@@ -409,17 +409,26 @@ void DnfcomposerHandler::allCasesRelearning()
 void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	std::vector<std::vector<double>> inputSelected;
 	std::vector<std::vector<double>> outputSelected;
 
-	for (int i = 0; i < inputTargetPeaksForCoupling.size(); ++i) 
+	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
 	{
 		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
 		{
-			inputSelected.push_back(inputTargetPeaksForCoupling[i]);
-			outputSelected.push_back(outputTargetPeaksForCoupling[i]);
+			int index = i;
+			if (index == 1)
+				index = 5;
+			else
+				if (index == 5)
+					index = 1;
+			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
+			std::cout << outputTargetPeaksForCoupling[index][0] << std::endl;
+			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
+			//std::cout << outputTargetPeaksForCoupling[index][0] << std::endl;
+
 		}
 	}
 
@@ -427,7 +436,7 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 25;
+	gsp.amplitude = 35;
 	gsp.sigma = 3;
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";

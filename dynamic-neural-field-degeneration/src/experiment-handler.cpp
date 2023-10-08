@@ -251,6 +251,7 @@ bool ExperimentHandler::verifyDecision()
 
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	stats.shapesPlacedIncorrectly = stats.shapesPlacedIncorrectly << 1;
+	std::cout << "Wrong decision: " << data.expectedTargetAngle << std::endl;
 	return false;
 }
 
@@ -406,7 +407,7 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 		if(params.fieldToDegenerate == "perceptual")
 			return 1; //10% - 36 / 1% - 3.6
 		if (params.fieldToDegenerate == "decision")
-			return 9; //10% - 18 / 5% - 9
+			return 2; //10% - 18 / 5% - 9 / 1% - 2
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:

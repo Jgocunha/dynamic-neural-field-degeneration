@@ -78,13 +78,13 @@ private:
 	const double offset = 1.0;
 	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
-		{ 00.00 + offset }, // red
-		{ 41.00 + offset }, // orange
-		{ 60.00 + offset }, // yellow
-		{ 120.00 + offset }, // green
-		{ 240.00 + offset }, // blue
-		{ 274.00 + offset }, // indigo
-		{ 300.00 + offset } // violet
+		{ 00.00 + offset }, // red 0
+		{ 41.00 + offset }, // orange 1
+		{ 60.00 + offset }, // yellow 2
+		{ 120.00 + offset }, // green 3
+		{ 240.00 + offset }, // blue 4
+		{ 274.00 + offset }, // indigo 5
+		{ 300.00 + offset } // violet 6
 	};
 	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	{
@@ -96,6 +96,7 @@ private:
 		{ 140.00 + offset },
 		{ 165.00 + offset }
 	};
+
 
 public:
 	DnfcomposerHandler();
