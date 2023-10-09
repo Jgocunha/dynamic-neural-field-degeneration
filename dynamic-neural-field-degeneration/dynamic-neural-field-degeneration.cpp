@@ -10,12 +10,12 @@ int main()
 
         params.numberOfShapesPerTrial = 7;
         params.numberOfTrials = 10;
-        params.decisionTolerance = 5;
+        params.decisionTolerance = 10;
 
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         params.fieldToDegenerate = "decision";
 
-        params.initialPercentageOfDegeneration = 20;
+        params.initialPercentageOfDegeneration = 40;
         params.targetPercentageOfDegeneration = 100;
         params.incrementOfDegenerationPercentage = 10;
 
