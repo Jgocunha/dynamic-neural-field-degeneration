@@ -12,17 +12,17 @@ int main()
         params.numberOfTrials = 10;
         params.decisionTolerance = 10;
 
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "decision";
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.fieldToDegenerate = "perceptual";
 
-        params.initialPercentageOfDegeneration = 40;
-        params.targetPercentageOfDegeneration = 180;
-        params.incrementOfDegenerationPercentage = 1;
+        params.initialPercentageOfDegeneration = 50;
+        params.targetPercentageOfDegeneration = 100;
+        params.incrementOfDegenerationPercentage = 10;
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
         params.learningRate = 0.02;
-        params.numberOfRelearningEpochs = 10; //<------
-        params.maximumAmountOfDemonstrations = 10; //<------
+        params.numberOfRelearningEpochs = 1; //<------
+        params.maximumAmountOfDemonstrations = 1000; //<------
         params.updateAllWeights = false; //<------
 
         params.isDataSavingOn = true;

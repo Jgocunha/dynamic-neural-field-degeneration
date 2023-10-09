@@ -92,12 +92,20 @@ void ExperimentHandler::step()
 				if (doesBackupWeightsFileExist())
 					restoreWeightsFile();
 				degenerationProcedure();
+				
 				dnfcomposerHandler.saveWeightsToFile();
 				if (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations)
+				{
 					data.isFieldDead = true;
+					if (params.isDebugModeOn)
+						std::cout << "Field is 'dead'." << std::endl << std::endl;
+				}
 				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
 				stats.numOfRelearningCycles = 0;
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+				if (params.isDebugModeOn)
+					std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl << std::endl;
+
 			}
 			else
 			{
@@ -378,6 +386,9 @@ void ExperimentHandler::relearningProcedure()
 	while (!dnfcomposerHandler.getHasRelearningFinished());
 	dnfcomposerHandler.setHasRelearningFinished(false);
 	//Sleep(2000);
+
+	if (params.isDebugModeOn)
+		std::cout << "Relearning procedure finished." << std::endl << std::endl;
 
 	stats.numOfRelearningCycles++;
 }
