@@ -6,13 +6,12 @@ clc;
 resultPath = '../results/';
 degeneracyType = 'deactivate weights';
 relearningType = 'Only-degenerated-cases';
-epochs = 100;
-maxCycles = 5;
+epochs = 200;
+maximumLearningCycles = 10;
 updateAllWeights = 0; % 0 || 1
-maximumLearningCycles = 5;
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
-    '  Epochs-', num2str(epochs), ' ', 'MaxCycles-', num2str(maxCycles), ...
+    '  Epochs-', num2str(epochs), ' ', 'MaxCycles-', num2str(maximumLearningCycles), ...
     ' Update-all-weights-', num2str(updateAllWeights), '.txt'];
 
 

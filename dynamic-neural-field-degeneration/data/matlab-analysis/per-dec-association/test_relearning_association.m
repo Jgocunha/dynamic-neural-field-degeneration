@@ -1,6 +1,5 @@
 clear;
 clc;
-clf;
 
 path = '../../';
 filename_perceptual = [path, 'per - dec_perceptual field.txt'];  

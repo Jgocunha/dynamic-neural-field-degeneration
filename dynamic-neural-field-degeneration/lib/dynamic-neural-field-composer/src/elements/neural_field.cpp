@@ -84,22 +84,24 @@ double NeuralField::calculateCentroid()
 {
 
 	double centroid = 0.0;
+	const std::vector<double> f_output = mathtools::heaviside(components["activation"], 0.1);
 
-	if (*std::max_element(components["output"].begin(), components["output"].end()) > 0)
+	if (*std::max_element(f_output.begin(), f_output.end()) > 0)
 	{
-		bool isAtLimits = (components["output"][0] > 0) || (components["output"][size - 1] > 0);
+		const bool isAtLimits = (f_output[0] > 0) || (f_output[size - 1] > 0);
 
 		double sumActivation = 0.0;
 		double sumWeightedPositions = 0.0;
 
 		for (int i = 0; i < size; i++)
 		{
-			double activation = components["output"][i];
+			const double activation = f_output[i];
+
 			sumActivation += activation;
 
 			// Calculate the circular distance from the midpoint to the position
 			double distance = 0.0;
-			if(isAtLimits)
+			if (isAtLimits)
 				distance = fmod(static_cast<double>(i) - static_cast<double>(size) * 0.5 + static_cast<double>(size) * 10, static_cast<double>(size));
 			else
 				distance = fmod(static_cast<double>(i) - static_cast<double>(size) * 0.5, static_cast<double>(size));

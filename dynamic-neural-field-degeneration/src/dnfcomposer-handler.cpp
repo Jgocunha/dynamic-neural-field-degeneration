@@ -54,8 +54,8 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
-		else if (wasStartSimulationRequested)
-			startSimulation();
+		//else if (wasStartSimulationRequested)
+			//startSimulation();
 		else if(wasCloseSimulationRequested)
 			closeSimulation();
 		else
@@ -94,6 +94,8 @@ void DnfcomposerHandler::closeSimulation()
 	numberOfRelearningCycles = 0;
 	simulationElements.fieldCoupling->readWeights();
 	simulationElements.fieldCoupling->populateIndicesForDegeneration();
+	simulationElements.inputField->clearDegeneration();
+	simulationElements.outputField->clearDegeneration();
 	wasCloseSimulationRequested = false;
 }
 
@@ -104,12 +106,12 @@ void DnfcomposerHandler::setupUserInterface()
 	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
 	PlotDimensions pd;
-	pd = { 0, 360, -25, 30 };
+	pd = { 0, 360, -25, 35 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -15, 25 };
+	pd = { 0, 180, -25, 35 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
@@ -277,45 +279,6 @@ void DnfcomposerHandler::activateDegeneration()
 
 // Relearning
 
-//void DnfcomposerHandler::activateRelearning()
-//{
-//	
-//	// add gaussian inputs
-//	double offset = 1.0;
-//	GaussStimulusParameters gsp = { 3, 25, 20 };
-//
-//	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-//	{
-//		{relearningParameters.expectedInputCentroid + offset}
-//	};
-//
-//	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-//	{
-//		{relearningParameters.expectedOutputCentroid + offset}
-//	};
-//	
-//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-//	
-//	std::cout << "Finished setting up the field coupling wizard.\n";
-//
-//	gsp.amplitude = 15;
-//	gsp.sigma = 3;
-//	
-//	simulationElements.fcpw.setGaussStimulusParameters(gsp);
-//	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
-//
-//	simulationElements.fcpw.simulateAssociation();
-//	std::cout << "Finished simulating association.\n";
-//	
-//	// only 1 iteration of training
-//	simulationElements.fcpw.trainWeights(1);
-//	std::cout << "Finished training weights.\n";
-//	
-//	wasRelearningRequested = false;
-//	hasRelearningFinished = true;
-//}
-
 void DnfcomposerHandler::activateRelearning()
 {
 	// NOW WE HAVE RELEARNING TYPE, LEARNING RATE, AND NUMBER OF ITERATIONS
@@ -350,7 +313,7 @@ void DnfcomposerHandler::activateRelearning()
 void DnfcomposerHandler::updateExternalInput()
 {
 	static double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<GaussStimulus> stimulus
 		(new GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));
@@ -391,13 +354,13 @@ void DnfcomposerHandler::waitForFieldsToSettle() const
 void DnfcomposerHandler::allCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 25;
+	gsp.amplitude = 35;
 	gsp.sigma = 3;
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
@@ -407,25 +370,35 @@ void DnfcomposerHandler::allCasesRelearning()
 void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 25, 20 };
+	GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	std::vector<std::vector<double>> inputSelected;
 	std::vector<std::vector<double>> outputSelected;
 
-	for (int i = 0; i < inputTargetPeaksForCoupling.size(); ++i) 
+	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
 	{
 		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
 		{
-			inputSelected.push_back(inputTargetPeaksForCoupling[i]);
-			outputSelected.push_back(outputTargetPeaksForCoupling[i]);
+			//std::cout << "i " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
+			int index = 6 - i;
+			if (index == 2)
+				index = 4;
+			else
+				if (index == 4)
+					index = 2;
+
+			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
+			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
+			std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[index][0] << std::endl;
 		}
+		//std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
 	}
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 25;
+	gsp.amplitude = 35;
 	gsp.sigma = 3;
 	simulationElements.fcpw.setGaussStimulusParameters(gsp);
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";

@@ -52,18 +52,7 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	if(params.initialPercentageOfDegeneration != 0)
-	{
-		mockPickAndPlace();
-		while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
-		{
-			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-			degenerationProcedure();
-			dnfcomposerHandler.saveWeightsToFile();
-		}
-		if(params.isDebugModeOn)
-			std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
-	}
+	
 
 	for(int trial = 1; trial <= params.numberOfTrials; trial++)
 	{
@@ -75,6 +64,19 @@ void ExperimentHandler::step()
 
 		if(params.isComposerVisualizationOn)
 			dnfcomposerHandler.setTrial(trial);
+
+		if (params.initialPercentageOfDegeneration != 0)
+		{
+			mockPickAndPlace();
+			while (params.currentPercentageOfDegeneration < params.initialPercentageOfDegeneration)
+			{
+				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+				degenerationProcedure();
+				dnfcomposerHandler.saveWeightsToFile();
+			}
+			if (params.isDebugModeOn)
+				std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
+		}
 
 		do
 		{
@@ -114,61 +116,6 @@ void ExperimentHandler::step()
 	dnfcomposerHandler.stop();
 }
 
-//void ExperimentHandler::step()
-//{
-//	//mockPickAndPlace();
-//
-//	//while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
-//	//{
-//	//	params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-//	//	degenerationProcedure();
-//	//	std::cout << "Degeneration percentage: " << params.currentPercentageOfDegeneration << std::endl;
-//	//	Sleep(10);
-//	//	dnfcomposerHandler.saveWeightsToFile();
-//	//}
-//
-//	//Sleep(200);
-//
-//	for(int i = 0; i < params.numberOfTrials; i++)
-//	{
-//		if(params.isDebugModeOn)
-//		{
-//			std::cout << "Trial " << i + 1 << " started." << std::endl;
-//			std::cout << "----------------------------------------" << std::endl;
-//		}
-//
-//		do
-//		{
-//			bool successfulPickAndPlace = false;
-//			do
-//			{
-//				if(params.isLinkToCoppeliaSimOn)
-//					successfulPickAndPlace = bonafidePickAndPlace();
-//				else
-//					successfulPickAndPlace = mockPickAndPlace();
-//
-//				if(!successfulPickAndPlace)
-//				{
-//					if (!doesBackupWeightsFileExist())
-//						backupWeightsFile();
-//					relearningProcedure();
-//				}
-//			} while (!successfulPickAndPlace 
-//				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
-//
-//			saveLearningCyclesPerTrial();
-//
-//			restoreWeightsFile();
-//			degenerationProcedure();
-//			dnfcomposerHandler.saveWeightsToFile();
-//			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-//			
-//		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration );
-//
-//		cleanupTrial();
-//	}
-//
-//}
 
 void ExperimentHandler::close()
 {
@@ -249,6 +196,7 @@ bool ExperimentHandler::verifyDecision()
 
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	stats.shapesPlacedIncorrectly = stats.shapesPlacedIncorrectly << 1;
+	std::cout << "Wrong decision: " << data.expectedTargetAngle << std::endl;
 	return false;
 }
 
@@ -373,7 +321,8 @@ void ExperimentHandler::degenerationProcedure()
 		std::cout << "Degeneration procedure started." << std::endl;
 
 	// Disable the user interface whilst degenerating to consume less time.
-	dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
+	if (params.isComposerVisualizationOn)
+		dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
 
 	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
 	// we kill 1 neuron per iteration
@@ -391,7 +340,8 @@ void ExperimentHandler::degenerationProcedure()
 	}
 
 	// Re-enable the UI.
-	dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
+	if (params.isComposerVisualizationOn)
+		dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
 }
 
 int ExperimentHandler::getNumberOfElementsToDegenerate() const
@@ -400,13 +350,13 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 36; 
+			return 1; //10% - 36 / 1% - 3.6
 		if (params.fieldToDegenerate == "decision")
-			return 18; 
+			return 2; //10% - 18 / 5% - 9 / 1% - 2
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 65; //64.8
+		return 65; //10% - 64.8 / 5% - 33
 	default:
 		return 0;
 	}
@@ -450,6 +400,8 @@ void ExperimentHandler::cleanupTrial()
 	Sleep(50);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
 	Sleep(50);
+	dnfcomposerHandler.setWasStartSimulationRequested(true);
+	//Sleep(25);
 }
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
@@ -527,7 +479,7 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 void ExperimentHandler::getOriginalWeightsFile() const
 {
-	const std::string sourceFileName = params.filePathPrefix + "weights-backup/weights-original/per - dec_weights.txt";
+	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - dec_weights.txt";
 	const std::ifstream sourceFile(sourceFileName);
 
 	const std::string destFileName = params.filePathPrefix + "per - dec_weights.txt";

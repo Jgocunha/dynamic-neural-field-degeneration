@@ -20,9 +20,12 @@ public:
 
 	void startDegeneration();
 	void applyDegeneracy();
+	void clearDegeneration();
 
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	ElementDegeneracyType getDegeneracyType();
+
+
 private:
 	void populateIndicesForDegeneration();
 	void setRandomUniqueNeuronToZero();
