@@ -15,18 +15,18 @@ int main()
         params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         params.fieldToDegenerate = "decision";
 
-        params.initialPercentageOfDegeneration = 70;
+        params.initialPercentageOfDegeneration = 20;
         params.targetPercentageOfDegeneration = 100;
-        params.incrementOfDegenerationPercentage = 5;
+        params.incrementOfDegenerationPercentage = 10;
 
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES; //<------
-        params.learningRate = 0.05;
-        params.numberOfRelearningEpochs = 200; //<------
+        params.learningRate = 0.02;
+        params.numberOfRelearningEpochs = 100; //<------
         params.maximumAmountOfDemonstrations = 10; //<------
         params.updateAllWeights = false; //<------
 
         params.isDataSavingOn = true;
-        params.isComposerVisualizationOn = true;
+        params.isComposerVisualizationOn = false;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
 

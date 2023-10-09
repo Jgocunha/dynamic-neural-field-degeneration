@@ -54,8 +54,8 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
-		else if (wasStartSimulationRequested)
-			startSimulation();
+		//else if (wasStartSimulationRequested)
+			//startSimulation();
 		else if(wasCloseSimulationRequested)
 			closeSimulation();
 		else
@@ -279,45 +279,6 @@ void DnfcomposerHandler::activateDegeneration()
 
 // Relearning
 
-//void DnfcomposerHandler::activateRelearning()
-//{
-//	
-//	// add gaussian inputs
-//	double offset = 1.0;
-//	GaussStimulusParameters gsp = { 3, 25, 20 };
-//
-//	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-//	{
-//		{relearningParameters.expectedInputCentroid + offset}
-//	};
-//
-//	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-//	{
-//		{relearningParameters.expectedOutputCentroid + offset}
-//	};
-//	
-//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-//	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-//	
-//	std::cout << "Finished setting up the field coupling wizard.\n";
-//
-//	gsp.amplitude = 15;
-//	gsp.sigma = 3;
-//	
-//	simulationElements.fcpw.setGaussStimulusParameters(gsp);
-//	std::cout << "Finished setting up the gaussian stimulus parameters.\n";
-//
-//	simulationElements.fcpw.simulateAssociation();
-//	std::cout << "Finished simulating association.\n";
-//	
-//	// only 1 iteration of training
-//	simulationElements.fcpw.trainWeights(1);
-//	std::cout << "Finished training weights.\n";
-//	
-//	wasRelearningRequested = false;
-//	hasRelearningFinished = true;
-//}
-
 void DnfcomposerHandler::activateRelearning()
 {
 	// NOW WE HAVE RELEARNING TYPE, LEARNING RATE, AND NUMBER OF ITERATIONS
@@ -418,18 +379,19 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	{
 		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
 		{
-			int index = i;
-			if (index == 1)
-				index = 5;
+			//std::cout << "i " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
+			int index = 6 - i;
+			if (index == 2)
+				index = 4;
 			else
-				if (index == 5)
-					index = 1;
-			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
-			std::cout << outputTargetPeaksForCoupling[index][0] << std::endl;
-			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
-			//std::cout << outputTargetPeaksForCoupling[index][0] << std::endl;
+				if (index == 4)
+					index = 2;
 
+			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
+			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
+			std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[index][0] << std::endl;
 		}
+		//std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
 	}
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);

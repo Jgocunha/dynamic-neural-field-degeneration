@@ -103,7 +103,7 @@ void ExperimentHandler::step()
 			{
 				if(!doesBackupWeightsFileExist())
 					backupWeightsFile();
-				relearningProcedure();
+				//relearningProcedure();
 			}
 			if (params.isComposerVisualizationOn)
 				dnfcomposerHandler.setRelearningCycles(stats.numOfRelearningCycles);
@@ -116,61 +116,6 @@ void ExperimentHandler::step()
 	dnfcomposerHandler.stop();
 }
 
-//void ExperimentHandler::step()
-//{
-//	//mockPickAndPlace();
-//
-//	//while(params.currentPercentageOfDegeneration <= params.initialPercentageOfDegeneration)
-//	//{
-//	//	params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-//	//	degenerationProcedure();
-//	//	std::cout << "Degeneration percentage: " << params.currentPercentageOfDegeneration << std::endl;
-//	//	Sleep(10);
-//	//	dnfcomposerHandler.saveWeightsToFile();
-//	//}
-//
-//	//Sleep(200);
-//
-//	for(int i = 0; i < params.numberOfTrials; i++)
-//	{
-//		if(params.isDebugModeOn)
-//		{
-//			std::cout << "Trial " << i + 1 << " started." << std::endl;
-//			std::cout << "----------------------------------------" << std::endl;
-//		}
-//
-//		do
-//		{
-//			bool successfulPickAndPlace = false;
-//			do
-//			{
-//				if(params.isLinkToCoppeliaSimOn)
-//					successfulPickAndPlace = bonafidePickAndPlace();
-//				else
-//					successfulPickAndPlace = mockPickAndPlace();
-//
-//				if(!successfulPickAndPlace)
-//				{
-//					if (!doesBackupWeightsFileExist())
-//						backupWeightsFile();
-//					relearningProcedure();
-//				}
-//			} while (!successfulPickAndPlace 
-//				&& (stats.numOfRelearningCycles < params.maximumAmountOfRelearningCycles));
-//
-//			saveLearningCyclesPerTrial();
-//
-//			restoreWeightsFile();
-//			degenerationProcedure();
-//			dnfcomposerHandler.saveWeightsToFile();
-//			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-//			
-//		} while (params.currentPercentageOfDegeneration <= params.targetPercentageOfDegeneration );
-//
-//		cleanupTrial();
-//	}
-//
-//}
 
 void ExperimentHandler::close()
 {
@@ -411,7 +356,7 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 33; //10% - 64.8 / 5% - 33
+		return 65; //10% - 64.8 / 5% - 33
 	default:
 		return 0;
 	}
