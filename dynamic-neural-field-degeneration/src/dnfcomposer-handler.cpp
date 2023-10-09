@@ -375,11 +375,12 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	std::vector<std::vector<double>> inputSelected;
 	std::vector<std::vector<double>> outputSelected;
 
+	std::cout << "Target behaviors to relearn ";
+
 	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
 	{
 		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
 		{
-			//std::cout << "i " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
 			int index = 6 - i;
 			if (index == 2)
 				index = 4;
@@ -389,10 +390,11 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 
 			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
-			std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[index][0] << std::endl;
+			std::cout << outputTargetPeaksForCoupling[index][0] - offset << " ";
 		}
-		//std::cout << "index " << i << " out " << outputTargetPeaksForCoupling[i][0] << std::endl;
 	}
+
+	std::cout << std::endl;
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
