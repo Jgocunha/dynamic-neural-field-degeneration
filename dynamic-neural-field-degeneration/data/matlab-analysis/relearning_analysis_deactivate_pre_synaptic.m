@@ -6,14 +6,14 @@ clc;
 resultPath = '../results/';
 degeneracyType = 'deactivate pre-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
-epochs = 200;
-maximumLearningCycles = 10;
-updateAllWeights = 1; % 0 || 1
+epochs = 10;
+maximumLearningCycles = 50;
+updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
     '  Epochs-', num2str(epochs), ' ', 'MaxCycles-', num2str(maximumLearningCycles), ...
     ' Update-all-weights-', num2str(updateAllWeights), '.txt'];
-
+ 
 
 %% Read data from file
 dataMatrix = read_data(filePath);
@@ -21,7 +21,7 @@ dataMatrix = read_data(filePath);
 %% Analysis
 
 % Initialize variables to store results
-degenerationPercentages = (0:1:12)';
+degenerationPercentages = (0:1:14)';
 
 numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour

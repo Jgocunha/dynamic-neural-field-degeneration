@@ -4,9 +4,9 @@ clc;
 %% Experiment parameters
 % deactivate weights Only-degenerated-cases  Epochs-100 MaxCycles-5 Update-all-weights-0
 resultPath = '../results/';
-degeneracyType = 'deactivate weights';
+degeneracyType = 'deactivate post-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
-epochs = 200;
+epochs = 100;
 maximumLearningCycles = 10;
 updateAllWeights = 0; % 0 || 1
 
@@ -21,7 +21,11 @@ dataMatrix = read_data(filePath);
 %% Analysis
 
 % Initialize variables to store results
-degenerationPercentages = (0:10:100)';
+initialPer = 20;
+maxColumns = 17;
+incPer = 5;
+finalPer = 20 + (maxColumns-1)*5;
+degenerationPercentages = (initialPer:incPer:finalPer)';
 
 numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour

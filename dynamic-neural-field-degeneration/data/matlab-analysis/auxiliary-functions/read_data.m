@@ -29,7 +29,7 @@ end
 fclose(fileID);
 
 % Determine the maximum number of columns in the data
-max_columns = max(cellfun(@numel, dataCell));
+max_columns = max(cellfun(@numel, dataCell))
 
 % Pad shorter lines with zeros
 dataCell = cellfun(@(x) [x, zeros(1, max_columns - numel(x))], dataCell, 'UniformOutput', false);

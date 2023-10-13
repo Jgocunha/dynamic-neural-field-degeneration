@@ -358,13 +358,13 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 1; //10% - 36 / 1% - 3.6
+			return 2; //10% - 36 / 1% - 3.6
 		if (params.fieldToDegenerate == "decision")
-			return 2; //10% - 18 / 5% - 9 / 1% - 2
+			return 9; //10% - 18 / 5% - 9 / 1% - 2
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 65; //10% - 64.8 / 5% - 33
+		return 33; //10% - 64.8 / 5% - 33
 	default:
 		return 0;
 	}
