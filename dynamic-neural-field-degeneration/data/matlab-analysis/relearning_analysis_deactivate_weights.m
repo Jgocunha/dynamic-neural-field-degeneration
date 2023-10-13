@@ -6,7 +6,7 @@ clc;
 resultPath = '../results/';
 degeneracyType = 'deactivate weights';
 relearningType = 'Only-degenerated-cases';
-epochs = 200;
+epochs = 100;
 maximumLearningCycles = 10;
 updateAllWeights = 0; % 0 || 1
 
@@ -21,7 +21,7 @@ dataMatrix = read_data(filePath);
 %% Analysis
 
 % Initialize variables to store results
-degenerationPercentages = (0:10:100)';
+degenerationPercentages = (50:5:100)';
 
 numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour
