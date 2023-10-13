@@ -5,7 +5,6 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	: dnfcomposerHandler(DnfcomposerHandler(params.isComposerVisualizationOn)), params(params)
 {
 	this->params.setOtherDegeneracyParameters();
-	printExperimentParameters();
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
 	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
 		params.maximumAmountOfDemonstrations, params.updateAllWeights);
@@ -14,6 +13,8 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 
 void ExperimentHandler::printExperimentParameters() const
 {
+	std::cout << "Experiment identifier: " << params.experimentId << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Experiment parameters" << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "Number of shapes per trial: " << params.numberOfShapesPerTrial << std::endl;
@@ -43,6 +44,16 @@ void ExperimentHandler::printExperimentParameters() const
 
 void ExperimentHandler::init()
 {
+	params.experimentId = "trials-" + std::to_string(params.numberOfTrials)
+		+ " deg. type-" + std::to_string(static_cast<int>(params.degeneracyType))
+		+ " target field-" + params.fieldToDegenerate
+		+ " initial per.-" + std::to_string(params.initialPercentageOfDegeneration)
+		+ " inc per.-" + std::to_string(params.incrementOfDegenerationPercentage)
+		+ " epochs-" + std::to_string(params.numberOfRelearningEpochs)
+		+ " demos-" + std::to_string(params.maximumAmountOfDemonstrations);
+
+	printExperimentParameters();
+	createExperimentFolderDirectory();
 	getOriginalWeightsFile();
 	dnfcomposerHandler.init();
 	if(params.isLinkToCoppeliaSimOn)
@@ -122,8 +133,8 @@ void ExperimentHandler::step()
 		cleanupTrial();
 	}
 	dnfcomposerHandler.stop();
+	deleteExperimentFolderDirectory();
 }
-
 
 void ExperimentHandler::close()
 {
@@ -439,15 +450,15 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 void ExperimentHandler::backupWeightsFile() const
 {
 	const std::string newFilename = "per - dec_weights - copy.txt";
-	std::string filename = params.filePathPrefix + "per - dec_weights.txt";
-	std::string filenameCopy = params.filePathPrefix + newFilename;
+	std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights.txt";
+	std::string filenameCopy = params.filePathPrefix + params.experimentId + "/weights/" + newFilename;
 
 	std::ifstream source(filename, std::ios::binary);
 	std::ofstream dest(filenameCopy, std::ios::binary);
 
 	dest << source.rdbuf();
 
-	//puts("Backing up weights file.");
+	puts("Backing up weights file.");
 
 	source.close();
 	dest.close();
@@ -455,27 +466,27 @@ void ExperimentHandler::backupWeightsFile() const
 
 void ExperimentHandler::restoreWeightsFile() const
 {
-	const std::string oldFilename = params.filePathPrefix + "per - dec_weights - copy.txt";
-	const std::string newFilename = params.filePathPrefix + "per - dec_weights.txt";
+	const std::string oldFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights - copy.txt";
+	const std::string newFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights.txt";
 
 	int result = std::remove(newFilename.c_str());
 
-	//if (!result)
-		//puts("Previous weights file successfully deleted.");
-	//else
-		//perror("Error deleting previous weights file.");
+	if (!result)
+		puts("Previous weights file successfully deleted.");
+	else
+		perror("Error deleting previous weights file.");
 
 	result = std::rename(oldFilename.c_str(), newFilename.c_str());
 
-	//if (!result)
-		//puts("File successfully renamed.");
-	//else
-		//perror("Error renaming file.");
+	if (!result)
+		puts("File successfully renamed.");
+	else
+		perror("Error renaming file.");
 }
 
 bool ExperimentHandler::doesBackupWeightsFileExist() const
 {
-	const std::string filename = params.filePathPrefix + "per - dec_weights - copy.txt";
+	const std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights - copy.txt";
 	const std::ifstream file(filename);
 
 	if (file.good())
@@ -493,8 +504,30 @@ void ExperimentHandler::getOriginalWeightsFile() const
 	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - dec_weights.txt";
 	const std::ifstream sourceFile(sourceFileName);
 
-	const std::string destFileName = params.filePathPrefix + "per - dec_weights.txt";
+	const std::string destFileName = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights.txt";
 	std::ofstream destFile(destFileName);
 
 	destFile << sourceFile.rdbuf();
+}
+
+void ExperimentHandler::createExperimentFolderDirectory() 
+{
+	namespace fs = std::filesystem;
+
+	const std::string experimentFolderPath = params.filePathPrefix + params.experimentId;
+	fs::create_directory(experimentFolderPath);
+
+	const std::string weightsFolderPath = params.filePathPrefix + params.experimentId + "/weights";
+	fs::create_directory(weightsFolderPath);
+
+	dnfcomposerHandler.setDataFilePath(weightsFolderPath);
+
+}
+
+void ExperimentHandler::deleteExperimentFolderDirectory() const
+{
+	namespace fs = std::filesystem;
+
+	const std::string experimentFolderPath = params.filePathPrefix + params.experimentId;
+	fs::remove_all(experimentFolderPath);
 }

@@ -64,12 +64,12 @@ int main()
         params.decisionTolerance = 10;
 
         params.targetPercentageOfDegeneration = 100;
-        params.learningRate = 0.02;
+        params.learningRate = 0.05;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
         params.isDataSavingOn = true;
-        params.isComposerVisualizationOn = false;
+        params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
 

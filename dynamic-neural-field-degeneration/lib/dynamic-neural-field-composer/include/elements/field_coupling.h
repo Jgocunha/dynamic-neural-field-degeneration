@@ -27,6 +27,7 @@ protected:
 	bool trained;
 	bool updateAllWeights;
 	LearningRule learningRule;
+	std::string weightsFilePath;
 public:
 	FieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
 	
@@ -34,6 +35,7 @@ public:
 	void step(const double& t, const double& deltaT) override;
 	void close() override;
 
+	void setWeightsFilePath(const std::string& filePath);
 	bool readWeights();
 	void resetWeights();
 	void saveWeights() const;
