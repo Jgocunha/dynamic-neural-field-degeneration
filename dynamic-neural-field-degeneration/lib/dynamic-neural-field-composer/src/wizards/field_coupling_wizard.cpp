@@ -9,10 +9,18 @@ FieldCouplingWizard::FieldCouplingWizard(const std::shared_ptr<Simulation> simul
 	setNeuralFieldPost();
     fieldCoupling->resetWeights();
 
-    std::string pathPrefix = std::string(OUTPUT_DIRECTORY) + "/" + fieldCoupling->getUniqueIdentifier() + "_";
+    const std::string pathPrefix = std::string(OUTPUT_DIRECTORY) + "/" + fieldCoupling->getUniqueIdentifier() + "_";
     pathToFieldActivationPre = pathPrefix + neuralFieldPre->getUniqueIdentifier() + ".txt";
     pathToFieldActivationPost = pathPrefix + neuralFieldPost->getUniqueIdentifier() + ".txt";
 }
+
+void FieldCouplingWizard::setDataFilePath(const std::string& filePath)
+{
+    const std::string pathPrefix = filePath + "/" + fieldCoupling->getUniqueIdentifier() + "_";
+    pathToFieldActivationPre = pathPrefix + neuralFieldPre->getUniqueIdentifier() + ".txt";
+    pathToFieldActivationPost = pathPrefix + neuralFieldPost->getUniqueIdentifier() + ".txt";
+}
+
 
 void FieldCouplingWizard::setGaussStimulusParameters(const GaussStimulusParameters& gaussStimulusParameters)
 {

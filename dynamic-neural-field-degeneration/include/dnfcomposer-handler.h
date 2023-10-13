@@ -137,6 +137,7 @@ public:
 	bool getHasRelearningFinished() const;
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 
+	void setDataFilePath(const std::string& filePath);
 	void saveWeightsToFile() const;
 
 	void updateFieldCentroids();

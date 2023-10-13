@@ -11,6 +11,7 @@
 struct ExperimentParameters
 {
 	std::string filePathPrefix = "../../../data/";
+	std::string experimentId = "null";
 
 	int numberOfShapesPerTrial = 2;
 	double decisionTolerance = 0;
@@ -170,4 +171,7 @@ private:
 	void restoreWeightsFile() const;
 	bool doesBackupWeightsFileExist() const;
 	void getOriginalWeightsFile() const;
+
+	void createExperimentFolderDirectory() ;
+	void deleteExperimentFolderDirectory() const;
 };

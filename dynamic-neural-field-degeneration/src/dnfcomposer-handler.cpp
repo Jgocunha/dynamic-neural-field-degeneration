@@ -340,6 +340,13 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 // other methods
 
+void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
+{
+	simulationElements.fieldCoupling->setWeightsFilePath(filePath);
+	simulationElements.fcpw.setDataFilePath(filePath);
+}
+
+
 void DnfcomposerHandler::saveWeightsToFile() const
 {
 	simulationElements.fieldCoupling->saveWeights();

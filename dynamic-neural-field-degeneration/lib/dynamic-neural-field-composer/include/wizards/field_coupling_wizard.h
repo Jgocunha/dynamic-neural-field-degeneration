@@ -27,6 +27,8 @@ public:
 	FieldCouplingWizard(const std::shared_ptr<Simulation> simulation, const std::string& fieldCouplingUniqueId);
 	~FieldCouplingWizard() = default;
 
+	void setDataFilePath(const std::string& filePath);
+
 	void setGaussStimulusParameters(const GaussStimulusParameters& gaussStimulusParameters);
 	void setTargetPeakLocationsForNeuralFieldPre(const std::vector<std::vector<double>>& targetPeakLocationsForNeuralFieldPre);
 	void setTargetPeakLocationsForNeuralFieldPost(const std::vector<std::vector<double>>& targetPeakLocationsForNeuralFieldPost);

@@ -15,7 +15,10 @@ FieldCoupling::FieldCoupling(const std::string& id, const int& outputSize, const
 
 	// Initialize the weight matrix with random values
 	mathtools::fillMatrixWithRandomValues(weights, -1, 1);
+
+	weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
 }
+
 
 void FieldCoupling::init()
 {
@@ -119,8 +122,7 @@ const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
 
 bool FieldCoupling::readWeights()
 {
-	const std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
-	std::ifstream file(filepath);  // Open file for reading
+	std::ifstream file(weightsFilePath);  // Open file for reading
 
 	if (file.is_open()) {
 		mathtools::resizeMatrix(weights, 0, 0);
@@ -146,8 +148,7 @@ bool FieldCoupling::readWeights()
 
 void FieldCoupling::writeWeights() const
 {
-	const std::string filepath = std::string(OUTPUT_DIRECTORY) + "/" + uniqueIdentifier + "_weights.txt";
-	std::ofstream file(filepath); // Open file for writing
+	std::ofstream file(weightsFilePath); // Open file for writing
 
 	if (file.is_open()) {
 		// Loop through each row of weights
@@ -169,4 +170,9 @@ void FieldCoupling::writeWeights() const
 void FieldCoupling::saveWeights() const
 {
 	writeWeights();
+}
+
+void FieldCoupling::setWeightsFilePath(const std::string& filePath)
+{
+	weightsFilePath = filePath + "/" + uniqueIdentifier + "_weights.txt";
 }
