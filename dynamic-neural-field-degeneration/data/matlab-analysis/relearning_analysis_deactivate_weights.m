@@ -7,7 +7,7 @@ resultPath = '../results/';
 degeneracyType = 'deactivate weights';
 relearningType = 'Only-degenerated-cases';
 epochs = 100;
-maximumLearningCycles = 10;
+maximumLearningCycles = 20;
 updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
