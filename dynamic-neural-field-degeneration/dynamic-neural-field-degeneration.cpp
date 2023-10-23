@@ -5,16 +5,34 @@ ExperimentParameters setExperimentParameters()
 {
     ExperimentParameters params;
 
-	params.numberOfTrials = 5;
-    params.decisionTolerance = 0.5;
+    std::cout << "Enter number of trials: ";
+    std::cin >> params.numberOfTrials;
 
-    params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-    params.fieldToDegenerate = "decision";
+    std::cout << "Enter degeneracy type (1 for NEURONS_DEACTIVATE, "
+        << "3 for WEIGHTS_DEACTIVATE, "
+        << "5 for WEIGHTS_RANDOMIZE, "
+        << "7 for WEIGHTS_REDUCE): ";
+    int degeneracyTypeInput;
+    std::cin >> degeneracyTypeInput;
+    params.degeneracyType = static_cast<ElementDegeneracyType>(degeneracyTypeInput);
+
+    if (degeneracyTypeInput == 1)
+    {
+        std::cout << "Enter field to degenerate (perceptual/decision): ";
+        std::cin >> params.fieldToDegenerate;
+    }
+
+	//params.numberOfTrials = 5;
+    //params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
+    //params.fieldToDegenerate = "decision";
     setDegeneracyNameAndTypeOfElements(params);
 
+
+	params.decisionTolerance = 0.5;
     params.startingExternalStimulus = 0;
-    params.isDataSavingOn = false;
-    params.isVisualisationOn = true;
+
+	params.isDataSavingOn = true;
+    params.isVisualisationOn = false;
     params.isDebugModeOn = true;
 
     return params;

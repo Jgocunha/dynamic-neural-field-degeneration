@@ -163,7 +163,7 @@ void DnfcomposerHandler::setupUserInterface()
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -20, 25 };
+	pd = { 0, 28, -20, 25 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);

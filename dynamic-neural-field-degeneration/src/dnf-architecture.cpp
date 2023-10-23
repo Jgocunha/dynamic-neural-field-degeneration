@@ -7,13 +7,13 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(30, 0, 0);
 
 	constexpr int perceptualFieldSize = 360;
-	constexpr int decisionFieldSize = 180;
+	constexpr int decisionFieldSize = 28;
 
 	// create neural fields
 	constexpr ActivationFunctionParameters afp = { ActivationFunctionType::Sigmoid, 10.0, 0 };
 
 	constexpr NeuralFieldParameters nfp1 = { 25, -12 };
-	constexpr NeuralFieldParameters nfp2 = { 25, -10 };
+	constexpr NeuralFieldParameters nfp2 = { 25, -15 };
 	const std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
 	const std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
 
@@ -31,11 +31,13 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	GaussKernelParameters gkp2;
 	gkp2.amplitude = 15;  // self-stabilized (with input)
 	gkp2.sigma = 2;
-	gkp2.amplitudeGlobal = -0.2;
+	gkp2.amplitudeGlobal = -0.3;
 	const std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
 	simulation->addElement(k_dec_dec);
 
-	const std::shared_ptr<DegenerateFieldCoupling> w_per_dec(new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, { 0.5, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
+	const std::shared_ptr<DegenerateFieldCoupling> w_per_dec(
+		new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize,
+			{ 0.85, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
 	simulation->addElement(w_per_dec);
 
 	// create noise stimulus and noise kernel
@@ -70,8 +72,7 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//simulation->addElement(gauss_stimulus);
 	//perceptual_field->addInput(gauss_stimulus);
 
-	// ==
-	// set up the field coupling wizard
+	//set up the field coupling wizard
 	//FieldCouplingWizard fcpw{ simulation, "per - dec" };
 
 	//// add gaussian inputs
@@ -90,13 +91,13 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 	//};
 	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	//{
-	//	{ 15.00 + offset },
-	//	{ 40.00 + offset },
-	//	{ 65.00 + offset },
-	//	{ 90.00 + offset },
-	//	{ 115.00 + offset },
-	//	{ 140.00 + offset },
-	//	{ 165.00 + offset }
+	//	{ 2.00 + offset },
+	//	{ 6.00 + offset },
+	//	{ 10.00 + offset },
+	//	{ 14.00 + offset },
+	//	{ 18.00 + offset },
+	//	{ 22.00 + offset },
+	//	{ 26.00 + offset }
 	//};
 
 	//fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
@@ -109,10 +110,10 @@ std::shared_ptr<Simulation> getExperimentSimulation()
 
 	//fcpw.simulateAssociation();
 
-	//fcpw.trainWeights(200);
+	//fcpw.trainWeights(500);
 
 	//fcpw.saveWeights();
- 
+
 	return simulation;
 
 }
