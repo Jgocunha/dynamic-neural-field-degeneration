@@ -7,7 +7,7 @@ resultPath = '../results/';
 degeneracyType = 'deactivate pre-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
 epochs = 100;
-maximumLearningCycles = 20;
+maximumLearningCycles = 10;
 updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...

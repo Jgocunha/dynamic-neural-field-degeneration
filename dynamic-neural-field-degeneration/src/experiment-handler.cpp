@@ -215,7 +215,7 @@ bool ExperimentHandler::verifyDecision()
 
 	// No matching rules for the given cuboidHue and robotTargetAngle.
 	stats.shapesPlacedIncorrectly = stats.shapesPlacedIncorrectly << 1;
-	std::cout << "Wrong decision: " << data.expectedTargetAngle << std::endl;
+	//std::cout << "Wrong decision: " << data.expectedTargetAngle << std::endl;
 	return false;
 }
 
@@ -419,9 +419,9 @@ void ExperimentHandler::cleanupTrial()
 	params.currentPercentageOfDegeneration = 0;
 	data.isFieldDead = false;
 	getOriginalWeightsFile();
-	Sleep(50);
+	Sleep(10);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
-	Sleep(50);
+	Sleep(10);
 	dnfcomposerHandler.setWasStartSimulationRequested(true);
 	//Sleep(25);
 }
