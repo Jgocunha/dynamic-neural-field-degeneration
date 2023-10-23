@@ -111,7 +111,7 @@ void DnfcomposerHandler::setupUserInterface()
 
 	visualization = std::make_shared<Visualization>(simulation);
 	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 180, -25, 35 };
+	pd = { 0, 28, -25, 35 };
 	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
@@ -205,7 +205,7 @@ void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationR
 	this->wasCloseSimulationRequested = wasCloseSimulationRequested;
 }
 
-
+ 
 // public get methods
 
 double DnfcomposerHandler::getInputFieldCentroid() const

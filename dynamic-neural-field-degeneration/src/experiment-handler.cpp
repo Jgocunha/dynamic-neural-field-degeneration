@@ -243,7 +243,7 @@ void ExperimentHandler::readShapeHue()
 void ExperimentHandler::readTargetAngle()
 {
 	dnfcomposerHandler.updateFieldCentroids();
-	Sleep(5);
+	Sleep(10);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -252,6 +252,7 @@ void ExperimentHandler::readTargetAngle()
 	data.lastOutputFieldCentroid = signals.targetAngle;
 
 	getExpectedTargetAngle();
+	dnfcomposerHandler.updateFieldCentroids();
 
 	// set the target angle for CoppeliaSim
 	coppeliasimHandler.setSignals(signals);
