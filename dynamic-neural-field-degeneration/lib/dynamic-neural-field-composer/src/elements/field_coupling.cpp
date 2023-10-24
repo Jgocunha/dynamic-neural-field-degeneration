@@ -160,6 +160,7 @@ void FieldCoupling::writeWeights() const
 			file << '\n';  // Write new line after each row
 		}
 		file.close();  // Close the file
+		std::cout << "Saved weights to: " << weightsFilePath << std::endl;
 	}
 	else
 	{

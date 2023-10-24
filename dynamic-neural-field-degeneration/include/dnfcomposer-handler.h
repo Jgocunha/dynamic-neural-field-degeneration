@@ -71,6 +71,7 @@ private:
 	bool haveFieldsSettled = false;
 	bool hasRelearningFinished = false;
 	bool hasExperimentFinished = false;
+	bool wasUpdateWeightsRequested = false;
 
 	bool wasStartSimulationRequested = false;
 	bool wasCloseSimulationRequested = false;
@@ -88,13 +89,13 @@ private:
 	};
 	const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 	{
-		{ 15.00 + offset },
-		{ 40.00 + offset },
-		{ 65.00 + offset },
-		{ 90.00 + offset },
-		{ 115.00 + offset },
-		{ 140.00 + offset },
-		{ 165.00 + offset }
+		{ 2.00 + offset },
+		{ 6.00 + offset },
+		{ 10.00+ offset },
+		{ 14.00 + offset },
+		{ 18.00 + offset },
+		{ 22.00 + offset },
+		{ 26.00 + offset }
 	};
 
 
@@ -141,6 +142,8 @@ public:
 	void saveWeightsToFile() const;
 
 	void updateFieldCentroids();
+	void updateWeights();
+	void readWeights();
 private:
 	void setupUserInterface();
 	void updateExternalInput();
