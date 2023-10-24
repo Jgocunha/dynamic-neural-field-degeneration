@@ -25,7 +25,7 @@ struct SimulationParameters
 	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
-	const int timeForFieldToSettle = 15;
+	const int timeForFieldToSettle = 20;
 
 	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
@@ -71,6 +71,7 @@ private:
 	bool haveFieldsSettled = false;
 	bool hasRelearningFinished = false;
 	bool hasExperimentFinished = false;
+	bool wasUpdateWeightsRequested = false;
 
 	bool wasStartSimulationRequested = false;
 	bool wasCloseSimulationRequested = false;
@@ -141,6 +142,8 @@ public:
 	void saveWeightsToFile() const;
 
 	void updateFieldCentroids();
+	void updateWeights();
+	void readWeights();
 private:
 	void setupUserInterface();
 	void updateExternalInput();

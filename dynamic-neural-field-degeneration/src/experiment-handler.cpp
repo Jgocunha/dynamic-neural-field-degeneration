@@ -83,8 +83,8 @@ void ExperimentHandler::step()
 			{
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
 				degenerationProcedure();
-				dnfcomposerHandler.saveWeightsToFile();
 			}
+			dnfcomposerHandler.saveWeightsToFile();
 			if (params.isDebugModeOn)
 				std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
 		}
@@ -101,7 +101,14 @@ void ExperimentHandler::step()
 			if (successfulPickAndPlace || (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations))
 			{
 				if (doesBackupWeightsFileExist())
+				{
 					restoreWeightsFile();
+					dnfcomposerHandler.readWeights();
+					Sleep(50);
+					dnfcomposerHandler.saveWeightsToFile();
+					Sleep(50);
+				}
+
 				degenerationProcedure();
 				
 				dnfcomposerHandler.saveWeightsToFile();
@@ -344,9 +351,10 @@ void ExperimentHandler::degenerationProcedure()
 	if (params.isComposerVisualizationOn)
 		dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
 
+
 	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
 	// we kill 1 neuron per iteration
-	// we kill 100 weights per iteration
+	// we kill 10 weights per iteration
 	const int numberOfElementsToDegenerate = getNumberOfElementsToDegenerate();
 
 	if (params.isDebugModeOn)
@@ -370,13 +378,13 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 2; //10% - 36 / 1% - 3.6
+			return 1; // 1 element - 3.6%
 		if (params.fieldToDegenerate == "decision")
-			return 9; //10% - 18 / 5% - 9 / 1% - 2
+			return 1; // 1 element - 3.57%
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 33; //10% - 64.8 / 5% - 33
+		return 25; // 250 elements - 2.48%
 	default:
 		return 0;
 	}
@@ -459,7 +467,7 @@ void ExperimentHandler::backupWeightsFile() const
 
 	dest << source.rdbuf();
 
-	puts("Backing up weights file.");
+	std::cout << "Backing up weights file." << std::endl;
 
 	source.close();
 	dest.close();
@@ -473,16 +481,18 @@ void ExperimentHandler::restoreWeightsFile() const
 	int result = std::remove(newFilename.c_str());
 
 	if (!result)
-		puts("Previous weights file successfully deleted.");
+		std::cout << "Previous weights file successfully deleted." << std::endl;
 	else
-		perror("Error deleting previous weights file.");
+		std::cout << "Error deleting previous weights file." << std::endl;
 
-	result = std::rename(oldFilename.c_str(), newFilename.c_str());
+	const std::string newTestFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - dec_weights.txt";
+
+	result = std::rename(oldFilename.c_str(), newTestFilename.c_str());
 
 	if (!result)
-		puts("File successfully renamed.");
+		std::cout << "File successfully renamed." << std::endl;
 	else
-		perror("Error renaming file.");
+		std::cout << "Error renaming file." << std::endl;
 }
 
 bool ExperimentHandler::doesBackupWeightsFileExist() const
@@ -492,11 +502,11 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 	if (file.good())
 	{
-		//puts("Weights file exists.");
+		std::cout << "Weights file exists." << std::endl;
 		return true;
 	}
 
-	//puts("Weights file does not exist.");
+	std::cout << "Weights file does not exist." << std::endl;
 	return false;
 }
 

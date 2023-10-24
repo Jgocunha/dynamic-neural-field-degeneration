@@ -2,7 +2,6 @@
 #include "dynamic-neural-field-degeneration.h"
 
 
-
 ExperimentParameters inputUserParameters()
 {
     ExperimentParameters params;
@@ -78,17 +77,17 @@ int main()
         ExperimentParameters params = inputUserParameters();
 
         params.numberOfShapesPerTrial = 7;
-        params.decisionTolerance = 10;
+        params.decisionTolerance = 2.0;
 
         params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.02;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
-        params.isDataSavingOn = false;
-        params.isComposerVisualizationOn = true;
+        params.isDataSavingOn = true;
+        params.isComposerVisualizationOn = false;
         params.isDebugModeOn = true;
-        params.isLinkToCoppeliaSimOn = true;
+        params.isLinkToCoppeliaSimOn = false;
 
         ExperimentHandler experiment{ params };
         

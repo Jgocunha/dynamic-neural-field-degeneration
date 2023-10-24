@@ -50,7 +50,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1; // 1 percent
 	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
-	constexpr double numWeightsToDegenerate = 100;
+	constexpr double numWeightsToDegenerate = 10;
 
 	//std::cout << "Indices for degeneration size: " << indicesForDegeneration.size() << std::endl;
 	switch (degeneracyType)

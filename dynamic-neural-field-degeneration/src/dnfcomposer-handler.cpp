@@ -56,6 +56,8 @@ void DnfcomposerHandler::step()
 			activateRelearning();
 		//else if (wasStartSimulationRequested)
 			//startSimulation();
+		else if (wasUpdateWeightsRequested)
+			updateWeights();
 		else if(wasCloseSimulationRequested)
 			closeSimulation();
 		else
@@ -258,7 +260,7 @@ void DnfcomposerHandler::activateDegeneration()
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
-		numberOfDegeneratedElements = numberOfDegeneratedElements + 100; // hardcoded to 100
+		numberOfDegeneratedElements = numberOfDegeneratedElements + 10; // hardcoded to 10
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
 		if (simulationParameters.isDebugMode)
@@ -336,6 +338,17 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+}
+
+void DnfcomposerHandler::readWeights()
+{
+	wasUpdateWeightsRequested = true;
+}
+
+void DnfcomposerHandler::updateWeights()
+{
+	simulationElements.fieldCoupling->readWeights();
+	wasUpdateWeightsRequested = false;
 }
 
 // other methods

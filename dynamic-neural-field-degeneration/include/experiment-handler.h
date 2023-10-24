@@ -24,8 +24,8 @@ struct ExperimentParameters
 
 	int initialPercentageOfDegeneration = 0;
 	int targetPercentageOfDegeneration = 100;
-	int currentPercentageOfDegeneration = 0;
-	int incrementOfDegenerationPercentage = 10;
+	double currentPercentageOfDegeneration = 0;
+	double incrementOfDegenerationPercentage = 10;
 
 	RelearningParameters::RelearningType relearningType = RelearningParameters::RelearningType::ALL_CASES;
 	double learningRate = 0.1;
