@@ -5,7 +5,7 @@ path = '../';
 filename_perceptual = [path, 'per - dec_perceptual field.txt'];  
 filename_decision = [path, 'per - dec_decision field.txt'];
 fieldSize_perceptual = 360;
-fieldSize_decision = 180;
+fieldSize_decision = 28;
 
 % Read the file
 fid = fopen(filename_perceptual, 'r');

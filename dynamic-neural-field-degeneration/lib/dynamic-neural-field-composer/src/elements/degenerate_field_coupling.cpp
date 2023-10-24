@@ -40,7 +40,7 @@ void DegenerateFieldCoupling::applyDegeneracy()
 {
 	double percentage = 0.1; // 1 percent
 	//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
-	constexpr double numWeightsToDegenerate = 100;
+	constexpr double numWeightsToDegenerate = 10;
 	switch (degeneracyType)
 	{
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:

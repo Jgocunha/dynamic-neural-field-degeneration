@@ -110,7 +110,7 @@ std::vector<double> FieldCouplingWizard::normalizeFieldActivation(std::vector<do
     //for (double& val : vec)
     //    val += restingLevel;
 
-    const int safetyFactor = 0;
+    const int safetyFactor = 2;
     // Find the minimum and maximum values in the vector
     const double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
     const double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;

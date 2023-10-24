@@ -49,13 +49,13 @@ private:
 	ExperimentData data;
 
 	std::unordered_map<double, int> hueToAngleMap = {
-		{00.00,  15}, // red
-		{41.00,  40}, // blue
-		{60.00,  65}, // yellow
-		{120.00, 90}, // green
-		{240.00, 115}, // orange
-		{274.00, 140}, // indigo
-		{300.00, 165} // violet
+		{00.00,  2.00}, // red
+		{41.00,  6.00}, // blue
+		{60.00,  10.00}, // yellow
+		{120.00, 14.00}, // green
+		{240.00, 18.00}, // orange
+		{274.00, 22.00}, // indigo
+		{300.00, 26.00} // violet
 	};
 	std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
 

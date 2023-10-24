@@ -12,8 +12,8 @@ experiments = {'deactivate weights', 'weight'; ...
                'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
 
-positions = {'15.0'; '40.0' ; '65.0'; '90.0'; '115.0'; '140.0'}; % '165.0'
-targetCentroids = {2.0; 6.0; 10.0; 14.0; 18.0; 22.0}; %; 65.0; 90.0; 115.0; 140.0; 165.0};
+positions = {'2.0'; '6.0'; '10.0'; '14.0'; '18.0'; '22.0'}; %; '26.0'}; % '165.0'
+targetCentroids = {2.0; 6.0; 10.0; 14.0; 18.0; 22.0}; %; 26.0}; %; 65.0; 90.0; 115.0; 140.0; 165.0};
 
 centroidsFilePath = '';
 resultsFilePath = '';
