@@ -57,13 +57,13 @@ ExperimentParameters inputUserParameters()
     }
     else
     {
-        params.numberOfTrials = 1;
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "perceptual";
-        params.initialPercentageOfDegeneration = 0;
-        params.incrementOfDegenerationPercentage = 1;
-        params.numberOfRelearningEpochs = 1;
-        params.maximumAmountOfDemonstrations = 1;
+        params.numberOfTrials = 2;
+        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.fieldToDegenerate = "decision";
+        params.initialPercentageOfDegeneration = 20;
+        params.incrementOfDegenerationPercentage = 2.5;
+        params.numberOfRelearningEpochs = 100;
+        params.maximumAmountOfDemonstrations = 3;
     }
 
     return params;
@@ -77,7 +77,7 @@ int main()
         ExperimentParameters params = inputUserParameters();
 
         params.numberOfShapesPerTrial = 7;
-        params.decisionTolerance = 2.0;
+        params.decisionTolerance = 1.5;
 
         params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.02;

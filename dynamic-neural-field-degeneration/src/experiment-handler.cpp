@@ -378,9 +378,9 @@ int ExperimentHandler::getNumberOfElementsToDegenerate() const
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(params.fieldToDegenerate == "perceptual")
-			return 1; // 1 element - 3.6%
+			return 1; // 1 element - 0.36%
 		if (params.fieldToDegenerate == "decision")
-			return 1; // 1 element - 3.57%
+			return 1; // 1 element - 3.6%
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case ElementDegeneracyType::WEIGHTS_REDUCE:
