@@ -78,7 +78,7 @@ void ExperimentHandler::step()
 			dnfcomposerHandler.setTrial(i);
 
 			setupProcedure();
-			//degenerationProcedure();
+			degenerationProcedure();
 			cleanUpTrial();
 			Sleep(20);
 		}
