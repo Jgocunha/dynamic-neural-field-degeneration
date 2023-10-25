@@ -31,7 +31,7 @@ ExperimentParameters setExperimentParameters()
 	params.decisionTolerance = 2.0;
     params.startingExternalStimulus = 0;
 
-	params.isDataSavingOn = true;
+	params.isDataSavingOn = false;
     params.isVisualisationOn = false;
     params.isDebugModeOn = true;
 
@@ -51,7 +51,7 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
             params.typeOfElementsDegenerated = "weights";
     		break;
         case ElementDegeneracyType::WEIGHTS_REDUCE:
-            params.degeneracyName = "reduce 0.8";
+            params.degeneracyName = "reduce 0.2";
             params.typeOfElementsDegenerated = "weights";
             break;
 	    case ElementDegeneracyType::NEURONS_DEACTIVATE:

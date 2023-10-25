@@ -241,7 +241,7 @@ void DnfcomposerHandler::activateDegeneration()
 		break;
 	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+	case ElementDegeneracyType::WEIGHTS_REDUCE:
 		numberOfDegeneratedElements = numberOfDegeneratedElements + 10;
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
