@@ -58,12 +58,12 @@ ExperimentParameters inputUserParameters()
     else
     {
         params.numberOfTrials = 2;
-        params.degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
         params.fieldToDegenerate = "decision";
-        params.initialPercentageOfDegeneration = 20;
-        params.incrementOfDegenerationPercentage = 2.5;
-        params.numberOfRelearningEpochs = 100;
-        params.maximumAmountOfDemonstrations = 3;
+        params.initialPercentageOfDegeneration = 10;
+        params.incrementOfDegenerationPercentage = 3.6;
+        params.numberOfRelearningEpochs = 1;
+        params.maximumAmountOfDemonstrations = 10;
     }
 
     return params;
