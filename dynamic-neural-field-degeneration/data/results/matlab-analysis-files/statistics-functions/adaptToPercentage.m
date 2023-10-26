@@ -2,7 +2,7 @@ function [avgNumIterationsPercentage, avgIterationsMisbehaviorPercentage] = adap
     switch experiment
         case 'deactivate weights'
             size = 1008;
-        case 'reduce 0.4 weights' 
+        case 'reduce 0.2 weights' 
             size = 1008;
         case 'reduce 0.6 weights' 
             size = 1008;
