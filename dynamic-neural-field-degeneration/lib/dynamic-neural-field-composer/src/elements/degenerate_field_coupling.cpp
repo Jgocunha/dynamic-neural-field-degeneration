@@ -50,12 +50,14 @@ void DegenerateFieldCoupling::applyDegeneracy()
 			break;
 		case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 			for (int i = 0; i < numWeightsToDegenerate; i++)
-				setRandomWeightToRandomValue();
+				//setRandomWeightToRandomValue();
+				setRandomUniqueWeightToRandomValue();
 			degenerate = false;
 			break;
 		case ElementDegeneracyType::WEIGHTS_REDUCE:
 			for (int i = 0; i < numWeightsToDegenerate; i++)
-				setRandomWeightToReduceValue();
+				//setRandomWeightToReduceValue();
+				setRandomUniqueWeightToReduceValue();
 			degenerate = false;
 			break;
 		default:
@@ -132,7 +134,7 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 	//static int maxAttempts = components["output"].size() * components["input"].size();
 	int row_idx, col_idx;
 
-	while(1)
+	while(true)
 	{
 		row_idx = mathtools::generateRandomNumber(0, (int)components["input"].size() - 1);
 		col_idx = mathtools::generateRandomNumber(0, (int)components["output"].size() - 1);
@@ -142,6 +144,87 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 			break;
 		}
 	}
+}
+
+void DegenerateFieldCoupling::setRandomUniqueWeightToRandomValue()
+{
+	// Initialize the maximum number of attempts to find unique combinations
+	static int maxAttempts = components["output"].size() * components["input"].size();
+
+	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
+
+	// Loop until a unique combination is found or indicesForDegeneration is empty
+	while (!uniqueCombinationFound && !indicesForDegeneration.empty())
+	{
+		int size = indicesForDegeneration.size() - 1;
+		// Get a random iterator from the set
+		auto randomIterator = std::next(indicesForDegeneration.begin(), mathtools::generateRandomNumber(0, size));
+
+		// Get the pair from the iterator
+		const std::pair<int, int> pair = *randomIterator;
+
+		// Erase the combination from the set
+		indicesForDegeneration.erase(randomIterator);
+
+		const int row_idx = pair.first;
+		const int col_idx = pair.second;
+
+		const double aux = mathtools::generateRandomNumber(minWeightValue, maxWeightValue);
+		weights[row_idx][col_idx] = aux;
+
+		uniqueCombinationFound = true; // Set flag to indicate combination found
+		//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+	}
+
+	if (indicesForDegeneration.empty())
+	{
+		std::cout << "No more unique combinations to degenerate" << std::endl;
+	}
+	/*else
+	{
+		std::cout << "Attempting to find unique combination" << std::endl;
+	}*/
+}
+
+
+void DegenerateFieldCoupling::setRandomUniqueWeightToReduceValue()
+{
+	// Initialize the maximum number of attempts to find unique combinations
+	static int maxAttempts = components["output"].size() * components["input"].size();
+
+	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
+
+	// Loop until a unique combination is found or indicesForDegeneration is empty
+	while (!uniqueCombinationFound && !indicesForDegeneration.empty())
+	{
+		int size = indicesForDegeneration.size() - 1;
+		// Get a random iterator from the set
+		auto randomIterator = std::next(indicesForDegeneration.begin(), mathtools::generateRandomNumber(0, size));
+
+		// Get the pair from the iterator
+		const std::pair<int, int> pair = *randomIterator;
+
+		// Erase the combination from the set
+		indicesForDegeneration.erase(randomIterator);
+
+		const int row_idx = pair.first;
+		const int col_idx = pair.second;
+
+		// Set weight at combination to 0
+		weights[row_idx][col_idx] = weights[row_idx][col_idx] * 0.2;
+
+		uniqueCombinationFound = true; // Set flag to indicate combination found
+		//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+	}
+
+	if (indicesForDegeneration.empty())
+	{
+		std::cout << "No more unique combinations to degenerate" << std::endl;
+	}
+	/*else
+	{
+		std::cout << "Attempting to find unique combination" << std::endl;
+	}*/
 }
 
 
