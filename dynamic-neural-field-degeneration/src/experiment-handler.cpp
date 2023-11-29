@@ -59,6 +59,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 void ExperimentHandler::init()
 {
 	dnfcomposerHandler.init();
+	Sleep(5000);
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
@@ -147,6 +148,13 @@ bool ExperimentHandler::hasOutputFieldDegenerated()
 
 	if (outputFieldCentroid < 0)
 		return true;
+
+	if ((outputFieldCentroid < data.targetOutputFieldCentroid - 2) || (outputFieldCentroid > data.targetOutputFieldCentroid + 2))
+	{
+		int aux;
+		std::cout << "Reached condition!!";
+		std::cin >> aux;
+	}
 
 	return false;
 }
