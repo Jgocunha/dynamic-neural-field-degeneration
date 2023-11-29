@@ -9,11 +9,11 @@ experiments = {'deactivate weights', 'weight'; ...
                %'reduce 0.8 weights', 'weight'; ...
                'randomize weights', 'weight'; ...
                'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
-               'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
+                'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
 
-positions = {'2.0'; '6.0'; '10.0'; '14.0'; '18.0'}; %; '22.0'; '26.0'}; 
-targetCentroids = {2.0; 6.0; 10.0; 14.0; 18.0}; %; 22.0;; 26.0};
+positions = {'2.0'; '6.0'; '10.0'; '14.0'; '18.0'; '22.0'; '26.0'}; %}; 
+targetCentroids = {2.0; 6.0; 10.0; 14.0; 18.0; 22.; 26.00}; %;};
 
 centroidsFilePath = '';
 resultsFilePath = '';
@@ -139,14 +139,14 @@ for experiment = 1:size(experiments,1)
     %disp(['Standard deviation of AvgNumIterations: ', num2str(stdDeviationAvgNumIterations)]);
 
     %% Calculate and display average AvgIterationsMisbehavior per experiment
-    avgAvgIterationsMisbehavior = mean(dataTable{:,'AvgIterationsMisbehavior'});
+    avgAvgIterationsMisbehavior = mean(dataTable{:,'AvgIterationsMisbehavior'}, 1);
     disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
     %% Calculate and display the standard deviation of AvgIterationsMisbehavior
     stdDeviationAvgIterationsMisbehavior = std(dataTable{:,'AvgIterationsMisbehavior'}, 1);
     %disp(['Standard deviation of AvgIterationsMisbehavior: ', num2str(stdDeviationAvgIterationsMisbehavior)]);
 
     %% Calculate and display average MaxDeviation per experiment
-    avgMaxDeviation = mean(dataTable{:,'MaxDeviation'});
+    avgMaxDeviation = mean(dataTable{:,'MaxDeviation'},1);
     disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
     %% Calculate and display the standard deviation of MaxDeviation
     stdDeviationMaxDeviation = std(dataTable{:,'MaxDeviation'}, 1);
