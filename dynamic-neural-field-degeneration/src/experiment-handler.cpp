@@ -78,13 +78,13 @@ void ExperimentHandler::step()
 			dnfcomposerHandler.setTrial(i);
 
 			setupProcedure();
-			degenerationProcedure();
+			//degenerationProcedure();
 			cleanUpTrial();
 			Sleep(20);
 		}
 		Sleep(50);
 	}
-	setExperimentAsEnded();
+	//setExperimentAsEnded();
 }
 
 void ExperimentHandler::close()

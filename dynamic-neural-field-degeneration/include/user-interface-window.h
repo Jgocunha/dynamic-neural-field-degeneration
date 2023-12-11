@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../lib/dynamic-neural-field-composer/include/user_interface/user_interface.h"
+#include "simulation/simulation.h"
 
 
 struct ExperimentWindowParameters
@@ -18,14 +19,14 @@ struct ExperimentWindowParameters
 };
 
 
-class ExperimentWindow : public UserInterfaceWindow 
+class ExperimentWindow : public dnf_composer::user_interface::UserInterfaceWindow 
 {
 private:
-	std::shared_ptr<Simulation> simulation;
+	std::shared_ptr<dnf_composer::Simulation> simulation;
 	ExperimentWindowParameters expWinParams;
 
 public:
-	ExperimentWindow(const std::shared_ptr<Simulation>& simulation);
+	ExperimentWindow(const std::shared_ptr<dnf_composer::Simulation>& simulation);
 	void render() override;
 	~ExperimentWindow() = default;
 

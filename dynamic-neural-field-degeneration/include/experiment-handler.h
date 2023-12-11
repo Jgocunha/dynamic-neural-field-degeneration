@@ -15,7 +15,7 @@ struct ExperimentParameters
 	double decisionTolerance = 5;
 	int numberOfTrials = 10;
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 	std::string degeneracyName = "deactivate-weights";
 	std::string typeOfElementsDegenerated = "weights";
 	std::string fieldToDegenerate = "perceptual";
@@ -49,11 +49,11 @@ private:
 	ExperimentData data;
 
 	std::unordered_map<double, int> hueToAngleMap = {
-		//{00.00,  2.00}, // red
-		//{41.00,  6.00}, // blue
-		//{60.00,  10.00}, // yellow
-		//{120.00, 14.00}, // green
-		//{240.00, 18.00}, // orange
+		{00.00,  2.00}, // red
+		{41.00,  6.00}, // blue
+		{60.00,  10.00}, // yellow
+		{120.00, 14.00}, // green
+		{240.00, 18.00}, // orange
 		{274.00, 22.00}, // indigo
 		{300.00, 26.00} // violet
 	};

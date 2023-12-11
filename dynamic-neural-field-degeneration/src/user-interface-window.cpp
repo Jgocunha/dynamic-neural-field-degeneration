@@ -1,6 +1,6 @@
 #include "../include/user-interface-window.h"
 
-ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation)
+ExperimentWindow::ExperimentWindow(const std::shared_ptr<dnf_composer::Simulation>& simulation)
 	: simulation(simulation)
 {
 }
@@ -19,9 +19,9 @@ void ExperimentWindow::render()
 		renderDegenerationStatistics();
 	ImGui::End();
 
-	if (ImGui::Begin("Plot of decision field centroid plot over time"))
-		renderFieldCentroidOverTime();
-	ImGui::End();
+	//if (ImGui::Begin("Plot of decision field centroid plot over time"))
+	//	renderFieldCentroidOverTime();
+	//ImGui::End();
 }
 
 void ExperimentWindow::renderExperimentDetails() const

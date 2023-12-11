@@ -2,32 +2,54 @@
 
 
 #include "user_interface_window.h"
+#include "simulation/visualization.h"
 
-static int current_id = 0;
 
-struct PlotDimensions
+namespace dnf_composer
 {
-	int xMin, xMax, yMin, yMax;
-};
+	namespace user_interface
+	{
+		static int current_id = 0;
+
+		struct PlotDimensions
+		{
+			int xMin = 0, xMax = 0, yMin = 0, yMax = 0;
+		};
+
+		struct PlotAnnotations
+		{
+			std::string title{}, x_label{}, y_label{};
+		};
+
+		struct PlotParameters
+		{
+			int id;
+			std::shared_ptr<Visualization> visualization;
+			PlotDimensions dimensions;
+			PlotAnnotations annotations;
+		};
+
+		class PlotWindow : public UserInterfaceWindow
+		{
+		private:
+			std::shared_ptr<Simulation> simulation;
+			std::vector<PlotParameters> plots;
+		public:
+			PlotWindow(const std::shared_ptr<Simulation>& simulation);
+			PlotWindow(const std::shared_ptr<Simulation>& simulation, PlotParameters parameters);
+			PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters);
 
 
-class PlotWindow : public UserInterfaceWindow
-{
-private:
-	std::shared_ptr<Visualization> visualization;
-	 int id;
-	 PlotDimensions plotDimensions;
-	 bool renderPlotSelector;
-public:
-	PlotWindow(const std::shared_ptr<Simulation>& simulation, bool renderPlotSelector = true);
-	PlotWindow(const std::shared_ptr<Simulation>& simulation, const PlotDimensions& dimensions, bool renderPlotSelector = true);
-	PlotWindow(const std::shared_ptr<Visualization>& visualization, bool renderPlotSelector = true);
-	PlotWindow(const std::shared_ptr<Visualization>& visualization, const PlotDimensions& dimensions, bool renderPlotSelector = true);
-	void render() override;
-	~PlotWindow() = default;
-private:
-	void renderPlots();
-	void renderElementSelector();
-	void configure();
-};
+			void render() override;
+			~PlotWindow() override = default;
+		private:
+			void createPlot(PlotParameters& parameters);
+			void renderPlotControl();
+			static void renderPlot(const PlotParameters& parameters);
+			static void renderElementSelector(const PlotParameters& parameters);
+			static void configure(const PlotDimensions& dimensions);
+		};
+	}
+}
+
 

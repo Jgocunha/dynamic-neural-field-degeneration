@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "../lib/imgui/imgui.h"
 #include "../lib/imgui/backends/imgui_impl_win32.h"
 #include "../lib/imgui/backends/imgui_impl_dx12.h"
@@ -21,15 +20,11 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 
-#include "./simulation/simulation.h"
-#include "./simulation/visualization.h"
-#include "./user_interface_window.h"
-#include "./plot_window.h"
-#include "./simulation_window.h"
-#include "./coupling_window.h"
-#include "./degeneracy_window.h"
-#include "./matrix_plot_window.h"
 
+#include <vector>
+#include <string>
+
+#include "user_interface_window.h"
 
 // Dear ImGui stuff
 struct FrameContext
@@ -67,31 +62,38 @@ FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
-
-class UserInterface
+namespace dnf_composer
 {
-private:
-	std::shared_ptr<Simulation> simulation;
-	std::vector<std::shared_ptr<Visualization>> visualizations;
-	std::vector<std::shared_ptr<UserInterfaceWindow>> windows;
+	namespace user_interface
+	{
+		class UserInterface
+		{
+		private:
+			std::vector<std::shared_ptr<UserInterfaceWindow>> windows;
 
-	HWND windowHandle;
-	WNDCLASSEXW windowClass;
-	bool closeUI;
+			HWND windowHandle;
+			WNDCLASSEXW windowClass;
+			bool closeUI;
 
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-public:
-	UserInterface(std::shared_ptr<Simulation> simulation, std::vector<std::shared_ptr<Visualization>> visualizations);
+			ImVec4 clear_color = ImVec4(0.2f, 0.2f, 0.2f, 1.00f); // Darkish gray
+		public:
+			UserInterface();
+			UserInterface(const UserInterface&) = delete;
+			UserInterface& operator=(const UserInterface&) = delete;
+			UserInterface(UserInterface&&) = delete;
+			UserInterface& operator=(UserInterface&&) = delete;
 
-	void init();
-	void step();
-	void close();
+			void init();
+			void step();
+			void close() const;
 
-	void activateWindow(const std::shared_ptr<UserInterfaceWindow> window);
+			void activateWindow(const std::shared_ptr<UserInterfaceWindow>& window);
 
-	const bool getCloseUI();
-	~UserInterface() = default;
+			bool getCloseUI() const;
+			~UserInterface() = default;
 
-private:
-	void render();
-};
+		private:
+			void render() const;
+		};
+	}
+}

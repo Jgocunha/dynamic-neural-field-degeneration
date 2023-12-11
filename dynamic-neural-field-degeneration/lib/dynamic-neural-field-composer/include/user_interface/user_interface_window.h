@@ -10,16 +10,28 @@
 #include "../lib/implot/implot.h"
 #include "../lib/implot/implot_internal.h"
 
-
-#include "./simulation/visualization.h"
-
-#define CHAR_SIZE 50
-
-class UserInterfaceWindow
+enum CharSize : size_t
 {
-public:
-	UserInterfaceWindow();
-	virtual void render() = 0;
-	~UserInterfaceWindow() = default;
+	CHAR_SIZE = 50
 };
+
+namespace dnf_composer
+{
+	namespace user_interface
+	{
+
+		class UserInterfaceWindow
+		{
+		public:
+			UserInterfaceWindow() = default;
+			virtual void render() = 0;
+			virtual ~UserInterfaceWindow() = default;
+
+			UserInterfaceWindow(const UserInterfaceWindow&) = delete;
+			UserInterfaceWindow& operator=(const UserInterfaceWindow&) = delete;
+			UserInterfaceWindow(UserInterfaceWindow&&) = delete;
+			UserInterfaceWindow& operator=(UserInterfaceWindow&&) = delete;
+		};
+	}
+}
 

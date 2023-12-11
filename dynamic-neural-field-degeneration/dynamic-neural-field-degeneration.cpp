@@ -14,7 +14,7 @@ ExperimentParameters setExperimentParameters()
         << "7 for WEIGHTS_REDUCE): ";
     int degeneracyTypeInput;
     std::cin >> degeneracyTypeInput;
-    params.degeneracyType = static_cast<ElementDegeneracyType>(degeneracyTypeInput);
+    params.degeneracyType = static_cast<dnf_composer::element::ElementDegeneracyType>(degeneracyTypeInput);
 
     if (degeneracyTypeInput == 1)
     {
@@ -42,19 +42,19 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
 {
     switch(params.degeneracyType)
     {
-		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
     		params.degeneracyName = "deactivate";
             params.typeOfElementsDegenerated = "weights";
     		break;
-	    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	    case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
     		params.degeneracyName = "randomize";
             params.typeOfElementsDegenerated = "weights";
     		break;
-        case ElementDegeneracyType::WEIGHTS_REDUCE:
+        case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
             params.degeneracyName = "reduce 0.2";
             params.typeOfElementsDegenerated = "weights";
             break;
-	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
+	    case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
             if(params.fieldToDegenerate == "perceptual")
 				params.typeOfElementsDegenerated = "pre-synaptic neurons";
 			else if(params.fieldToDegenerate == "decision")
@@ -79,7 +79,7 @@ int main()
 
         return 0;
     }
-    catch (const Exception& ex) {
+    catch (const dnf_composer::Exception& ex) {
         std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
         return static_cast<int>(ex.getErrorCode());
     }

@@ -1,25 +1,29 @@
-﻿#include "dynamic-neural-field-composer.h"
+﻿// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
+#include "dynamic-neural-field-composer.h"
 
 // This .cpp file is an example of how you can use the library to create your own DNF simulation.
 
 int main(int argc, char* argv[])
 {
     // After defining the simulation, we can create the application.
-    std::shared_ptr<Simulation> simulation = test_DegeneracyCuboidColor();
+    auto simulation = std::make_shared<dnf_composer::Simulation>(5, 0, 0);
     // You can run the application without the user interface by setting the second parameter to false.
-    Application app{ simulation, true};
+    constexpr bool activateUserInterface = true;
+    const dnf_composer::Application app{ simulation, activateUserInterface };
     
     // After creating the application, we can add the windows we want to display.
-    app.activateUserInterfaceWindow(std::make_shared<SimulationWindow>(simulation));
-    PlotDimensions pd;
-    pd = { 0, 360, -30, 40 };
-    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation, pd));
-    pd = { 0, 180, -30, 40 };
-    app.activateUserInterfaceWindow(std::make_shared<PlotWindow>(simulation, pd));
-    app.activateUserInterfaceWindow(std::make_shared<DegeneracyWindow>(simulation));
-    app.activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+    app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::SimulationWindow>(simulation));
+    dnf_composer::user_interface::PlotParameters plotParameters;
+    plotParameters.annotations = { "Plot title", "Spatial dimension", "Amplitude" };
+    plotParameters.dimensions = { 0, 100, -30, 40 };
+    app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(simulation, plotParameters));
+    app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::LoggerWindow>());
 
-    try {
+    try 
+    {
         app.init();
 
         bool userRequestClose = false;
@@ -31,7 +35,7 @@ int main(int argc, char* argv[])
         app.close();
         return 0;
     }
-    catch (const Exception& ex) {
+    catch (const dnf_composer::Exception& ex) {
         std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
         return static_cast<int>(ex.getErrorCode());
     }

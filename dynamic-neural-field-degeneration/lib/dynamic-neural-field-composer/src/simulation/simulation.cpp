@@ -1,172 +1,187 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "simulation/simulation.h"
 
-
-Simulation::Simulation(const double& deltaT, const double& tZero, const double& t)
-	: deltaT(deltaT), tZero(tZero), t(t)
+namespace dnf_composer
 {
-	initialized = false;
-	elements = {};
-}
+	Simulation::Simulation(double deltaT, double tZero, double t)
+		: deltaT(deltaT), tZero(tZero), t(t)
+	{
+		if (deltaT <= 0 || tZero > t)
+			throw Exception(ErrorCode::SIM_INVALID_PARAMETER, "Invalid parameters for Simulation constructor");
 
-void Simulation::init()
-{
-	t = tZero;
-	for (int i = 0; i < elements.size(); i++)
-		elements[i]->init();
+		initialized = false;
+		elements = {};
+	}
 
-	initialized = true;
-}
+	void Simulation::init()
+	{
+		t = tZero;
+		for (const auto& element : elements)
+			element->init();
 
-void Simulation::step()
-{
-	t += deltaT;
-	for (int i = 0; i < elements.size(); i++)
-		elements[i]->step(t, deltaT);
-}
+		initialized = true;
+		user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, "Started the simulation.");
+	}
 
-void Simulation::close()
-{
-	for (int i = 0; i < elements.size(); i++)
-		elements[i]->close();
+	void Simulation::step() {
+		t += deltaT;
+		for (const auto& element : elements)
+			element->step(t, deltaT);
+	}
 
-	initialized = false;
-}
+	void Simulation::close() {
+		for (const auto& element : elements)
+			element->close();
+		
+		initialized = false;
+		user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, "Stopped the simulation.");
+	}
 
-void Simulation::run(const double& runTime)
-{
-	if (runTime <= 0)
-		throw Exception(ErrorCode::SIM_RUNTIME_LESS_THAN_ZERO, (int)runTime);
+	void Simulation::run(double runTime)
+	{
+		if (runTime <= 0)
+			throw Exception(ErrorCode::SIM_RUNTIME_LESS_THAN_ZERO, static_cast<int>(runTime));
 
-	double simTime = t + runTime;
+		const double simTime = t + runTime;
 
-	if (!initialized)
-		init();
+		if (!initialized)
+			init();
 
-	while (t < simTime)
-		step();
+		while (t < simTime)
+			step();
 
-	close();
-}
+		close();
+	}
 
-void Simulation::addElement(const std::shared_ptr<Element>& element)
-{
-	// Check if an element with the same id already exists
-	std::string newElementId = element->getUniqueIdentifier();
-	for (int i = 0; i < elements.size(); i++) {
-		if (elements[i]->getUniqueIdentifier() == newElementId) {
-			throw Exception(ErrorCode::SIM_ELEM_ALREADY_EXISTS, newElementId);
-			// Element with the same id already exists, throw an exception or handle the error
-			//throw Exception(ErrorCode::SIM_ELEM_ALREADY_EXISTS, newElementId);
-			// Alternatively, you can handle the error in any other way that makes sense for your application
-			// such as logging an error message, returning an error code, etc.
-			// ...
+	void Simulation::addElement(const std::shared_ptr<element::Element>& element)
+	{
+		// Check if an element with the same id already exists
+		const std::string newElementName = element->getUniqueName();
+		for (const auto& existingElement : elements) {
+			if (existingElement->getUniqueName() == newElementName) 
+			{
+				const std::string logMessage = "An element with the same unique name already exists '" + newElementName + "'! New element was not added.";
+				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_WARNING, logMessage.c_str());
+				return;
+			}
 		}
+
+		const std::string logMessage = "Element '" + newElementName + "' was added to the simulation.";
+		user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logMessage.c_str());
+		elements.push_back(element);
+		element->init(); 
 	}
 
-	elements.push_back(element);
-	element->init();
-}
-
-void Simulation::removeElement(const std::string& elementId)
-{
-	for (int i = 0; i < elements.size(); i++)
+	void Simulation::removeElement(const std::string& elementId)
 	{
-		// Remove the element from the inputs of all other elements
-		elements[i]->removeInput(elementId);
-	}
+		for (const auto& element : elements)
+			element->removeInput(elementId);
 
-	for (int i = 0; i < elements.size(); i++)
-	{
-		// Remove the element from the simulation
-		if (elements[i]->getUniqueIdentifier() == elementId)
+		for (int i = 0; i < static_cast<int>(elements.size()); i++)
 		{
-			elements.erase(elements.begin() + i);
-			return;
+			if (elements[i]->getUniqueName() == elementId)
+			{
+				elements.erase(elements.begin() + i);
+				const std::string logMessage = "Element '" + elementId + "' was removed from the simulation.";
+				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logMessage.c_str());
+				return;
+			}
 		}
+		throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, elementId);
 	}
-	throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, elementId);
-}
 
-void Simulation::resetElement(const std::string& idOfElementToReset, const std::shared_ptr<Element>& newElement)
-{
-	bool elementFound = false;
-	for (int i = 0; i < elements.size(); i++)
+	void Simulation::resetElement(const std::string& idOfElementToReset, const std::shared_ptr<element::Element>& newElement)
 	{
-		if (elements[i]->getUniqueIdentifier() == idOfElementToReset)
+		bool elementFound = false;
+
+		for (auto& element : elements) 
 		{
-			elements[i] = newElement;
-			elements[i]->init();
-			elementFound = true;
-			break;
+			if (element->getUniqueName() == idOfElementToReset) 
+			{
+				element = newElement;
+				element->init();
+				const std::string logMessage = "Element '" + idOfElementToReset + "' was reset in the simulation.";
+				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logMessage.c_str());
+				elementFound = true;
+				break;
+			}
 		}
+
+		if (!elementFound)
+			throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, idOfElementToReset);
+
 	}
 
-	if (!elementFound)
-		throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, idOfElementToReset);
-
-}
-
-void Simulation::createInteraction(const std::string& stimulusElementId, 
-	const std::string& stimulusComponent, const std::string& receivingElementId)
-{
-	std::shared_ptr<Element> stimulusElement = getElement(stimulusElementId);
-	std::shared_ptr<Element> receivingElement = getElement(receivingElementId);
-	receivingElement->addInput(stimulusElement, stimulusComponent);
-}
-
-
-std::shared_ptr<Element> Simulation::getElement(const std::string& id) const
-{
-	for (int i = 0; i < elements.size(); i++)
-		if (elements[i]->getUniqueIdentifier() == id)
-			return std::shared_ptr<Element>(elements[i]);
-
-	throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, id);
-}
-
-std::shared_ptr<Element> Simulation::getElement(uint8_t index) const 
-{
-	if (index < elements.size())
-		return elements[index];
-	else
-		throw Exception(ErrorCode::SIM_ELEM_INDEX, (int)index);
-}
-
-std::vector<double> Simulation::getComponent(const std::string& id, const std::string& componentName)
-{
-
-	std::shared_ptr<Element> foundElement = getElement(id);
-	return foundElement->getComponent(componentName);
-}
-
-std::vector<double>* Simulation::getComponentPtr(const std::string& id, const std::string& componentName)
-{
-	std::shared_ptr<Element> foundElement = getElement(id);
-	return foundElement->getComponentPtr(componentName);
-}
-
-uint8_t Simulation::getNumberOfElements() const
-{
-	return elements.size();
-}
-
-std::vector<std::shared_ptr<Element>> Simulation::getElementsThatHaveSpecifiedElementAsInput(const std::string& specifiedElement, const std::string& inputComponent)
-{
-	std::vector<std::shared_ptr<Element>> elementsThatHaveSpecifiedElementAsInput;
-	for (int i = 0; i < elements.size(); i++)
+	void Simulation::createInteraction(const std::string& stimulusElementId, 
+		const std::string& stimulusComponent, const std::string& receivingElementId) const
 	{
-		if (elements[i]->hasInput(specifiedElement, inputComponent))
-			elementsThatHaveSpecifiedElementAsInput.push_back(elements[i]);
+		const std::shared_ptr<element::Element> stimulusElement = getElement(stimulusElementId);
+		const std::shared_ptr<element::Element> receivingElement = getElement(receivingElementId);
+
+		if (!stimulusElement)
+			throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, stimulusElementId);
+
+		if (!receivingElement)
+			throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, receivingElementId);
+
+		const std::string logMessage = "Interaction created: " + stimulusElementId + " -> " + receivingElementId;
+		user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logMessage.c_str());
+
+		receivingElement->addInput(stimulusElement, stimulusComponent);
 	}
-	return elementsThatHaveSpecifiedElementAsInput;
+
+	std::shared_ptr<element::Element> Simulation::getElement(const std::string& id) const
+	{
+		for (const auto& element : elements)
+			if (element->getUniqueName() == id)
+				return element;
+
+		throw Exception(ErrorCode::SIM_ELEM_NOT_FOUND, id);
+	}
+
+	std::shared_ptr<element::Element> Simulation::getElement(const int index) const 
+	{
+		if (index < static_cast<int>(elements.size()))
+			return elements[index];
+
+		throw Exception(ErrorCode::SIM_ELEM_INDEX, index);
+	}
+
+	std::vector<double> Simulation::getComponent(const std::string& id, const std::string& componentName) const
+	{
+		const std::shared_ptr<element::Element> foundElement = getElement(id);
+		return foundElement->getComponent(componentName);
+	}
+
+	std::vector<double>* Simulation::getComponentPtr(const std::string& id, const std::string& componentName) const
+	{
+		const std::shared_ptr<element::Element> foundElement = getElement(id);
+		return foundElement->getComponentPtr(componentName);
+	}
+
+	int Simulation::getNumberOfElements() const
+	{
+		return static_cast<int>(elements.size());
+	}
+
+	std::vector<std::shared_ptr<element::Element>> Simulation::getElementsThatHaveSpecifiedElementAsInput(const std::string& specifiedElement, const std::string& inputComponent) const
+	{
+		std::vector<std::shared_ptr<element::Element>> elementsThatHaveSpecifiedElementAsInput;
+		for (const auto& element : elements) 
+		{
+			if (element->hasInput(specifiedElement, inputComponent)) {
+				elementsThatHaveSpecifiedElementAsInput.push_back(element);
+			}
+		}
+		return elementsThatHaveSpecifiedElementAsInput;
+	}
+
+	bool Simulation::isInitialized() const
+	{
+		return initialized;
+	}
 }
 
-bool Simulation::isInitialized()
-{
-	return initialized;
-}
-
-Simulation::~Simulation()
-{
-	// nothing requires cleanup
-}

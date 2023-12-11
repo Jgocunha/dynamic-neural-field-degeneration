@@ -6,46 +6,61 @@
 
 #include <set>
 
-struct FieldCouplingParameters
+namespace dnf_composer
 {
-	double scalar;
-	double learningRate;
-};
+	enum class LearningRule
+	{
+		HEBBIAN = 0,
+		DELTA_WIDROW_HOFF,
+		DELTA_KROGH_HERTZ
+	};
 
-enum class LearningRule
-{
-	HEBBIAN = 0,
-	DELTA_WIDROW_HOFF,
-	DELTA_KROGH_HERTZ
-};
+	namespace element
+	{
+		struct FieldCouplingParameters
+		{
+			int inputFieldSize;
+			double scalar;
+			double learningRate;
+			LearningRule learningRule;
+		};
 
-class FieldCoupling : public Element
-{
-protected:
-	FieldCouplingParameters parameters;
-	std::vector<std::vector<double>> weights;
-	bool trained;
-	LearningRule learningRule;
-public:
-	FieldCoupling(const std::string& id, const int& outputSize, const int& inputSize, const FieldCouplingParameters& parameters, const LearningRule& learningRule);
-	
-	void init() override;
-	void step(const double& t, const double& deltaT) override;
-	void close() override;
+		class FieldCoupling : public Element
+		{
+		protected:
+			FieldCouplingParameters parameters;
+			std::vector<std::vector<double>> weights;
+			bool trained;
+			bool updateAllWeights;
+			std::string weightsFilePath;
+		public:
+			FieldCoupling(const std::string& id, int outputSize, const FieldCouplingParameters& parameters);
 
-	void resetWeights();
-	void saveWeights();
-	void updateWeights(const std::vector<double> input, const std::vector<double> output);
-	
-	const std::vector<std::vector<double>>& getWeights() const;
+			void init() override;
+			void step(double t, double deltaT) override;
+			void close() override;
 
-	~FieldCoupling() = default;
-	
-protected:
-	void getInputFunction();
-	void computeOutput();
-	void scaleOutput();
+			void printParameters() override;
 
-	bool readWeights();
-	void writeWeights();
-};
+			void setWeightsFilePath(const std::string& filePath);
+			bool readWeights();
+			void resetWeights();
+			void saveWeights() const;
+			virtual void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
+
+			void setLearningRate(double learningRate);
+			void setUpdateAllWeights(bool updateAllWeights);
+
+			const std::vector<std::vector<double>>& getWeights() const;
+
+			~FieldCoupling() override = default;
+
+		protected:
+			void getInputFunction();
+			void computeOutput();
+			void scaleOutput();
+
+			void writeWeights() const;
+		};
+	}
+}

@@ -1,41 +1,80 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "elements/normal_noise.h"
 
-NormalNoise::NormalNoise(std::string id, const int& size, const NormalNoiseParameters& parameters)
-	: parameters(parameters)
+namespace dnf_composer
 {
-	// Assert that the size is positive
-	assert(size > 0);
+	namespace element
+	{
+		NormalNoise::NormalNoise(const std::string& id, int size, NormalNoiseParameters parameters)
+			: parameters(parameters)
+		{
+			if (size <= 0)
+				throw Exception(ErrorCode::ELEM_INVALID_SIZE, id);
 
-	this->label = ElementLabel::NORMAL_NOISE;
-	this->uniqueIdentifier = id;
-	this->size = size;
-	components["output"] = std::vector<double>(size);
-}
+			this->label = ElementLabel::NORMAL_NOISE;
+			this->uniqueName = id;
+			this->size = size;
+			components["output"] = std::vector<double>(size);
+		}
 
-void NormalNoise::init()
-{
-	std::fill(components["output"].begin(), components["output"].end(), 0);
-}
+		void NormalNoise::init()
+		{
+			std::ranges::fill(components["output"], 0.0);
+		}
 
-void NormalNoise::step(const double& t, const double& deltaT)
-{
-	std::vector<double> rand = mathtools::generateNormalVector(size);
+		void NormalNoise::step(double t, double deltaT)
+		{
+			const std::vector<double> rand = mathtools::generateNormalVector(size);
 
-	for (int i = 0; i < size; i++)
-		components["output"][i] = parameters.amplitude / sqrt(deltaT) * rand[i];
-}
+			for (int i = 0; i < size; i++)
+				components["output"][i] = parameters.amplitude / sqrt(deltaT) * rand[i];
+		}
 
-void NormalNoise::setParameters(const NormalNoiseParameters& parameters)
-{
-	this->parameters = parameters;
-}
+		void NormalNoise::printParameters()
+		{
+			std::ostringstream logStream;
 
-NormalNoiseParameters NormalNoise::getParameters()
-{
-	return parameters;
-}
+			logStream << std::left;
 
-NormalNoise::~NormalNoise()
-{
-	// nothing requires cleanup 
+			logStream << "Logging element parameters" << std::endl;
+			logStream << "Unique Identifier: " << uniqueIdentifier << std::endl;
+			logStream << "Unique Name: " << uniqueName << std::endl;
+			logStream << "Label: " << ElementLabelToString.at(label) << std::endl;
+			logStream << "Size: " << size << std::endl;
+
+			logStream << "Components: ";
+			for (const auto& pair : components)
+			{
+				const std::string& componentName = pair.first;
+				logStream << componentName << " | ";
+			}
+
+			logStream << std::endl << "Inputs: ";
+			for (const auto& inputPair : inputs)
+			{
+				const std::shared_ptr<Element>& inputElement = inputPair.first;
+				const std::string& inputComponent = inputPair.second;
+
+				logStream << inputElement->getUniqueName() << "->" << inputComponent << " | ";
+			}
+
+			logStream << std::endl << "NormalNoiseParameters: ";
+			logStream << "Amplitude: " << parameters.amplitude << std::endl;
+
+			user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logStream.str().c_str());
+		}
+
+		void NormalNoise::setParameters(NormalNoiseParameters parameters)
+		{
+			this->parameters = parameters;
+		}
+
+		NormalNoiseParameters NormalNoise::getParameters() const
+		{
+			return parameters;
+		}
+	}
 }
