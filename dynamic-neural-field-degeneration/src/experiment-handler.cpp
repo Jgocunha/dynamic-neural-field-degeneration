@@ -10,7 +10,10 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	data.targetOutputFieldCentroid = hueToAngleIterator->second;
 
 	if (params.isDebugModeOn)
-		std::cout << "External stimulus: " << data.targetOutputFieldCentroid << std::endl;
+	{
+		const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid);
+		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
+	}
 }
 
  void ExperimentHandler::printExperimentSetupToConsole() const
@@ -78,13 +81,13 @@ void ExperimentHandler::step()
 			dnfcomposerHandler.setTrial(i);
 
 			setupProcedure();
-			//degenerationProcedure();
+			degenerationProcedure();
 			cleanUpTrial();
 			Sleep(20);
 		}
 		Sleep(50);
 	}
-	//setExperimentAsEnded();
+	setExperimentAsEnded();
 }
 
 void ExperimentHandler::close()
@@ -162,8 +165,13 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
 
 	if (!file.is_open())
+	{
 		if (params.isDebugModeOn)
-			std::cerr << "Failed to open the file for writing." << std::endl;
+		{
+			const std::string message = "Failed to open the file for writing " + filename;
+			dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_ERROR, message.c_str());
+		}
+	}
 
 	for (const auto& centroid : data.outputFieldCentroidHistory)
 		file << centroid << " ";
@@ -172,6 +180,9 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 	file.close();
 
 	if (params.isDebugModeOn)
-		std::cout << "New centroids appended to " << filename << std::endl;
+	{
+		const std::string message = "New centroids appended to " + filename;
+		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
+	}
 }
 

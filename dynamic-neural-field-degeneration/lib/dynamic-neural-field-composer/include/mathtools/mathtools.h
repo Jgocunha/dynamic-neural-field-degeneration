@@ -138,7 +138,7 @@ namespace dnf_composer
 		{
 			std::vector<T> h(x.size());
 			for (int i = 0; i < static_cast<int>(h.size()); i++)
-				h[i] = (x[i] >= threshold) ? 1 : 0;
+				h[i] = (x[i] > threshold) ? 1 : 0;
 			return h;
 		}
 

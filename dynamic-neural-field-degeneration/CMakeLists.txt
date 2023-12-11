@@ -14,6 +14,8 @@ set(SOURCES
     dynamic-neural-field-degeneration.cpp
 )
 
+configure_file(./resources/resources.rc.in ./resources/resources.rc)
+
 # Add executable
 add_executable(launch-dynamic-neural-field-degeneration ${SOURCES} 
     "src/coppeliasim-handler.cpp"
@@ -21,6 +23,7 @@ add_executable(launch-dynamic-neural-field-degeneration ${SOURCES}
     "src/dnfcomposer-handler.cpp"
     "src/dnf-architecture.cpp" 
     "src/user-interface-window.cpp"
+	./resources/resources.rc
 )
 
 # Set the desired output directory relative to the project

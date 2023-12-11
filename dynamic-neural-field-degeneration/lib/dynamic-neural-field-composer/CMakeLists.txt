@@ -7,6 +7,8 @@ project (dynamic-neural-field-composer
     VERSION 1.0.0 
     DESCRIPTION "A C++ application to develop Dynamic Neural Field Architectures")
 
+configure_file(./resources/resources.rc.in ./resources/resources.rc)
+
 # Add the source files
 add_library(dynamic-neural-field-composer 	
 	"src/simulation/simulation.cpp"
@@ -42,14 +44,18 @@ add_library(dynamic-neural-field-composer
 	
 	"src/elements/degenerate_neural_field.cpp"
 	"src/elements/degenerate_field_coupling.cpp"
-
+	
+	./resources/resources.rc
 ) 
+
 
 # Set the desired output directory relative to the project
 set(OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data")
+set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
 
 # Pass the OUTPUT_DIRECTORY as a preprocessor definition
 add_compile_definitions(OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY}")
+add_compile_definitions(PROJECT_DIR="${PROJECT_DIR}")
 
 # Set C++ standard and compile options
 # Set the minimum required C++ version to C++11
@@ -59,6 +65,5 @@ target_compile_features(dynamic-neural-field-composer PRIVATE cxx_std_20)
 
 # Specify include directories
 target_include_directories(dynamic-neural-field-composer PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
 
 add_subdirectory(lib)

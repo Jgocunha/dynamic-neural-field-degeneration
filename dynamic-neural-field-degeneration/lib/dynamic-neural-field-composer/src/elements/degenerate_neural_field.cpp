@@ -41,10 +41,11 @@ namespace dnf_composer
 	void DegenerateNeuralField::step(double t, double deltaT)
 	{
 		updateInput();
+		calculateActivation(t, deltaT);
 		if (degenerate)
 			applyDegeneracy();
-		calculateActivation(t, deltaT);
 		calculateOutput();
+		calculateCentroid();
 	}
 
 	void DegenerateNeuralField::startDegeneration()

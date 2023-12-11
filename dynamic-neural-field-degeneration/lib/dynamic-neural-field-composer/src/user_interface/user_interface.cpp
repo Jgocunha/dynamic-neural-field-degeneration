@@ -33,26 +33,26 @@ namespace dnf_composer
             windowHandle = ::CreateWindowW(windowClass.lpszClassName, L"Dynamic Neural Field Composer C++",
                 WS_OVERLAPPEDWINDOW, 0, 0, windowWidth, windowHeight, nullptr, nullptr, windowClass.hInstance, nullptr);
 
-            //const HICON hIcon = static_cast<HICON>(LoadImage(
-            //    GetModuleHandle(nullptr),
-            //    MAKEINTRESOURCE(MYICON1),
-            //    IMAGE_ICON,
-            //    0, 0,
-            //    LR_DEFAULTSIZE | LR_LOADTRANSPARENT
-            //));
+            const HICON hIcon = static_cast<HICON>(LoadImage(
+                GetModuleHandle(nullptr),
+                MAKEINTRESOURCE(MYICON1),
+                IMAGE_ICON,
+                0, 0,
+                LR_DEFAULTSIZE | LR_LOADTRANSPARENT
+            ));
 
-            //if (hIcon != nullptr)
-            //{
-            //    SendMessage(windowHandle, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
-            //    SendMessage(windowHandle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
-            //}
-            //else
-            //{
-            //    // Failed to load the icon
-            //    const DWORD error = GetLastError();
-            //    // Handle or log the error
-            //    std::cout << "Error load icon: " + std::to_string(error) << std::endl;
-            //}
+            if (hIcon != nullptr)
+            {
+                SendMessage(windowHandle, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
+                SendMessage(windowHandle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
+            }
+            else
+            {
+                // Failed to load the icon
+                const DWORD error = GetLastError();
+                // Handle or log the error
+                std::cout << "Error load icon: " + std::to_string(error) << std::endl;
+            }
 
             // Initialize Direct3D
             if (!CreateDeviceD3D(windowHandle))
@@ -146,16 +146,13 @@ namespace dnf_composer
 
             // Load Fonts
 
-            //std::string convertedPath = std::string(PROJECT_DIR) + "/resources/fonts/Lexend-Light.ttf";
-            //size_t pos = 0;
-            //while ((pos = convertedPath.find('/')) != std::string::npos)
-            //    convertedPath.replace(pos, 1, "\\");
-            //const ImFont* font = io_ref.Fonts->AddFontFromFileTTF(convertedPath.c_str(), 24.0f);
-            //IM_ASSERT(font != NULL);
-
-                // Load Fonts
-            ImFont* font = io_ref.Fonts->AddFontDefault();
+            std::string convertedPath = std::string(PROJECT_DIR) + "/resources/fonts/Lexend-Light.ttf";
+            size_t pos = 0;
+            while ((pos = convertedPath.find('/')) != std::string::npos)
+                convertedPath.replace(pos, 1, "\\");
+            const ImFont* font = io_ref.Fonts->AddFontFromFileTTF(convertedPath.c_str(), 24.0f);
             IM_ASSERT(font != NULL);
+
         }
 
         void UserInterface::step()
