@@ -71,8 +71,8 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	noise_kernel_per->addInput(noise_per);
 	noise_kernel_dec->addInput(noise_dec);
 
-	//dnf_composer::element::GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
-	//std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
+	//const dnf_composer::element::GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
+	//std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus", perceptualFieldSize }, gcp_a));
 
 	//simulation->addElement(gauss_stimulus);
 	//perceptual_field->addInput(gauss_stimulus);

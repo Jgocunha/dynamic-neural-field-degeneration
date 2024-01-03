@@ -33,7 +33,10 @@ namespace dnf_composer
 			std::iota(rangeX.begin(), rangeX.end(), -startingValue);
 			std::vector<double> gauss(commonParameters.dimensionParameters.size);
 			if (!normalized)
+			{
 				gauss = mathtools::gaussNorm(rangeX, 0.0, parameters.sigma);
+				//gauss = mathtools::gauss(rangeX, 0.0, parameters.sigma);
+			}
 			else
 			{
 				const std::string message = "Tried to initialize a normalized Mexican hat kernel '" + this->getUniqueName() + "'. That is not supported yet.\n";
@@ -66,7 +69,8 @@ namespace dnf_composer
 				convolution = mathtools::conv(subDataInput, components["kernel"]);
 
 			for (int i = 0; i < components["output"].size(); i++)
-				components["output"][i] = (convolution[i] + parameters.amplitudeGlobal) * commonParameters.dimensionParameters.d_x;
+				components["output"][i] = (convolution[i] + parameters.amplitudeGlobal * fullSum);
+			//* commonParameters.dimensionParameters.d_x;
 
 		}
 
