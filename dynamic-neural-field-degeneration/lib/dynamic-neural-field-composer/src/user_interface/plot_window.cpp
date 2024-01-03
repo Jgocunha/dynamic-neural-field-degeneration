@@ -44,10 +44,10 @@ namespace dnf_composer
 
 		void PlotWindow::render()
 		{
-			renderPlotControl();
+			//renderPlotControl();
 			for(const auto& plot : plots)
 			{
-				renderElementSelector(plot);
+				//renderElementSelector(plot);
 				renderPlot(plot);
 			}
 		}
