@@ -15,25 +15,27 @@ namespace dnf_composer
 {
     namespace element
     {
-	    struct ElementParameters
+	    struct CompoundElementParameters
 	    {
-	        NeuralFieldParameters nfp = {};
-	        GaussStimulusParameters gsp = {};
-	        GaussKernelParameters gkp = {};
-	        MexicanHatKernelParameters mhkp = {};
-	        NormalNoiseParameters nnp = {};
-	        GaussFieldCouplingParameters gfcp = {};
-			FieldCouplingParameters fcp = {};
+	        NeuralFieldParameters nfp;
+	        GaussStimulusParameters gsp;
+	        GaussKernelParameters gkp;
+	        MexicanHatKernelParameters mhkp;
+	        NormalNoiseParameters nnp;
+	        GaussFieldCouplingParameters gfcp;
+			FieldCouplingParameters fcp;
+
+			CompoundElementParameters() = default;
 	    };
 
 	    class ElementFactory
 	    {
 	    private:
-	        std::unordered_map<ElementLabel, std::function<std::shared_ptr<Element>(const std::string&, int, const ElementParameters&)>> elementCreators;
+	        std::unordered_map<ElementLabel, std::function<std::shared_ptr<Element>(const ElementCommonParameters&, const CompoundElementParameters&)>> elementCreators;
 
 	    public:
 			ElementFactory();
-			std::shared_ptr<Element> create(ElementLabel type, const std::string& id, int size, const ElementParameters& params);
+			std::shared_ptr<Element> create(ElementLabel type, const ElementCommonParameters& elementCommonParameters, const CompoundElementParameters& elementSpecificParameters);
 	    };
     }
     

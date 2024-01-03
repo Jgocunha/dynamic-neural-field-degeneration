@@ -1,10 +1,11 @@
 #pragma once
 
-#include "mathtools/mathtools.h"
-
-#include "element.h"
-
 #include <set>
+
+#include "mathtools/mathtools.h"
+#include "element.h"
+#include "utilities/utilities.h"
+
 
 namespace dnf_composer
 {
@@ -34,7 +35,7 @@ namespace dnf_composer
 			bool updateAllWeights;
 			std::string weightsFilePath;
 		public:
-			FieldCoupling(const std::string& id, int outputSize, const FieldCouplingParameters& parameters);
+			FieldCoupling(const ElementCommonParameters& elementCommonParameters, const FieldCouplingParameters& fc_parameters);
 
 			void init() override;
 			void step(double t, double deltaT) override;

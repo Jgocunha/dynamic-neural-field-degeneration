@@ -4,10 +4,12 @@
 #include <memory>
 #include <string>
 #include <filesystem>
+#include <chrono>
 
-#include "user_interface/logger_window.h"
+
 #include "elements/element.h"
 #include "exceptions/exception.h"
+#include "utilities/utilities.h"
 
 namespace dnf_composer
 {
@@ -15,6 +17,7 @@ namespace dnf_composer
 	{
 	protected:
 		bool initialized;
+		bool paused;
 		std::vector<std::shared_ptr<element::Element>> elements;
 		std::string uniqueIdentifier;
 	public:
@@ -32,6 +35,8 @@ namespace dnf_composer
 		void step();
 		void run(double runTime);
 		void close();
+		void pause();
+		void resume();
 
 		void addElement(const std::shared_ptr<element::Element>& element);
 		void removeElement(const std::string& elementId);
@@ -47,6 +52,8 @@ namespace dnf_composer
 		int getNumberOfElements() const;
 		std::vector < std::shared_ptr<element::Element>> getElementsThatHaveSpecifiedElementAsInput(const std::string& specifiedElement, 
 		                                                                                            const std::string& inputComponent = "output") const;
+
+		void exportComponentToFile(const std::string& id, const std::string& componentName) const;
 
 		bool isInitialized() const;
 

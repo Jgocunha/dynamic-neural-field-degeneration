@@ -32,13 +32,12 @@ namespace dnf_composer
 		class PlotWindow : public UserInterfaceWindow
 		{
 		private:
-			std::shared_ptr<Simulation> simulation;
 			std::vector<PlotParameters> plots;
 		public:
 			PlotWindow(const std::shared_ptr<Simulation>& simulation);
 			PlotWindow(const std::shared_ptr<Simulation>& simulation, PlotParameters parameters);
+			PlotWindow(const std::shared_ptr<Visualization>& visualization);
 			PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters);
-
 
 			void render() override;
 			~PlotWindow() override = default;

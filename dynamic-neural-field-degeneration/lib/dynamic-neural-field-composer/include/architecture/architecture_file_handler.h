@@ -6,7 +6,7 @@
 #include <fstream>
 #include <deque>
 
-#include "user_interface/logger_window.h"
+#include "logging/logger.h"
 
 namespace dnf_composer
 {

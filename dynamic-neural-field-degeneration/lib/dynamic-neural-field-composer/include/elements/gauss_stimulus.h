@@ -35,7 +35,7 @@ namespace dnf_composer
 		private:
 			GaussStimulusParameters parameters;
 		public:
-			GaussStimulus(const std::string& id, int size,
+			GaussStimulus(const ElementCommonParameters& elementCommonParameters,
 				const GaussStimulusParameters& parameters);
 
 			void init() override;

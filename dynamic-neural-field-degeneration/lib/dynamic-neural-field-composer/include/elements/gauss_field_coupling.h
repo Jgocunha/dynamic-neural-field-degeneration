@@ -28,9 +28,9 @@ namespace dnf_composer
 		class GaussFieldCoupling : public Element
 		{
 		private:
-			GaussFieldCouplingParameters gfcp;
+			GaussFieldCouplingParameters parameters;
 		public:
-			GaussFieldCoupling(const std::string& id, int size, const GaussFieldCouplingParameters& gfcp);
+			GaussFieldCoupling(const ElementCommonParameters& elementCommonParameters, const GaussFieldCouplingParameters& gfc_parameters);
 
 			void addCoupling(const WeightedCoupling& coupling);
 

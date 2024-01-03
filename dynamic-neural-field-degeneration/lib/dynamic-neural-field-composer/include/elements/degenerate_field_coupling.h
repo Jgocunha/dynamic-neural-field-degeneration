@@ -6,39 +6,42 @@
 
 namespace dnf_composer
 {
-	class DegenerateFieldCoupling : public element::FieldCoupling
+	namespace element
 	{
-	private:
-		element::ElementDegeneracyType degeneracyType;
-		bool degenerate;
-		std::set<std::pair<int, int>> indicesForDegeneration;
-		double minWeightValue = 0;
-		double maxWeightValue = 0;
-		double weightReductionFactor = 0.2;
-	public:
-		DegenerateFieldCoupling(const std::string& id, int outputSize, const element::FieldCouplingParameters& parameters);
+		class DegenerateFieldCoupling : public element::FieldCoupling
+		{
+		private:
+			element::ElementDegeneracyType degeneracyType;
+			bool degenerate;
+			std::set<std::pair<int, int>> indicesForDegeneration;
+			double minWeightValue = 0;
+			double maxWeightValue = 0;
+			double weightReductionFactor = 0.2;
+		public:
+			DegenerateFieldCoupling(const ElementCommonParameters& elementCommonParameters, const FieldCouplingParameters& parameters);
 
-		void init() override;
-		void step(double t, double deltaT) override;
+			void init() override;
+			void step(double t, double deltaT) override;
 
-		void startDegeneration();
-		void applyDegeneracy();
+			void startDegeneration();
+			void applyDegeneracy();
 
-		void setWeightReductionFactor(const double& factor);
-		void setDegeneracyType(element::ElementDegeneracyType degeneracyType);
-		element::ElementDegeneracyType getDegeneracyType();
-		void updateWeights(const std::vector<double> input, const std::vector<double> output);
-	private:
-		void populateIndicesForDegeneration();
-		void setRandomWeightToRandomValue();
-		void setRandomWeightToReduceValue();
-		void setRandomUniqueWeightToZero();
-		void findMinMaxWeightValues();
-		double getWeightReductionFactor();
-		void setRandomUniqueWeightToReduceValue();
-		void setRandomUniqueWeightToRandomValue();
+			void setWeightReductionFactor(const double& factor);
+			void setDegeneracyType(element::ElementDegeneracyType degeneracyType);
+			element::ElementDegeneracyType getDegeneracyType();
+			void updateWeights(const std::vector<double> input, const std::vector<double> output);
+		private:
+			void populateIndicesForDegeneration();
+			void setRandomWeightToRandomValue();
+			void setRandomWeightToReduceValue();
+			void setRandomUniqueWeightToZero();
+			void findMinMaxWeightValues();
+			double getWeightReductionFactor();
+			void setRandomUniqueWeightToReduceValue();
+			void setRandomUniqueWeightToRandomValue();
 
-		std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-			const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
-	};
+			std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
+				const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
+		};
+	}
 }

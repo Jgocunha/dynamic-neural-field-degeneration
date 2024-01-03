@@ -9,36 +9,29 @@ namespace dnf_composer
 {
 	namespace user_interface
 	{
-		enum class LogLevel : int
-		{
-			_INFO,
-			_WARNING,
-			_ERROR
-		};
-
-		struct Logger
-		{
-			ImGuiTextBuffer     buffer;
-			ImGuiTextFilter     filter;
-			ImVector<int>       lineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
-			bool                autoScroll = true;  // Keep scrolling if already at the bottom.
-		};
-
 		class LoggerWindow : public UserInterfaceWindow
 		{
 		private:
-			static Logger logger;
-			std::string windowTitle;
+			inline static ImGuiTextBuffer	buffer;
+			inline static ImGuiTextFilter	filter;
+			inline static ImVector<int>		lineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
+			inline static ImVec4			textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);  // Default to white
+			inline static bool				autoScroll = true;  // Keep scrolling if already at the bottom.
+			inline static std::string		windowTitle;
+			inline static bool 				isWindowActive = false;
 		public:
 			LoggerWindow();
-			static void addLog(LogLevel level, const char* message, ...) IM_FMTARGS(3);
+			static void addLog(const char* message, ...) IM_FMTARGS(3);
 
 			void render() override;
+
+			static bool isActive();
+
 			~LoggerWindow() override = default;
 		private:
             static void clean();
 			static void draw();
-			static LogLevel getLogLevelFromLine(const char* line_start);
+			static void getLogColor(const char* line_start);
 			static void drawLog();
 		};
 	}
