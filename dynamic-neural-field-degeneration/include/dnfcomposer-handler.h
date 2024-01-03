@@ -9,8 +9,8 @@
 
 struct SimulationElements
 {
-	std::shared_ptr<dnf_composer::DegenerateNeuralField> inputField, outputField;
-	std::shared_ptr<dnf_composer::DegenerateFieldCoupling> fieldCoupling;
+	std::shared_ptr<dnf_composer::element::DegenerateNeuralField> inputField, outputField;
+	std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> fieldCoupling;
 };
 
 struct SimulationParameters

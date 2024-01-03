@@ -9,10 +9,9 @@ namespace dnf_composer
 	namespace user_interface
 	{
 		PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation)
-			:simulation(simulation)
 		{
 			PlotParameters parameters;
-			parameters.id = ++current_id;
+			parameters.visualization = std::make_shared<Visualization>(simulation);
 			parameters.dimensions = { 0, 100, -30, 40 };
 			parameters.annotations.title = "Plot window ";
 			parameters.annotations.x_label = "Spatial dimension";
@@ -21,28 +20,34 @@ namespace dnf_composer
 		}
 
 		PlotWindow::PlotWindow(const std::shared_ptr<Simulation>& simulation, PlotParameters parameters)
-			:simulation(simulation)
 		{
+			parameters.visualization = std::make_shared<Visualization>(simulation);
+			createPlot(parameters);
+		}
+
+		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization)
+		{
+			PlotParameters parameters;
+			parameters.visualization = visualization;
+			parameters.dimensions = { 0, 100, -30, 40 };
+			parameters.annotations.title = "Plot window ";
+			parameters.annotations.x_label = "Spatial dimension";
+			parameters.annotations.y_label = "Amplitude";
 			createPlot(parameters);
 		}
 
 		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters)
 		{
 			parameters.visualization = visualization;
-			parameters.id = ++current_id;
-			parameters.annotations.title += " " + std::to_string(parameters.id);
-			plots.emplace_back(parameters);
-
-			const std::string message = "Added a new plot to the application with id: " + parameters.annotations.title;
-			LoggerWindow::addLog(LogLevel::_INFO, message.c_str());
+			createPlot(parameters);
 		}
 
 		void PlotWindow::render()
 		{
-			//renderPlotControl();
+			renderPlotControl();
 			for(const auto& plot : plots)
 			{
-				//renderElementSelector(plot);
+				renderElementSelector(plot);
 				renderPlot(plot);
 			}
 		}
@@ -80,6 +85,8 @@ namespace dnf_composer
 						PlotParameters parameters;
 						parameters.annotations = {title, x_label, y_label};
 						parameters.dimensions = {x_min, x_max, y_min, y_max};
+						std::shared_ptr<Simulation> simulation = plots[0].visualization->getAssociatedSimulationPtr();
+						parameters.visualization = std::make_shared<Visualization>(simulation);
 						createPlot(parameters);
 					}
 				}
@@ -89,13 +96,12 @@ namespace dnf_composer
 
 		void PlotWindow::createPlot( PlotParameters& parameters)
 		{
-			parameters.visualization = std::make_shared<Visualization>(simulation);
 			parameters.id = ++current_id;
 			parameters.annotations.title += " " + std::to_string(parameters.id);
 			plots.emplace_back(parameters);
 
-			const std::string message = "Added a new plot to the application with id: " + parameters.annotations.title;
-			LoggerWindow::addLog(LogLevel::_INFO, message.c_str());
+			const std::string message = "Added a new plot to the application with id: " + parameters.annotations.title + ".\n";
+			log(LogLevel::INFO, message);
 		}
 
 		void PlotWindow::renderPlot(const PlotParameters& parameters)
@@ -166,30 +172,43 @@ namespace dnf_composer
 
 				// Next column: List box for selecting a component
 				//ImGui::NextColumn();
-				const char* components[] = { "output", "activation", "input", "kernel" };
+
+				std::shared_ptr<element::Element> simulationElement;
 				static int currentComponentIdx = 0;
-
-				ImGui::Text("Select component");
-				if (ImGui::BeginListBox("##Component list", { 250.0f, 200.0f }))
+				if (selectedElementId.empty())
 				{
-					for (int n = 0; n < IM_ARRAYSIZE(components); n++)
+					ImGui::Text("Select component");
+					if (ImGui::BeginListBox("##Component list", { 250.0f, 200.0f }))
 					{
-						const bool isSelected = (currentComponentIdx == n);
-						if (ImGui::Selectable(components[n], isSelected))
-							currentComponentIdx = n;
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
+						ImGui::EndListBox();
 					}
-					ImGui::EndListBox();
+				}
+				else
+				{
+					simulationElement = simulation->getElement(selectedElementId);
+					const std::string elementId = simulationElement->getUniqueName();
+					ImGui::Text("Select component");
+					if (ImGui::BeginListBox("##Component list", { 250.0f, 200.0f }))
+					{
+						for (int n = 0; n < static_cast<int>(simulationElement->getComponentList().size()); n++)
+						{
+							const bool isSelected = (currentComponentIdx == n);
+							if (ImGui::Selectable(simulationElement->getComponentList()[n].c_str(), isSelected))
+								currentComponentIdx = n;
+
+							if (isSelected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
 				}
 
 				// Reset columns
-				ImGui::Columns(1);
+				//ImGui::Columns(1);
 
 				if (ImGui::Button("Add", { 100.0f, 30.0f }))
 				{
-					parameters.visualization->addPlottingData(selectedElementId, components[currentComponentIdx]);
+					parameters.visualization->addPlottingData(selectedElementId, simulationElement->getComponentList()[currentComponentIdx]);
 				}
 			}
 			ImGui::End();

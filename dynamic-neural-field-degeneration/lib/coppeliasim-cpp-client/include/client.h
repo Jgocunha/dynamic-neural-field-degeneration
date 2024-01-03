@@ -41,7 +41,7 @@ public:
 	double getFloatSignal(const std::string& signalName);
 	std::string getStringSignal(const std::string& signalName);
 
-	void log(const std::string& message);
+	void log_msg(const std::string& message) const;
 	
 	~CoppeliaSimClient();
 };

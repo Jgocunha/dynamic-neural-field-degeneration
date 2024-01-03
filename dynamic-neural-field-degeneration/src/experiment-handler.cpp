@@ -12,7 +12,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	if (params.isDebugModeOn)
 	{
 		const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid);
-		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
+		dnf_composer::log(dnf_composer::LogLevel::INFO, message);
 	}
 }
 
@@ -169,7 +169,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 		if (params.isDebugModeOn)
 		{
 			const std::string message = "Failed to open the file for writing " + filename;
-			dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_ERROR, message.c_str());
+			dnf_composer::log(dnf_composer::LogLevel::FATAL, message);
 		}
 	}
 
@@ -182,7 +182,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 	if (params.isDebugModeOn)
 	{
 		const std::string message = "New centroids appended to " + filename;
-		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
+		dnf_composer::log(dnf_composer::LogLevel::INFO, message);
 	}
 }
 

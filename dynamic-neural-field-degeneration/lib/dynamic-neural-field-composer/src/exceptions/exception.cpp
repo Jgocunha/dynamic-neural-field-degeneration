@@ -98,6 +98,8 @@ namespace dnf_composer
 			return "Invalid size for element (" + errorElement + ").";
 		case ErrorCode::SIM_INVALID_PARAMETER:
 			return "Invalid parameter for simulation.";
+		case ErrorCode::LOG_LOCAL_TIME_ERROR:
+			return "Error trying to obtain local time for error.";
 		default:
 			return "An error was detected but no suitable response was found!";
 		}

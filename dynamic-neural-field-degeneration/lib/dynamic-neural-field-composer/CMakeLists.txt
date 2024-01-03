@@ -26,6 +26,8 @@ add_library(dynamic-neural-field-composer
     "src/elements/normal_noise.cpp"
     "src/elements/gauss_field_coupling.cpp" 
     "src/elements/kernel.cpp"
+    "src/elements/element_parameters.cpp"
+    "src/elements/activation_function.cpp"
     
     "src/mathtools/mathtools.cpp"
 
@@ -44,6 +46,10 @@ add_library(dynamic-neural-field-composer
 	
 	"src/elements/degenerate_neural_field.cpp"
 	"src/elements/degenerate_field_coupling.cpp"
+
+    "src/logging/logger.cpp"
+
+    "src/utilities/utilities.cpp"
 	
 	./resources/resources.rc
 ) 
@@ -57,11 +63,12 @@ set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
 add_compile_definitions(OUTPUT_DIRECTORY="${OUTPUT_DIRECTORY}")
 add_compile_definitions(PROJECT_DIR="${PROJECT_DIR}")
 
+
 # Set C++ standard and compile options
 # Set the minimum required C++ version to C++11
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-target_compile_features(dynamic-neural-field-composer PRIVATE cxx_std_20)
+#target_compile_features(dynamic-neural-field-composer PRIVATE cxx_std_20)
 
 # Specify include directories
 target_include_directories(dynamic-neural-field-composer PUBLIC ${PROJECT_SOURCE_DIR}/include)

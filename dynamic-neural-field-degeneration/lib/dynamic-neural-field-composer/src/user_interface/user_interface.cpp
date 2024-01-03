@@ -4,8 +4,6 @@
 
 #include "user_interface/user_interface.h"
 
-#include <iostream>
-
 
 namespace dnf_composer
 {
@@ -51,7 +49,7 @@ namespace dnf_composer
                 // Failed to load the icon
                 const DWORD error = GetLastError();
                 // Handle or log the error
-                std::cout << "Error load icon: " + std::to_string(error) << std::endl;
+                //dnf_composer::log(dnf_composer::LogLevel::WARNING, "Error load icon: " + std::to_string(error));
             }
 
             // Initialize Direct3D
@@ -152,7 +150,6 @@ namespace dnf_composer
                 convertedPath.replace(pos, 1, "\\");
             const ImFont* font = io_ref.Fonts->AddFontFromFileTTF(convertedPath.c_str(), 24.0f);
             IM_ASSERT(font != NULL);
-
         }
 
         void UserInterface::step()

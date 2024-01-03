@@ -8,24 +8,12 @@ namespace dnf_composer
 {
 	namespace element
 	{
-
-		NeuralField::NeuralField(const std::string& id, int size,
-			const NeuralFieldParameters& parameters)
-			: parameters(parameters)
+		NeuralField::NeuralField(const ElementCommonParameters& elementCommonParameters, const NeuralFieldParameters& parameters)
+			: Element(elementCommonParameters), parameters(parameters), centroid(-1)
 		{
-			if (size <= 0) 
-				throw Exception(ErrorCode::ELEM_INVALID_SIZE, id);
-
-			this->label = ElementLabel::NEURAL_FIELD;
-			this->uniqueName = id;
-			this->size = size;
-
-			centroid = -1.0;
-
-			components["input"] = std::vector<double>(size);
-			components["activation"] = std::vector<double>(size);
-			components["output"] = std::vector<double>(size);
-			components["resting level"] = std::vector<double>(size);
+			commonParameters.identifiers.label = ElementLabel::NEURAL_FIELD;
+			components["activation"] = std::vector<double>(commonParameters.dimensionParameters.size);
+			components["resting level"] = std::vector<double>(commonParameters.dimensionParameters.size);
 		}
 
 		void NeuralField::init()
@@ -49,9 +37,9 @@ namespace dnf_composer
 		{
 		}
 
-		void NeuralField::setParameters(const NeuralFieldParameters& parameters)
+		void NeuralField::setParameters(const NeuralFieldParameters& neuralFieldParameters)
 		{
-			this->parameters = parameters;
+			parameters = neuralFieldParameters;
 			init();
 		}
 
@@ -67,49 +55,27 @@ namespace dnf_composer
 
 		void NeuralField::printParameters()
 		{
+			printCommonParameters();
+
 			std::ostringstream logStream;
 
-			logStream << std::left;
+			logStream << "Logging specific element parameters" << std::endl;
+			logStream << "StartingRestingLevel: " << parameters.startingRestingLevel << std::endl;
+			logStream << "Tau: " << parameters.tau << std::endl;
 
-			logStream << "Logging element parameters" << std::endl;
-			logStream << "Unique Identifier: " << uniqueIdentifier << std::endl;
-			logStream << "Unique Name: " << uniqueName << std::endl;
-			logStream << "Label: " << ElementLabelToString.at(label) << std::endl;
-			logStream << "Size: " << size << std::endl;
-
-			logStream << "Components: ";
-			for (const auto& pair : components)
-			{
-				const std::string& componentName = pair.first;
-				logStream << componentName << " | ";
-			}
-
-			logStream << std::endl << "Inputs: ";
-			for (const auto& inputPair : inputs)
-			{
-				const std::shared_ptr<Element>& inputElement = inputPair.first;
-				const std::string& inputComponent = inputPair.second;
-
-				logStream << inputElement->getUniqueName() << "->" << inputComponent << " | ";
-			}
-
-			logStream << std::endl << "NeuralFieldParameters: ";
-			logStream << "StartingRestingLevel: " << parameters.startingRestingLevel << " | ";
-			logStream << "Tau: " << parameters.tau << " | ";
-
-			logStream << "ActivationFunctionParameters: ";
-			//logStream << "Type: " << ActivationFunctionTypeToString.at(parameters.activationFunctionParameters.type) << " | ";
-			logStream << "Steepness: " << parameters.activationFunctionParameters.steepness << " | ";
-			logStream << "XShift: " << parameters.activationFunctionParameters.xShift << " | ";
+			//logStream << "ActivationFunctionParameters: ";
+			////logStream << "Type: " << ActivationFunctionTypeToString.at(parameters.activationFunctionParameters.type) << " | ";
+			//logStream << "Steepness: " << parameters.activationFunction. << " | ";
+			//logStream << "XShift: " << parameters.activationFunctionParameters.xShift << " | ";
 
 			logStream << std::endl << "Current centroid value: " << getCentroid() << std::endl;
 
-			user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logStream.str().c_str());
+			log(LogLevel::INFO, logStream.str());
 		}
 
 		void NeuralField::calculateActivation(double t, double deltaT)
 		{
-			for (int i = 0; i < size; i++)
+			for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
 			{
 				components["activation"][i] = components["activation"][i] + deltaT / parameters.tau *
 					(-components["activation"][i] + components["resting level"][i] + components["input"][i]);
@@ -118,16 +84,8 @@ namespace dnf_composer
 
 		void NeuralField::calculateOutput()
 		{
-			switch (parameters.activationFunctionParameters.type)
-			{
-			case ActivationFunctionType::Sigmoid:
-				components["output"] = mathtools::sigmoid(components["activation"],
-					parameters.activationFunctionParameters.steepness, static_cast<double>(parameters.activationFunctionParameters.xShift));
-				break;
-			case ActivationFunctionType::Heaviside:
-				components["output"] = mathtools::heaviside(components["activation"], parameters.activationFunctionParameters.xShift);
-				break;
-			}
+
+			components["output"] = parameters.activationFunction->operator()(components["activation"]);
 		}
 
 		void NeuralField::calculateCentroid()
@@ -136,12 +94,12 @@ namespace dnf_composer
 
 			if (*std::ranges::max_element(f_output) > 0)
 			{
-				const bool isAtLimits = (f_output[0] > 0) || (f_output[size - 1] > 0);
+				const bool isAtLimits = (f_output[0] > 0) || (f_output[commonParameters.dimensionParameters.size - 1] > 0);
 
 				double sumActivation = 0.0;
 				double sumWeightedPositions = 0.0;
 
-				for (int i = 0; i < size; i++)
+				for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
 				{
 					const double activation = f_output[i];
 
@@ -150,9 +108,10 @@ namespace dnf_composer
 					// Calculate the circular distance from the midpoint to the position
 					double distance = 0.0;
 					if (isAtLimits)
-						distance = fmod(static_cast<double>(i) - static_cast<double>(size) * 0.5 + static_cast<double>(size) * 10, static_cast<double>(size));
+						distance = fmod(static_cast<double>(i) - static_cast<double>(commonParameters.dimensionParameters.size) * 0.5 
+							+ static_cast<double>(commonParameters.dimensionParameters.size) * 10, static_cast<double>(commonParameters.dimensionParameters.size));
 					else
-						distance = fmod(static_cast<double>(i) - static_cast<double>(size) * 0.5, static_cast<double>(size));
+						distance = fmod(static_cast<double>(i) - static_cast<double>(commonParameters.dimensionParameters.size) * 0.5, static_cast<double>(commonParameters.dimensionParameters.size));
 					sumWeightedPositions += distance * activation;
 				}
 
@@ -160,9 +119,9 @@ namespace dnf_composer
 				if (std::fabs(sumActivation) > epsilon)
 				{
 					// Shift the centroid back to the circular field
-					centroid = fmod(static_cast<double>(size) * 0.5 + sumWeightedPositions / sumActivation, static_cast<double>(size));
+					centroid = fmod(static_cast<double>(commonParameters.dimensionParameters.size) * 0.5 + sumWeightedPositions / sumActivation, static_cast<double>(commonParameters.dimensionParameters.size));
 					if (isAtLimits)
-						centroid = (centroid >= 0 ? centroid : centroid + static_cast<double>(size));
+						centroid = (centroid >= 0 ? centroid : centroid + static_cast<double>(commonParameters.dimensionParameters.size));
 				}
 			}
 			else

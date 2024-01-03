@@ -1,6 +1,7 @@
 
 #include "../include/dnfcomposer-handler.h"
 
+#include "user_interface/logger_window.h"
 #include "user_interface/plot_window.h"
 
 
@@ -9,9 +10,9 @@ DnfcomposerHandler::DnfcomposerHandler()
 	simulation = getExperimentSimulation();
 	application = std::make_unique<dnf_composer::Application>(simulation, true);
 
-	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
-	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
-	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::element::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
 
 	setupUserInterface();
 }
@@ -23,9 +24,9 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 	simulation = getExperimentSimulation();
 	application = std::make_unique<dnf_composer::Application>(simulation, simulationParameters.isUserInterfaceActive);
 
-	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
-	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
-	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::element::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
 
 	if(simulationParameters.isUserInterfaceActive)
 		setupUserInterface();
@@ -214,7 +215,7 @@ void DnfcomposerHandler::updateExternalInput()
 	dnf_composer::element::GaussStimulusParameters gsp = { 3, 15, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
-		(new dnf_composer::element::GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));
+	(new dnf_composer::element::GaussStimulus({ "stimulus", simulationElements.inputField->getSize() }, gsp));
 
 	simulation->addElement(stimulus);
 	simulationElements.inputField->addInput(stimulus);

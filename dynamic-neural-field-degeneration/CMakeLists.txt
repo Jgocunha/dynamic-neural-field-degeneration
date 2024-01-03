@@ -9,6 +9,9 @@ endif()
 project ("dynamic-neural-field-degeneration")
 
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Add source files
 set(SOURCES
     dynamic-neural-field-degeneration.cpp
@@ -45,9 +48,5 @@ target_link_libraries(launch-dynamic-neural-field-degeneration PUBLIC implot)
 target_link_libraries(launch-dynamic-neural-field-degeneration PRIVATE dynamic-neural-field-composer)
 target_link_libraries(launch-dynamic-neural-field-degeneration PRIVATE coppeliasim-cpp-client)
 
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET launch-dynamic-neural-field-degeneration PROPERTY CXX_STANDARD 20)
-endif()
 
 # TODO: Add tests
