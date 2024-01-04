@@ -3,12 +3,12 @@ clc;
 close all;
 
 % File paths
-matrixFile = 'per - dec_weights.txt';
-perceptualFieldFile = 'per - dec_perceptual field.txt';
-outputFieldFile = 'per - dec_decision field.txt';
+matrixFile = 'per - out_weights.txt';
+perceptualFieldFile = 'per - out_perceptual field.txt';
+outputFieldFile = 'per - out_output field.txt';
 
-fieldSize_perceptual = 360;
-fieldSize_decision = 28;
+fieldSize_perceptual = 360/0.5;
+fieldSize_decision = 28/0.1;
 
 % Read matrix and arrays
 matrix = load(matrixFile);

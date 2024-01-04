@@ -123,6 +123,7 @@ namespace dnf_composer
 					if (isAtLimits)
 						centroid = (centroid >= 0 ? centroid : centroid + static_cast<double>(commonParameters.dimensionParameters.size));
 				}
+				centroid = centroid * commonParameters.dimensionParameters.d_x;
 			}
 			else
 				centroid = -1.0;

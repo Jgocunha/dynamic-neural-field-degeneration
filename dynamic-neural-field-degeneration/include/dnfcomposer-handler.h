@@ -16,8 +16,8 @@ struct SimulationElements
 struct SimulationParameters
 {
 	std::string inputFieldId = "perceptual field";
-	std::string outputFieldId = "decision field";
-	std::string fieldCouplingId = "per - dec";
+	std::string outputFieldId = "output field";
+	std::string fieldCouplingId = "per - out";
 	double externalInputPosition = 0;
 	double inputFieldCentroid, outputFieldCentroid;
 	int timeForFieldToSettle = 100;

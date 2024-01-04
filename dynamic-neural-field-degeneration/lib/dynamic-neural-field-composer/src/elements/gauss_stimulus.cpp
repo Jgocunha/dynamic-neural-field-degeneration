@@ -22,7 +22,7 @@ namespace dnf_composer
 			std::vector<double> g(commonParameters.dimensionParameters.size);
 
 			if (parameters.circular)
-				g = mathtools::circularGauss(commonParameters.dimensionParameters.size, parameters.sigma, parameters.position);
+				g = mathtools::circularGauss(commonParameters.dimensionParameters.size, parameters.sigma, parameters.position/commonParameters.dimensionParameters.d_x);
 			else
 			{
 				const std::string message = "Tried to initialize a non-circular Gaussian stimulus '" + this->getUniqueName() + "'. That is not supported yet. \n";

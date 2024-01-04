@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 		plotParameters.annotations = { "Plot title", "Spatial dimension", "Amplitude" };
 		plotParameters.dimensions = { 0, 28, -30, 40 };
 		const std::shared_ptr<dnf_composer::Visualization> visualization_2 = std::make_shared<dnf_composer::Visualization>(simulation);
-		visualization_2->addPlottingData("decision field", "activation");
+		visualization_2->addPlottingData("output field", "activation");
 		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization_2, plotParameters));
 
 		app.init();

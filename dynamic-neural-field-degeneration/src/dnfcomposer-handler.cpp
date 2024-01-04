@@ -165,15 +165,15 @@ void DnfcomposerHandler::setupUserInterface()
 
 	dnf_composer::user_interface::PlotParameters pp;
 	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 360, -35, 30 };
+	pp.dimensions = { 0, 720, -35, 30 };
 	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
 
 	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
-	visualization->addPlottingData("decision field", "activation");
-	visualization->addPlottingData("dec - dec", "output");
+	visualization->addPlottingData("output field", "activation");
+	visualization->addPlottingData("out - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 28, -20, 40 };
+	pp.dimensions = { 0, 280, -20, 40 };
 	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
 
 	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
@@ -215,7 +215,7 @@ void DnfcomposerHandler::updateExternalInput()
 	dnf_composer::element::GaussStimulusParameters gsp = { 3, 15, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
-	(new dnf_composer::element::GaussStimulus({ "stimulus", simulationElements.inputField->getSize() }, gsp));
+	(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
 
 	simulation->addElement(stimulus);
 	simulationElements.inputField->addInput(stimulus);
