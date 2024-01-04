@@ -10,7 +10,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	constexpr int decisionFieldSize = 28;
 
 	// create neural field
-	constexpr dnf_composer::element::ActivationFunctionParameters afp = {dnf_composer::element::ActivationFunctionType::Heaviside, 10.0, 0.0 };
+	constexpr dnf_composer::element::ActivationFunctionParameters afp = {dnf_composer::element::ActivationFunctionType::Sigmoid, 100.0, 0.0 };
 	constexpr dnf_composer::element::NeuralFieldParameters nfp1 = { 25, -12 , afp};
 	constexpr dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -15 , afp};
 	const std::shared_ptr<dnf_composer::DegenerateNeuralField> perceptual_field(new dnf_composer::DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1));
