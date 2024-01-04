@@ -4,7 +4,6 @@
 #include "./user_interface/user_interface_window.h"
 #include "wizards/learning_wizard.h"
 
-#include "./user_interface/logger_window.h"
 
 #include "./elements/element_factory.h"
 #include "simulation/simulation.h"
@@ -34,6 +33,7 @@ namespace dnf_composer
 			void renderRemoveElement() const;
 			void renderElementProperties(const std::pair<int, std::string>& elementId) const;
 			void renderLogElementProperties() const;
+			void renderExportElementComponents() const;
 
 			// unfortunately, these functions need to be here like this
 			void addElementNeuralField() const;

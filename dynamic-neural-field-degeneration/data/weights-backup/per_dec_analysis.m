@@ -1,7 +1,7 @@
 clear;
 clc;
 
-path = '../';
+path = './';
 filename_perceptual = [path, 'per - dec_perceptual field.txt'];  
 filename_decision = [path, 'per - dec_decision field.txt'];
 fieldSize_perceptual = 360;
@@ -50,3 +50,25 @@ hold off;
 xlabel('Neural position');
 ylabel('Activation');
 title('per-dec decision field Plot');
+
+
+%% matrix
+
+% Load data from the file
+data = load('per - dec_weights.txt');
+
+% Create a grid of coordinates using meshgrid
+[longitude, latitude] = meshgrid(1:28, 1:360);
+
+% Create a 3D surface plot using surf
+figure;
+surf(longitude, latitude, data);
+
+% Add labels and title
+xlabel('Longitude');
+ylabel('Latitude');
+zlabel('Data Value');
+title('3D Plot of Data');
+
+% Adjust the view for better visualization
+view(45, 30);  % You can adjust the view angle as needed

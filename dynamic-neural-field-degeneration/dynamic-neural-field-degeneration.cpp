@@ -22,7 +22,7 @@ ExperimentParameters setExperimentParameters()
     //    std::cin >> params.fieldToDegenerate;
     //}
 
-	params.numberOfTrials = 5;
+	params.numberOfTrials = 1;
     params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
     params.fieldToDegenerate = "perceptual";
     setDegeneracyNameAndTypeOfElements(params);

@@ -4,6 +4,7 @@
 #include "./elements/neural_field.h"
 #include "./elements/field_coupling.h"
 #include "./elements/gauss_stimulus.h"
+#include "utilities/utilities.h"
 
 
 namespace dnf_composer

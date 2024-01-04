@@ -8,11 +8,16 @@ namespace dnf_composer
 {
 	namespace element
 	{
-		Kernel::Kernel()
+		Kernel::Kernel(const ElementCommonParameters& elementCommonParameters)
+			: Element(elementCommonParameters)
+
 		{
 			circular = true;
 			normalized = false;
 			kernelRange = { 0, 0 };
+			fullSum = 0.0;
+			cutOfFactor = 5;
+			components["kernel"] = std::vector<double>(commonParameters.dimensionParameters.size);
 		}
 
 		bool Kernel::getCircular() const

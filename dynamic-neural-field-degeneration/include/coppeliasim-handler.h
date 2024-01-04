@@ -18,6 +18,8 @@
 #define SHAPE_HUE_SIGNAL "shapeHue"
 #define SHAPE_ANGLE_SIGNAL "targetAngle"
 
+constexpr bool log_info = false;
+
 struct Signals
 {
 	bool createShape = false;

@@ -25,7 +25,7 @@ namespace dnf_composer
 		private:
 			NormalNoiseParameters parameters;
 		public:
-			NormalNoise(const std::string& id, int size, NormalNoiseParameters parameters);
+			NormalNoise(const ElementCommonParameters& elementCommonParameters, NormalNoiseParameters parameters);
 
 			void init() override;
 			void step(double t, double deltaT) override;

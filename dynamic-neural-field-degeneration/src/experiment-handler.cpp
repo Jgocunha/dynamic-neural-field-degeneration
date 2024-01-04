@@ -8,12 +8,6 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	std::advance(hueToAngleIterator, params.startingExternalStimulus);
 	data.targetInputFieldCentroid = hueToAngleIterator->first;
 	data.targetOutputFieldCentroid = hueToAngleIterator->second;
-
-	if (params.isDebugModeOn)
-	{
-		const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid);
-		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
-	}
 }
 
  void ExperimentHandler::printExperimentSetupToConsole() const
@@ -32,6 +26,12 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	std::cout << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 	std::cout << "----------------------------------------" << std::endl << std::endl;
+
+	//if (params.isDebugModeOn)
+	//{
+	//	const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid) + '\n';
+	//	dnf_composer::log(dnf_composer::LogLevel::INFO, message);
+	//}
 }
 
  void ExperimentHandler::setExperimentSetupData() const
@@ -129,7 +129,7 @@ void ExperimentHandler::degenerationProcedure()
 	}
 
 	if (params.isDebugModeOn)
-		std::cout << "Number of degeneration steps: " << data.outputFieldCentroidHistory.size() << std::endl;
+		log(dnf_composer::LogLevel::INFO, "Number of degeneration steps: " + std::to_string(data.outputFieldCentroidHistory.size()) + '\n');
  }
 
 void ExperimentHandler::cleanUpTrial()
@@ -169,7 +169,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 		if (params.isDebugModeOn)
 		{
 			const std::string message = "Failed to open the file for writing " + filename;
-			dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_ERROR, message.c_str());
+			dnf_composer::log(dnf_composer::LogLevel::FATAL, message);
 		}
 	}
 
@@ -182,7 +182,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 	if (params.isDebugModeOn)
 	{
 		const std::string message = "New centroids appended to " + filename;
-		dnf_composer::user_interface::LoggerWindow::addLog(dnf_composer::user_interface::LogLevel::_INFO, message.c_str());
+		dnf_composer::log(dnf_composer::LogLevel::INFO, message);
 	}
 }
 

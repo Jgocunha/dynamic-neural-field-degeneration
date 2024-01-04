@@ -15,8 +15,6 @@ namespace dnf_composer
 			double sigma = 5.0;
 			double amplitude = 10.0;
 			double amplitudeGlobal = 0.0;
-			double fullSum = 0.0;
-			int cutOfFactor = 5;
 			
 			bool operator==(const GaussKernelParameters& other) const {
 				constexpr double epsilon = 1e-6; // Set an appropriate epsilon value
@@ -24,9 +22,7 @@ namespace dnf_composer
 				// Compare floating-point values with tolerance (epsilon)
 				return std::abs(sigma - other.sigma) < epsilon &&
 					std::abs(amplitude - other.amplitude) < epsilon &&
-					std::abs(amplitudeGlobal - other.amplitudeGlobal) < epsilon &&
-					std::abs(fullSum - other.fullSum) < epsilon &&
-					cutOfFactor == other.cutOfFactor;
+					std::abs(amplitudeGlobal - other.amplitudeGlobal) < epsilon;
 			}
 		};
 
@@ -35,8 +31,7 @@ namespace dnf_composer
 		private:
 			GaussKernelParameters parameters;
 		public:
-			GaussKernel(const std::string& id, int size,
-				const GaussKernelParameters& parameters);
+			GaussKernel(const ElementCommonParameters& elementCommonParameters, const GaussKernelParameters& parameters);
 
 			void init() override;
 			void step( double t,  double deltaT) override;
@@ -44,7 +39,7 @@ namespace dnf_composer
 
 			void printParameters() override;
 
-			void setParameters(const GaussKernelParameters& parameters);
+			void setParameters(const GaussKernelParameters& gk_parameters);
 			GaussKernelParameters getParameters() const;
 
 			~GaussKernel() override = default;

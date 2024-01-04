@@ -28,8 +28,8 @@ namespace dnf_composer
 	{
 		if (elementId.empty())
 		{
-			const std::string message = "Tried to add an invalid element component '" + elementId + "' - '" + componentId + "' to the plot";
-			user_interface::LoggerWindow::addLog(user_interface::LogLevel::_WARNING, message.c_str());
+			const std::string message = "Tried to add an invalid element component '" + elementId + "' - '" + componentId + "' to the plot.\n";
+			log(LogLevel::WARNING, message);
 			return;
 		}
 
@@ -37,22 +37,23 @@ namespace dnf_composer
 
 		if (!data)
 		{
-			const std::string message = "Tried to add an invalid element component '" + elementId + "' - '" + componentId + "' to the plot";
-			user_interface::LoggerWindow::addLog(user_interface::LogLevel::_WARNING, message.c_str());
+			const std::string message = "Tried to add an invalid element component '" + elementId + "' - '" + componentId + "' to the plot.\n";
+			log(LogLevel::WARNING, message);
 			return;
 		}
 
 		for (const auto& [label, plotData] : plottingLabelAndData)
 			if (label == elementId + " " + componentId)
 			{
-				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_ERROR, "Data already exists in the plotting vector.");
+				log(LogLevel::ERROR_, "Data already exists in the plotting vector.\n");
 				return;
 			}
 
 		plottingLabelAndData.emplace_back(elementId + " " + componentId, data);
+		log(LogLevel::INFO, "Added element component '" + elementId + "' - '" + componentId + "' to the plot.\n");
 	}
 
-	std::shared_ptr<const Simulation> Visualization::getAssociatedSimulationPtr() const
+	std::shared_ptr<Simulation> Visualization::getAssociatedSimulationPtr() const
 	{
 		return simulation;
 	}

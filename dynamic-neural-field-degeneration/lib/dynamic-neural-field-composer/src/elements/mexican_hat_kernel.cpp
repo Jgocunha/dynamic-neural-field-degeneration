@@ -8,41 +8,31 @@ namespace dnf_composer
 {
 	namespace element
 	{
-		MexicanHatKernel::MexicanHatKernel(const std::string& id, int size,
-			const MexicanHatKernelParameters& parameters)
-			: parameters(parameters)
+		MexicanHatKernel::MexicanHatKernel(const ElementCommonParameters& elementCommonParameters, const MexicanHatKernelParameters& mhk_parameters)
+			: Kernel(elementCommonParameters), parameters(mhk_parameters)
 		{
-			if (size <= 0)
-				throw Exception(ErrorCode::ELEM_INVALID_SIZE, id);
-
-			this->label = ElementLabel::MEXICAN_HAT_KERNEL;
-			this->uniqueName = id;
-			this->size = size;
-
-			components["kernel"] = std::vector<double>(size);
-			components["output"] = std::vector<double>(size);
-			components["input"] = std::vector<double>(size);
+			commonParameters.identifiers.label = ElementLabel::MEXICAN_HAT_KERNEL;
 		}
 
 		void MexicanHatKernel::init()
 		{
 			const double maxSigma = std::max(parameters.amplitudeExc * parameters.sigmaExc, parameters.amplitudeInh * parameters.sigmaInh);
-			kernelRange = mathtools::computeKernelRange(maxSigma, parameters.cutOfFactor, size, circular);
+			kernelRange = mathtools::computeKernelRange(maxSigma, cutOfFactor, commonParameters.dimensionParameters.size, circular);
 
 			if (circular)
-				extIndex = mathtools::createExtendedIndex(size, kernelRange);
+				extIndex = mathtools::createExtendedIndex(commonParameters.dimensionParameters.size, kernelRange);
 			else
 			{
-				const std::string message = "Tried to initialize a non-circular Mexican hat kernel '" + this->getUniqueName() + "'. That is not supported yet.";
-				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_ERROR, message.c_str());
+				const std::string message = "Tried to initialize a non-circular Mexican hat kernel '" + this->getUniqueName() + "'. That is not supported yet.\n";
+				log(LogLevel::ERROR_, message);
 			}
 
 			uint32_t rangeXsize = kernelRange[0] + kernelRange[1] + 1;
 			std::vector<int> rangeX(rangeXsize);
 			const int startingValue = static_cast<int>(kernelRange[0]);
 			std::iota(rangeX.begin(), rangeX.end(), -startingValue);
-			std::vector<double> gaussExc(size);
-			std::vector<double> gaussInh(size);
+			std::vector<double> gaussExc(commonParameters.dimensionParameters.size);
+			std::vector<double> gaussInh(commonParameters.dimensionParameters.size);
 			if (!normalized)
 			{
 				gaussExc = mathtools::gaussNorm(rangeX, 0.0, parameters.sigmaExc);
@@ -50,14 +40,14 @@ namespace dnf_composer
 			}
 			else
 			{
-				const std::string message = "Tried to initialize a normalized Mexican hat kernel '" + this->getUniqueName() + "'. That is not supported yet.";
-				user_interface::LoggerWindow::addLog(user_interface::LogLevel::_ERROR, message.c_str());
+				const std::string message = "Tried to initialize a normalized Mexican hat kernel '" + this->getUniqueName() + "'. That is not supported yet.\n";
+				log(LogLevel::ERROR_, message);
 			}
 
 			for (int i = 0; i < components["kernel"].size(); i++)
 				components["kernel"][i] = parameters.amplitudeExc * gaussExc[i] - parameters.amplitudeInh * gaussInh[i];
 
-			parameters.fullSum = 0;
+			fullSum = 0;
 			std::ranges::fill(components["input"], 0.0);
 		}
 
@@ -65,9 +55,9 @@ namespace dnf_composer
 		{
 			updateInput();
 
-			parameters.fullSum = std::accumulate(components["input"].begin(), components["input"].end(), (double)0.0);
+			fullSum = std::accumulate(components["input"].begin(), components["input"].end(), (double)0.0);
 
-			std::vector<double> convolution(size);
+			std::vector<double> convolution(commonParameters.dimensionParameters.size);
 			const std::vector<double> subDataInput = mathtools::obtainCircularVector(extIndex, components["input"]);
 
 			if (circular)
@@ -76,7 +66,7 @@ namespace dnf_composer
 				convolution = mathtools::conv(subDataInput, components["kernel"]);
 
 			for (int i = 0; i < components["output"].size(); i++)
-				components["output"][i] = convolution[i] + parameters.amplitudeGlobal;
+				components["output"][i] = (convolution[i] + parameters.amplitudeGlobal) * commonParameters.dimensionParameters.d_x;
 		}
 
 		void MexicanHatKernel::close()
@@ -85,49 +75,26 @@ namespace dnf_composer
 
 		void MexicanHatKernel::printParameters()
 		{
+			printCommonParameters();
+
 			std::ostringstream logStream;
 
-			logStream << std::left;
-
-			logStream << "Logging element parameters" << std::endl;
-			logStream << "Unique Identifier: " << uniqueIdentifier << std::endl;
-			logStream << "Unique Name: " << uniqueName << std::endl;
-			logStream << "Label: " << ElementLabelToString.at(label) << std::endl;
-			logStream << "Size: " << size << std::endl;
-
-			logStream << "Components: ";
-			for (const auto& pair : components)
-			{
-				const std::string& componentName = pair.first;
-				const std::vector<double>& componentValues = pair.second;
-
-				logStream << componentName << " | ";
-			}
-
-			logStream << std::endl << "Inputs: ";
-			for (const auto& inputPair : inputs)
-			{
-				const std::shared_ptr<Element>& inputElement = inputPair.first;
-				const std::string& inputComponent = inputPair.second;
-
-				logStream << inputElement->getUniqueName() << "->" << inputComponent << " | ";
-			}
-
-			logStream << std::endl << "MexicanHatKernelParameters: ";
-			logStream << "AmplitudeExc: " << parameters.amplitudeExc << " | ";
-			logStream << "SigmaExc: " << parameters.sigmaExc << " | ";
-			logStream << "AmplitudeInh: " << parameters.amplitudeInh << " | ";
-			logStream << "SigmaInh: " << parameters.sigmaInh << " | ";
-			logStream << "AmplitudeGlobal: " << parameters.amplitudeGlobal << " | ";
-			logStream << "CutOffFactor: " << parameters.cutOfFactor << " | ";
+			logStream << "Logging specific element parameters" << std::endl;
+			logStream << "AmplitudeExc: " << parameters.amplitudeExc << std::endl;
+			logStream << "SigmaExc: " << parameters.sigmaExc << std::endl;
+			logStream << "AmplitudeInh: " << parameters.amplitudeInh << std::endl;
+			logStream << "SigmaInh: " << parameters.sigmaInh << std::endl;
+			logStream << "AmplitudeGlobal: " << parameters.amplitudeGlobal << std::endl;
+			logStream << "CutOffFactor: " << cutOfFactor << std::endl;
 			logStream << "Normalized: " << normalized << std::endl;
 
-			user_interface::LoggerWindow::addLog(user_interface::LogLevel::_INFO, logStream.str().c_str());
+			log(LogLevel::INFO, logStream.str());
 		}
 
-		void MexicanHatKernel::setParameters(const MexicanHatKernelParameters& parameters)
+		void MexicanHatKernel::setParameters(const MexicanHatKernelParameters& mhk_parameters)
 		{
-			this->parameters = parameters;
+			parameters = mhk_parameters;
+			init();
 		}
 
 		MexicanHatKernelParameters MexicanHatKernel::getParameters() const

@@ -7,7 +7,7 @@ CoppeliasimHandler::CoppeliasimHandler()
 
 void CoppeliasimHandler::init()
 {
-	if (DEBUG)
+	if (log_info)
 		std::cout << "Coppeliasim Handler: Thread will start.\n";
 	coppeliasimThread = std::thread(&CoppeliasimHandler::step, this);
 }
@@ -35,7 +35,7 @@ void CoppeliasimHandler::step()
 void CoppeliasimHandler::close()
 {
 	coppeliasimThread.join();
-	if (DEBUG)
+	if (log_info)
 		std::cout << "Coppeliasim Handler: Thread has finished its execution.\n";
 }
 
@@ -59,8 +59,8 @@ void CoppeliasimHandler::writeSignals()
 
 	wereSignalsChanged = false;
 
-	if (DEBUG)
-		client.log("Coppeliasim Handler: New signals written.\n");
+	if (log_info)
+		client.log_msg("Coppeliasim Handler: New signals written.\n");
 }
 
 void CoppeliasimHandler::readSignals()
@@ -71,8 +71,8 @@ void CoppeliasimHandler::readSignals()
 
 	signals.shapeHue = client.getFloatSignal(SHAPE_HUE_SIGNAL);
 
-	if (DEBUG)
-		client.log("Coppeliasim Handler: Signals retrieved.\n");
+	if (log_info)
+		client.log_msg("Coppeliasim Handler: Signals retrieved.\n");
 }
 
 void CoppeliasimHandler::resetSignals()
@@ -87,6 +87,6 @@ void CoppeliasimHandler::resetSignals()
 	client.setFloatSignal(SHAPE_HUE_SIGNAL, UNDEFINED);
 	client.setFloatSignal(SHAPE_ANGLE_SIGNAL, UNDEFINED);
 
-	if (DEBUG)
-		client.log("Coppeliasim Handler: All signals were reset.\n");
+	if (log_info)
+		client.log_msg("Coppeliasim Handler: All signals were reset.\n");
 }

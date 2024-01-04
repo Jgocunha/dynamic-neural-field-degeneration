@@ -17,10 +17,7 @@
 #include <numeric>
 #include <functional>
 #include <random>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <string>
 
 namespace dnf_composer
 {
@@ -125,7 +122,7 @@ namespace dnf_composer
 		}
 
 		template<typename T>
-		std::vector<T> sigmoid(const std::vector<T>& x, T beta, int x0)
+		std::vector<T> sigmoid(const std::vector<T>& x, T beta, T x0)
 		{
 			std::vector<T> s(x.size());
 			for (int i = 0; i < static_cast<int>(s.size()); i++)
@@ -151,23 +148,6 @@ namespace dnf_composer
 			return gaussResult;
 		}
 
-		template <typename T>
-		void fillMatrixWithRandomValues(std::vector<std::vector<T>>& matrix, double minRange = -1.0, double maxRange = 1.0) {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<> dis(minRange, maxRange);
-			for (auto& row : matrix)
-				for (auto& element : row)
-					element = dis(gen);
-		}
-
-		template <typename T>
-		void resizeMatrix(std::vector<std::vector<T>>& matrix, int newRowSize, int newColSize)
-		{
-			matrix.resize(newRowSize);
-			for (int i = 0; i < newRowSize; i++)
-				matrix[i].resize(newColSize);
-		}
 
 		std::array<int, 2> computeKernelRange(double sigma, int cutOfFactor, int fieldSize, bool circular);
 		std::vector<int> createExtendedIndex(int fieldSize, const std::array<int, 2>& kernelRange);
@@ -274,21 +254,6 @@ namespace dnf_composer
 
 			return weights;
 		}
-
-		template <typename T>
-		T generateRandomNumber(const T& min, const T& max)
-		{
-			// Seed the random number generator with a random device
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			// Create a uniform distribution from 1 to 2 (inclusive)
-			std::uniform_real_distribution<> dis(min, max);
-			// Generate a random integer between 1 and 2
-			T randomNum = dis(gen);
-			return randomNum;
-		}
-
-		int countNumOfLinesInFile(const std::string& filename);
 
 	}
 }

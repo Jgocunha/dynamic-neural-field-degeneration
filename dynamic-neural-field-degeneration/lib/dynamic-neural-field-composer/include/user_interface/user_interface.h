@@ -4,12 +4,13 @@
 #include "../lib/imgui/backends/imgui_impl_win32.h"
 #include "../lib/imgui/backends/imgui_impl_dx12.h"
 
+#include "../lib/implot/implot.h"
+#include "../lib/implot/implot_internal.h"
+
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <tchar.h>
 
-#include "../lib/implot/implot.h"
-#include "../lib/implot/implot_internal.h"
 
 #ifdef _DEBUG
 #define DX12_ENABLE_DEBUG_LAYER
@@ -23,6 +24,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "user_interface_window.h"
 #include "../resources/resource.h"
