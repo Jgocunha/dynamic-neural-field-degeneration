@@ -1,14 +1,29 @@
 clear;
 clc;
+close all;
 
-path = './';
-filename_perceptual = [path, 'per - dec_perceptual field.txt'];  
-filename_decision = [path, 'per - dec_decision field.txt'];
+% File paths
+matrixFile = 'per - dec_weights.txt';
+perceptualFieldFile = 'per - dec_perceptual field.txt';
+outputFieldFile = 'per - dec_decision field.txt';
+
 fieldSize_perceptual = 360;
 fieldSize_decision = 28;
 
+% Read matrix and arrays
+matrix = load(matrixFile);
+perceptualField = load(perceptualFieldFile);
+outputField = load(outputFieldFile);
+
+% Plot the matrix
+figure;
+imagesc(matrix);
+%colormap('viridis');
+colorbar;
+title('Matrix Plot');
+
 % Read the file
-fid = fopen(filename_perceptual, 'r');
+fid = fopen(perceptualFieldFile, 'r');
 data = textscan(fid, '%f');  % Read the numeric data
 fclose(fid);
 
@@ -27,10 +42,10 @@ hold off;
 % Add labels and title
 xlabel('Neural position');
 ylabel('Activation');
-title('per-dec perceptual field Plot');
+title('per-out perceptual field Plot');
 
 % Read the file
-fid = fopen(filename_decision, 'r');
+fid = fopen(outputFieldFile, 'r');
 data = textscan(fid, '%f');  % Read the numeric data
 fclose(fid);
 
@@ -50,25 +65,3 @@ hold off;
 xlabel('Neural position');
 ylabel('Activation');
 title('per-dec decision field Plot');
-
-
-%% matrix
-
-% Load data from the file
-data = load('per - dec_weights.txt');
-
-% Create a grid of coordinates using meshgrid
-[longitude, latitude] = meshgrid(1:28, 1:360);
-
-% Create a 3D surface plot using surf
-figure;
-surf(longitude, latitude, data);
-
-% Add labels and title
-xlabel('Longitude');
-ylabel('Latitude');
-zlabel('Data Value');
-title('3D Plot of Data');
-
-% Adjust the view for better visualization
-view(45, 30);  % You can adjust the view angle as needed

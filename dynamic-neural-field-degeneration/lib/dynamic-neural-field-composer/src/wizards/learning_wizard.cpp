@@ -125,6 +125,7 @@ namespace dnf_composer
         }
     }
 
+    // this generates a weighted matrix WITHOUT 0 value weights
     std::vector<double> LearningWizard::normalizeFieldActivation(std::vector<double>& vec, const double& restingLevel)
     {
         // this removes the resting level
@@ -132,11 +133,11 @@ namespace dnf_composer
         //for (double& val : vec)
         //    val += restingLevel;
 
-        for (double& val : vec)
-            if (val < 0.01)
-                val = 0;
+        //for (double& val : vec)
+        //    if (val < 0.01)
+        //        val = 0;
 
-        constexpr int safetyFactor = 0;
+        constexpr int safetyFactor = 1;
         // Find the minimum and maximum values in the vector
         const double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
         const double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
@@ -147,7 +148,7 @@ namespace dnf_composer
         {
             if (val != 0.0)
             {
-                //double normalized_val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+                //val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
                 val = (val - minVal) / (maxVal - minVal);
             }
 
@@ -156,6 +157,40 @@ namespace dnf_composer
 
         return normalizedVec;
     }
+
+    // this generates a weighted matrix WITH 0 value weights
+    //std::vector<double> LearningWizard::normalizeFieldActivation(std::vector<double>& vec, const double& restingLevel)
+    //{
+    //    // this removes the resting level
+    //    // the code works without this  
+    //    //for (double& val : vec)
+    //    //    val += restingLevel;
+
+    //    for (double& val : vec)
+    //        if (val < 0.01)
+    //            val = 0;
+
+    //    constexpr int safetyFactor = 0;
+    //    // Find the minimum and maximum values in the vector
+    //    const double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
+    //    const double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;
+
+    //    // Normalize the vector
+    //    std::vector<double> normalizedVec;
+    //    for (double& val : vec)
+    //    {
+    //        if (val != 0.0)
+    //        {
+    //            //val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+    //            val = (val - minVal) / (maxVal - minVal);
+    //        }
+
+    //        normalizedVec.push_back(val);
+    //    }
+
+    //    return normalizedVec;
+    //}
+
 
     void LearningWizard::saveFieldActivation(const std::vector<double>* fieldActivation, const std::string& filename)
     {

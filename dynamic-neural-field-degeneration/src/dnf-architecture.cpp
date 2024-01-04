@@ -1,6 +1,8 @@
 
 #include "../include/dnf-architecture.h"
 
+#include "wizards/learning_wizard.h"
+
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
@@ -78,11 +80,11 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	//perceptual_field->addInput(gauss_stimulus);
 
 	//set up the field coupling wizard
-	//FieldCouplingWizard fcpw{ simulation, "per - dec" };
+	//dnf_composer::LearningWizard fcpw{ simulation, "per - dec" };
 
 	////// add gaussian inputs
 	//double offset = 1.0;
-	//GaussStimulusParameters gsp = { 3, 25, 20 };
+	//dnf_composer::element::GaussStimulusParameters gsp = { 3, 25, 20 };
 
 	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	//{

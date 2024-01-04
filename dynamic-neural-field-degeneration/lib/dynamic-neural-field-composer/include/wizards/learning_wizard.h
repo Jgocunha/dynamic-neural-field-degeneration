@@ -5,6 +5,7 @@
 #include "./elements/field_coupling.h"
 #include "./elements/gauss_stimulus.h"
 #include "utilities/utilities.h"
+#include "logging/logger.h"
 
 
 namespace dnf_composer
