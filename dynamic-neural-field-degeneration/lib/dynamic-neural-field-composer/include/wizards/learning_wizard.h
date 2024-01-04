@@ -4,6 +4,8 @@
 #include "./elements/neural_field.h"
 #include "./elements/field_coupling.h"
 #include "./elements/gauss_stimulus.h"
+#include "elements/gauss_kernel.h"
+
 #include "utilities/utilities.h"
 #include "logging/logger.h"
 

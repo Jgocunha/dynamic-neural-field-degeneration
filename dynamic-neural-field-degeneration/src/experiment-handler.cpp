@@ -12,21 +12,21 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 
  void ExperimentHandler::printExperimentSetupToConsole() const
 {
-	std::cout << "Starting the experiment." << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Data saving is " << (params.isDataSavingOn ? "on" : "off") << std::endl;
-	std::cout << "Debug mode is " << (params.isDebugModeOn ? "on" : "off") << std::endl;
-	std::cout << "Visualization is " << (params.isVisualisationOn ? "on" : "off") << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Number of trials: " << params.numberOfTrials << std::endl;
-	std::cout << "Decision tolerance: " << params.decisionTolerance << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Degeneracy type: " << params.degeneracyName << std::endl;
-	std::cout << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
-	std::cout << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "----------------------------------------" << std::endl << std::endl;
+	 std::ostringstream logStream;
 
+	logStream << "Starting the experiment." << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Data saving is " << (params.isDataSavingOn ? "on" : "off") << std::endl;
+	logStream << "Debug mode is " << (params.isDebugModeOn ? "on" : "off") << std::endl;
+	logStream << "Visualization is " << (params.isVisualisationOn ? "on" : "off") << std::endl;
+	logStream << "Number of trials: " << params.numberOfTrials << std::endl;
+	logStream << "Decision tolerance: " << params.decisionTolerance << std::endl;
+	logStream << "Degeneracy type: " << params.degeneracyName << std::endl;
+	logStream << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
+	logStream << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+
+	 log(dnf_composer::LogLevel::INFO, logStream.str());
 	//if (params.isDebugModeOn)
 	//{
 	//	const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid) + '\n';
@@ -77,7 +77,7 @@ void ExperimentHandler::step()
 		for(int i = 0; i < params.numberOfTrials; i++)
 		{
 			if (params.isDebugModeOn)
-				std::cout << "Trial: " << i << std::endl;
+				dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(i) + '\n');
 			dnfcomposerHandler.setTrial(i);
 
 			setupProcedure();
@@ -101,6 +101,9 @@ void ExperimentHandler::setupProcedure()
 	// add and remove stimulus and wait for the fields to settle
 	dnfcomposerHandler.setExternalInput(data.targetInputFieldCentroid);
 
+	if (params.isDebugModeOn)
+		dnf_composer::log(dnf_composer::INFO, "Added gaussian stimulus to perceptual field.\n");
+
 	while (!dnfcomposerHandler.getHaveFieldsSettled());
 	dnfcomposerHandler.setHaveFieldsSettled(false);
 }
@@ -120,6 +123,8 @@ void ExperimentHandler::degenerationProcedure()
 
 		// apply degeneration and wait for the fields to settle
 		dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
+		if (params.isDebugModeOn)
+			dnf_composer::log(dnf_composer::INFO, "Degenerated an element. Total elements degenerated: " + std::to_string(data.outputFieldCentroidHistory.size()) + ".\n");
 
 		while (!dnfcomposerHandler.getHaveFieldsSettled());
 
@@ -134,6 +139,7 @@ void ExperimentHandler::degenerationProcedure()
 
 void ExperimentHandler::cleanUpTrial()
 {
+	dnf_composer::log(dnf_composer::INFO, "A trial has finished.\n");
 	if (params.isDataSavingOn)
 		saveOutputFieldCentroidToFile();
 	Sleep(20);
@@ -168,7 +174,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 	{
 		if (params.isDebugModeOn)
 		{
-			const std::string message = "Failed to open the file for writing " + filename;
+			const std::string message = "Failed to open the file for writing " + filename + '\n';
 			dnf_composer::log(dnf_composer::LogLevel::FATAL, message);
 		}
 	}
@@ -181,7 +187,7 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 
 	if (params.isDebugModeOn)
 	{
-		const std::string message = "New centroids appended to " + filename;
+		const std::string message = "New centroids appended to " + filename + '\n';
 		dnf_composer::log(dnf_composer::LogLevel::INFO, message);
 	}
 }

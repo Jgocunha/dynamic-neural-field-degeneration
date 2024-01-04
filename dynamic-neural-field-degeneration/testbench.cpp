@@ -21,46 +21,61 @@ int main(int argc, char* argv[])
 		// After creating the application, we can add the windows we want to display.
 		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::SimulationWindow>(simulation));
 		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::LoggerWindow>());
-		dnf_composer::user_interface::PlotParameters plotParameters;
-		plotParameters.annotations = { "Plot title", "Spatial dimension", "Amplitude" };
-		plotParameters.dimensions = { 0, 360, -30, 40 };
-		const std::shared_ptr<dnf_composer::Visualization> visualization_1 = std::make_shared<dnf_composer::Visualization>(simulation);
-		visualization_1->addPlottingData("perceptual field", "activation");
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization_1, plotParameters));
-		plotParameters.annotations = { "Plot title", "Spatial dimension", "Amplitude" };
-		plotParameters.dimensions = { 0, 28, -30, 40 };
-		const std::shared_ptr<dnf_composer::Visualization> visualization_2 = std::make_shared<dnf_composer::Visualization>(simulation);
-		visualization_2->addPlottingData("output field", "activation");
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization_2, plotParameters));
+
+		std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+		visualization->addPlottingData("perceptual field", "activation");
+		visualization->addPlottingData("perceptual field", "output");
+		visualization->addPlottingData("per - per", "output");
+
+		dnf_composer::user_interface::PlotParameters pp;
+		pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
+		pp.dimensions = { 0, 720, -30, 30 };
+		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+		visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+		visualization->addPlottingData("output field", "activation");
+		visualization->addPlottingData("output field", "output");
+		visualization->addPlottingData("out - out", "output");
+		visualization->addPlottingData("per - out", "output");
+
+		pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
+		pp.dimensions = { 0, 280, -20, 20 };
+		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+		//return 0;
 
 		app.init();
 
-		constexpr dnf_composer::element::GaussStimulusParameters gcp_a = { 3, 15, 0 + 1.0 };
-		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus", 360 }, gcp_a));
+		constexpr int simTime = 200;
+
+		constexpr dnf_composer::element::GaussStimulusParameters gcp_a = { 25, 25, 0 + 1.0 };
+		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus",{360, 0.5} }, gcp_a));
 
 		simulation->addElement(gauss_stimulus);
 		simulation->createInteraction("gauss stimulus", "output", "perceptual field");
 
-		for(int i = 0; i < 100; i++)
+		for (int i = 0; i < simTime; i++)
 			app.step();
 
 		simulation->removeElement("gauss stimulus");
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < simTime; i++)
 			app.step();
 
-		constexpr dnf_composer::element::GaussStimulusParameters gcp_b = { 3, 25, 274.15 + 1.0 };
-		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus_b(new dnf_composer::element::GaussStimulus({ "gauss stimulus b", 360 }, gcp_b));
+		constexpr dnf_composer::element::GaussStimulusParameters gcp_b = { 25, 30, 274.15 + 1.0 };
+		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus_b(new dnf_composer::element::GaussStimulus({ "gauss stimulus b", {360, 0.5} }, gcp_b));
 		simulation->addElement(gauss_stimulus_b);
 		simulation->createInteraction("gauss stimulus b", "output", "perceptual field");
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < simTime; i++)
 			app.step();
 
 		simulation->removeElement("gauss stimulus b");
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < simTime; i++)
 			app.step();
+
+		simulation->removeElement("perceptual field");
 
 		bool userRequestClose = false;
 		while (!userRequestClose)

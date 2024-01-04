@@ -1,6 +1,7 @@
 #include "./wizards/learning_wizard.h"
 
 
+
 namespace dnf_composer
 {
     LearningWizard::LearningWizard(const std::shared_ptr<Simulation>& simulation, const std::string& fieldCouplingUniqueId)
@@ -46,6 +47,12 @@ namespace dnf_composer
             // Create Gaussian stimuli in the input field
             for (int j = 0; j < static_cast<int>(targetPeakLocationsForNeuralFieldPre[i].size()); j++)
             {
+                static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("per - per"));
+                static auto kernel_width = kernel->getParameters().sigma;
+                static auto kernel_amplitude = kernel->getParameters().amplitude;
+                gaussStimulusParameters.amplitude = kernel_amplitude;
+                gaussStimulusParameters.sigma = kernel_width;
+
                 const std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
             	const element::ElementIdentifiers stimulusIdentifiers{ stimulusName };
 
@@ -67,6 +74,12 @@ namespace dnf_composer
             // Create Gaussian stimuli in the output field
             for (int j = 0; j < targetPeakLocationsForNeuralFieldPost[i].size(); j++)
             {
+                static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("out - out"));
+                static auto kernel_width = kernel->getParameters().sigma;
+                static auto kernel_amplitude = kernel->getParameters().amplitude;
+                gaussStimulusParameters.amplitude = kernel_amplitude;
+                gaussStimulusParameters.sigma = kernel_width;
+
                 const std::string stimulusName = "Output Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
                 const element::ElementIdentifiers stimulusIdentifiers{ stimulusName };
 
