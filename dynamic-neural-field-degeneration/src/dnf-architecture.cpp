@@ -13,7 +13,8 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{28, 0.1};
 
 	// create neural field
-	const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
+	//const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
+	const dnf_composer::element::SigmoidFunction activationFunction{0.0, 10.0};
 	const dnf_composer::element::NeuralFieldParameters nfp1 = { 25, -12 , activationFunction };
 	const dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -15 , activationFunction };
 	const std::shared_ptr<dnf_composer::element::DegenerateNeuralField> perceptual_field
@@ -26,16 +27,16 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create interactions and add them to the simulation
 	dnf_composer::element::GaussKernelParameters gkp1;
-	gkp1.amplitude = 45;  // self-sustained (without input)
+	gkp1.amplitude = 40;  // self-sustained (without input)
 	gkp1.sigma = 5;
-	gkp1.amplitudeGlobal = -1.0;
+	gkp1.amplitudeGlobal = -0.5;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_per_per
 		(new dnf_composer::element::GaussKernel({ "per - per", perceptualFieldSpatialDimensions }, gkp1)); // self-excitation u-u
 	simulation->addElement(k_per_per);
 
 
 	dnf_composer::element::GaussKernelParameters gkp2;
-	gkp2.amplitude = 35;  // self-stabilized (with input)
+	gkp2.amplitude = 15;  // self-stabilized (with input)
 	gkp2.sigma = 2;
 	gkp2.amplitudeGlobal = -0.3;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
