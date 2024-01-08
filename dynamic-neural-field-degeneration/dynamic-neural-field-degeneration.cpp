@@ -84,8 +84,8 @@ int main()
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
-        params.isDataSavingOn = true;
-        params.isComposerVisualizationOn = false;
+        params.isDataSavingOn = false;
+        params.isComposerVisualizationOn = true;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
 
