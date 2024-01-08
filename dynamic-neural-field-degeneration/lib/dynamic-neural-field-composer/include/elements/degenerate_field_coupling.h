@@ -17,6 +17,7 @@ namespace dnf_composer
 			double minWeightValue = 0;
 			double maxWeightValue = 0;
 			double weightReductionFactor = 0.2;
+			int numWeightsToDegenerate = 100;
 		public:
 			DegenerateFieldCoupling(const ElementCommonParameters& elementCommonParameters, const FieldCouplingParameters& parameters);
 
@@ -27,8 +28,9 @@ namespace dnf_composer
 			void applyDegeneracy();
 
 			void setWeightReductionFactor(const double& factor);
-			void setDegeneracyType(element::ElementDegeneracyType degeneracyType);
-			element::ElementDegeneracyType getDegeneracyType();
+			void setDegeneracyType(ElementDegeneracyType degeneracyType);
+			void setNumWeightsToDegenerate(const int& numWeightsToDegenerate);
+			ElementDegeneracyType getDegeneracyType() const;
 			void updateWeights(const std::vector<double> input, const std::vector<double> output);
 		private:
 			void populateIndicesForDegeneration();
@@ -41,7 +43,7 @@ namespace dnf_composer
 			void setRandomUniqueWeightToRandomValue();
 
 			std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-				const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
+				const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const;
 		};
 	}
 }

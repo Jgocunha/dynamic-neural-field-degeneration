@@ -52,18 +52,24 @@ namespace dnf_composer
 			degenerate = true;
 		}
 
+		void DegenerateNeuralField::setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate)
+		{
+			this->numNeuronsToDegenerate = numNeuronsToDegenerate;
+		}
+
 		void DegenerateNeuralField::applyDegeneracy()
 		{
-			double percentage = 0.01; // 1 percent
-			double numNeuronsToDegenerate = commonParameters.dimensionParameters.size * percentage;
+			//double percentage = 0.01; // 1 percent
+			//double numNeuronsToDegenerate = commonParameters.dimensionParameters.size * percentage;
 
 			switch (degeneracyType)
 			{
-			case element::ElementDegeneracyType::NEURONS_DEACTIVATE:
-				setRandomUniqueNeuronToZero();
+			case ElementDegeneracyType::NEURONS_DEACTIVATE:
+				for (int i = 0; i < numNeuronsToDegenerate; i++)
+					setRandomUniqueNeuronToZero();
 				degenerate = false;
 				break;
-			case element::ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
+			case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
 				while (numNeuronsToDegenerate > 0)
 				{
 					setRandomUniqueNeuronToZero();

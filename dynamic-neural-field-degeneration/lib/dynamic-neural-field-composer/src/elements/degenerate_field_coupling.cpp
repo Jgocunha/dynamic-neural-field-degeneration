@@ -37,42 +37,45 @@ namespace dnf_composer
 			writeWeights();
 		}
 
+		void DegenerateFieldCoupling::setNumWeightsToDegenerate(const int& numWeightsToDegenerate)
+		{
+			this->numWeightsToDegenerate = numWeightsToDegenerate;
+		}
+
+
 		void DegenerateFieldCoupling::applyDegeneracy()
 		{
-			double percentage = 0.1; // 1 percent
-			//double numWeightsToDegenerate = (components["output"].size() * components["input"].size()) * percentage;
-			constexpr double numWeightsToDegenerate = 10;
 			switch (degeneracyType)
 			{
-			case element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+			case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 				for (int i = 0; i < numWeightsToDegenerate; i++)
 					setRandomUniqueWeightToZero();
 				degenerate = false;
 				break;
-			case element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+			case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 				for (int i = 0; i < numWeightsToDegenerate; i++)
 					//setRandomWeightToRandomValue();
 					setRandomUniqueWeightToRandomValue();
 				degenerate = false;
 				break;
-			case element::ElementDegeneracyType::WEIGHTS_REDUCE:
+			case ElementDegeneracyType::WEIGHTS_REDUCE:
 				for (int i = 0; i < numWeightsToDegenerate; i++)
 					//setRandomWeightToReduceValue();
 					setRandomUniqueWeightToReduceValue();
 				degenerate = false;
 				break;
 			default:
-				//std::cout << "Degeneracy type not supported" << std::endl;
+				log(ERROR_, "Degeneracy type not supported");
 				break;
 			}
 		}
 
-		void DegenerateFieldCoupling::setDegeneracyType(element::ElementDegeneracyType degeneracyType)
+		void DegenerateFieldCoupling::setDegeneracyType(ElementDegeneracyType degeneracyType)
 		{
 			this->degeneracyType = degeneracyType;
 		}
 
-		element::ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
+		ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType() const
 		{
 			return degeneracyType;
 		}
@@ -190,15 +193,12 @@ namespace dnf_composer
 
 		void DegenerateFieldCoupling::setRandomUniqueWeightToReduceValue()
 		{
-			// Initialize the maximum number of attempts to find unique combinations
-			static int maxAttempts = components["output"].size() * components["input"].size();
-
 			bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
 
 			// Loop until a unique combination is found or indicesForDegeneration is empty
 			while (!uniqueCombinationFound && !indicesForDegeneration.empty())
 			{
-				int size = indicesForDegeneration.size() - 1;
+				int size = static_cast<int>(indicesForDegeneration.size()) - 1;
 				// Get a random iterator from the set
 				auto randomIterator = std::next(indicesForDegeneration.begin(), utilities::generateRandomNumber(0, size));
 
@@ -231,15 +231,12 @@ namespace dnf_composer
 
 		void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 		{
-			// Initialize the maximum number of attempts to find unique combinations
-			static int maxAttempts = components["output"].size() * components["input"].size();
-
 			bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
 
 			// Loop until a unique combination is found or indicesForDegeneration is empty
 			while (!uniqueCombinationFound && !indicesForDegeneration.empty())
 			{
-				int size = indicesForDegeneration.size() - 1;
+				int size = static_cast<int>(indicesForDegeneration.size()) - 1;
 				// Get a random iterator from the set
 				auto randomIterator = std::next(indicesForDegeneration.begin(), utilities::generateRandomNumber(0, size));
 
@@ -256,12 +253,12 @@ namespace dnf_composer
 				weights[row_idx][col_idx] = 0;
 
 				uniqueCombinationFound = true; // Set flag to indicate combination found
-				//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+				std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
 			}
 
 			if (indicesForDegeneration.empty())
 			{
-				//std::cout << "No more unique combinations to degenerate" << std::endl;
+				std::cout << "No more unique combinations to degenerate" << std::endl;
 			}
 			/*else
 			{
@@ -347,15 +344,15 @@ namespace dnf_composer
 		//}
 
 		std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-			const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate)
+			const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const
 		{
 
 			double deltaT = 1.0;
 			double tau_w = 5.0;
 			double eta = 0.5;
 
-			size_t inputSize = input.size();
-			size_t outputSize = targetOutput.size(); //fixed from int to size_t
+			const size_t inputSize = input.size();
+			const size_t outputSize = targetOutput.size(); //fixed from int to size_t
 
 			// Calculate the activation levels of the fields based on the input values and current weights
 			std::vector<double> actualOutput(outputSize, 0.0);

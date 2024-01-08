@@ -43,6 +43,7 @@ private:
 	SimulationParameters simulationParameters;
 
 	int numberOfDegeneratedElements = 0;
+	int numberOfElementsToDegenerate = 0;
 
 	bool wasIntializationRequested = false;
 	bool wasExternalInputUpdated = false;
@@ -74,6 +75,7 @@ public:
 	void setHaveFieldsSettled(bool haveFieldsSettled);
 	void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
 	void setCentroidDataBeingAccessed(bool isCentroidDataBeingAccessed);
+	void setNumberOfElementsToDegenerate(const int& numberOfElementsToDegenerate);
 
 	double getInputFieldCentroid() const;
 	double getOutputFieldCentroid() const;

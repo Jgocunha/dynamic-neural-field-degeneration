@@ -22,6 +22,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	logStream << "Number of trials: " << params.numberOfTrials << std::endl;
 	logStream << "Decision tolerance: " << params.decisionTolerance << std::endl;
 	logStream << "Degeneracy type: " << params.degeneracyName << std::endl;
+	logStream << "Number of elements to degenerate: " << params.numberOfElementsToDegenerate << std::endl;
 	logStream << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
 	logStream << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
 	logStream << "----------------------------------------" << std::endl;
@@ -34,9 +35,10 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	//}
 }
 
- void ExperimentHandler::setExperimentSetupData() const
+ void ExperimentHandler::setExperimentSetupData()
  {
-	 dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
+	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
+	dnfcomposerHandler.setNumberOfElementsToDegenerate(params.numberOfElementsToDegenerate);
  }
 
  void ExperimentHandler::setExpectedFieldBehaviour()
@@ -124,7 +126,7 @@ void ExperimentHandler::degenerationProcedure()
 		// apply degeneration and wait for the fields to settle
 		dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
 		if (params.isDebugModeOn)
-			dnf_composer::log(dnf_composer::INFO, "Degenerated an element. Total elements degenerated: " + std::to_string(data.outputFieldCentroidHistory.size()) + ".\n");
+			dnf_composer::log(dnf_composer::INFO, "Degeneration step number: " + std::to_string(data.outputFieldCentroidHistory.size()) + ".\n");
 
 		while (!dnfcomposerHandler.getHaveFieldsSettled());
 

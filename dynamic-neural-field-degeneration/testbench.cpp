@@ -49,10 +49,10 @@ int main(int argc, char* argv[])
 		constexpr int simTime = 200;
 
 		constexpr dnf_composer::element::GaussStimulusParameters gcp_a = { 25, 25, 0 + 1.0 };
-		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus",{360, 0.5} }, gcp_a));
+		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus",{28, 0.1} }, gcp_a));
 
 		simulation->addElement(gauss_stimulus);
-		simulation->createInteraction("gauss stimulus", "output", "perceptual field");
+		simulation->createInteraction("gauss stimulus", "output", "output field");
 
 		for (int i = 0; i < simTime; i++)
 			app.step();
@@ -63,9 +63,9 @@ int main(int argc, char* argv[])
 			app.step();
 
 		constexpr dnf_composer::element::GaussStimulusParameters gcp_b = { 25, 30, 274.15 + 1.0 };
-		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus_b(new dnf_composer::element::GaussStimulus({ "gauss stimulus b", {360, 0.5} }, gcp_b));
+		std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus_b(new dnf_composer::element::GaussStimulus({ "gauss stimulus b", {28, 0.1} }, gcp_b));
 		simulation->addElement(gauss_stimulus_b);
-		simulation->createInteraction("gauss stimulus b", "output", "perceptual field");
+		simulation->createInteraction("gauss stimulus b", "output", "output field");
 
 		for (int i = 0; i < simTime; i++)
 			app.step();

@@ -146,9 +146,9 @@ namespace dnf_composer
         //for (double& val : vec)
         //    val += restingLevel;
 
-        //for (double& val : vec)
-        //    if (val < 0.01)
-        //        val = 0;
+        for (double& val : vec)
+            if (val < 0.01)
+                val = 0;
 
         constexpr int safetyFactor = 1;
         // Find the minimum and maximum values in the vector

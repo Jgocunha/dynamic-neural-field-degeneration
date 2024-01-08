@@ -87,6 +87,13 @@ void DnfcomposerHandler::setDegeneracy(dnf_composer::element::ElementDegeneracyT
 	wasDegenerationRequested = true;
 }
 
+void DnfcomposerHandler::setNumberOfElementsToDegenerate(const int& numberOfElementsToDegenerate)
+{
+	this->numberOfElementsToDegenerate = numberOfElementsToDegenerate;
+	simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElementsToDegenerate);
+	simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElementsToDegenerate);
+}
+
 void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType, 
 	const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const
 {
@@ -259,13 +266,13 @@ void DnfcomposerHandler::activateDegeneration()
 	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if(simulationParameters.fieldToDegenerate == "perceptual")
 		{
-			numberOfDegeneratedElements = numberOfDegeneratedElements + 1;
+			numberOfDegeneratedElements = numberOfDegeneratedElements + numberOfElementsToDegenerate;
 			simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.inputField->startDegeneration();
 		}
 		else
 		{
-			numberOfDegeneratedElements = numberOfDegeneratedElements + 1;
+			numberOfDegeneratedElements = numberOfDegeneratedElements + numberOfElementsToDegenerate;
 			simulationElements.outputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.outputField->startDegeneration();
 		}
@@ -275,7 +282,7 @@ void DnfcomposerHandler::activateDegeneration()
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		numberOfDegeneratedElements = numberOfDegeneratedElements + 10;
+		numberOfDegeneratedElements = numberOfDegeneratedElements + numberOfElementsToDegenerate;
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
 		if (simulationParameters.isDebugMode)

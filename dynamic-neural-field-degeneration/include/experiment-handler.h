@@ -24,6 +24,7 @@ struct ExperimentParameters
 	int initialPercentageOfDegeneration = 0;
 	int targetPercentageOfDegeneration = 100;
 	int currentPercentageOfDegeneration = 0;
+	int numberOfElementsToDegenerate = 0;
 
 	bool isDataSavingOn = false;
 	bool isVisualisationOn = true;
@@ -70,7 +71,7 @@ public:
 
 private:
 	void printExperimentSetupToConsole() const;
-	void setExperimentSetupData() const;
+	void setExperimentSetupData();
 	void setExpectedFieldBehaviour();
 	void setExperimentAsEnded();
 

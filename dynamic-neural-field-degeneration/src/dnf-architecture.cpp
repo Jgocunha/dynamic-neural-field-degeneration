@@ -3,6 +3,8 @@
 
 #include "wizards/learning_wizard.h"
 
+constexpr bool trainWeights = false;
+
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
@@ -16,7 +18,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	//const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
 	const dnf_composer::element::SigmoidFunction activationFunction{0.0, 10000.0};
 	const dnf_composer::element::NeuralFieldParameters nfp1 = { 25, -5 , activationFunction };
-	const dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -10 , activationFunction };
+	const dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -5 , activationFunction };
 	const std::shared_ptr<dnf_composer::element::DegenerateNeuralField> perceptual_field
 		(new dnf_composer::element::DegenerateNeuralField({ "perceptual field", perceptualFieldSpatialDimensions}, nfp1));
 	const std::shared_ptr<dnf_composer::element::DegenerateNeuralField> output_field
@@ -36,16 +38,16 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 
 	dnf_composer::element::GaussKernelParameters gkp2;
-	gkp2.amplitude = 20;  // self-stabilized (with input)
-	gkp2.sigma = 4;
-	gkp2.amplitudeGlobal = -0.3;
+	gkp2.amplitude = 15;  // self-stabilized (with input)
+	gkp2.sigma = 15;
+	gkp2.amplitudeGlobal = -0.08;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
 		(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
 
 	dnf_composer::element::FieldCouplingParameters fcp;
 	fcp.inputFieldSize = perceptualFieldSpatialDimensions.size;
-	fcp.scalar = 0.35;
+	fcp.scalar = 0.4;
 	fcp.learningRate = 0.01;
 	fcp.learningRule = dnf_composer::LearningRule::DELTA_KROGH_HERTZ;
 	const std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> w_per_out(
@@ -88,42 +90,45 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	//simulation->addElement(gauss_stimulus);
 	//perceptual_field->addInput(gauss_stimulus);
 
-	////set up the field coupling wizard
-	//dnf_composer::LearningWizard fcpw{ simulation, "per - out" };
+	if(trainWeights)
+	{
+		//set up the field coupling wizard
+		dnf_composer::LearningWizard fcpw{ simulation, "per - out" };
 
-	// add gaussian inputs
-	//constexpr double offset = 1.0;
-	//const double kernel_width = k_per_per->getParameters().sigma;
-	//const double kernel_amplitude = k_per_per->getParameters().amplitude;
-	////dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 0 };
-	////fcpw.setGaussStimulusParameters(gsp);
+		// add gaussian inputs
+		constexpr double offset = 1.0;
+		const double kernel_width = k_per_per->getParameters().sigma;
+		const double kernel_amplitude = k_per_per->getParameters().amplitude;
+		//dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 0 };
+		//fcpw.setGaussStimulusParameters(gsp);
 
-	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-	//{
-	//	{ 00.00 + offset }, // red
-	//	{ 41.00 + offset }, // orange
-	//	{ 60.00 + offset }, // yellow
-	//	{ 120.00 + offset }, // green
-	//	{ 240.00 + offset }, // blue
-	//	{ 274.00 + offset }, // indigo
-	//	{ 300.00 + offset } // violet
-	//};
-	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	//{
-	//	{ 2.00 + offset },
-	//	{ 6.00 + offset },
-	//	{ 10.00 + offset },
-	//	{ 14.00 + offset },
-	//	{ 18.00 + offset },
-	//	{ 22.00 + offset },
-	//	{ 26.00 + offset }
-	//};
+		std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+		{
+			{ 00.00 + offset }, // red
+			{ 41.00 + offset }, // orange
+			{ 60.00 + offset }, // yellow
+			{ 120.00 + offset }, // green
+			{ 240.00 + offset }, // blue
+			{ 274.00 + offset }, // indigo
+			{ 300.00 + offset } // violet
+		};
+		std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+		{
+			{ 2.00 + offset },
+			{ 6.00 + offset },
+			{ 10.00 + offset },
+			{ 14.00 + offset },
+			{ 18.00 + offset },
+			{ 22.00 + offset },
+			{ 26.00 + offset }
+		};
 
-	//fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	//fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-	//fcpw.simulateAssociation();
-	//fcpw.trainWeights(500);
-	//fcpw.saveWeights();
+		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+		fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+		fcpw.simulateAssociation();
+		fcpw.trainWeights(500);
+		fcpw.saveWeights();
+	}
 
 	return simulation;
 }
