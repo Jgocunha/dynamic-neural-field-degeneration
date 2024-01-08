@@ -20,11 +20,11 @@ ExperimentParameters inputUserParameters()
             << "3 for WEIGHTS_DEACTIVATE): ";
         int degeneracyTypeInput;
         std::cin >> degeneracyTypeInput;
-        params.degeneracyType = static_cast<ElementDegeneracyType>(degeneracyTypeInput);
+        params.degeneracyType = static_cast<dnf_composer::element::ElementDegeneracyType>(degeneracyTypeInput);
 
         if (degeneracyTypeInput == 1)
         {
-            std::cout << "Enter field to degenerate (perceptual/decision): ";
+            std::cout << "Enter field to degenerate (perceptual/output): ";
             std::cin >> params.fieldToDegenerate;
         }
         else
@@ -58,8 +58,8 @@ ExperimentParameters inputUserParameters()
     else
     {
         params.numberOfTrials = 20;
-        params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "decision";
+        params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.fieldToDegenerate = "output";
         params.initialPercentageOfDegeneration = 10;
         params.incrementOfDegenerationPercentage = 3.6;
         params.numberOfRelearningEpochs = 1;
@@ -96,17 +96,20 @@ int main()
 
         return 0;
     }
-    catch (const Exception& ex) {
-        std::cerr << "Exception: " << ex.what() << " ErrorCode: " << static_cast<int>(ex.getErrorCode()) << std::endl;
+    catch (const dnf_composer::Exception& ex)
+    {
+        const std::string errorMessage = "Exception: " + std::string(ex.what()) + " ErrorCode: " + std::to_string(static_cast<int>(ex.getErrorCode())) + ". \n";
+        log(dnf_composer::LogLevel::FATAL, errorMessage, dnf_composer::LogOutputMode::CONSOLE);
         return static_cast<int>(ex.getErrorCode());
     }
-    catch (const std::exception& ex) {
-        std::cerr << "Exception caught: " << ex.what() << std::endl;
+    catch (const std::exception& ex)
+    {
+        log(dnf_composer::LogLevel::FATAL, "Exception caught: " + std::string(ex.what()) + ". \n", dnf_composer::LogOutputMode::CONSOLE);
         return 1;
     }
     catch (...)
     {
-        std::cerr << "Unknown exception occurred." << std::endl;
+        log(dnf_composer::LogLevel::FATAL, "Unknown exception occurred. \n", dnf_composer::LogOutputMode::CONSOLE);
         return 1;
     }
 }

@@ -1,110 +1,82 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "elements/gauss_stimulus.h"
 
-GaussStimulus::GaussStimulus(std::string id, const int& size, const GaussStimulusParameters& parameters)
-	: parameters(parameters)
+namespace dnf_composer
 {
-	// Assert that the size is positive
-	assert(size > 0);
-
-	if (parameters.position < 0 || parameters.position >= size)
-		throw Exception(ErrorCode::GAUSS_STIMULUS_POSITION_OUT_OF_RANGE, id);
-
-	this->label = ElementLabel::GAUSS_STIMULUS;
-	this->uniqueIdentifier = id;
-	this->size = size;
-	components["output"] = std::vector<double>(size);
-	this->parameters.circular = true;
-	this->parameters.normalized = false;
-}
-
-void GaussStimulus::init()
-{
-	std::vector<double> g(size);
-
-	if (parameters.circular)
-		g = mathtools::circularGauss(size, parameters.sigma, parameters.position);
-	else
-		std::cout << "Not implemented yet" << std::endl;
-
-	if(!parameters.normalized)
-		for (int i = 0; i < size; i++)
-			components["output"][i] = parameters.amplitude * g[i];
-	else
-		std::cout << "Not implemented yet" << std::endl;
-
-	// if stimulus is being used as a sum of stimulus
-	components["input"] = std::vector<double>(size);
-	updateInput();
-	for (int i = 0; i < size; i++)
-		components["output"][i] += components["input"][i];
-}
-
-void GaussStimulus::step(const double& t, const double& deltaT)
-{
-}
-
-void GaussStimulus::close()
-{
-}
-
-void GaussStimulus::setParameters(const GaussStimulusParameters& parameters)
-{
-	this->parameters = parameters;
-	init();
-}
-
-GaussStimulusParameters GaussStimulus::getParameters()
-{
-	return parameters;
-}
-
-GaussStimulus GaussStimulus::operator+(const GaussStimulus& other) const
-{
-	GaussStimulus result(*this); // Create a copy of the current object
-	if (components.count("output") > 0 && other.components.count("output") > 0)
+	namespace element
 	{
-		const std::vector<double> output = other.components.at("output"); // Get the output vector from the other object
-		std::vector<double> resultOutput = result.components["output"]; // Get the output vector from the result object
-		if (output.size() == resultOutput.size())
+		GaussStimulus::GaussStimulus(const ElementCommonParameters& elementCommonParameters, const GaussStimulusParameters& parameters)
+			: Element(elementCommonParameters), parameters(parameters)
 		{
-			// Sum the output vectors element-wise
-			for (size_t i = 0; i < resultOutput.size(); i++)
-			{
-				resultOutput[i] += output[i];
-			}
+			if (parameters.position < 0 || parameters.position >= elementCommonParameters.dimensionParameters.x_max)
+				throw Exception(ErrorCode::GAUSS_STIMULUS_POSITION_OUT_OF_RANGE, elementCommonParameters.identifiers.uniqueName);
+
+			this->commonParameters.identifiers.label = ElementLabel::GAUSS_STIMULUS;
 		}
-		else
-			throw Exception(ErrorCode::GAUSS_STIMULUS_SUM_MISMATCH, other.uniqueIdentifier);
-	}
 
-	return result;
-}
-
-
-std::shared_ptr<GaussStimulus> GaussStimulus::operator+(const std::shared_ptr<GaussStimulus>& other) const
-{
-	std::shared_ptr<GaussStimulus> result = std::make_shared<GaussStimulus>(*this); // Create a copy of the current object
-	if (components.count("output") > 0 && other->components.count("output") > 0)
-	{
-		const std::vector<double>& output = other->components.at("output"); // Get the output vector from the other object
-		std::vector<double>& resultOutput = result->components["output"]; // Get the output vector from the result object
-		if (output.size() == resultOutput.size())
+		void GaussStimulus::init()
 		{
-			// Sum the output vectors element-wise
-			for (size_t i = 0; i < resultOutput.size(); i++)
+			std::vector<double> g(commonParameters.dimensionParameters.size);
+
+			if (parameters.circular)
+				g = mathtools::circularGauss(commonParameters.dimensionParameters.size, parameters.sigma, parameters.position/commonParameters.dimensionParameters.d_x);
+			else
 			{
-				resultOutput[i] += output[i];
+				const std::string message = "Tried to initialize a non-circular Gaussian stimulus '" + this->getUniqueName() + "'. That is not supported yet. \n";
+				log(LogLevel::ERROR_, message);
 			}
+
+			if (!parameters.normalized)
+				for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
+					components["output"][i] = parameters.amplitude * g[i];
+			else
+			{
+				const std::string message = "Tried to initialize a normalized Gaussian stimulus '" + this->getUniqueName() + "'. That is not supported yet. \n";
+				log(LogLevel::ERROR_, message);
+			}
+
+			components["input"] = std::vector<double>(commonParameters.dimensionParameters.size);
+			updateInput();
+			for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
+				components["output"][i] += components["input"][i];
 		}
-		else
-			throw Exception(ErrorCode::GAUSS_STIMULUS_SUM_MISMATCH, other->uniqueIdentifier);
+
+		void GaussStimulus::step(double t, double deltaT)
+		{
+		}
+
+		void GaussStimulus::close()
+		{
+		}
+
+		void GaussStimulus::printParameters()
+		{
+			printCommonParameters();
+
+			std::ostringstream logStream;
+
+			logStream << "Logging specific element parameters" << std::endl;
+			logStream << "Amplitude: " << parameters.amplitude << std::endl;
+			logStream << "Sigma: " << parameters.sigma << std::endl;
+			logStream << "Position: " << parameters.position << std::endl;
+			logStream << "Circular: " << parameters.circular << std::endl;
+			logStream << "Normalized: " << parameters.normalized << std::endl;
+
+			log(LogLevel::INFO, logStream.str());
+		}
+
+		void GaussStimulus::setParameters(const GaussStimulusParameters& gaussStimulusParameters)
+		{
+			parameters = gaussStimulusParameters;
+			init();
+		}
+
+		GaussStimulusParameters GaussStimulus::getParameters() const
+		{
+			return parameters;
+		}
 	}
-	return result;
-}
-
-
-
-GaussStimulus::~GaussStimulus()
-{
-	// nothing requires cleanup
 }

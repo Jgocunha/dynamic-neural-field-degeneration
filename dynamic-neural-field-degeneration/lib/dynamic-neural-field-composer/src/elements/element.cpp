@@ -1,131 +1,227 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "elements/element.h"
 
-Element::Element()
+
+namespace dnf_composer
 {
-	label = ElementLabel::UNITIALIZED;
-	uniqueIdentifier = std::string();
-	size = 0;
-	components["output"] = {};
-	components["input"] = {};
-	inputs = {};
-}
-
-void Element::addInput(const std::shared_ptr<Element>& inputElement, const std::string& inputComponent)
-{
-	if (!inputElement)
-		throw Exception(ErrorCode::ELEM_INPUT_IS_NULL);
-
-	auto existingInput = inputs.find(inputElement);
-	if (existingInput != inputs.end())
-		throw Exception(ErrorCode::ELEM_INPUT_ALREADY_EXISTS);
-	
-	// check if input element has the same size as the element
-	if(inputElement->getComponentPtr("output")->size() != this->getComponentPtr("input")->size())
-		if (inputElement->getComponentPtr("output")->size() != this->getSize())
-			throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
-
-	inputs[inputElement] = inputComponent;
-}
-
-void Element::removeInput(const std::string& inputElementId)
-{
-	for (auto& [key, value] : inputs)
+	namespace element
 	{
-		if (key->uniqueIdentifier == inputElementId)
+		Element::Element(const ElementCommonParameters& parameters)
 		{
-			inputs.erase(key);
-			return;
+			if(parameters.dimensionParameters.size <= 0)
+			{
+				const std::string logMessage = "Element '" + parameters.identifiers.uniqueName + "' has an invalid size. Thus, Element constructor halted. \n";
+				log(LogLevel::ERROR_, logMessage);
+				return;
+				//throw Exception(ErrorCode::ELEM_INVALID_SIZE, commonParameters.identifiers.uniqueName);
+			}
+			commonParameters = parameters;
+			components["output"] = std::vector<double>(commonParameters.dimensionParameters.size);
+			components["input"] = std::vector<double>(commonParameters.dimensionParameters.size);
 		}
-	}
-	//throw Exception(ErrorCode::ELEM_INPUT_NOT_FOUND, inputElementId);
-}
 
-bool Element::hasInput(const std::string& inputElementId, const std::string& inputComponent)
-{
-	for (auto& [key, value] : inputs)
-	{
-		if (key->uniqueIdentifier == inputElementId && value == inputComponent)
-			return true;
-	}
-	return false;
-}
-
-void Element::updateInput()
-{
-	std::fill(components["input"].begin(), components["input"].end(), 0);
-
-	for (const auto& input_pair : inputs) {
-		auto inputElement = input_pair.first;
-		auto inputElementComponent = input_pair.second;
-		auto& inputElementComponents = inputElement->components;
-		const auto& inputElementComponentValue = inputElementComponents.at(inputElementComponent);
-
-		for (int i = 0; i < inputElementComponentValue.size(); i++)
+		void Element::addInput(const std::shared_ptr<Element>& inputElement, const std::string& inputComponent)
 		{
-			components["input"][i] += inputElementComponentValue[i];
+			if (!inputElement)
+			{
+				const std::string logMessage = "Input is null. Thus, addInput() method halted. \n";
+				log(LogLevel::ERROR_, logMessage);
+				return;
+				//throw Exception(ErrorCode::ELEM_INPUT_IS_NULL, this->getUniqueIdentifier());
+			}
+
+			const auto existingInput = inputs.find(inputElement);
+			if (existingInput != inputs.end())
+			{
+				const std::string logMessage = "Input '" + inputElement->getUniqueName() + "' already exists. Thus, addInput() method halted. \n";
+				log(LogLevel::ERROR_, logMessage);
+				return;
+				//throw Exception(ErrorCode::ELEM_INPUT_ALREADY_EXISTS, existingInput->first->getUniqueIdentifier());
+			}
+
+			if (inputElement->getComponentPtr("output")->size() != this->getComponentPtr("input")->size())
+			{
+				if (inputElement->getComponentPtr("output")->size() != this->getSize())
+				{
+					const std::string logMessage = "Input '" + inputElement->getUniqueName() + "' has a different size than '" + this->getUniqueName() + "'. Thus, addInput() method halted. \n";
+					log(LogLevel::ERROR_, logMessage);
+					return;
+					//throw Exception(ErrorCode::ELEM_INPUT_SIZE_MISMATCH, inputElement->getUniqueIdentifier());
+				}
+			}
+
+			inputs[inputElement] = inputComponent;
+
+			const std::string logMessage = "Input '" + inputElement->getUniqueName() +"' added successfully to '" +  this->getUniqueName() + ". \n";
+			log(LogLevel::INFO, logMessage);
 		}
+
+		void Element::removeInput(const std::string& inputElementId)
+		{
+			for (auto& key : inputs | std::views::keys)
+			{
+				if (key->commonParameters.identifiers.uniqueName == inputElementId) {
+					inputs.erase(key);
+					log(LogLevel::INFO, "Input '" + inputElementId + "' removed successfully from '" + this->getUniqueName() + ". \n");
+					return;
+				}
+			}
+		}
+
+		void Element::removeInput(int uniqueId)
+		{
+			for (auto& key : inputs | std::views::keys)
+			{
+				if (key->commonParameters.identifiers.uniqueIdentifier == uniqueId) {
+					inputs.erase(key);
+					log(LogLevel::INFO, "Input '" + std::to_string(uniqueId) + "' removed successfully from '" + this->getUniqueName() + ".");
+					return;
+				}
+			}
+		}
+
+		bool Element::hasInput(const std::string& inputElementName, const std::string& inputComponent)
+		{
+			const bool found = std::ranges::any_of(inputs, [&](const auto& pair) {
+				const auto& [key, value] = pair;
+				return key->commonParameters.identifiers.uniqueName == inputElementName && value == inputComponent;
+				});
+			if (found)
+				return true;
+			return false;
+		}
+
+		bool Element::hasInput(int inputElementId, const std::string& inputComponent)
+		{
+			const bool found = std::ranges::any_of(inputs, [&](const auto& pair) {
+				const auto& [key, value] = pair;
+				return key->commonParameters.identifiers.uniqueIdentifier == inputElementId && value == inputComponent;
+				});
+			if (found)
+				return true;
+			return false;
+		}
+
+		void Element::updateInput()
+		{
+			std::ranges::fill(components["input"], 0);
+
+			for (const auto& input_pair : inputs) {
+				const auto inputElement = input_pair.first;
+				auto inputElementComponent = input_pair.second;
+				auto& inputElementComponents = inputElement->components;
+				const auto& inputElementComponentValue = inputElementComponents.at(inputElementComponent);
+
+				for (int i = 0; i < inputElementComponentValue.size(); i++)
+				{
+					components["input"][i] += inputElementComponentValue[i];
+				}
+			}
+		}
+
+		int Element::getMaxSpatialDimension() const
+		{
+			return commonParameters.dimensionParameters.x_max;
+		}
+
+		double Element::getStepSize() const
+		{
+			return commonParameters.dimensionParameters.d_x;
+		}
+
+		int Element::getSize() const
+		{
+			return commonParameters.dimensionParameters.size;
+		}
+
+		std::string Element::getUniqueName() const
+		{
+			return commonParameters.identifiers.uniqueName;
+		}
+
+		int Element::getUniqueIdentifier() const
+		{
+			return commonParameters.identifiers.uniqueIdentifier;
+		}
+
+		ElementLabel Element::getLabel() const
+		{
+			return commonParameters.identifiers.label;
+		}
+
+		std::vector<double> Element::getComponent(const std::string& componentName)
+		{
+			if (components.contains(componentName))
+				return components.at(componentName);
+			throw Exception(ErrorCode::ELEM_COMP_NOT_FOUND, commonParameters.identifiers.uniqueName, componentName);
+		}
+
+		std::vector<double>* Element::getComponentPtr(const std::string& componentName)
+		{
+			if (components.contains(componentName))
+				return &components.at(componentName);
+			throw Exception(ErrorCode::ELEM_COMP_NOT_FOUND, commonParameters.identifiers.uniqueName, componentName);
+		}
+
+		std::vector<std::string> Element::getComponentList() const
+		{
+
+			std::vector<std::string> componentNames;
+			componentNames.reserve(components.size());
+
+			for (const auto& pair : components)
+			{
+				const std::string& componentName = pair.first;
+				componentNames.push_back(componentName);
+			}
+
+			return componentNames;
+		
+		}
+
+		std::vector<std::shared_ptr<Element>> Element::getInputs()
+		{
+			std::vector<std::shared_ptr<Element>> inputVec;
+			inputVec.reserve(inputs.size());
+
+			for (const auto& key : inputs | std::views::keys)
+				inputVec.push_back(key);
+
+			return inputVec;
+		}
+
+		void Element::printCommonParameters() const
+		{
+			//std::ostringstream logStream;
+			//logStream << std::left;
+			//logStream << "Logging element '" << commonParameters.identifiers.uniqueName << "' parameters:" << std::endl;
+			//commonParameters.print();
+
+			//logStream << "Components: ";
+			//for (const auto& pair : components)
+			//{
+			//	const std::string& componentName = pair.first;
+			//	const std::vector<double>& componentValues = pair.second;
+
+			//	logStream << componentName << " | ";
+			//}
+
+			//logStream << std::endl << "Inputs: ";
+			//for (const auto& inputPair : inputs)
+			//{
+			//	const std::shared_ptr<Element>& inputElement = inputPair.first;
+			//	const std::string& inputComponent = inputPair.second;
+
+			//	logStream << inputElement->getUniqueName() << "->" << inputComponent << " | ";
+			//}
+
+			//logStream << std::endl;
+
+			//log(LogLevel::INFO, logStream.str());
+		}
+
 	}
-}
-
-void Element::setUniqueIdentifier(const std::string& uniqueIdentifier)
-{
-	//this->uniqueIdentifier = uniqueIdentifier;
-
-	// for now, element renaming can be pottentially damaging for the simulation
-	throw Exception(ErrorCode::ELEM_RENAME_NOT_ALLOWED, uniqueIdentifier);
-}
-
-void Element::setSize(uint8_t size)
-{
-	//this->size = size;
-	//components.at("output").resize(size);
-	//components.at("input").resize(size);
-
-	// for now, element resizing can be pottentially damaging for the simulation
-	throw Exception(ErrorCode::ELEM_SIZE_NOT_ALLOWED, uniqueIdentifier);
-}
-
-int Element::getSize()
-{
-	return size;
-}
-
-std::string Element::getUniqueIdentifier() const
-{
-	return uniqueIdentifier;
-}
-
-ElementLabel Element::getLabel()
-{
-	return label;
-}
-
-std::vector<double> Element::getComponent(const std::string& componentName)
-{
-	for (int i = 0; i < components.size(); i++)
-		if (components.find(componentName) != components.end())
-			return components.at(componentName);
-	throw Exception(ErrorCode::ELEM_COMP_NOT_FOUND, uniqueIdentifier, componentName);
-}
-
-std::vector<double>* Element::getComponentPtr(const std::string& componentName)
-{
-	for (int i = 0; i < components.size(); i++)
-		if (components.find(componentName) != components.end())
-			return &components.at(componentName);
-	throw Exception(ErrorCode::ELEM_COMP_NOT_FOUND, uniqueIdentifier, componentName);
-}
-
-std::vector<std::shared_ptr<Element>> Element::getInputs()
-{
-	std::vector<std::shared_ptr<Element>> inputVec;
-	for (const auto& [key, value] : inputs)
-		inputVec.push_back(key);
-
-	return inputVec;
-}
-
-Element::~Element()
-{
-	// nothing requires cleanup 
 }

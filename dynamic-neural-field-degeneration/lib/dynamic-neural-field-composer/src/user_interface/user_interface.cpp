@@ -1,185 +1,265 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "user_interface/user_interface.h"
 
-UserInterface::UserInterface(std::shared_ptr<Simulation> simulation, std::vector<std::shared_ptr<Visualization>> visualizations)
-	: simulation(simulation), visualizations(visualizations)
-{
-    closeUI = false;
-	windowHandle = NULL;
-	windowClass = {};
 
-    for (auto& visualization : visualizations)
+namespace dnf_composer
+{
+    namespace user_interface
     {
-		visualization->setSimulation(simulation);
-        windows.push_back(std::make_shared<PlotWindow>(visualization));
+        UserInterface::UserInterface()
+        {
+            closeUI = false;
+            windowHandle = nullptr;
+            windowClass = {};
+        }
 
+        void UserInterface::init()
+        {
+        	// Calculate the position to center the window
+            constexpr int windowWidth = 2560; // Set your window width
+            constexpr int windowHeight = 1440; // Set your window height
+
+            // Create application window
+            ImGui_ImplWin32_EnableDpiAwareness();
+            windowClass = { sizeof(windowClass), CS_CLASSDC, WndProc, 0L, 0L,
+                GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"dnfcomposerc++", nullptr };
+            ::RegisterClassExW(&windowClass);
+
+            windowHandle = ::CreateWindowW(windowClass.lpszClassName, L"Dynamic Neural Field Composer C++",
+                WS_OVERLAPPEDWINDOW, 0, 0, windowWidth, windowHeight, nullptr, nullptr, windowClass.hInstance, nullptr);
+
+            const HICON hIcon = static_cast<HICON>(LoadImage(
+                GetModuleHandle(nullptr),
+                MAKEINTRESOURCE(MYICON1),
+                IMAGE_ICON,
+                0, 0,
+                LR_DEFAULTSIZE | LR_LOADTRANSPARENT
+            ));
+
+            if (hIcon != nullptr)
+            {
+                SendMessage(windowHandle, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hIcon));
+                SendMessage(windowHandle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hIcon));
+            }
+            else
+            {
+                // Failed to load the icon
+                const DWORD error = GetLastError();
+                // Handle or log the error
+                //dnf_composer::log(dnf_composer::LogLevel::WARNING, "Error load icon: " + std::to_string(error));
+            }
+
+            // Initialize Direct3D
+            if (!CreateDeviceD3D(windowHandle))
+            {
+                CleanupDeviceD3D();
+                ::UnregisterClassW(windowClass.lpszClassName, windowClass.hInstance);
+                closeUI = true;
+            }
+
+            // Show the window
+            ::ShowWindow(windowHandle, SW_SHOWDEFAULT);
+            ::UpdateWindow(windowHandle);
+
+            // Setup Dear ImGui context
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImPlot::CreateContext();
+            ImGuiIO& io_ref = ImGui::GetIO(); (void)io_ref;
+            io_ref.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+            io_ref.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+            io_ref.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+            io_ref.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+            //io.ConfigViewportsNoAutoMerge = true;
+            //io.ConfigViewportsNoTaskBarIcon = true;
+
+            // Setup Dear ImGui style
+            ImGui::StyleColorsDark();
+            //ImGui::StyleColorsLight();
+
+            // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+            ImGuiStyle& style = ImGui::GetStyle();
+           
+
+            if (io_ref.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                style.WindowBorderSize = 1.0f;
+                style.WindowRounding = 0.25f;
+                style.WindowTitleAlign = ImVec2(0.0f, 0.5f);
+
+                // Set window colors
+
+                style.Colors[ImGuiCol_Text] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f); // Text color
+                style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Disabled text color
+                style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f); // Text background color when selected
+                style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Background color
+                style.Colors[ImGuiCol_ChildBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Child window background color
+                style.Colors[ImGuiCol_PopupBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Popup background color
+                style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f); // Border shadow color (used by some widgets)
+                style.Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Frame background color
+                style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f); // Frame background color when hovered
+                style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Frame background color when active
+                style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Tab color when unfocused
+                style.Colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Docking empty box color
+                style.Colors[ImGuiCol_PlotLines] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f); // Plot lines color
+                style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f); // Plot lines color when hovered
+                style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f); // Plot histogram color
+                style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f); // Plot histogram color when hovered
+                style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f); // Text background color when selected
+
+                style.Colors[ImGuiCol_Separator] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Separator color
+                style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f); // Separator color when hovered
+                style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // Separator color when active
+                style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f); // Resize grip color
+                style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.9f, 0.9f, 0.9f, 1.0f); // Resize grip color when hovered
+                style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // Resize grip color when active
+                style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Tab color when unfocused and active
+                style.Colors[ImGuiCol_DockingPreview] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Docking preview overlay color
+
+                style.Colors[ImGuiCol_Button] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Button color
+                style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Button color when hovered
+                style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f); // Button color when active
+                style.Colors[ImGuiCol_TitleBg] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Title bar background color
+                style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Title bar background color when active
+                style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Title bar background color when collapsed
+                style.Colors[ImGuiCol_Header] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Header color
+                style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Header color when hovered
+                style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f); // Header color when active
+                style.Colors[ImGuiCol_Tab] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // Tab color
+                style.Colors[ImGuiCol_TabHovered] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Tab color when hovered
+                style.Colors[ImGuiCol_TabActive] = ImVec4(0.6f, 0.6f, 0.6f, 1.0f); // Tab color when active
+
+
+            }
+
+            // Setup Platform/Renderer backends
+            ImGui_ImplWin32_Init(windowHandle);
+            ImGui_ImplDX12_Init(g_pd3dDevice, NUM_FRAMES_IN_FLIGHT,
+                DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap,
+                g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
+                g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
+
+            // Load Fonts
+
+            std::string convertedPath = std::string(PROJECT_DIR) + "/resources/fonts/Lexend-Light.ttf";
+            size_t pos = 0;
+            while ((pos = convertedPath.find('/')) != std::string::npos)
+                convertedPath.replace(pos, 1, "\\");
+            const ImFont* font = io_ref.Fonts->AddFontFromFileTTF(convertedPath.c_str(), 24.0f);
+            IM_ASSERT(font != NULL);
+        }
+
+        void UserInterface::step()
+        {
+            // Poll and handle messages (inputs, window resize, etc.)
+            // See the WndProc() function below for our to dispatch events to the Win32 backend.
+            MSG msg;
+            while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+            {
+                ::TranslateMessage(&msg);
+                ::DispatchMessage(&msg);
+                if (msg.message == WM_QUIT)
+                    closeUI = true;
+            }
+
+            if (closeUI)
+                return;
+
+            // Start the Dear ImGui frame
+            ImGui_ImplDX12_NewFrame();
+            ImGui_ImplWin32_NewFrame();
+            ImGui::NewFrame();
+
+            // My render() function.
+            this->render();
+
+            ImGui::Render();
+
+            FrameContext* frameCtx = WaitForNextFrameResources();
+            UINT backBufferIdx = g_pSwapChain->GetCurrentBackBufferIndex();
+            frameCtx->CommandAllocator->Reset();
+
+            D3D12_RESOURCE_BARRIER barrier = {};
+            barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+            barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+            barrier.Transition.pResource = g_mainRenderTargetResource[backBufferIdx];
+            barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+            barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+            barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+            g_pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
+            g_pd3dCommandList->ResourceBarrier(1, &barrier);
+
+            // Render Dear ImGui graphics
+        	const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+        	g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
+            g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
+            g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
+            ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), g_pd3dCommandList);
+            barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+            barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+            g_pd3dCommandList->ResourceBarrier(1, &barrier);
+            g_pd3dCommandList->Close();
+
+            g_pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&g_pd3dCommandList);
+
+            ImGuiIO& io_ref = ImGui::GetIO(); (void)io_ref;
+            //io_ref.FontGlobalScale = 1.2f; // Adjust the scale factor as needed
+            //ImFont* font = io_ref.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 16.0f);
+            //IM_ASSERT(font != NULL);
+
+            // Update and Render additional Platform Windows
+            if (io_ref.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+            {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault(nullptr, (void*)g_pd3dCommandList);
+            }
+
+            g_pSwapChain->Present(1, 0); // Present with vsync
+            //g_pSwapChain->Present(0, 0); // Present without vsync
+
+            UINT64 fenceValue = g_fenceLastSignaledValue + 1;
+            g_pd3dCommandQueue->Signal(g_fence, fenceValue);
+            g_fenceLastSignaledValue = fenceValue;
+            frameCtx->FenceValue = fenceValue;
+        }
+
+        void UserInterface::close() const
+        {
+            WaitForLastSubmittedFrame();
+
+            // Cleanup
+            ImGui_ImplDX12_Shutdown();
+            ImGui_ImplWin32_Shutdown();
+            ImGui::DestroyContext();
+
+            CleanupDeviceD3D();
+            ::DestroyWindow(windowHandle);
+            ::UnregisterClassW(windowClass.lpszClassName, windowClass.hInstance);
+        }
+
+        void UserInterface::activateWindow(const std::shared_ptr<UserInterfaceWindow>& window)
+        {
+            windows.push_back(window);
+        }
+
+        bool UserInterface::getCloseUI() const
+        {
+            return closeUI;
+        }
+
+        void UserInterface::render() const
+        {
+            for (const auto& window : windows)
+                window->render();
+        }
     }
-
-    // Setup windows here
-    //windows.push_back(std::make_shared<PlotWindow>(visualizations[1]));
-   /* windows.push_back(std::make_shared<SimulationWindow>(simulation));
-    windows.push_back(std::make_shared<CouplingWindow>(simulation));
-    windows.push_back(std::make_shared<DegeneracyWindow>(simulation));*/
+		
 }
 
-void UserInterface::init()
-{
-	
-	// Create application window
-	//ImGui_ImplWin32_EnableDpiAwareness();
-    windowClass = { sizeof(windowClass), CS_CLASSDC, WndProc, 0L, 0L, 
-        GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"dnfcomposerc++", nullptr };
-    ::RegisterClassExW(&windowClass);
-    windowHandle = ::CreateWindowW(windowClass.lpszClassName, L"Dynamic Neural Field Composer C++", 
-        WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, windowClass.hInstance, nullptr);
 
-	// Initialize Direct3D
-	if (!CreateDeviceD3D(windowHandle))
-	{
-		CleanupDeviceD3D();
-		::UnregisterClassW(windowClass.lpszClassName, windowClass.hInstance);
-        closeUI = true;
-	}
-
-	// Show the window
-	::ShowWindow(windowHandle, SW_SHOWDEFAULT);
-	::UpdateWindow(windowHandle);
-
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-    ImPlot::CreateContext();
-	ImGuiIO& io_ref = ImGui::GetIO(); (void)io_ref;
-	io_ref.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io_ref.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io_ref.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io_ref.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-	//io.ConfigViewportsNoAutoMerge = true;
-	//io.ConfigViewportsNoTaskBarIcon = true;
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
-	if (io_ref.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(windowHandle);
-	ImGui_ImplDX12_Init(g_pd3dDevice, NUM_FRAMES_IN_FLIGHT,
-		DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap,
-		g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
-		g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
-
-	// Load Fonts
-    ImFont* font = io_ref.Fonts->AddFontDefault();
-    IM_ASSERT(font != NULL);
-}
-
-void UserInterface::step()
-{
-	// Poll and handle messages (inputs, window resize, etc.)
-	// See the WndProc() function below for our to dispatch events to the Win32 backend.
-	MSG msg;
-	while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-	{
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
-        if (msg.message == WM_QUIT)
-			closeUI = true;
-	}
-
-    if (closeUI)
-        return;
-
-	// Start the Dear ImGui frame
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-
-	// My render() function.
-	this->render();
-
-	ImGui::Render();
-
-	FrameContext* frameCtx = WaitForNextFrameResources();
-	UINT backBufferIdx = g_pSwapChain->GetCurrentBackBufferIndex();
-	frameCtx->CommandAllocator->Reset();
-
-	D3D12_RESOURCE_BARRIER barrier = {};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = g_mainRenderTargetResource[backBufferIdx];
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	g_pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
-	g_pd3dCommandList->ResourceBarrier(1, &barrier);
-
-	// Render Dear ImGui graphics
-	const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-	g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
-	g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
-	g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), g_pd3dCommandList);
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	g_pd3dCommandList->ResourceBarrier(1, &barrier);
-	g_pd3dCommandList->Close();
-
-	g_pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&g_pd3dCommandList);
-
-	ImGuiIO& io_ref = ImGui::GetIO(); (void)io_ref;
-	// Update and Render additional Platform Windows
-	if (io_ref.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault(nullptr, (void*)g_pd3dCommandList);
-	}
-
-	g_pSwapChain->Present(1, 0); // Present with vsync
-	//g_pSwapChain->Present(0, 0); // Present without vsync
-
-	UINT64 fenceValue = g_fenceLastSignaledValue + 1;
-	g_pd3dCommandQueue->Signal(g_fence, fenceValue);
-	g_fenceLastSignaledValue = fenceValue;
-	frameCtx->FenceValue = fenceValue;
-}
-
-void UserInterface::close()
-{
-	WaitForLastSubmittedFrame();
-
-	// Cleanup
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
-	CleanupDeviceD3D();
-	::DestroyWindow(windowHandle);
-	::UnregisterClassW(windowClass.lpszClassName, windowClass.hInstance);
-}
-
-void UserInterface::activateWindow(const std::shared_ptr<UserInterfaceWindow> window)
-{
-    windows.push_back(window);
-}
-
-const bool UserInterface::getCloseUI()
-{
-	return closeUI;
-}
-
-void UserInterface::render()
-{
-    for (const auto& window : windows)
-        window->render();
-}
 
 // Helper functions
 bool CreateDeviceD3D(HWND hWnd)

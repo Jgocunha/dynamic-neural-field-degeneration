@@ -1,0 +1,5 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+MYICON1 ICON "./icons/win_icon.ico"

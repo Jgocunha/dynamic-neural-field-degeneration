@@ -17,7 +17,7 @@ struct ExperimentParameters
 	double decisionTolerance = 0;
 	int numberOfTrials = 10;
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE;
 	std::string degeneracyName = "deactivate-weights";
 	std::string typeOfElementsDegenerated = "weights";
 	std::string fieldToDegenerate = "perceptual";
@@ -42,22 +42,22 @@ struct ExperimentParameters
 	{
 		switch (degeneracyType)
 		{
-		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 			degeneracyName = "deactivate";
 			typeOfElementsDegenerated = "weights";
 			break;
-		case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 			degeneracyName = "randomize";
 			typeOfElementsDegenerated = "weights";
 			break;
-		case ElementDegeneracyType::WEIGHTS_REDUCE:
+		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
 			degeneracyName = "reduce 0.4";
 			typeOfElementsDegenerated = "weights";
 			break;
-		case ElementDegeneracyType::NEURONS_DEACTIVATE:
+		case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
 			if (fieldToDegenerate == "perceptual")
 				typeOfElementsDegenerated = "pre-synaptic neurons";
-			else if (fieldToDegenerate == "decision")
+			else if (fieldToDegenerate == "output")
 				typeOfElementsDegenerated = "post-synaptic neurons";
 			degeneracyName = "deactivate";
 			break;

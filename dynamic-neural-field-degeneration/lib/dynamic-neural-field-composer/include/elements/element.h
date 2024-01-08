@@ -3,78 +3,75 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <map>
 #include <memory>
-#include <cassert>
-#include <cmath>
+#include <ranges>
+#include <algorithm>
 
-#include "../exceptions/exception.h"
+#include "element_parameters.h"
+#include "exceptions/exception.h"
+#include "logging/logger.h"
 
-enum ElementLabel
+namespace dnf_composer
 {
-	UNITIALIZED = 0,
-	NEURAL_FIELD,
-	GAUSS_STIMULUS,
-	GAUSS_KERNEL,
-	MEXICAN_HAT_KERNEL,
-	NORMAL_NOISE,
-	SUM_DIMENSION,
-	FIELD_COUPLING
-};
+	namespace element
+	{
+		enum class ElementDegeneracyType
+		{
+			NONE = 0,
+			NEURONS_DEACTIVATE,
+			NEURONS_DEACTIVATE_PERCENTAGE,
+			WEIGHTS_DEACTIVATE,
+			WEIGHTS_DEACTIVATE_PERCENTAGE,
+			WEIGHTS_RANDOMIZE,
+			WEIGHTS_RANDOMIZE_PERCENTAGE,
+			WEIGHTS_REDUCE,
+			WEIGHTS_REDUCE_PERCENTAGE,
+		};
 
-const std::map<ElementLabel, std::string> ElementLabelToString = {
-	{ NEURAL_FIELD, "neural field" },
-	{ GAUSS_STIMULUS, "gauss stimulus" },
-	{ FIELD_COUPLING, "field coupling" },
-	{ GAUSS_KERNEL, "gauss kernel" },
-	{ MEXICAN_HAT_KERNEL, "mexican hat kernel" },
-	{ NORMAL_NOISE, "normal noise" },
-	{ SUM_DIMENSION, "sum dimension" },
-};
+		class Element
+		{
+		protected:
+			ElementCommonParameters commonParameters;
+			std::unordered_map<std::string, std::vector<double>> components;
+			std::unordered_map<std::shared_ptr<Element>, std::string> inputs;
+		public:
+			Element(const ElementCommonParameters& parameters);
 
-enum class ElementDegeneracyType
-{
-	NONE = 0,
+			Element(const Element&) = delete;
+			Element& operator=(const Element&) = delete;
+			Element(Element&&) = delete;
+			Element& operator=(Element&&) = delete;
 
-	NEURONS_DEACTIVATE,
-	NEURONS_DEACTIVATE_PERCENTAGE,
+			virtual void init() = 0;
+			virtual void step(double t, double deltaT) = 0;
+			virtual void close() = 0;
+			virtual void printParameters() = 0;
 
-	WEIGHTS_DEACTIVATE,
-	WEIGHTS_DEACTIVATE_PERCENTAGE,
-	WEIGHTS_RANDOMIZE,
-	WEIGHTS_RANDOMIZE_PERCENTAGE,
-	WEIGHTS_REDUCE,
-	WEIGHTS_REDUCE_PERCENTAGE,
-};
+			void addInput(const std::shared_ptr<Element>& inputElement, const std::string& inputComponent = "output");
+			void removeInput(const std::string& inputElementId);
+			void removeInput(int uniqueId);
+			bool hasInput(const std::string& inputElementName, const std::string& inputComponent);
+			bool hasInput(int inputElementId, const std::string& inputComponent);
+			void updateInput();
 
-class Element
-{
-protected:
-	std::string uniqueIdentifier;
-	ElementLabel label;
-	int size;
-	std::unordered_map<std::string, std::vector<double>> components;
-	std::unordered_map<std::shared_ptr<Element>, std::string> inputs;
-public:
-	Element();
-	virtual void init() = 0;
-	virtual void step(const double& t, const double& deltaT) = 0;
-	virtual void close() = 0;
+			int getMaxSpatialDimension() const;
+			int getSize() const;
+			double getStepSize() const;
 
-	void addInput(const std::shared_ptr<Element>& inputElement, const std::string& inputComponent = "output");
-	void removeInput(const std::string& inputElementId);
-	bool hasInput(const std::string& inputElementId, const std::string& inputComponent);
-	void updateInput();
+			int getUniqueIdentifier() const;
+			std::string getUniqueName() const;
+			ElementLabel getLabel() const;
 
-	void setUniqueIdentifier(const std::string& uniqueIdentifier);
-	void setSize(uint8_t size);
+			std::vector<double> getComponent(const std::string& componentName);
+			std::vector<double>* getComponentPtr(const std::string& componentName);
+			std::vector<std::string> getComponentList() const;
 
-	int getSize();
-	std::string getUniqueIdentifier() const;
-	ElementLabel getLabel();
-	std::vector<double> getComponent(const std::string& componentName);
-	std::vector<double>* getComponentPtr(const std::string& componentName);
-	std::vector < std::shared_ptr<Element>> getInputs();
+			std::vector < std::shared_ptr<Element>> getInputs();
 
-	~Element();
-};
+			virtual ~Element() = default;
+
+		protected:
+			void printCommonParameters() const;
+		};
+	}
+}

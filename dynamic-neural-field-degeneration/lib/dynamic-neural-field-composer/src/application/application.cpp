@@ -1,66 +1,63 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 
 #include "application/application.h"
 
-Application::Application(std::shared_ptr<Simulation> simulation, bool activateUserInterface)
-	:simulation(simulation), activateUserInterface(activateUserInterface)
+namespace dnf_composer
 {
-	//if(this->visualizations.empty())
-		//addVisualization();
-	if(activateUserInterface)
-		userInterface = std::make_shared<UserInterface>(this->simulation, this->visualizations);
+	Application::Application(const std::shared_ptr<Simulation>& simulation, bool activateUserInterface)
+		:simulation(simulation), activateUserInterface(activateUserInterface)
+	{
+		if (activateUserInterface)
+			userInterface = std::make_shared<user_interface::UserInterface>();
+	}
+
+
+	void Application::init() const
+	{
+		simulation->init();
+		if (activateUserInterface)
+			userInterface->init();
+	}
+
+	void Application::step() const
+	{
+		simulation->step();
+		if (activateUserInterface)
+			userInterface->step();
+	}
+
+	void Application::close() const
+	{
+		simulation->close();
+		if (activateUserInterface)
+			userInterface->close();
+	}
+
+	void Application::setActivateUserInterfaceAs(bool activateUI)
+	{
+		activateUserInterface = activateUI;
+		if (activateUserInterface)
+			userInterface = std::make_shared<user_interface::UserInterface>();
+	}
+
+	void Application::activateUserInterfaceWindow(const std::shared_ptr<user_interface::UserInterfaceWindow>& window) const
+	{
+		if (activateUserInterface)
+			userInterface->activateWindow(window);
+	}
+
+	bool Application::getCloseUI() const
+	{
+		if (activateUserInterface)
+			return userInterface->getCloseUI();
+		return false;
+	}
+
+	bool Application::getActivateUserInterface() const
+	{
+		return activateUserInterface;
+	}
+	
 }
-
-void Application::addVisualization()
-{
-	visualizations.push_back(std::make_shared<Visualization>(simulation));
-}
-
-void Application::init()
-{
-	simulation->init();
-	if (activateUserInterface)
-		userInterface->init();
-}
-
-void Application::step()
-{
-	simulation->step();
-	if (activateUserInterface)
-		userInterface->step();
-}
-
-void Application::close()
-{
-	simulation->close();
-	if (activateUserInterface)
-		userInterface->close();
-}
-
-void Application::setActivateUserInterfaceAs(bool activateUserInterface)
-{
-	//if (!activateUserInterface)
-		//std::cout << "Deactivating User Interface. It will still be visible, but will not be interactable and will not reflect updated elements." << std::endl;
-	//else
-		//std::cout << "Activating User Interface." << std::endl;
-
-	this->activateUserInterface = activateUserInterface;
-}
-
-void Application::activateUserInterfaceWindow(const std::shared_ptr<UserInterfaceWindow> window)
-{
-	if (activateUserInterface)
-		userInterface->activateWindow(window);
-}
-
-const bool Application::getCloseUI()
-{
-	if (activateUserInterface)
-		return userInterface->getCloseUI();
-	return false;
-}
-
-Application::~Application()
-{
-	// no cleanup necessary
-}
-

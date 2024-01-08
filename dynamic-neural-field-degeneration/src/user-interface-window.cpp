@@ -1,6 +1,6 @@
 #include "../include/user-interface-window.h"
 
-ExperimentWindow::ExperimentWindow(const std::shared_ptr<Simulation>& simulation)
+ExperimentWindow::ExperimentWindow(const std::shared_ptr<dnf_composer::Simulation>& simulation)
 	: simulation(simulation)
 {
 }
@@ -60,21 +60,21 @@ void ExperimentWindow::renderFieldAnalysis() const
 	// Custom vertical spacing using a dummy element with a specific size
 	ImGui::Dummy(ImVec2(0.0f, 20.0f)); // Adjust the second parameter for the desired vertical spacing size
 
-	ImGui::Text("Decision field centroid is %.2f", expWinParams.decisionFieldCentroid);
-	ImGui::Text("Expected decision field centroid is %.2f", expWinParams.expectedDecisionFieldCentroid);
+	ImGui::Text("Output field centroid is %.2f", expWinParams.decisionFieldCentroid);
+	ImGui::Text("Expected output field centroid is %.2f", expWinParams.expectedDecisionFieldCentroid);
 	ImGui::Text("Maximum allowed deviation is %.2f", expWinParams.maximumAllowedDeviation);
 
 	// Check the condition and set the font color accordingly
 	if (expWinParams.decisionFieldCentroidDeviation > expWinParams.maximumAllowedDeviation)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color
-		ImGui::Text("Decision field centroid is not within limits.");
+		ImGui::Text("Output field centroid is not within limits.");
 	}
 	else
 	{
 		// green color
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-		ImGui::Text("Decision field centroid is within limits.");
+		ImGui::Text("Output field centroid is within limits.");
 	}
 
 	ImGui::Text("Current deviation is %.2f.", expWinParams.decisionFieldCentroidDeviation);

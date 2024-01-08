@@ -5,49 +5,49 @@
 #include <string>
 #include <array>
 
-#include "element.h"
+#include "kernel.h"
 
-struct MexicanHatKernelParameters
+namespace dnf_composer
 {
-	double sigmaExc;
-	double amplitudeExc;
-	double sigmaInh;
-	double amplitudeInh;
-	double amplitudeGlobal;
-	double fullSum;
-	int cutOfFactor;
-
-	bool operator==(const MexicanHatKernelParameters& other) const
+	namespace element
 	{
-		return sigmaExc == other.sigmaExc &&
-			amplitudeExc == other.amplitudeExc &&
-			sigmaInh == other.sigmaInh && 
-			amplitudeInh == other.amplitudeInh &&
-			amplitudeGlobal == other.amplitudeGlobal &&
-			fullSum == other.fullSum &&
-			cutOfFactor == other.cutOfFactor;
+		struct MexicanHatKernelParameters
+		{
+			double sigmaExc;
+			double amplitudeExc;
+			double sigmaInh;
+			double amplitudeInh;
+			double amplitudeGlobal = 0.0;
+
+			bool operator==(const MexicanHatKernelParameters& other) const
+			{
+				constexpr double epsilon = 1e-6; 
+
+				return std::abs(sigmaExc - other.sigmaExc) < epsilon &&
+					std::abs(amplitudeExc - other.amplitudeExc) < epsilon &&
+					std::abs(sigmaInh - other.sigmaInh) < epsilon &&
+					std::abs(amplitudeInh - other.amplitudeInh) < epsilon &&
+					std::abs(amplitudeGlobal - other.amplitudeGlobal) < epsilon;
+			}
+		};
+
+		class MexicanHatKernel : public Kernel
+		{
+		private:
+			MexicanHatKernelParameters parameters;
+		public:
+			MexicanHatKernel(const ElementCommonParameters& elementCommonParameters, const MexicanHatKernelParameters& mhk_parameters);
+
+			void init() override;
+			void step(double t, double deltaT) override;
+			void close() override;
+
+			void printParameters() override;
+
+			void setParameters(const MexicanHatKernelParameters& mhk_parameters);
+			MexicanHatKernelParameters getParameters() const;
+
+			~MexicanHatKernel() override = default;
+		};
 	}
-};
-
-class MexicanHatKernel : public Element
-{
-private:
-	MexicanHatKernelParameters parameters;
-	bool circular;
-	bool normalized;
-	std::array<uint32_t, 2> kernelRange;
-	std::vector<uint32_t> extIndex;
-public:
-	MexicanHatKernel(const std::string& id, const int& size,
-		const MexicanHatKernelParameters& parameters,
-		bool circular = true, bool normalized = true);
-
-	void init() override;
-	void step(const double& t, const double& deltaT) override;
-	void close() override;
-
-	void setParameters(const MexicanHatKernelParameters& parameters);
-	MexicanHatKernelParameters getParameters();
-
-	~MexicanHatKernel();
-};
+}

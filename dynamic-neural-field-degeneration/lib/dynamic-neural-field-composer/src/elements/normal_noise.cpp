@@ -1,41 +1,52 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "elements/normal_noise.h"
 
-NormalNoise::NormalNoise(std::string id, const int& size, const NormalNoiseParameters& parameters)
-	: parameters(parameters)
+namespace dnf_composer
 {
-	// Assert that the size is positive
-	assert(size > 0);
+	namespace element
+	{
+		NormalNoise::NormalNoise(const ElementCommonParameters& elementCommonParameters, NormalNoiseParameters parameters)
+			: Element(elementCommonParameters), parameters(parameters)
+		{
+			 commonParameters.identifiers.label = ElementLabel::NORMAL_NOISE;
+		}
 
-	this->label = ElementLabel::NORMAL_NOISE;
-	this->uniqueIdentifier = id;
-	this->size = size;
-	components["output"] = std::vector<double>(size);
-}
+		void NormalNoise::init()
+		{
+			std::ranges::fill(components["output"], 0.0);
+		}
 
-void NormalNoise::init()
-{
-	std::fill(components["output"].begin(), components["output"].end(), 0);
-}
+		void NormalNoise::step(double t, double deltaT)
+		{
+			const std::vector<double> rand = mathtools::generateNormalVector(commonParameters.dimensionParameters.size);
 
-void NormalNoise::step(const double& t, const double& deltaT)
-{
-	std::vector<double> rand = mathtools::generateNormalVector(size);
+			for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
+				components["output"][i] = parameters.amplitude / sqrt(deltaT) * rand[i];
+		}
 
-	for (int i = 0; i < size; i++)
-		components["output"][i] = parameters.amplitude / sqrt(deltaT) * rand[i];
-}
+		void NormalNoise::printParameters()
+		{
+			printCommonParameters();
 
-void NormalNoise::setParameters(const NormalNoiseParameters& parameters)
-{
-	this->parameters = parameters;
-}
+			std::ostringstream logStream;
 
-NormalNoiseParameters NormalNoise::getParameters()
-{
-	return parameters;
-}
+			logStream << "Logging specific element parameters" << std::endl;
+			logStream << "Amplitude: " << parameters.amplitude << std::endl;
 
-NormalNoise::~NormalNoise()
-{
-	// nothing requires cleanup 
+			log(LogLevel::INFO, logStream.str());
+		}
+
+		void NormalNoise::setParameters(NormalNoiseParameters normalNoiseParameters)
+		{
+			parameters = normalNoiseParameters;
+		}
+
+		NormalNoiseParameters NormalNoise::getParameters() const
+		{
+			return parameters;
+		}
+	}
 }

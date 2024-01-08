@@ -1,17 +1,19 @@
 
 #include "../include/dnfcomposer-handler.h"
 
+#include "user_interface/plot_window.h"
+
 
 DnfcomposerHandler::DnfcomposerHandler()
 {
 	simulation = getExperimentSimulation();
-	application = std::make_unique<Application>(simulation, true);
+	application = std::make_unique<dnf_composer::Application>(simulation, true);
 
-	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
-	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
-	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::element::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
 	
-	simulationElements.fcpw = FieldCouplingWizard{simulation, "per - dec" };
+	simulationElements.fcpw = dnf_composer::LearningWizard{simulation, "per - out" };
 
 	setupUserInterface();
 }
@@ -21,13 +23,13 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 	simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
 
 	simulation = getExperimentSimulation();
-	application = std::make_unique<Application>(simulation, simulationParameters.isUserInterfaceActive);
+	application = std::make_unique<dnf_composer::Application>(simulation, simulationParameters.isUserInterfaceActive);
 
-	simulationElements.inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
-	simulationElements.outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
-	simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+	simulationElements.inputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	simulationElements.outputField = std::dynamic_pointer_cast<dnf_composer::element::DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	simulationElements.fieldCoupling = std::dynamic_pointer_cast<dnf_composer::element::DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
 
-	simulationElements.fcpw = FieldCouplingWizard{ simulation, "per - dec" };
+	simulationElements.fcpw = dnf_composer::LearningWizard{ simulation, "per - out" };
 
 	if (simulationParameters.isUserInterfaceActive)
 		setupUserInterface();
@@ -105,22 +107,48 @@ void DnfcomposerHandler::closeSimulation()
 
 void DnfcomposerHandler::setupUserInterface()
 {
-	std::shared_ptr<Visualization> visualization = std::make_shared<Visualization>(simulation);
+	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
-	PlotDimensions pd;
-	pd = { 0, 360, -25, 35 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
+	visualization->addPlottingData("perceptual field", "output");
+	visualization->addPlottingData("per - per", "output");
 
-	visualization = std::make_shared<Visualization>(simulation);
-	visualization->addPlottingData("decision field", "activation");
-	pd = { 0, 28, -25, 35 };
-	application->activateUserInterfaceWindow(std::make_shared<PlotWindow>(visualization, pd, false));
+	dnf_composer::user_interface::PlotParameters pp;
+	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
+	pp.dimensions = { 0, 720, -35, 30 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+	visualization->addPlottingData("output field", "activation");
+	visualization->addPlottingData("output field", "output");
+	visualization->addPlottingData("out - out", "output");
+	visualization->addPlottingData("per - out", "output");
+
+	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
+	pp.dimensions = { 0, 280, -20, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+	//visualization->addPlottingData("per - per", "kernel");
+
+	//pp.annotations = { "Kernel_{per}(x-x')", "Spatial dimension", "Amplitude" };
+	//pp.dimensions = { 0, 50, -1, 4 };
+	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+	//visualization->addPlottingData("dec - dec", "kernel");
+
+	//pp.annotations = { "Kernel_{out}(x-x')", "Spatial dimension", "Amplitude" };
+	//pp.dimensions = { 0, 20, -1, 4 };
+	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::LoggerWindow>());
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
 	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
 }
+
 
 // public set methods for UI
 
@@ -163,7 +191,7 @@ void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::Rel
 
 // public set methods for control flags
 
-void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
+void DnfcomposerHandler::setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
 {
 	simulationParameters.degeneracyType = degeneracyType;
 	simulationParameters.fieldToDegenerate = fieldToDegenerate;
@@ -242,7 +270,7 @@ void DnfcomposerHandler::activateDegeneration()
 
 	switch (simulationParameters.degeneracyType)
 	{
-	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
 		numberOfDegeneratedElements = numberOfDegeneratedElements + 1; // hardcoded to 1
 		if (simulationParameters.fieldToDegenerate == "perceptual")
 		{
@@ -257,9 +285,9 @@ void DnfcomposerHandler::activateDegeneration()
 		if (simulationParameters.isDebugMode)
 			std::cout << "Deactivated " << numberOfDegeneratedElements << " neurons." << std::endl;
 		break;
-	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE: // this is hardcoded to 0.4
 		numberOfDegeneratedElements = numberOfDegeneratedElements + 10; // hardcoded to 10
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
@@ -314,11 +342,15 @@ void DnfcomposerHandler::activateRelearning()
 
 void DnfcomposerHandler::updateExternalInput()
 {
+	static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("per - per"));
+	static auto kernel_width = kernel->getParameters().sigma;
+	static auto kernel_amplitude = kernel->getParameters().amplitude;
+
 	static double offset = 1.0;
-	GaussStimulusParameters gsp = { 3, 35, 20 };
+	dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
-	const std::shared_ptr<GaussStimulus> stimulus
-		(new GaussStimulus("stimulus", simulationElements.inputField->getSize(), gsp));
+	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
+	(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
 
 	simulation->addElement(stimulus);
 	simulationElements.inputField->addInput(stimulus);
@@ -333,8 +365,8 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	simulationParameters.inputFieldCentroid = simulationElements.inputField->calculateCentroid();
-	simulationParameters.outputFieldCentroid = simulationElements.outputField->calculateCentroid();
+	simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
+	simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
 
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
@@ -374,7 +406,7 @@ void DnfcomposerHandler::waitForFieldsToSettle() const
 void DnfcomposerHandler::allCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 35, 20 };
+	dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
@@ -390,7 +422,7 @@ void DnfcomposerHandler::allCasesRelearning()
 void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 {
 	// add gaussian inputs
-	GaussStimulusParameters gsp = { 3, 35, 20 };
+	dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	std::vector<std::vector<double>> inputSelected;
 	std::vector<std::vector<double>> outputSelected;

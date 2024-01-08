@@ -11,23 +11,23 @@
 
 struct SimulationElements
 {
-	std::shared_ptr<DegenerateNeuralField> inputField, outputField;
-	std::shared_ptr<DegenerateFieldCoupling> fieldCoupling;
-	FieldCouplingWizard fcpw;
+	std::shared_ptr<dnf_composer::element::DegenerateNeuralField> inputField, outputField;
+	std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> fieldCoupling;
+	dnf_composer::LearningWizard fcpw;
 };
 
 struct SimulationParameters
 {
 	std::string inputFieldId = "perceptual field";
-	std::string outputFieldId = "decision field";
-	std::string fieldCouplingId = "per - dec";
+	std::string outputFieldId = "output field";
+	std::string fieldCouplingId = "per - out";
 
 	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
 	const int timeForFieldToSettle = 25;
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::NONE;
+	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
 
 	bool isDebugMode = false;
@@ -54,8 +54,8 @@ private:
 	std::thread dnfcomposerThread;
 	std::thread readCentroidsThread;
 
-	std::unique_ptr<Application> application;
-	std::shared_ptr<Simulation> simulation;
+	std::unique_ptr<dnf_composer::Application> application;
+	std::shared_ptr<dnf_composer::Simulation> simulation;
 	std::shared_ptr<ExperimentWindow> userInterfaceWindow;
 
 	SimulationElements simulationElements;
@@ -122,7 +122,7 @@ public:
 		const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
 	
 
-	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
+	void setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
 	void setRelearning(const int& targetRelearningPositions);
 	void setHaveFieldsSettled(bool haveFieldsSettled);

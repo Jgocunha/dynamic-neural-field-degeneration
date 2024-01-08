@@ -1,119 +1,133 @@
 
 #include "../include/dnf-architecture.h"
 
-std::shared_ptr<Simulation> getExperimentSimulation()
+
+constexpr bool trainWeights = false;
+
+std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<Simulation> simulation = std::make_shared<Simulation>(30, 0, 0);
+	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>(2, 0, 0);
 
-	constexpr int perceptualFieldSize = 360;
-	constexpr int decisionFieldSize = 28;
+	// element common parameters
+	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };
+	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{ 28, 0.1 };
 
-	// create neural fields
-	constexpr ActivationFunctionParameters afp = { ActivationFunctionType::Sigmoid, 10.0, 0 };
-
-	constexpr NeuralFieldParameters nfp1 = { 25, -12 };
-	constexpr NeuralFieldParameters nfp2 = { 25, -15 };
-	const std::shared_ptr<DegenerateNeuralField> perceptual_field(new DegenerateNeuralField("perceptual field", perceptualFieldSize, nfp1, afp));
-	const std::shared_ptr<DegenerateNeuralField> decision_field(new DegenerateNeuralField("decision field", decisionFieldSize, nfp2, afp));
+	// create neural field
+	//const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
+	const dnf_composer::element::SigmoidFunction activationFunction{ 0.0, 10000.0 };
+	const dnf_composer::element::NeuralFieldParameters nfp1 = { 25, -5 , activationFunction };
+	const dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -5 , activationFunction };
+	const std::shared_ptr<dnf_composer::element::DegenerateNeuralField> perceptual_field
+	(new dnf_composer::element::DegenerateNeuralField({ "perceptual field", perceptualFieldSpatialDimensions }, nfp1));
+	const std::shared_ptr<dnf_composer::element::DegenerateNeuralField> output_field
+	(new dnf_composer::element::DegenerateNeuralField({ "output field", outputFieldSpatialDimensions }, nfp2));
 
 	simulation->addElement(perceptual_field);
-	simulation->addElement(decision_field);
+	simulation->addElement(output_field);
 
 	// create interactions and add them to the simulation
-	GaussKernelParameters gkp1;
-	gkp1.amplitude = 45;  // self-sustained (without input)
-	gkp1.sigma = 5;
-	gkp1.amplitudeGlobal = -0.5;
-	const std::shared_ptr<GaussKernel> k_per_per(new GaussKernel("per - per", perceptualFieldSize, gkp1)); // self-excitation u-u
+	dnf_composer::element::GaussKernelParameters gkp1;
+	gkp1.amplitude = 40;  // self-sustained (without input)
+	gkp1.sigma = 25;
+	gkp1.amplitudeGlobal = -0.12;
+	const std::shared_ptr<dnf_composer::element::GaussKernel> k_per_per
+	(new dnf_composer::element::GaussKernel({ "per - per", perceptualFieldSpatialDimensions }, gkp1)); // self-excitation u-u
 	simulation->addElement(k_per_per);
 
-	GaussKernelParameters gkp2;
-	gkp2.amplitude = 15;  // self-stabilized (with input)
-	gkp2.sigma = 2;
-	gkp2.amplitudeGlobal = -0.3;
-	const std::shared_ptr<GaussKernel> k_dec_dec(new GaussKernel("dec - dec", decisionFieldSize, gkp2)); // self-excitation v-v
-	simulation->addElement(k_dec_dec);
 
-	const std::shared_ptr<DegenerateFieldCoupling> w_per_dec(
-		new DegenerateFieldCoupling("per - dec", decisionFieldSize, perceptualFieldSize, 
-			{ 0.65, 0.01 }, LearningRule::DELTA_KROGH_HERTZ));
-	simulation->addElement(w_per_dec);
+	dnf_composer::element::GaussKernelParameters gkp2;
+	gkp2.amplitude = 15;  // self-stabilized (with input)
+	gkp2.sigma = 15;
+	gkp2.amplitudeGlobal = -0.08;
+	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
+	(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
+	simulation->addElement(k_out_out);
+
+	dnf_composer::element::FieldCouplingParameters fcp;
+	fcp.inputFieldSize = perceptualFieldSpatialDimensions.size;
+	fcp.scalar = 0.4;
+	fcp.learningRate = 0.01;
+	fcp.learningRule = dnf_composer::LearningRule::DELTA_KROGH_HERTZ;
+	const std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> w_per_out(
+		new dnf_composer::element::DegenerateFieldCoupling({ "per - out", outputFieldSpatialDimensions }, fcp));
+	simulation->addElement(w_per_out);
 
 	// create noise stimulus and noise kernel
-	const std::shared_ptr<NormalNoise> noise_per(new NormalNoise("noise per", perceptualFieldSize, { 1 }));
-	const std::shared_ptr<NormalNoise> noise_dec(new NormalNoise("noise dec", decisionFieldSize, { 1 }));
-	const std::shared_ptr<GaussKernel> noise_kernel_per(new GaussKernel("noise kernel per", perceptualFieldSize, { 0.25, 0.2 }));
-	const std::shared_ptr<GaussKernel> noise_kernel_dec(new GaussKernel("noise kernel dec", decisionFieldSize, { 0.25, 0.2 }));
+	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_per
+	(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 1 }));
+	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
+	(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 1 }));
+	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
+	(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.2 }));
+	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out
+	(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.2 }));
 
 	simulation->addElement(noise_per);
-	simulation->addElement(noise_dec);
+	simulation->addElement(noise_out);
 	simulation->addElement(noise_kernel_per);
-	simulation->addElement(noise_kernel_dec);
+	simulation->addElement(noise_kernel_out);
 
 	// define the interactions between the elements
 	perceptual_field->addInput(k_per_per); // self-excitation
 	perceptual_field->addInput(noise_kernel_per); // noise
 
-	decision_field->addInput(k_dec_dec); // self-excitation
-	decision_field->addInput(noise_kernel_dec); // noise
-	decision_field->addInput(w_per_dec); // coupling
+	output_field->addInput(k_out_out); // self-excitation
+	output_field->addInput(noise_kernel_out); // noise
+	output_field->addInput(w_per_out); // coupling
 
 	k_per_per->addInput(perceptual_field);
-	k_dec_dec->addInput(decision_field);
-	w_per_dec->addInput(perceptual_field, "activation");
+	k_out_out->addInput(output_field);
+	w_per_out->addInput(perceptual_field, "activation");
 
 	noise_kernel_per->addInput(noise_per);
-	noise_kernel_dec->addInput(noise_dec);
+	noise_kernel_out->addInput(noise_out);
 
-	//GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
-	//std::shared_ptr<GaussStimulus> gauss_stimulus(new GaussStimulus("gauss stimulus", perceptualFieldSize, gcp_a));
+	//const dnf_composer::element::GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
+	//std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus", perceptualFieldSize }, gcp_a));
 
 	//simulation->addElement(gauss_stimulus);
 	//perceptual_field->addInput(gauss_stimulus);
 
-	//set up the field coupling wizard
-	//FieldCouplingWizard fcpw{ simulation, "per - dec" };
+	if (trainWeights)
+	{
+		//set up the field coupling wizard
+		dnf_composer::LearningWizard fcpw{ simulation, "per - out" };
 
-	//// add gaussian inputs
-	//double offset = 1.0;
-	//GaussStimulusParameters gsp = { 3, 25, 20 };
+		// add gaussian inputs
+		constexpr double offset = 1.0;
+		const double kernel_width = k_per_per->getParameters().sigma;
+		const double kernel_amplitude = k_per_per->getParameters().amplitude;
+		//dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 0 };
+		//fcpw.setGaussStimulusParameters(gsp);
 
-	//std::vector<std::vector<double>> inputTargetPeaksForCoupling =
-	//{
-	//	{ 00.00 + offset }, // red
-	//	{ 41.00 + offset }, // orange
-	//	{ 60.00 + offset }, // yellow
-	//	{ 120.00 + offset }, // green
-	//	{ 240.00 + offset }, // blue
-	//	{ 274.00 + offset }, // indigo
-	//	{ 300.00 + offset } // violet
-	//};
-	//std::vector<std::vector<double>> outputTargetPeaksForCoupling =
-	//{
-	//	{ 2.00 + offset },
-	//	{ 6.00 + offset },
-	//	{ 10.00 + offset },
-	//	{ 14.00 + offset },
-	//	{ 18.00 + offset },
-	//	{ 22.00 + offset },
-	//	{ 26.00 + offset }
-	//};
+		std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+		{
+			{ 00.00 + offset }, // red
+			{ 41.00 + offset }, // orange
+			{ 60.00 + offset }, // yellow
+			{ 120.00 + offset }, // green
+			{ 240.00 + offset }, // blue
+			{ 274.00 + offset }, // indigo
+			{ 300.00 + offset } // violet
+		};
+		std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+		{
+			{ 2.00 + offset },
+			{ 6.00 + offset },
+			{ 10.00 + offset },
+			{ 14.00 + offset },
+			{ 18.00 + offset },
+			{ 22.00 + offset },
+			{ 26.00 + offset }
+		};
 
-	//fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
-	//fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-
-	//gsp.amplitude = 25;
-	//gsp.sigma = 3;
-
-	//fcpw.setGaussStimulusParameters(gsp);
-
-	//fcpw.simulateAssociation();
-
-	//fcpw.trainWeights(500);
-
-	//fcpw.saveWeights();
+		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
+		fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
+		fcpw.simulateAssociation();
+		fcpw.trainWeights(500);
+		fcpw.saveWeights();
+	}
 
 	return simulation;
-
 }

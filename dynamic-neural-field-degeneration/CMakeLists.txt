@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.12)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -8,6 +8,8 @@ endif()
 
 project ("dynamic-neural-field-degeneration")
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add source files
 set(SOURCES
@@ -21,6 +23,7 @@ add_executable(launch-dynamic-neural-field-degeneration ${SOURCES}
     "src/dnfcomposer-handler.cpp"
     "src/dnf-architecture.cpp" 
     "src/user-interface-window.cpp"
+	./resources/resources.rc
 )
 
 # Set the desired output directory relative to the project
@@ -42,9 +45,4 @@ target_link_libraries(launch-dynamic-neural-field-degeneration PUBLIC implot)
 target_link_libraries(launch-dynamic-neural-field-degeneration PRIVATE dynamic-neural-field-composer)
 target_link_libraries(launch-dynamic-neural-field-degeneration PRIVATE coppeliasim-cpp-client)
 
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET launch-dynamic-neural-field-degeneration PROPERTY CXX_STANDARD 20)
-endif()
-
-# TODO: Add tests
+configure_file(./resources/resources.rc.in ./resources/resources.rc)

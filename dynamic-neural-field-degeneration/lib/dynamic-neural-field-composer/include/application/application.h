@@ -5,26 +5,32 @@
 #include "simulation/visualization.h"
 #include "user_interface/user_interface.h"
 
-class Application
+namespace dnf_composer
 {
-private:
-	std::shared_ptr<Simulation> simulation;
-	std::vector<std::shared_ptr<Visualization>> visualizations;
-	std::shared_ptr<UserInterface> userInterface;
-	bool activateUserInterface;
-public:
-	Application(std::shared_ptr<Simulation> simulation, 
-		bool activateUserInterface = true);
+	class Application
+	{
+	private:
+		std::shared_ptr<Simulation> simulation;
+		std::shared_ptr<user_interface::UserInterface> userInterface;
+		bool activateUserInterface;
+	public:
+		Application(const std::shared_ptr<Simulation>& simulation, bool activateUserInterface = true);
+		Application(const Application&) = delete;             
+		Application& operator=(const Application&) = delete;  
+		Application(Application&&) = delete;                  
+		Application& operator=(Application&&) = delete;       
 
-	void init();
-	void step();
-	void close();
+		void init() const;
+		void step() const;
+		void close() const;
 
-	void activateUserInterfaceWindow(const std::shared_ptr<UserInterfaceWindow> window);
-	void setActivateUserInterfaceAs(bool activateUserInterface);
+		void activateUserInterfaceWindow(const std::shared_ptr<user_interface::UserInterfaceWindow>& window) const;
+		void setActivateUserInterfaceAs(bool activateUI);
 
-	const bool getCloseUI();
-	~Application();
-private:
-	void addVisualization();
-};
+		bool getCloseUI() const;
+		bool getActivateUserInterface() const;
+
+		~Application() = default;
+	};
+}
+
