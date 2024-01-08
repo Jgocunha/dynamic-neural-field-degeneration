@@ -253,7 +253,7 @@ namespace dnf_composer
 				weights[row_idx][col_idx] = 0;
 
 				uniqueCombinationFound = true; // Set flag to indicate combination found
-				std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+				//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
 			}
 
 			if (indicesForDegeneration.empty())
