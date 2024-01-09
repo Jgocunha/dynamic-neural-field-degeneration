@@ -159,7 +159,6 @@ private:
 	void mockReadTargetAngle();
 
 	void degenerationProcedure();
-	int getNumberOfElementsToDegenerate() const;
 
 	void relearningProcedure();
 

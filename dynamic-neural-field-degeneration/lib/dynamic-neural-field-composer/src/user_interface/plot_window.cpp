@@ -36,16 +36,17 @@ namespace dnf_composer
 			createPlot(parameters);
 		}
 
-		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters)
+		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters, double xStep)
 		{
 			parameters.visualization = visualization;
 			createPlot(parameters);
+			this->xStep = xStep;
 		}
 
 		void PlotWindow::render()
 		{
 			//renderPlotControl();
-			for(const auto& plot : plots)
+			for (const auto& plot : plots)
 			{
 				//renderElementSelector(plot);
 				renderPlot(plot);
@@ -83,8 +84,8 @@ namespace dnf_composer
 					if (ImGui::Button("Add", { 100.0f, 30.0f }))
 					{
 						PlotParameters parameters;
-						parameters.annotations = {title, x_label, y_label};
-						parameters.dimensions = {x_min, x_max, y_min, y_max};
+						parameters.annotations = { title, x_label, y_label };
+						parameters.dimensions = { x_min, x_max, y_min, y_max };
 						std::shared_ptr<Simulation> simulation = plots[0].visualization->getAssociatedSimulationPtr();
 						parameters.visualization = std::make_shared<Visualization>(simulation);
 						createPlot(parameters);
@@ -94,7 +95,7 @@ namespace dnf_composer
 			ImGui::End();
 		}
 
-		void PlotWindow::createPlot( PlotParameters& parameters)
+		void PlotWindow::createPlot(PlotParameters& parameters)
 		{
 			parameters.id = ++current_id;
 			parameters.annotations.title += " " + std::to_string(parameters.id);
@@ -104,7 +105,7 @@ namespace dnf_composer
 			log(LogLevel::INFO, message);
 		}
 
-		void PlotWindow::renderPlot(const PlotParameters& parameters)
+		void PlotWindow::renderPlot(const PlotParameters& parameters) const
 		{
 			configure(parameters.dimensions);
 
@@ -126,7 +127,7 @@ namespace dnf_composer
 					{
 						std::string label = parameters.visualization->getPlottingLabel(j);
 						std::vector<double> data = *parameters.visualization->getPlottingData(j);
-						ImPlot::PlotLine(label.c_str(), data.data(), static_cast<int>(data.size()));
+						ImPlot::PlotLine(label.c_str(), data.data(), static_cast<int>(data.size()), xStep);
 					}
 
 				}

@@ -32,6 +32,8 @@ struct SimulationParameters
 
 	bool isDebugMode = false;
 	bool isUserInterfaceActive = false;
+
+	int incrementOfDegenerationInPercentage;
 };
 
 struct RelearningParameters
@@ -120,7 +122,7 @@ public:
 	void setRelearningCycles(const int& relearningCycles) const;
 	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
 		const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
-	
+	void setIncrementOfDegenerationPercentage(int percentage);
 
 	void setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
@@ -153,4 +155,5 @@ private:
 
 	void allCasesRelearning();
 	void onlyDegeneratedCasesRelearning();
+	void setNumberOfElementsToDegenerate() const;
 };

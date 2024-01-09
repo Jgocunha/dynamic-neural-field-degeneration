@@ -66,7 +66,10 @@ namespace dnf_composer
 			{
 			case ElementDegeneracyType::NEURONS_DEACTIVATE:
 				for (int i = 0; i < numNeuronsToDegenerate; i++)
+				{
 					setRandomUniqueNeuronToZero();
+					log(INFO, "Degenerated " + std::to_string(numNeuronsToDegenerate) + " neurons.\n");
+				}
 				degenerate = false;
 				break;
 			case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:

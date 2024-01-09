@@ -8,38 +8,43 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
 	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
 		params.maximumAmountOfDemonstrations, params.updateAllWeights);
-
+	dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
 }
 
 void ExperimentHandler::printExperimentParameters() const
 {
-	std::cout << "Experiment identifier: " << params.experimentId << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Experiment parameters" << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Number of shapes per trial: " << params.numberOfShapesPerTrial << std::endl;
-	std::cout << "Decision tolerance: " << params.decisionTolerance << std::endl;
-	std::cout << "Number of trials: " << params.numberOfTrials << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Degeneracy type: " << params.degeneracyName << std::endl;
-	std::cout << "Type of elements degenerated: " << params.typeOfElementsDegenerated << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
-	std::cout << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
-	std::cout << "Increment of degeneration percentage: " << params.incrementOfDegenerationPercentage << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Relearning type: " << (params.relearningType == RelearningParameters::RelearningType::ALL_CASES ? "All cases" : "Only degenerated cases") << std::endl;
-	std::cout << "Learning rate: " << params.learningRate << std::endl;
-	std::cout << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
-	std::cout << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfDemonstrations << std::endl;
-	std::cout << "Update all weights: " << (params.updateAllWeights ? "true" : "false") << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
-	std::cout << "Is dnf-composer visualization on: " << (params.isComposerVisualizationOn ? "true" : "false") << std::endl;
-	std::cout << "Is debug mode on: " << (params.isDebugModeOn ? "true" : "false") << std::endl;
-	std::cout << "Is link to CoppeliaSim on: " << (params.isLinkToCoppeliaSimOn ? "true" : "false") << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-	std::cout << "----------------------------------------" << std::endl << std::endl;
+	std::ostringstream logStream;
+
+	logStream << "Experiment identifier: " << params.experimentId << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Experiment parameters" << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Number of shapes per trial: " << params.numberOfShapesPerTrial << std::endl;
+	logStream << "Decision tolerance: " << params.decisionTolerance << std::endl;
+	logStream << "Number of trials: " << params.numberOfTrials << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Degeneracy type: " << params.degeneracyName << std::endl;
+	logStream << "Type of elements degenerated: " << params.typeOfElementsDegenerated << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
+	logStream << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
+	logStream << "Increment of degeneration percentage: " << params.incrementOfDegenerationPercentage << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Relearning type: " << (params.relearningType == RelearningParameters::RelearningType::ALL_CASES ? "All cases" : "Only degenerated cases") << std::endl;
+	logStream << "Learning rate: " << params.learningRate << std::endl;
+	logStream << "Number of relearning epochs: " << params.numberOfRelearningEpochs << std::endl;
+	logStream << "Maximum allowed amount of relearning cycles: " << params.maximumAmountOfDemonstrations << std::endl;
+	logStream << "Update all weights: " << (params.updateAllWeights ? "true" : "false") << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "Is data saving on: " << (params.isDataSavingOn ? "true" : "false") << std::endl;
+	logStream << "Is dnf-composer visualization on: " << (params.isComposerVisualizationOn ? "true" : "false") << std::endl;
+	logStream << "Is debug mode on: " << (params.isDebugModeOn ? "true" : "false") << std::endl;
+	logStream << "Is link to CoppeliaSim on: " << (params.isLinkToCoppeliaSimOn ? "true" : "false") << std::endl;
+	logStream << "----------------------------------------" << std::endl;
+	logStream << "----------------------------------------" << std::endl << std::endl;
+
+	log(dnf_composer::LogLevel::INFO, logStream.str());
+
 }
 
 void ExperimentHandler::init()
@@ -69,8 +74,9 @@ void ExperimentHandler::step()
 	{
 		if (params.isDebugModeOn)
 		{
-			std::cout << std::endl << "Trial " << trial << std::endl;
-			std::cout << "----------------------------------------" << std::endl;
+			dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(trial) + '\n');
+
+			//std::cout << "----------------------------------------" << std::endl;
 		}
 
 		if(params.isComposerVisualizationOn)
@@ -86,7 +92,9 @@ void ExperimentHandler::step()
 			}
 			dnfcomposerHandler.saveWeightsToFile();
 			if (params.isDebugModeOn)
-				std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl;
+			{
+				dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
+			}
 		}
 
 		do
@@ -116,13 +124,18 @@ void ExperimentHandler::step()
 				{
 					data.isFieldDead = true;
 					if (params.isDebugModeOn)
-						std::cout << "Field is 'dead'." << std::endl << std::endl;
+					{
+						dnf_composer::log(dnf_composer::INFO, "Field is 'dead'.\n");
+
+					}
 				}
 				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
 				stats.numOfRelearningCycles = 0;
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
 				if (params.isDebugModeOn)
-					std::cout << "Degenerated to " << params.currentPercentageOfDegeneration << "%." << std::endl << std::endl;
+				{
+					dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
+				}
 
 			}
 			else
@@ -169,8 +182,12 @@ bool ExperimentHandler::bonafidePickAndPlace()
 
 	if(params.isDebugModeOn)
 	{
-		std::cout << "Binary representation of placed boxes: " << std::bitset<7>(stats.shapesPlacedIncorrectly) << std::endl;
-		std::cout << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Binary representation of placed boxes: " + std::bitset<7>(stats.shapesPlacedIncorrectly).to_string() + '\n');
+		std::ostringstream logStream;
+		logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+		dnf_composer::log(dnf_composer::INFO, logStream.str());
+		//std::cout << "Binary representation of placed boxes: " << std::bitset<7>(stats.shapesPlacedIncorrectly) << std::endl;
+		//std::cout << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
 	}
 
 	return successfulPickAndPlace;
@@ -303,8 +320,10 @@ bool ExperimentHandler::mockPickAndPlace()
 
 	if (params.isDebugModeOn)
 	{
-		std::cout << "Binary representation of placed boxes: " << std::bitset<7>(stats.shapesPlacedIncorrectly) << std::endl;
-		std::cout << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Binary representation of placed boxes: " + std::bitset<7>(stats.shapesPlacedIncorrectly).to_string() + '\n');
+		std::ostringstream logStream;
+		logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+		dnf_composer::log(dnf_composer::INFO, logStream.str());
 	}
 
 	return successfulPickAndPlace;
@@ -345,7 +364,7 @@ void ExperimentHandler::mockReadTargetAngle()
 void ExperimentHandler::degenerationProcedure()
 {
 	if(params.isDebugModeOn)
-		std::cout << "Degeneration procedure started." << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
 
 	// Disable the user interface whilst degenerating to consume less time.
 	if (params.isComposerVisualizationOn)
@@ -355,40 +374,25 @@ void ExperimentHandler::degenerationProcedure()
 	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
 	// we kill 1 neuron per iteration
 	// we kill 10 weights per iteration
-	const int numberOfElementsToDegenerate = getNumberOfElementsToDegenerate();
+	const int numberOfElementsToDegenerate = 0;
+		//getNumberOfElementsToDegenerate();
 
 	if (params.isDebugModeOn)
-		std::cout << "Number of elements to degenerate: " << numberOfElementsToDegenerate << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Number of elements to degenerate: " + std::to_string(numberOfElementsToDegenerate) + '\n');
 
-	for (int i = 0; i < numberOfElementsToDegenerate; i++)
-	{
+	//for (int i = 0; i < numberOfElementsToDegenerate; i++)
+	//{
 		dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
 		while (!dnfcomposerHandler.getHaveFieldsSettled());
 		dnfcomposerHandler.setHaveFieldsSettled(false);
-	}
+	//}
 
 	// Re-enable the UI.
 	if (params.isComposerVisualizationOn)
 		dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
 }
 
-int ExperimentHandler::getNumberOfElementsToDegenerate() const
-{
-	switch (params.degeneracyType)
-	{
-	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
-		if(params.fieldToDegenerate == "perceptual")
-			return 1; // 1 element - 0.36%
-		if (params.fieldToDegenerate == "output")
-			return 1; // 1 element - 3.6%
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		return 25; // 250 elements - 2.48%
-	default:
-		return 0;
-	}
-}
+
 
 void ExperimentHandler::relearningProcedure()
 {
@@ -398,8 +402,8 @@ void ExperimentHandler::relearningProcedure()
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
 
-	if(params.isDebugModeOn)
-		std::cout << "Relearning procedure started." << std::endl;
+	if (params.isDebugModeOn)
+		dnf_composer::log(dnf_composer::INFO, "Relearning procedure started.\n");
 
 	dnfcomposerHandler.setRelearning(stats.shapesPlacedIncorrectly);
 
@@ -408,7 +412,7 @@ void ExperimentHandler::relearningProcedure()
 	//Sleep(2000);
 
 	if (params.isDebugModeOn)
-		std::cout << "Relearning procedure finished." << std::endl << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Relearning procedure finished.\n");
 
 	stats.numOfRelearningCycles++;
 }
@@ -448,11 +452,11 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 			file << cycles << " "; // Write the integer followed by a newline
 		file << "\n";
 		file.close(); // Close the file
-		std::cout << "Number of relearning cycles needed saved to file." << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Number of relearning cycles needed saved to file.\n");
 	}
 	else
 	{
-		std::cerr << "Unable to open file: " << filename << std::endl;
+		dnf_composer::log(dnf_composer::ERROR_, "Unable to open file: " + filename + '\n');
 	}
 }
 
@@ -467,7 +471,7 @@ void ExperimentHandler::backupWeightsFile() const
 
 	dest << source.rdbuf();
 
-	std::cout << "Backing up weights file." << std::endl;
+	dnf_composer::log(dnf_composer::INFO, "Backing up weights file.\n");
 
 	source.close();
 	dest.close();
@@ -481,18 +485,18 @@ void ExperimentHandler::restoreWeightsFile() const
 	int result = std::remove(newFilename.c_str());
 
 	if (!result)
-		std::cout << "Previous weights file successfully deleted." << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
 	else
-		std::cout << "Error deleting previous weights file." << std::endl;
+		dnf_composer::log(dnf_composer::ERROR_, "Error deleting previous weights file." + '\n');
 
 	const std::string newTestFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 
 	result = std::rename(oldFilename.c_str(), newTestFilename.c_str());
 
 	if (!result)
-		std::cout << "File successfully renamed." << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "File successfully renamed.\n");
 	else
-		std::cout << "Error renaming file." << std::endl;
+		dnf_composer::log(dnf_composer::ERROR_, "Error renaming file.\n");
 }
 
 bool ExperimentHandler::doesBackupWeightsFileExist() const
@@ -502,11 +506,11 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 	if (file.good())
 	{
-		std::cout << "Weights file exists." << std::endl;
+		dnf_composer::log(dnf_composer::INFO, "Weights file exists.\n");
 		return true;
 	}
 
-	std::cout << "Weights file does not exist." << std::endl;
+	dnf_composer::log(dnf_composer::INFO, "Weights file does not exist.\n");
 	return false;
 }
 

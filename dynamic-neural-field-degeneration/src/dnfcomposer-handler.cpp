@@ -15,7 +15,52 @@ DnfcomposerHandler::DnfcomposerHandler()
 	
 	simulationElements.fcpw = dnf_composer::LearningWizard{simulation, "per - out" };
 
+
 	setupUserInterface();
+}
+
+void DnfcomposerHandler::setIncrementOfDegenerationPercentage(int percentage)
+{
+	simulationParameters.incrementOfDegenerationInPercentage = percentage;
+}
+
+
+void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
+{
+	int numberOfElements;
+
+	switch (simulationParameters.degeneracyType)
+	{
+	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
+		if (simulationParameters.fieldToDegenerate == "perceptual")
+		{
+			// this is a double
+			numberOfElements = simulationElements.inputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
+			simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElements);
+			std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
+
+		}
+		if (simulationParameters.fieldToDegenerate == "output")
+		{
+			// this is a double
+			numberOfElements = simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
+			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
+		}
+		break;
+
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
+		// this is a double
+		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
+		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
+		break;
+	default:
+		break;
+	}
+
+	std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
+	
 }
 
 DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
@@ -45,6 +90,8 @@ void DnfcomposerHandler::init()
 
 void DnfcomposerHandler::step()
 {
+	setNumberOfElementsToDegenerate();
+
 	application->init();
 	
 	bool userRequestClose = false;
@@ -114,8 +161,8 @@ void DnfcomposerHandler::setupUserInterface()
 
 	dnf_composer::user_interface::PlotParameters pp;
 	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 720, -35, 30 };
-	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+	pp.dimensions = { 0, 360, -35, 30 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
 
 	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("output field", "activation");
@@ -124,8 +171,8 @@ void DnfcomposerHandler::setupUserInterface()
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 280, -20, 40 };
-	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+	pp.dimensions = { 0, 28, -20, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
 
 	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	//visualization->addPlottingData("per - per", "kernel");
@@ -427,7 +474,9 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	std::vector<std::vector<double>> inputSelected;
 	std::vector<std::vector<double>> outputSelected;
 
-	std::cout << "Target behaviors to relearn ";
+	std::ostringstream logStream;
+
+	logStream << "Target behaviors to relearn ";
 
 	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
 	{
@@ -442,11 +491,13 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 
 			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
-			std::cout << outputTargetPeaksForCoupling[index][0] - offset << " ";
+			logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
 		}
 	}
 
-	std::cout << std::endl;
+	logStream << std::endl;
+
+	dnf_composer::log(dnf_composer::INFO, logStream.str());
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
