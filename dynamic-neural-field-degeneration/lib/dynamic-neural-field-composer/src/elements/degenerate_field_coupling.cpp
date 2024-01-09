@@ -232,6 +232,7 @@ namespace dnf_composer
 		void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 		{
 			bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
+			//static int count = 0;
 
 			// Loop until a unique combination is found or indicesForDegeneration is empty
 			while (!uniqueCombinationFound && !indicesForDegeneration.empty())
@@ -253,7 +254,8 @@ namespace dnf_composer
 				weights[row_idx][col_idx] = 0;
 
 				uniqueCombinationFound = true; // Set flag to indicate combination found
-				//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+				//count++;
+				//std::cout << "Unique combination found " << row_idx << " " << col_idx << " "<< count << std::endl;
 			}
 
 			if (indicesForDegeneration.empty())

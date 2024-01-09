@@ -33,18 +33,19 @@ namespace dnf_composer
 		{
 		private:
 			std::vector<PlotParameters> plots;
+			double xStep = 1.0;
 		public:
 			PlotWindow(const std::shared_ptr<Simulation>& simulation);
 			PlotWindow(const std::shared_ptr<Simulation>& simulation, PlotParameters parameters);
 			PlotWindow(const std::shared_ptr<Visualization>& visualization);
-			PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters);
+			PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters, double xStep);
 
 			void render() override;
 			~PlotWindow() override = default;
 		private:
 			void createPlot(PlotParameters& parameters);
 			void renderPlotControl();
-			static void renderPlot(const PlotParameters& parameters);
+			void renderPlot(const PlotParameters& parameters) const;
 			static void renderElementSelector(const PlotParameters& parameters);
 			static void configure(const PlotDimensions& dimensions);
 		};

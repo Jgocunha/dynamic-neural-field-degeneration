@@ -20,7 +20,7 @@ struct SimulationParameters
 	std::string fieldCouplingId = "per - out";
 	double externalInputPosition = 0;
 	double inputFieldCentroid, outputFieldCentroid;
-	int timeForFieldToSettle = 100;
+	int timeForFieldToSettle = 25;
 	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
 

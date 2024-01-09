@@ -1,15 +1,15 @@
 function [avgNumIterationsPercentage, avgIterationsMisbehaviorPercentage] = adaptToPercentage(experiment, avgNumIterations, avgIterationsMisbehavior)
     switch experiment
         case 'deactivate weights'
-            size = 202; 
+            size = 201; 
         case 'reduce 0.2 weights' 
-            size = 202; 
+            size = 201; 
         case 'reduce 0.6 weights' 
-            size = 202; 
+            size = 201; 
         case 'reduce 0.8 weights' 
-            size = 202; 
+            size = 201; 
         case 'randomize weights'
-            size = 202;
+            size = 201;
         case 'deactivate pre-synaptic neurons'
             size = 720;
         case 'deactivate post-synaptic neurons'

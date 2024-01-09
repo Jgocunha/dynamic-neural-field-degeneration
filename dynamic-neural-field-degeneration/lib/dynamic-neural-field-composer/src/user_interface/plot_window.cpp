@@ -36,10 +36,11 @@ namespace dnf_composer
 			createPlot(parameters);
 		}
 
-		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters)
+		PlotWindow::PlotWindow(const std::shared_ptr<Visualization>& visualization, PlotParameters parameters, double xStep)
 		{
 			parameters.visualization = visualization;
 			createPlot(parameters);
+			this->xStep = xStep;
 		}
 
 		void PlotWindow::render()
@@ -104,7 +105,7 @@ namespace dnf_composer
 			log(LogLevel::INFO, message);
 		}
 
-		void PlotWindow::renderPlot(const PlotParameters& parameters)
+		void PlotWindow::renderPlot(const PlotParameters& parameters) const
 		{
 			configure(parameters.dimensions);
 
@@ -126,7 +127,7 @@ namespace dnf_composer
 					{
 						std::string label = parameters.visualization->getPlottingLabel(j);
 						std::vector<double> data = *parameters.visualization->getPlottingData(j);
-						ImPlot::PlotLine(label.c_str(), data.data(), static_cast<int>(data.size()));
+						ImPlot::PlotLine(label.c_str(), data.data(), static_cast<int>(data.size()), xStep);
 					}
 
 				}

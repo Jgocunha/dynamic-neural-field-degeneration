@@ -173,8 +173,8 @@ void DnfcomposerHandler::setupUserInterface()
 
 	dnf_composer::user_interface::PlotParameters pp;
 	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 720, -35, 30 };
-	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+	pp.dimensions = { 0, 360, -25, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
 
 	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("output field", "activation");
@@ -183,8 +183,8 @@ void DnfcomposerHandler::setupUserInterface()
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 280, -20, 40 };
-	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+	pp.dimensions = { 0, 28, -20, 40 };
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
 
 	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	//visualization->addPlottingData("per - per", "kernel");
