@@ -47,7 +47,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	dnf_composer::element::FieldCouplingParameters fcp;
 	fcp.inputFieldSize = perceptualFieldSpatialDimensions.size;
-	fcp.scalar = 0.3; // 0.5 98% - 0.4 94% - 0.3 90% 
+	fcp.scalar = 0.4; // 0.5 98% - 0.4 94% - 0.3 90% 
 	fcp.learningRate = 0.01;
 	fcp.learningRule = dnf_composer::LearningRule::DELTA_KROGH_HERTZ;
 	const std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> w_per_out(

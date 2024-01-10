@@ -38,7 +38,7 @@ ExperimentParameters setExperimentParameters()
 	params.decisionTolerance = 2.0;
     params.startingExternalStimulus = 0;
 
-    params.isVisualisationOn = true;
+    params.isVisualisationOn = false;
 	params.isDataSavingOn = !params.isVisualisationOn;
     params.isDebugModeOn = true;
 
