@@ -104,10 +104,10 @@ namespace dnf_composer
 				for (int j = 0; j < components["input"].size(); j++)
 					components["output"][i] += weights[j][i] * components["input"][j];
 
-			// only the positive values of the output are considered
-			for (auto& value : components["output"])
-				if (value < 0)
-					value = 0;
+			//// only the positive values of the output are considered
+			//for (auto& value : components["output"])
+			//	if (value < 0)
+			//		value = 0;
 		}
 
 		void FieldCoupling::scaleOutput()

@@ -38,8 +38,8 @@ ExperimentParameters setExperimentParameters()
 	params.decisionTolerance = 2.0;
     params.startingExternalStimulus = 0;
 
-	params.isDataSavingOn = true;
-    params.isVisualisationOn = false;
+    params.isVisualisationOn = true;
+	params.isDataSavingOn = !params.isVisualisationOn;
     params.isDebugModeOn = true;
 
     return params;
@@ -52,17 +52,17 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
 		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
     		params.degeneracyName = "deactivate";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 500;
+			params.numberOfElementsToDegenerate = 1000;
     		break;
 	    case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
     		params.degeneracyName = "randomize";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 500;
+			params.numberOfElementsToDegenerate = 1000;
     		break;
         case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
             params.degeneracyName = "reduce 0.2";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 500;
+			params.numberOfElementsToDegenerate = 1000;
             break;
 	    case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
             if(params.fieldToDegenerate == "perceptual")

@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 
 		dnf_composer::user_interface::PlotParameters pp;
 		pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-		pp.dimensions = { 0, 720, -30, 30 };
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+		pp.dimensions = { 0, 360, -30, 30 };
+		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
 
 		visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 		visualization->addPlottingData("output field", "activation");
@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
 		visualization->addPlottingData("per - out", "output");
 
 		pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-		pp.dimensions = { 0, 280, -20, 20 };
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+		pp.dimensions = { 0, 28, -20, 30 };
+		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
 
 		//return 0;
 

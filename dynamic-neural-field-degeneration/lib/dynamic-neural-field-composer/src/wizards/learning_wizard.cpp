@@ -219,7 +219,7 @@ namespace dnf_composer
         }
         else
         {
-            const std::string message = "Failed to save data to " + filename + ".\n";;
+            const std::string message = "Failed to save data to " + filename + ".\n";
             log(LogLevel::ERROR_, message);
         }
     }

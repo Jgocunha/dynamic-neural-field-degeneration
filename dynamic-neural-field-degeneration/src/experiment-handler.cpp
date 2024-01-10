@@ -67,21 +67,45 @@ void ExperimentHandler::init()
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
+//void ExperimentHandler::step()
+//{
+//	printExperimentSetupToConsole();
+//	setExperimentSetupData();
+//
+//	for(int k = 0; k < hueToAngleMap.size(); k++)
+//	{
+//		setExpectedFieldBehaviour();
+//
+//		for(int i = 0; i < params.numberOfTrials; i++)
+//		{
+//			if (params.isDebugModeOn)
+//				dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(i) + '\n');
+//			dnfcomposerHandler.setTrial(i);
+//
+//			setupProcedure();
+//			degenerationProcedure();
+//			cleanUpTrial();
+//			Sleep(20);
+//		}
+//		Sleep(50);
+//	}
+//	setExperimentAsEnded();
+//}
+
 void ExperimentHandler::step()
 {
 	printExperimentSetupToConsole();
 	setExperimentSetupData();
 
-	for(int k = 0; k < hueToAngleMap.size(); k++)
+	for (int i = 0; i < params.numberOfTrials; i++)
 	{
-		setExpectedFieldBehaviour();
+		if (params.isDebugModeOn)
+			dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(i) + '\n');
+		dnfcomposerHandler.setTrial(i);
 
-		for(int i = 0; i < params.numberOfTrials; i++)
+		for (int k = 0; k < static_cast<int>(hueToAngleMap.size()); k++)
 		{
-			if (params.isDebugModeOn)
-				dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(i) + '\n');
-			dnfcomposerHandler.setTrial(i);
-
+			setExpectedFieldBehaviour();
 			setupProcedure();
 			degenerationProcedure();
 			cleanUpTrial();
