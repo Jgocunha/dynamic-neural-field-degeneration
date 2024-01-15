@@ -19,50 +19,6 @@ DnfcomposerHandler::DnfcomposerHandler()
 	setupUserInterface();
 }
 
-void DnfcomposerHandler::setIncrementOfDegenerationPercentage(int percentage)
-{
-	simulationParameters.incrementOfDegenerationInPercentage = percentage;
-}
-
-
-void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
-{
-	int numberOfElements;
-
-	switch (simulationParameters.degeneracyType)
-	{
-	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
-		if (simulationParameters.fieldToDegenerate == "perceptual")
-		{
-			// this is a double
-			numberOfElements = simulationElements.inputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
-			simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElements);
-			std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
-
-		}
-		if (simulationParameters.fieldToDegenerate == "output")
-		{
-			// this is a double
-			numberOfElements = simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
-			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
-		}
-		break;
-
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		// this is a double
-		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage;
-		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
-		break;
-	default:
-		break;
-	}
-
-	std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
-	
-}
-
 DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 {
 	simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
@@ -85,13 +41,12 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-	//readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
+	//if (simulationParameters.isUserInterfaceActive)
+		readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
 {
-	setNumberOfElementsToDegenerate();
-
 	application->init();
 	
 	bool userRequestClose = false;
@@ -113,7 +68,8 @@ void DnfcomposerHandler::step()
 			application->step();
 
 		Sleep(1);
-		userRequestClose = application->getCloseUI();
+		if (simulationParameters.isUserInterfaceActive)
+			userRequestClose = application->getCloseUI();
 	}
 
 	application->close();
@@ -123,7 +79,8 @@ void DnfcomposerHandler::close()
 {
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
-	readCentroidsThread.join();
+	//if (simulationParameters.isUserInterfaceActive)
+		readCentroidsThread.join();
 }
 
 void DnfcomposerHandler::stop()
@@ -242,6 +199,7 @@ void DnfcomposerHandler::setDegeneracy(dnf_composer::element::ElementDegeneracyT
 {
 	simulationParameters.degeneracyType = degeneracyType;
 	simulationParameters.fieldToDegenerate = fieldToDegenerate;
+	setNumberOfElementsToDegenerate();
 	wasDegenerationRequested = true;
 }
 
@@ -311,6 +269,49 @@ std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
 }
 
 // Degeneration
+
+void DnfcomposerHandler::setIncrementOfDegenerationPercentage(double percentage)
+{
+	simulationParameters.incrementOfDegenerationInPercentage = percentage;
+}
+
+
+void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
+{
+	int numberOfElements;
+
+	switch (simulationParameters.degeneracyType)
+	{
+	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
+		if (simulationParameters.fieldToDegenerate == "perceptual")
+		{
+			// this is a double
+			numberOfElements = simulationElements.inputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage / 100;
+			simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElements);
+			//std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
+		}
+		if (simulationParameters.fieldToDegenerate == "output")
+		{
+			// this is a double
+			numberOfElements = simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage / 100;
+			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
+		}
+		break;
+
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
+		// this is a double
+		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize() * simulationParameters.incrementOfDegenerationInPercentage / 100;
+		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
+		break;
+	default:
+		break;
+	}
+
+	//std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
+
+}
 
 void DnfcomposerHandler::activateDegeneration()
 {
@@ -412,11 +413,25 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
-	simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
+	//simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
+	//simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
 
-	if (simulationParameters.isUserInterfaceActive)
-		userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+	//if (simulationParameters.isUserInterfaceActive)
+	//	userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+
+	bool userRequestClose = false;
+	while (!userRequestClose && !hasExperimentFinished)
+	{
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
+
+		if (simulationParameters.isUserInterfaceActive)
+			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
+
+		if (simulationParameters.isUserInterfaceActive)
+			userRequestClose = application->getCloseUI();
+		Sleep(5);
+	}
 }
 
 void DnfcomposerHandler::readWeights()
@@ -437,7 +452,6 @@ void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
 	simulationElements.fieldCoupling->setWeightsFilePath(filePath);
 	simulationElements.fcpw.setDataFilePath(filePath);
 }
-
 
 void DnfcomposerHandler::saveWeightsToFile() const
 {

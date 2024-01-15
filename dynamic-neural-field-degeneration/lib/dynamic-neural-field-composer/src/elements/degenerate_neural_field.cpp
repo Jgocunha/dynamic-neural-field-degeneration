@@ -66,10 +66,8 @@ namespace dnf_composer
 			{
 			case ElementDegeneracyType::NEURONS_DEACTIVATE:
 				for (int i = 0; i < numNeuronsToDegenerate; i++)
-				{
 					setRandomUniqueNeuronToZero();
-					log(INFO, "Degenerated " + std::to_string(numNeuronsToDegenerate) + " neurons.\n");
-				}
+				log(INFO, "Degenerated " + std::to_string(numNeuronsToDegenerate) + " neurons.\n");
 				degenerate = false;
 				break;
 			case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
@@ -81,7 +79,7 @@ namespace dnf_composer
 				degenerate = false;
 				break;
 			default:
-				//std::cout << "Degeneracy type not supported" << std::endl;
+				log(ERROR_, "Degeneracy type not supported.\n");
 				break;
 			}
 		}

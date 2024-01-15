@@ -25,7 +25,7 @@ struct SimulationParameters
 	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
-	const int timeForFieldToSettle = 25;
+	const int timeForFieldToSettle = 30;
 
 	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
@@ -122,7 +122,7 @@ public:
 	void setRelearningCycles(const int& relearningCycles) const;
 	void setRelearningParameters(const RelearningParameters::RelearningType& relearningType,
 		const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
-	void setIncrementOfDegenerationPercentage(int percentage);
+	void setIncrementOfDegenerationPercentage(double percentage);
 
 	void setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);

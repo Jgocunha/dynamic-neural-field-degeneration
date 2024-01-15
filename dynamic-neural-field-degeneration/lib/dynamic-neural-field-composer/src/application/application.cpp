@@ -38,8 +38,8 @@ namespace dnf_composer
 	void Application::setActivateUserInterfaceAs(bool activateUI)
 	{
 		activateUserInterface = activateUI;
-		if (activateUserInterface)
-			userInterface = std::make_shared<user_interface::UserInterface>();
+		//if (activateUserInterface)
+			//userInterface = std::make_shared<user_interface::UserInterface>();
 	}
 
 	void Application::activateUserInterfaceWindow(const std::shared_ptr<user_interface::UserInterfaceWindow>& window) const

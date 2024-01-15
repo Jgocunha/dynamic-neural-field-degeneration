@@ -8,7 +8,7 @@ ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
 	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
 		params.maximumAmountOfDemonstrations, params.updateAllWeights);
-	dnfcomposerHandler.setDegeneracy(params.degeneracyType, params.fieldToDegenerate);
+	dnfcomposerHandler.setIncrementOfDegenerationPercentage(params.incrementOfDegenerationPercentage);
 }
 
 void ExperimentHandler::printExperimentParameters() const
@@ -68,15 +68,11 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::step()
 {
-	
-
 	for(int trial = 1; trial <= params.numberOfTrials; trial++)
 	{
 		if (params.isDebugModeOn)
 		{
 			dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(trial) + '\n');
-
-			//std::cout << "----------------------------------------" << std::endl;
 		}
 
 		if(params.isComposerVisualizationOn)
@@ -88,9 +84,13 @@ void ExperimentHandler::step()
 			while (params.currentPercentageOfDegeneration < params.initialPercentageOfDegeneration)
 			{
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+				if (params.isDebugModeOn)
+					dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
 				degenerationProcedure();
 			}
+			Sleep(300);
 			dnfcomposerHandler.saveWeightsToFile();
+			Sleep(300);
 			if (params.isDebugModeOn)
 			{
 				dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
@@ -110,13 +110,17 @@ void ExperimentHandler::step()
 			{
 				if (doesBackupWeightsFileExist())
 				{
+					Sleep(300);
 					restoreWeightsFile();
+					Sleep(300); // new
 					dnfcomposerHandler.readWeights();
-					Sleep(50);
+					Sleep(300);
 					dnfcomposerHandler.saveWeightsToFile();
-					Sleep(50);
+					Sleep(300);
 				}
 
+				if (params.isDebugModeOn)
+					dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
 				degenerationProcedure();
 				
 				dnfcomposerHandler.saveWeightsToFile();
@@ -335,21 +339,26 @@ void ExperimentHandler::mockReadShapeHue()
 		hueToAngleIterator = hueToAngleMap.begin();
 
 	data.shapeHue = hueToAngleIterator->first;
+	data.expectedTargetAngle = hueToAngleIterator->second;
 	//if (params.isDebugModeOn)
 		//std::cout << "External stimulus: " << data.shapeHue << std::endl;
 	++hueToAngleIterator;
+
+	if (params.isComposerVisualizationOn)
+		dnfcomposerHandler.setExpectedFieldBehavior(data.shapeHue, data.expectedTargetAngle);
 
 	dnfcomposerHandler.setExternalInput(data.shapeHue);
 
 	// wait for the shape hue to be read
 	while (!dnfcomposerHandler.getHaveFieldsSettled());
 	dnfcomposerHandler.setHaveFieldsSettled(false);
+
 }
 
 void ExperimentHandler::mockReadTargetAngle()
 {
-	dnfcomposerHandler.updateFieldCentroids();
-	Sleep(5);
+	//dnfcomposerHandler.updateFieldCentroids();
+	//Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 	//if (params.isDebugModeOn)
 		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
@@ -357,15 +366,12 @@ void ExperimentHandler::mockReadTargetAngle()
 	data.outputFieldCentroid = signals.targetAngle;
 	data.lastOutputFieldCentroid = signals.targetAngle;
 
-	getExpectedTargetAngle();
-	dnfcomposerHandler.updateFieldCentroids();
+	//getExpectedTargetAngle();
+	//dnfcomposerHandler.updateFieldCentroids();
 }
 
 void ExperimentHandler::degenerationProcedure()
 {
-	if(params.isDebugModeOn)
-		dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
-
 	// Disable the user interface whilst degenerating to consume less time.
 	if (params.isComposerVisualizationOn)
 		dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
@@ -374,11 +380,11 @@ void ExperimentHandler::degenerationProcedure()
 	//int numberOfElementsToDegenerate = computeNumberOfElementsToDegenerate();
 	// we kill 1 neuron per iteration
 	// we kill 10 weights per iteration
-	const int numberOfElementsToDegenerate = 0;
+	//const int numberOfElementsToDegenerate = 0;
 		//getNumberOfElementsToDegenerate();
 
-	if (params.isDebugModeOn)
-		dnf_composer::log(dnf_composer::INFO, "Number of elements to degenerate: " + std::to_string(numberOfElementsToDegenerate) + '\n');
+	//if (params.isDebugModeOn)
+		//dnf_composer::log(dnf_composer::INFO, "Number of elements to degenerate: " + std::to_string(numberOfElementsToDegenerate) + '\n');
 
 	//for (int i = 0; i < numberOfElementsToDegenerate; i++)
 	//{
@@ -391,8 +397,6 @@ void ExperimentHandler::degenerationProcedure()
 	if (params.isComposerVisualizationOn)
 		dnfcomposerHandler.setIsUserInterfaceActiveAs(true);
 }
-
-
 
 void ExperimentHandler::relearningProcedure()
 {
@@ -422,6 +426,7 @@ void ExperimentHandler::cleanupPickAndPlace()
 	stats.shapesPlacedIncorrectly = 0;
 	if(params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.resetSignals();
+	log(dnf_composer::LogLevel::INFO, "Pick and place procedure finished.\n");
 }
 
 void ExperimentHandler::cleanupTrial()
@@ -432,11 +437,12 @@ void ExperimentHandler::cleanupTrial()
 	params.currentPercentageOfDegeneration = 0;
 	data.isFieldDead = false;
 	getOriginalWeightsFile();
-	Sleep(10);
+	Sleep(300);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
 	Sleep(10);
 	dnfcomposerHandler.setWasStartSimulationRequested(true);
 	//Sleep(25);
+	log(dnf_composer::LogLevel::INFO, "Trial finished.\n");
 }
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
@@ -487,7 +493,7 @@ void ExperimentHandler::restoreWeightsFile() const
 	if (!result)
 		dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
 	else
-		dnf_composer::log(dnf_composer::ERROR_, "Error deleting previous weights file." + '\n');
+		dnf_composer::log(dnf_composer::ERROR_, "Error deleting previous weights file.\n");
 
 	const std::string newTestFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 
@@ -523,6 +529,9 @@ void ExperimentHandler::getOriginalWeightsFile() const
 	std::ofstream destFile(destFileName);
 
 	destFile << sourceFile.rdbuf();
+
+	dnf_composer::log(dnf_composer::INFO, "Original weights file loaded.\n");
+
 }
 
 void ExperimentHandler::createExperimentFolderDirectory() 
@@ -537,6 +546,7 @@ void ExperimentHandler::createExperimentFolderDirectory()
 
 	dnfcomposerHandler.setDataFilePath(weightsFolderPath);
 
+	dnf_composer::log(dnf_composer::INFO, "Experiment folder directory created.\n");
 }
 
 void ExperimentHandler::deleteExperimentFolderDirectory() const
@@ -545,4 +555,6 @@ void ExperimentHandler::deleteExperimentFolderDirectory() const
 
 	const std::string experimentFolderPath = params.filePathPrefix + params.experimentId;
 	fs::remove_all(experimentFolderPath);
+
+	dnf_composer::log(dnf_composer::INFO, "Experiment folder directory deleted.\n");
 }

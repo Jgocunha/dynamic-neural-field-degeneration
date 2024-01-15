@@ -42,24 +42,26 @@ namespace dnf_composer
 
     void LearningWizard::simulateAssociation()
     {
+        constexpr int timeSteps = 25;
+
         for (int i = 0; i < static_cast<int>(targetPeakLocationsForNeuralFieldPre.size()); i++)
         {
             // Create Gaussian stimuli in the input field
             for (int j = 0; j < static_cast<int>(targetPeakLocationsForNeuralFieldPre[i].size()); j++)
             {
-                static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("per - per"));
-                static auto kernel_width = kernel->getParameters().sigma;
-                static auto kernel_amplitude = kernel->getParameters().amplitude;
+                auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("per - per"));
+                auto kernel_width = kernel->getParameters().sigma;
+                auto kernel_amplitude = kernel->getParameters().amplitude;
                 gaussStimulusParameters.amplitude = kernel_amplitude;
                 gaussStimulusParameters.sigma = kernel_width;
 
                 const std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
-            	const element::ElementIdentifiers stimulusIdentifiers{ stimulusName };
+                const element::ElementIdentifiers stimulusIdentifiers{ stimulusName };
 
-            	element::ElementSpatialDimensionParameters stimulusDimensions{ neuralFieldPre->getMaxSpatialDimension(), neuralFieldPre->getStepSize() };
+                element::ElementSpatialDimensionParameters stimulusDimensions{ neuralFieldPre->getMaxSpatialDimension(), neuralFieldPre->getStepSize() };
                 element::ElementCommonParameters commonParameters{ stimulusIdentifiers, stimulusDimensions };
 
-            	gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPre[i][j];
+                gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPre[i][j];
                 std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>(commonParameters, gaussStimulusParameters);
 
                 simulation->addElement(stimulus);
@@ -67,16 +69,16 @@ namespace dnf_composer
 
                 simulation->init();
                 fieldCoupling->resetWeights();
-                for (int k = 0; k < 100; k++)
+                for (int k = 0; k < timeSteps; k++)
                     simulation->step();
             }
 
             // Create Gaussian stimuli in the output field
             for (int j = 0; j < targetPeakLocationsForNeuralFieldPost[i].size(); j++)
             {
-                static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("out - out"));
-                static auto kernel_width = kernel->getParameters().sigma;
-                static auto kernel_amplitude = kernel->getParameters().amplitude;
+                auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("out - out"));
+                auto kernel_width = kernel->getParameters().sigma;
+                auto kernel_amplitude = kernel->getParameters().amplitude;
                 gaussStimulusParameters.amplitude = kernel_amplitude;
                 gaussStimulusParameters.sigma = kernel_width;
 
@@ -86,7 +88,7 @@ namespace dnf_composer
                 element::ElementSpatialDimensionParameters stimulusDimensions{ neuralFieldPost->getMaxSpatialDimension(), neuralFieldPost->getStepSize() };
                 element::ElementCommonParameters commonParameters{ stimulusIdentifiers, stimulusDimensions };
 
-            	gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPost[i][j];
+                gaussStimulusParameters.position = targetPeakLocationsForNeuralFieldPost[i][j];
                 std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>(commonParameters, gaussStimulusParameters);
 
                 simulation->addElement(stimulus);
@@ -95,7 +97,7 @@ namespace dnf_composer
                 simulation->init();
                 fieldCoupling->resetWeights();
 
-                for (int k = 0; k < 100; k++)
+                for (int k = 0; k < timeSteps; k++)
                     simulation->step();
             }
 
@@ -108,7 +110,7 @@ namespace dnf_composer
 
             // Wait for the input field to settle again
             // simulation->init();
-            for (int k = 0; k < 100; k++)
+            for (int k = 0; k < timeSteps; k++)
                 simulation->step();
 
 
