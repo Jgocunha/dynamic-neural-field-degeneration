@@ -58,9 +58,9 @@ ExperimentParameters inputUserParameters()
     else
     {
         params.numberOfTrials = 5;
-        params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
-        params.fieldToDegenerate = "perceptual";
-        params.initialPercentageOfDegeneration = 15;
+        params.degeneracyType = dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+        params.fieldToDegenerate = "output";
+        params.initialPercentageOfDegeneration = 90;
         params.incrementOfDegenerationPercentage = 1;
         params.numberOfRelearningEpochs = 100;
         params.maximumAmountOfDemonstrations = 2;
@@ -76,8 +76,8 @@ int main()
     {
         ExperimentParameters params = inputUserParameters();
 
-        params.numberOfShapesPerTrial = 7;
-        params.decisionTolerance = 2.0;
+        params.numberOfShapesPerTrial = 1;
+        params.decisionTolerance = 1.99;
 
         params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.01;

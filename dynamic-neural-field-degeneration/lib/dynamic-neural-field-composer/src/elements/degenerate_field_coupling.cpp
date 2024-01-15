@@ -50,6 +50,7 @@ namespace dnf_composer
 			case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 				for (int i = 0; i < numWeightsToDegenerate; i++)
 					setRandomUniqueWeightToZero();
+				log(INFO, "Degenerated " + std::to_string(numWeightsToDegenerate) + " weights.\n");
 				degenerate = false;
 				break;
 			case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
@@ -255,7 +256,7 @@ namespace dnf_composer
 				weights[row_idx][col_idx] = 0;
 
 				uniqueCombinationFound = true; // Set flag to indicate combination found
-				std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+				//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
 			}
 
 			if (indicesForDegeneration.empty())
