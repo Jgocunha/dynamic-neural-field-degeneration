@@ -212,10 +212,11 @@ namespace dnf_composer
 				const int col_idx = pair.second;
 
 				// Set weight at combination to 0
-				weights[row_idx][col_idx] = weights[row_idx][col_idx] * 0.2;
+				weights[row_idx][col_idx] = weights[row_idx][col_idx] * weightReductionFactor;
 
 				uniqueCombinationFound = true; // Set flag to indicate combination found
 				//std::cout << "Unique combination found " << row_idx << " " << col_idx << std::endl;
+				//std::cout << "Weight reduction factor " << weightReductionFactor << std::endl;
 			}
 
 			if (indicesForDegeneration.empty())
