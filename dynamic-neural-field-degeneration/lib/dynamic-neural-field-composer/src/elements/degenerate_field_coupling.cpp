@@ -152,9 +152,6 @@ namespace dnf_composer
 
 		void DegenerateFieldCoupling::setRandomUniqueWeightToRandomValue()
 		{
-			// Initialize the maximum number of attempts to find unique combinations
-			static int maxAttempts = components["output"].size() * components["input"].size();
-
 			bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
 
 			// Loop until a unique combination is found or indicesForDegeneration is empty
