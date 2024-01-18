@@ -121,10 +121,10 @@ private:
 	Signals signals;
 
 	std::unordered_map<double, int> hueToAngleMap = {
-			{00.00, 2.00 }, // red
+			//{00.00, 2.00 }, // red
 			//{41.00, 6.00 }, // orange
 			//{60.00, 10.00}, // yellow
-			//{120.00,14.00}, // green
+			{120.00,14.00}, // green
 			//{240.00,18.00}, // blue
 			//{274.00,22.00}, // indigo
 			//{300.00,26.00} // violet
