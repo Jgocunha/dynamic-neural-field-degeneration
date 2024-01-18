@@ -142,8 +142,6 @@ namespace dnf_composer
 				weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
 				break;
 			}
-
-			writeWeights();
 		}
 
 		void FieldCoupling::setLearningRate(double learningRate)
@@ -155,54 +153,97 @@ namespace dnf_composer
 		{
 			return weights;
 		}
+#
 
 		bool FieldCoupling::readWeights()
 		{
-			std::ifstream file(weightsFilePath); 
+			std::ifstream file(weightsFilePath);
+
+			log(ERROR_, "Read weights was called...\n");
+
+			const int originalMatrixRows = static_cast<int>(weights.size());
+			const int originalMatrixColumns = static_cast<int>( weights[0].size());
+
+			log(WARNING, "Original size: " + std::to_string(originalMatrixRows) + "x" + std::to_string(originalMatrixColumns) + '\n');
 
 			if (file.is_open()) {
 				utilities::resizeMatrix(weights, 0, 0);
 				double element;
 				std::vector<double> row;
-				while (file >> element) 
-				{  
-					row.push_back(element);  
-					if (row.size() == components["output"].size())
-					{
-						weights.push_back(row);  
-						row.clear(); 
+
+				while (file >> element) {
+					row.push_back(element);
+					if (row.size() == components["output"].size()) {
+						weights.push_back(row);
+						row.clear();
 					}
 				}
-				file.close();
-				const std::string message = "Weights '" + this->getUniqueName() + "' read successfully from: " + weightsFilePath + ". \n";
+
+				file.sync();
+				int newMatrixRows = 0;
+				int newMatrixColumns = 0;
+				// Check if the dimensions of the loaded matrix match the original matrix
+				do
+				{
+					newMatrixRows = static_cast<int>(weights.size());
+					newMatrixColumns = static_cast<int>(weights[0].size());
+					//const std::string message = "Error: Dimensions of the loaded weights matrix do not match the original matrix in '" +
+						//this->getUniqueName() + "' from: " + weightsFilePath + ". \n";
+					//log(LogLevel::ERROR_, message);
+					log(WARNING, "Current size: " + std::to_string(newMatrixRows) + "x" + std::to_string(newMatrixColumns) + '\n');
+
+
+				} while (!(newMatrixRows == originalMatrixRows && !weights.empty() &&
+					newMatrixColumns == originalMatrixColumns));
+
+				const std::string message = "Weights '" + this->getUniqueName() +
+					"' read successfully from: " + weightsFilePath + ". \n";
 				log(LogLevel::INFO, message);
+
+				file.close();
+
 				return true;
 			}
 
-			const std::string message = "Failed to read weights '" + this->getUniqueName() + "' from: " + weightsFilePath + ". \n";
+			const std::string message = "Failed to open file for reading weights '" + this->getUniqueName() +
+				"' from: " + weightsFilePath + ". \n";
 			log(LogLevel::ERROR_, message);
-			
+
 			return false;
 		}
 
+
+
 		void FieldCoupling::writeWeights() const
 		{
+			log(ERROR_, "Write weights was called...\n");
+
 			std::ofstream file(weightsFilePath);
 
 			if (file.is_open()) {
 				for (const auto& row : weights) {
 					for (const auto& element : row) {
-						file << element << " ";  
+						file << element << " ";
 					}
-					file << '\n'; 
+					file << '\n';
 				}
-				file.close();
-				const std::string message = "Saved weights '" + this->getUniqueName() +"' to: " + weightsFilePath + ". \n";
-				log(LogLevel::INFO, message);
+
+				// Flush the data to the file
+				file.flush();
+
+				if (file.good()) {
+					file.close();
+					while (file.is_open());
+					const std::string message = "Saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
+					log(LogLevel::INFO, message);
+				}
+				else {
+					const std::string message = "Failed to save weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
+					log(LogLevel::ERROR_, message);
+				}
 			}
-			else
-			{
-				const std::string message = "Failed to saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
+			else {
+				const std::string message = "Failed to open file for saving weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
 				log(LogLevel::ERROR_, message);
 			}
 		}

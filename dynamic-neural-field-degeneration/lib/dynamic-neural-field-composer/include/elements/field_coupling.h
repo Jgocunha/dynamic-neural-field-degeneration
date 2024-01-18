@@ -5,7 +5,8 @@
 #include "mathtools/mathtools.h"
 #include "element.h"
 #include "utilities/utilities.h"
-
+#include <fstream>
+#include <iostream>
 
 namespace dnf_composer
 {

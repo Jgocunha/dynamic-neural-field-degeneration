@@ -125,7 +125,7 @@ public:
 	void setIncrementOfDegenerationPercentage(double percentage);
 
 
-	void setInitialNumberOfElementsToDegenerate(int count);
+	void setInitialNumberOfElementsToDegenerate(int count) const;
 
 	void setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);

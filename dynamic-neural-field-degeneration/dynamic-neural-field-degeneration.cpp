@@ -62,7 +62,7 @@ ExperimentParameters inputUserParameters()
         params.fieldToDegenerate = "perceptual";
         params.initialPercentageOfDegeneration = 15;
         params.incrementOfDegenerationPercentage = 0.2;
-        params.numberOfRelearningEpochs = 200;
+        params.numberOfRelearningEpochs = 100;
         params.maximumAmountOfDemonstrations = 1;
     }
 
@@ -84,7 +84,7 @@ int main()
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
-        params.isComposerVisualizationOn = true;
+        params.isComposerVisualizationOn = false;
         params.isDataSavingOn = params.isComposerVisualizationOn;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;

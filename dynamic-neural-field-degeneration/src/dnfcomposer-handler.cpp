@@ -15,7 +15,6 @@ DnfcomposerHandler::DnfcomposerHandler()
 	
 	simulationElements.fcpw = dnf_composer::LearningWizard{simulation, "per - out" };
 
-
 	setupUserInterface();
 }
 
@@ -41,36 +40,35 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 void DnfcomposerHandler::init()
 {
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
-	//if (simulationParameters.isUserInterfaceActive)
-		readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
+	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
 {
 	application->init();
 	
-	bool userRequestClose = false;
-	while (!userRequestClose && !hasExperimentFinished)
-	{
-		if (wasDegenerationRequested)
-			activateDegeneration();
-		else if (wasExternalInputUpdated)
-			updateExternalInput();
-		else if (wasRelearningRequested)
-			activateRelearning();
-		//else if (wasStartSimulationRequested)
-			//startSimulation();
-		else if (wasUpdateWeightsRequested)
-			updateWeights();
-		else if(wasCloseSimulationRequested)
-			closeSimulation();
-		else
-			application->step();
+	//bool userRequestClose = false;
+	//while (!userRequestClose && !hasExperimentFinished)
+	//{
+	//	if (wasDegenerationRequested)
+	//		activateDegeneration();
+	//	else if (wasExternalInputUpdated)
+	//		updateExternalInput();
+	//	else if (wasRelearningRequested)
+	//		activateRelearning();
+	//	//else if (wasStartSimulationRequested)
+	//		//startSimulation();
+	//	else if (wasUpdateWeightsRequested)
+	//		updateWeights();
+	//	else if(wasCloseSimulationRequested)
+	//		closeSimulation();
+	//	else
+	//		application->step();
 
-		Sleep(1);
-		if (simulationParameters.isUserInterfaceActive)
-			userRequestClose = application->getCloseUI();
-	}
+	//	Sleep(1);
+	//	if (simulationParameters.isUserInterfaceActive)
+	//		userRequestClose = application->getCloseUI();
+	//}
 
 	application->close();
 }
@@ -79,8 +77,7 @@ void DnfcomposerHandler::close()
 {
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
-	//if (simulationParameters.isUserInterfaceActive)
-		readCentroidsThread.join();
+	readCentroidsThread.join();
 }
 
 void DnfcomposerHandler::stop()
@@ -238,7 +235,6 @@ void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationR
 {
 	this->wasCloseSimulationRequested = wasCloseSimulationRequested;
 }
-
  
 // public get methods
 
@@ -275,35 +271,12 @@ void DnfcomposerHandler::setIncrementOfDegenerationPercentage(double percentage)
 }
 
 
-void DnfcomposerHandler::setInitialNumberOfElementsToDegenerate(int count)
+void DnfcomposerHandler::setInitialNumberOfElementsToDegenerate(int count) const
 {
-	/*std::cout << "here ffs " << count << std::endl;
-
-	switch (simulationParameters.degeneracyType)
-	{
-	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
-		if (simulationParameters.fieldToDegenerate == "perceptual")
-		{*/
-			simulationElements.inputField->setNumNeuronsToDegenerate(count);
-			//log(dnf_composer::ERROR_, " Number of pre-synaptic neurons to degenerate: " + std::to_string(count) + ".\n");
-		//}
-		//if (simulationParameters.fieldToDegenerate == "output")
-		//{
-			simulationElements.outputField->setNumNeuronsToDegenerate(count);
-			//log(dnf_composer::ERROR_, "Number of post-synaptic neurons to degenerate: " + std::to_string(count) + ".\n");
-		//}
-		//break;
-
-	//case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
-	//case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
-	//case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		simulationElements.fieldCoupling->setNumWeightsToDegenerate(count);
-		//log(dnf_composer::ERROR_, " Number of inter-synaptic connections to degenerate: " + std::to_string(count) + ".\n");
-		//break;
-	//default:
-		//break;
-	//}
-}//
+	simulationElements.inputField->setNumNeuronsToDegenerate(count);
+	simulationElements.outputField->setNumNeuronsToDegenerate(count);
+	simulationElements.fieldCoupling->setNumWeightsToDegenerate(count);
+}
 
 
 void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
@@ -315,20 +288,15 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if (simulationParameters.fieldToDegenerate == "perceptual")
 		{
-			// this is a double
-			numberOfElements = static_cast<double>(simulationElements.inputField->getSize())/ 100 * simulationParameters.incrementOfDegenerationInPercentage;
-			//log(dnf_composer::WARNING, "setNumberOfElementsToDegenerate() hardcoding number of elements.\n");
-			//numberOfElements = 1;
+			numberOfElements = (simulationElements.inputField->getSize())/ 100 * simulationParameters.incrementOfDegenerationInPercentage;
 			simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElements);
-			log(dnf_composer::WARNING, " Number of pre-synaptic neurons to degenerate: " + std::to_string(numberOfElements) + ".\n");
-			//std::cout << "Number of elements to degenerate: " << numberOfElements << std::endl;
+			log(dnf_composer::INFO, " Number of pre-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		}
 		if (simulationParameters.fieldToDegenerate == "output")
 		{
-			// this is a double
 			numberOfElements = simulationElements.outputField->getSize()/ 100 * simulationParameters.incrementOfDegenerationInPercentage ;
 			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
-			log(dnf_composer::WARNING, "Number of post-synaptic neurons to degenerate: " + std::to_string(numberOfElements) + ".\n");
+			log(dnf_composer::WARNING, "Number of post-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		}
 		break;
 
@@ -336,10 +304,9 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
 		// this is a double
-		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize()/ 100 * simulationParameters.incrementOfDegenerationInPercentage ;
+		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize()/ 100 * simulationParameters.incrementOfDegenerationInPercentage;
 		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
-		log(dnf_composer::WARNING, " Number of inter-synaptic connections to degenerate: " + std::to_string(numberOfElements) + ".\n");
-
+		log(dnf_composer::WARNING, " Number of inter-synaptic connections to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		break;
 	default:
 		break;
@@ -443,12 +410,6 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
-	//simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
-	//simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
-
-	//if (simulationParameters.isUserInterfaceActive)
-	//	userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
-
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
@@ -460,7 +421,7 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(5);
+		Sleep(1);
 	}
 }
 
