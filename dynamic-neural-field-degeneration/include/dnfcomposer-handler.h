@@ -25,7 +25,7 @@ struct SimulationParameters
 	double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 	double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
-	const int timeForFieldToSettle = 30;
+	const int timeForFieldToSettle = 35;
 
 	dnf_composer::element::ElementDegeneracyType degeneracyType = dnf_composer::element::ElementDegeneracyType::NONE;
 	std::string fieldToDegenerate = "perceptual";
@@ -33,7 +33,7 @@ struct SimulationParameters
 	bool isDebugMode = false;
 	bool isUserInterfaceActive = false;
 
-	int incrementOfDegenerationInPercentage;
+	double incrementOfDegenerationInPercentage;
 };
 
 struct RelearningParameters
@@ -83,8 +83,8 @@ private:
 	{
 		//{ 00.00 + offset }, // red 0
 		//{ 41.00 + offset }, // orange 1
-		//{ 60.00 + offset }, // yellow 2
-		{ 120.00 + offset }, // green 3
+		{ 60.00 + offset }, // yellow 2
+		//{ 120.00 + offset }, // green 3
 		//{ 240.00 + offset }, // blue 4
 		//{ 274.00 + offset }, // indigo 5
 		//{ 300.00 + offset } // violet 6
@@ -93,8 +93,8 @@ private:
 	{
 		//{ 2.00 + offset },
 		//{ 6.00 + offset },
-		//{ 10.00+ offset },
-		{ 14.00 + offset },
+		{ 10.00+ offset },
+		//{ 14.00 + offset },
 		//{ 18.00 + offset },
 		//{ 22.00 + offset },
 		//{ 26.00 + offset }
@@ -124,6 +124,9 @@ public:
 		const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
 	void setIncrementOfDegenerationPercentage(double percentage);
 
+
+	void setInitialNumberOfElementsToDegenerate(int count);
+
 	void setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);;
 	void setExternalInput(const double& position);
 	void setRelearning(const int& targetRelearningPositions);
@@ -146,6 +149,7 @@ public:
 	void updateFieldCentroids();
 	void updateWeights();
 	void readWeights();
+	void setNumberOfElementsToDegenerate() const;
 private:
 	void setupUserInterface();
 	void updateExternalInput();
@@ -155,5 +159,4 @@ private:
 
 	void allCasesRelearning();
 	void onlyDegeneratedCasesRelearning();
-	void setNumberOfElementsToDegenerate() const;
 };

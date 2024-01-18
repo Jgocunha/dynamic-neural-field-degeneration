@@ -66,6 +66,80 @@ void ExperimentHandler::init()
 	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
+
+void ExperimentHandler::initialDegeneration()
+{
+
+	/*if (params.initialPercentageOfDegeneration != 0)
+	{
+		mockPickAndPlace();
+		while (params.currentPercentageOfDegeneration < params.initialPercentageOfDegeneration)
+		{
+			params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
+			if (params.isDebugModeOn)
+				dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
+			degenerationProcedure();
+		}
+		Sleep(300);
+		dnfcomposerHandler.saveWeightsToFile();
+		Sleep(300);
+		if (params.isDebugModeOn)
+		{
+			dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
+		}
+	}*/
+
+	mockPickAndPlace();
+
+	int numberElements = 0;
+	switch (params.degeneracyType)
+	{
+	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
+		if (params.fieldToDegenerate == "perceptual")
+		{
+			numberElements = 720 * params.initialPercentageOfDegeneration / 100 ;
+			log(dnf_composer::WARNING, "Initial number of pre-synaptic neurons to degenerate: " + std::to_string(numberElements) + '\n');
+		}
+		if (params.fieldToDegenerate == "output")
+		{
+			numberElements = 280 * params.initialPercentageOfDegeneration / 100;
+			log(dnf_composer::WARNING, "Initial number of post-synaptic neurons to degenerate: " + std::to_string(numberElements) + '\n');
+
+		}
+		break;
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
+		numberElements = 280 * 720 * params.initialPercentageOfDegeneration / 100;
+		log(dnf_composer::WARNING, "Initial number of inter-field synaptic connections to degenerate: " + std::to_string(numberElements) + '\n');
+		break;
+	default:
+		break;
+	}
+
+	if (params.isDebugModeOn)
+	{
+		dnf_composer::log(dnf_composer::INFO, "Initial number of elements to degenerate is: " + std::to_string(numberElements) + '\n');
+	}
+
+	dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
+
+
+	degenerationProcedure();
+	Sleep(100);
+	params.currentPercentageOfDegeneration = params.initialPercentageOfDegeneration;
+	dnfcomposerHandler.saveWeightsToFile();
+	if (params.isDebugModeOn)
+	{
+		dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
+	}
+
+	dnfcomposerHandler.setNumberOfElementsToDegenerate();
+
+}
+
+
+
 void ExperimentHandler::step()
 {
 	for(int trial = 1; trial <= params.numberOfTrials; trial++)
@@ -78,24 +152,7 @@ void ExperimentHandler::step()
 		if(params.isComposerVisualizationOn)
 			dnfcomposerHandler.setTrial(trial);
 
-		if (params.initialPercentageOfDegeneration != 0)
-		{
-			mockPickAndPlace();
-			while (params.currentPercentageOfDegeneration < params.initialPercentageOfDegeneration)
-			{
-				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
-				if (params.isDebugModeOn)
-					dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
-				degenerationProcedure();
-			}
-			Sleep(300);
-			dnfcomposerHandler.saveWeightsToFile();
-			Sleep(300);
-			if (params.isDebugModeOn)
-			{
-				dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " % .\n");
-			}
-		}
+		initialDegeneration();
 
 		do
 		{

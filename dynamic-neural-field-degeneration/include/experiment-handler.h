@@ -153,6 +153,7 @@ private:
 	void readShapeHue();
 	void readTargetAngle();
 	void getExpectedTargetAngle();
+	void initialDegeneration();
 
 	bool mockPickAndPlace();
 	void mockReadShapeHue();

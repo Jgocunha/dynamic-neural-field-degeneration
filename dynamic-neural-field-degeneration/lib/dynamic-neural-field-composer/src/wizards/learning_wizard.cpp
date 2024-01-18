@@ -255,7 +255,7 @@ namespace dnf_composer
         }
         else
         {
-            const std::string message = "Failed to open file " + filename + ".\n";;
+            const std::string message = "Failed to open file " + filename + ".\n";
             log(LogLevel::ERROR_, message);
         }
 
@@ -285,6 +285,7 @@ namespace dnf_composer
             fieldCoupling->updateWeights(input, output);
             lineCount = (lineCount + 1) % (numLinesInput);
         }
+        fieldCoupling->saveWeights();
     }
 
     void LearningWizard::setFieldCoupling(const std::string& fieldCouplingUniqueId)
