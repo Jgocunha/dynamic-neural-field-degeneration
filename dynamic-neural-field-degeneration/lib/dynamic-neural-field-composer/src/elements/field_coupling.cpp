@@ -159,14 +159,14 @@ namespace dnf_composer
 		{
 			std::ifstream file(weightsFilePath);
 
-			log(ERROR_, "Read weights was called...\n");
+			log(LogLevel::DEBUG, "Attempting to read weights...\n");
 
 			const int originalMatrixRows = static_cast<int>(weights.size());
 			const int originalMatrixColumns = static_cast<int>( weights[0].size());
 
-			log(WARNING, "Original size: " + std::to_string(originalMatrixRows) + "x" + std::to_string(originalMatrixColumns) + '\n');
 
-			if (file.is_open()) {
+			if (file.is_open()) 
+			{
 				utilities::resizeMatrix(weights, 0, 0);
 				double element;
 				std::vector<double> row;
@@ -182,17 +182,14 @@ namespace dnf_composer
 				file.sync();
 				int newMatrixRows = 0;
 				int newMatrixColumns = 0;
+
 				// Check if the dimensions of the loaded matrix match the original matrix
 				do
 				{
 					newMatrixRows = static_cast<int>(weights.size());
 					newMatrixColumns = static_cast<int>(weights[0].size());
-					//const std::string message = "Error: Dimensions of the loaded weights matrix do not match the original matrix in '" +
-						//this->getUniqueName() + "' from: " + weightsFilePath + ". \n";
-					//log(LogLevel::ERROR_, message);
-					log(WARNING, "Current size: " + std::to_string(newMatrixRows) + "x" + std::to_string(newMatrixColumns) + '\n');
-
-
+					log(DEBUG, "Original matrix size is: " + std::to_string(originalMatrixRows) + " by " + std::to_string(originalMatrixColumns)
+						+ ". Current matrix size is: " + std::to_string(newMatrixRows) + " by " + std::to_string(newMatrixColumns) + ".\n");
 				} while (!(newMatrixRows == originalMatrixRows && !weights.empty() &&
 					newMatrixColumns == originalMatrixColumns));
 
@@ -216,9 +213,9 @@ namespace dnf_composer
 
 		void FieldCoupling::writeWeights() const
 		{
-			log(ERROR_, "Write weights was called...\n");
-
 			std::ofstream file(weightsFilePath);
+
+			log(LogLevel::DEBUG, "Attempting to write weights...\n");
 
 			if (file.is_open()) {
 				for (const auto& row : weights) {

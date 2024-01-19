@@ -47,28 +47,30 @@ void DnfcomposerHandler::step()
 {
 	application->init();
 	
-	//bool userRequestClose = false;
-	//while (!userRequestClose && !hasExperimentFinished)
-	//{
-	//	if (wasDegenerationRequested)
-	//		activateDegeneration();
-	//	else if (wasExternalInputUpdated)
-	//		updateExternalInput();
-	//	else if (wasRelearningRequested)
-	//		activateRelearning();
-	//	//else if (wasStartSimulationRequested)
-	//		//startSimulation();
-	//	else if (wasUpdateWeightsRequested)
-	//		updateWeights();
-	//	else if(wasCloseSimulationRequested)
-	//		closeSimulation();
-	//	else
-	//		application->step();
+	bool userRequestClose = false;
+	while (!userRequestClose && !hasExperimentFinished)
+	{
+		if (wasDegenerationRequested)
+			activateDegeneration();
+		else if (wasExternalInputUpdated)
+			updateExternalInput();
+		else if (wasRelearningRequested)
+			activateRelearning();
+		//else if (wasStartSimulationRequested)
+			//startSimulation();
+		else if (wasUpdateWeightsRequested)
+			updateWeights();
+		else if (wasSaveWeightsRequested)
+			saveWeightsToFile();
+		else if(wasCloseSimulationRequested)
+			closeSimulation();
+		else
+			application->step();
 
-	//	Sleep(1);
-	//	if (simulationParameters.isUserInterfaceActive)
-	//		userRequestClose = application->getCloseUI();
-	//}
+		Sleep(1);
+		if (simulationParameters.isUserInterfaceActive)
+			userRequestClose = application->getCloseUI();
+	}
 
 	application->close();
 }
@@ -436,6 +438,7 @@ void DnfcomposerHandler::updateWeights()
 	wasUpdateWeightsRequested = false;
 }
 
+
 // other methods
 
 void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
@@ -444,9 +447,17 @@ void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
 	simulationElements.fcpw.setDataFilePath(filePath);
 }
 
-void DnfcomposerHandler::saveWeightsToFile() const
+
+void DnfcomposerHandler::saveWeights()
+{
+	wasSaveWeightsRequested = true;
+}
+
+
+void DnfcomposerHandler::saveWeightsToFile() 
 {
 	simulationElements.fieldCoupling->saveWeights();
+	wasSaveWeightsRequested = false;
 }
 
 void DnfcomposerHandler::waitForFieldsToSettle() const
