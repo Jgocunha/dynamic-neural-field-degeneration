@@ -76,7 +76,7 @@ int main()
     {
         ExperimentParameters params = inputUserParameters();
 
-        params.numberOfShapesPerTrial = 1;
+        params.numberOfShapesPerTrial = 7;
         params.decisionTolerance = 1.99;
 
         params.targetPercentageOfDegeneration = 100;
