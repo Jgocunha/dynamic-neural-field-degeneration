@@ -85,7 +85,7 @@ int main()
         params.updateAllWeights = false; 
 
         params.isComposerVisualizationOn = false;
-        params.isDataSavingOn = params.isComposerVisualizationOn;
+        params.isDataSavingOn = !params.isComposerVisualizationOn;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
 
