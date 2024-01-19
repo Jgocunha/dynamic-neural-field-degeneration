@@ -59,11 +59,11 @@ void ExperimentHandler::init()
 
 	printExperimentParameters();
 	createExperimentFolderDirectory();
-	//getOriginalWeightsFile();
+	getOriginalWeightsFile();
 	dnfcomposerHandler.init();
 	if(params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.init();
-	//experimentThread = std::thread(&ExperimentHandler::step, this);
+	experimentThread = std::thread(&ExperimentHandler::step, this);
 }
 
 void ExperimentHandler::initialDegeneration()
@@ -94,12 +94,13 @@ void ExperimentHandler::initialDegeneration()
 	dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
 
 	degenerationProcedure();
-	//Sleep(300);
 
 	params.currentPercentageOfDegeneration = params.initialPercentageOfDegeneration;
-	dnfcomposerHandler.saveWeightsToFile();
 	if (params.isDebugModeOn)
 		dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " percent.\n");
+
+	saveWeights();
+
 
 	dnfcomposerHandler.setNumberOfElementsToDegenerate();
 }
@@ -130,20 +131,14 @@ void ExperimentHandler::step()
 			{
 				if (doesBackupWeightsFileExist())
 				{
-					//Sleep(300);
 					restoreWeightsFile();
-					//Sleep(300); // new
-					dnfcomposerHandler.readWeights();
-					//Sleep(300);
-					dnfcomposerHandler.saveWeightsToFile();
-					//Sleep(300);
+					readWeights();
+					saveWeights();
 				}
-
-				if (params.isDebugModeOn)
-					dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
-				degenerationProcedure();
 				
-				dnfcomposerHandler.saveWeightsToFile();
+				degenerationProcedure();
+				saveWeights();
+
 				if (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations)
 				{
 					data.isFieldDead = true;
@@ -323,6 +318,8 @@ void ExperimentHandler::getExpectedTargetAngle()
 
 bool ExperimentHandler::mockPickAndPlace()
 {
+	log(dnf_composer::INFO, "Performing a mock pick and place.\n");
+
 	stats.shapesPlacedIncorrectly = 0; // binary representation
 	bool successfulPickAndPlace = true;
 
@@ -384,6 +381,9 @@ void ExperimentHandler::mockReadTargetAngle()
 
 void ExperimentHandler::degenerationProcedure()
 {
+	if (params.isDebugModeOn)
+		dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
+
 	// Disable the user interface whilst degenerating to consume less time.
 	if (params.isComposerVisualizationOn)
 		dnfcomposerHandler.setIsUserInterfaceActiveAs(false);
@@ -435,11 +435,9 @@ void ExperimentHandler::cleanupTrial()
 	params.currentPercentageOfDegeneration = 0;
 	data.isFieldDead = false;
 	getOriginalWeightsFile();
-	//Sleep(300);
+	Sleep(300);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
-	//Sleep(10);
 	dnfcomposerHandler.setWasStartSimulationRequested(true);
-	//Sleep(25);
 	log(dnf_composer::LogLevel::INFO, "Trial finished.\n");
 }
 
@@ -474,54 +472,74 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 
 void ExperimentHandler::backupWeightsFile() const
 {
-	const std::string newFilename = "per-out_weights-copy.txt";
-	std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per-out_weights.txt";
+	const std::string newFilename = "per - out_weights - copy.txt";
+	std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 	std::string filenameCopy = params.filePathPrefix + params.experimentId + "/weights/" + newFilename;
 
 	std::ifstream source(filename, std::ios::binary);
 	std::ofstream dest(filenameCopy, std::ios::binary);
 
-	if (source.is_open() && dest.is_open()) {
-		dest << source.rdbuf();
+	dnf_composer::log(dnf_composer::INFO, "Attempting to back up weights file...\n");
 
-		// Check if the copy operation was successful
-		if (!dest.fail()) {
-			dnf_composer::log(dnf_composer::INFO, "Backing up weights file.\n");
-		}
-		else {
-			dnf_composer::log(dnf_composer::ERROR_, "Failed to copy weights file.\n");
-		}
+	dest << source.rdbuf();
 
-		source.close();
-		dest.close();
-	}
-	else {
-		dnf_composer::log(dnf_composer::ERROR_, "Unable to open source or destination file for backup.\n");
-	}
+	source.close();
+	dest.close();
+
+	// Check the file sizes
+	std::streampos sourceSize, destSize;
+	std::ifstream sourceCheckFile(filename, std::ios::binary | std::ios::ate);
+	std::ifstream destCheckFile(filenameCopy, std::ios::binary | std::ios::ate);
+
+	do
+	{
+		sourceSize = sourceCheckFile.tellg();
+		destSize = destCheckFile.tellg();
+		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+	} while (sourceSize != destSize);
+
+	dnf_composer::log(dnf_composer::INFO, "Weights file successfully backed-up.\n");
+
 }
 
 void ExperimentHandler::restoreWeightsFile() const
 {
-	const std::string oldFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per-out_weights-copy.txt";
-	const std::string newFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per-out_weights.txt";
+	const std::string oldFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights - copy.txt";
+	const std::string newFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 
+	log(dnf_composer::DEBUG, "Attempting to restore weights file...\n");
+
+	// remove weights file
 	const int removeResult = std::remove(newFilename.c_str());
+	std::ifstream oldFile(newFilename.c_str());
+	do
+	{
+		log(dnf_composer::DEBUG, "Checking if weights file still exists...\n");
+		oldFile.open(newFilename.c_str());
+	} while (oldFile.is_open());
+	oldFile.close();
+	dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
 
-	if (!removeResult) {
-		dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
+	// rename copy of weights file
+	std::ifstream currentFile(oldFilename.c_str(), std::ios::binary | std::ios::ate);
+	std::streampos sourceSize, destSize;
+	sourceSize = currentFile.tellg();
 
-		const int renameResult = std::rename(oldFilename.c_str(), newFilename.c_str());
+	currentFile.close();
+	const int renameResult = std::rename(oldFilename.c_str(), newFilename.c_str());
 
-		if (!renameResult) {
-			dnf_composer::log(dnf_composer::INFO, "File successfully renamed.\n");
-		}
-		else {
-			dnf_composer::log(dnf_composer::ERROR_, "Error renaming file.\n");
-		}
-	}
-	else {
-		dnf_composer::log(dnf_composer::ERROR_, "Error deleting previous weights file.\n");
-	}
+	dnf_composer::log(dnf_composer::INFO, "File successfully renamed.\n");
+
+	std::ifstream newFile(newFilename.c_str(), std::ios::binary | std::ios::ate);
+	do
+	{
+		destSize = newFile.tellg();
+		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+	} while (sourceSize != destSize);
+
+	dnf_composer::log(dnf_composer::INFO, "Weights file successfully restored.\n");
 }
 
 bool ExperimentHandler::doesBackupWeightsFileExist() const
@@ -539,57 +557,15 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 	return false;
 }
 
-//void ExperimentHandler::getOriginalWeightsFile() const
-//{
-//	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - out_weights.txt";
-//	const std::ifstream sourceFile(sourceFileName);
-//
-//	const std::string destFileName = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
-//	std::ofstream destFile(destFileName);
-//
-//	destFile << sourceFile.rdbuf();
-//
-//	dnf_composer::log(dnf_composer::INFO, "Original weights file loaded.\n");
-//
-//}
-//
-//void ExperimentHandler::getOriginalWeightsFile() const
-//{
-//	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per-out_weights.txt";
-//	const std::ifstream sourceFile(sourceFileName);
-//
-//	const std::string destFileName = params.filePathPrefix + params.experimentId + "/weights/" + "per-out_weights.txt";
-//	std::ofstream destFile(destFileName);
-//
-//	//if (sourceFile.is_open() && destFile.is_open()) {
-//		destFile << sourceFile.rdbuf();
-//
-//
-//		while(destFile.fail())
-//		{
-//			// Check if the copy operation was successful
-//			if (!destFile.fail()) {
-//				dnf_composer::log(dnf_composer::INFO, "Original weights file loaded.\n");
-//			}
-//			else {
-//				dnf_composer::log(dnf_composer::ERROR_, "Failed to copy original weights file.\n");
-//			}
-//		}
-//		destFile.close();
-//	//}
-//	//else {
-//		//dnf_composer::log(dnf_composer::ERROR_, "Unable to open source or destination file for loading original weights.\n");
-//	//}
-//}
-
-#include <iostream>
-
 void ExperimentHandler::getOriginalWeightsFile() const
 {
 	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - out_weights.txt";
 	 std::ifstream sourceFile(sourceFileName);
 
-	if (!sourceFile.is_open()) {
+	 log(dnf_composer::DEBUG, "Attempting to get original weights file...\n");
+
+	if (!sourceFile.is_open()) 
+	{
 		dnf_composer::log(dnf_composer::ERROR_, "Failed to open source file: " + sourceFileName);
 		return; // Exit the function if the source file cannot be opened
 	}
@@ -597,7 +573,8 @@ void ExperimentHandler::getOriginalWeightsFile() const
 	const std::string destFileName = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 	std::ofstream destFile(destFileName);
 
-	if (!destFile.is_open()) {
+	if (!destFile.is_open()) 
+	{
 		dnf_composer::log(dnf_composer::ERROR_, "Failed to open destination file: " + destFileName);
 		sourceFile.close(); // Close the source file before returning
 		return; // Exit the function if the destination file cannot be opened
@@ -605,7 +582,8 @@ void ExperimentHandler::getOriginalWeightsFile() const
 
 	destFile << sourceFile.rdbuf();
 
-	if (destFile.fail()) {
+	if (destFile.fail()) 
+	{
 		dnf_composer::log(dnf_composer::ERROR_, "Failed to write to destination file: " + destFileName);
 		sourceFile.close();
 		destFile.close(); // Close both files before returning
@@ -624,12 +602,12 @@ void ExperimentHandler::getOriginalWeightsFile() const
 	{
 		sourceSize = sourceCheckFile.tellg();
 		destSize = destCheckFile.tellg();
-		log(dnf_composer::INFO, "Checking if file size is correct... \n");
+		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
 	} while (sourceSize != destSize);
 
-	dnf_composer::log(dnf_composer::INFO, "Original weights file loaded and copied successfully. File size: " + std::to_string(sourceSize) + " bytes.\n");
+	dnf_composer::log(dnf_composer::INFO, "Original weights file loaded and copied successfully.\n");
 }
-
 
 void ExperimentHandler::createExperimentFolderDirectory() 
 {
@@ -654,4 +632,16 @@ void ExperimentHandler::deleteExperimentFolderDirectory() const
 	fs::remove_all(experimentFolderPath);
 
 	dnf_composer::log(dnf_composer::INFO, "Experiment folder directory deleted.\n");
+}
+
+void ExperimentHandler::saveWeights()
+{
+	dnfcomposerHandler.saveWeights();
+	Sleep(300);
+}
+
+void ExperimentHandler::readWeights()
+{
+	dnfcomposerHandler.readWeights();
+	Sleep(300);
 }

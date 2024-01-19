@@ -174,4 +174,7 @@ private:
 
 	void createExperimentFolderDirectory() ;
 	void deleteExperimentFolderDirectory() const;
+
+	void saveWeights();
+	void readWeights();
 };

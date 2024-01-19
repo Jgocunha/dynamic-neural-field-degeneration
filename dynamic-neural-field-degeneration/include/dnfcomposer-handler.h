@@ -78,6 +78,8 @@ private:
 	bool wasStartSimulationRequested = false;
 	bool wasCloseSimulationRequested = false;
 
+	bool wasSaveWeightsRequested = false;
+
 	const double offset = 1.0;
 	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
@@ -144,12 +146,14 @@ public:
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 
 	void setDataFilePath(const std::string& filePath);
-	void saveWeightsToFile() const;
 
 	void updateFieldCentroids();
 	void updateWeights();
 	void readWeights();
 	void setNumberOfElementsToDegenerate() const;
+	void saveWeights();
+
+
 private:
 	void setupUserInterface();
 	void updateExternalInput();
@@ -159,4 +163,6 @@ private:
 
 	void allCasesRelearning();
 	void onlyDegeneratedCasesRelearning();
+	void saveWeightsToFile();
+
 };
