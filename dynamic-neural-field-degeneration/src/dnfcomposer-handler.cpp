@@ -467,15 +467,18 @@ void DnfcomposerHandler::waitForFieldsToSettle() const
 void DnfcomposerHandler::allCasesRelearning()
 {
 	// add gaussian inputs
-	dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
+	//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 35;
-	gsp.sigma = 3;
-	simulationElements.fcpw.setGaussStimulusParameters(gsp);
+
+	//gsp.amplitude = 35;
+	//gsp.sigma = 3;
+	//simulationElements.fcpw.setGaussStimulusParameters(gsp);
+	//log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations");
+
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
 }
@@ -490,22 +493,32 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 
 	std::ostringstream logStream;
 
+
+	log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() starting relearning.\n");
+
+
 	logStream << "Target behaviors to relearn ";
 
 	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
 	{
 		if (!(relearningParameters.targetRelearningPositions & (1 << i))) 
 		{
-			int index = 6 - i;
-			if (index == 2)
-				index = 4;
-			else
-				if (index == 4)
-					index = 2;
+			//int index = 6 - i;
+			//if (index == 2)
+			//	index = 4;
+			//else
+			//	if (index == 4)
+			//		index = 2;
+			constexpr int index = 0;
+			log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() indexing is hardcoded.\n");
+
 
 			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
+			//log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() pushing.\n");
 			logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
+			//log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() adding to logstream.\n");
+
 		}
 	}
 
@@ -517,9 +530,12 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	gsp.amplitude = 35;
-	gsp.sigma = 3;
-	simulationElements.fcpw.setGaussStimulusParameters(gsp);
-	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
+	//log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations.\n");
+
+
+	//gsp.amplitude = 35;
+	//gsp.sigma = 3;
+	//simulationElements.fcpw.setGaussStimulusParameters(gsp);
+	////std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
 }
