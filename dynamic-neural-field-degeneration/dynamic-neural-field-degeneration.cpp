@@ -79,7 +79,7 @@ int main()
         params.numberOfShapesPerTrial = 1;
         params.decisionTolerance = 2.00;
 
-        params.targetPercentageOfDegeneration = 100;
+    	params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.02;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
