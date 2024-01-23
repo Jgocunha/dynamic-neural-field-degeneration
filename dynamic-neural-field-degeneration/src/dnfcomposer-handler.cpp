@@ -56,8 +56,8 @@ void DnfcomposerHandler::step()
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
-		//else if (wasStartSimulationRequested)
-			//startSimulation();
+		else if (wasStartSimulationRequested)
+			startSimulation();
 		else if (wasUpdateWeightsRequested)
 			updateWeights();
 		else if (wasSaveWeightsRequested)
@@ -284,19 +284,24 @@ void DnfcomposerHandler::setInitialNumberOfElementsToDegenerate(int count) const
 void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 {
 	int numberOfElements;
+	double floatingNumberOfElements;
 
 	switch (simulationParameters.degeneracyType)
 	{
 	case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
 		if (simulationParameters.fieldToDegenerate == "perceptual")
 		{
-			numberOfElements = (simulationElements.inputField->getSize())/ 100 * simulationParameters.incrementOfDegenerationInPercentage;
+			// Perform the calculation 			// Round the result to the nearest integer
+			floatingNumberOfElements = static_cast<double>(simulationElements.inputField->getSize()) / 100 * simulationParameters.incrementOfDegenerationInPercentage;
+			numberOfElements = static_cast<int>(std::round(floatingNumberOfElements));
 			simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElements);
 			log(dnf_composer::INFO, " Number of pre-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		}
 		if (simulationParameters.fieldToDegenerate == "output")
 		{
-			numberOfElements = simulationElements.outputField->getSize()/ 100 * simulationParameters.incrementOfDegenerationInPercentage ;
+			// Perform the calculation 			// Round the result to the nearest integer
+			floatingNumberOfElements = static_cast<double>(simulationElements.outputField->getSize()) / 100 * simulationParameters.incrementOfDegenerationInPercentage;
+			numberOfElements = static_cast<int>(std::round(floatingNumberOfElements));
 			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
 			log(dnf_composer::WARNING, "Number of post-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		}
@@ -305,8 +310,9 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		// this is a double
-		numberOfElements = simulationElements.inputField->getSize() * simulationElements.outputField->getSize()/ 100 * simulationParameters.incrementOfDegenerationInPercentage;
+		// Perform the calculation 			// Round the result to the nearest integer
+		floatingNumberOfElements = static_cast<double>(simulationElements.inputField->getSize() * simulationElements.outputField->getSize()) / 100 * simulationParameters.incrementOfDegenerationInPercentage;
+		numberOfElements = static_cast<int>(std::round(floatingNumberOfElements));
 		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
 		log(dnf_composer::WARNING, " Number of inter-synaptic connections to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		break;

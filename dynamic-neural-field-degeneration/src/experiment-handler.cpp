@@ -95,6 +95,8 @@ void ExperimentHandler::initialDegeneration()
 
 	degenerationProcedure();
 
+	Sleep(300);
+
 	params.currentPercentageOfDegeneration = params.initialPercentageOfDegeneration;
 	if (params.isDebugModeOn)
 		dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " percent.\n");
@@ -143,7 +145,7 @@ void ExperimentHandler::step()
 				{
 					data.isFieldDead = true;
 					if (params.isDebugModeOn)
-						dnf_composer::log(dnf_composer::INFO, "Field has no supra-threshold activation.\n");
+						dnf_composer::log(dnf_composer::INFO, "Re-learning did not work.\n");
 				}
 				stats.learningCyclesPerTrialHistory.push_back(stats.numOfRelearningCycles);
 				stats.numOfRelearningCycles = 0;
@@ -437,6 +439,7 @@ void ExperimentHandler::cleanupTrial()
 	getOriginalWeightsFile();
 	Sleep(300);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
+	Sleep(10);
 	dnfcomposerHandler.setWasStartSimulationRequested(true);
 	log(dnf_composer::LogLevel::INFO, "Trial finished.\n");
 }

@@ -16,6 +16,7 @@ namespace dnf_composer
 		void DegenerateNeuralField::init()
 		{
 			NeuralField::init();
+			log(DEBUG, "DegenerateNeuralField::init() with unique name: " + commonParameters.identifiers.uniqueName + ". \n");
 			populateIndicesForDegeneration();
 			degenerate = false;
 		}
