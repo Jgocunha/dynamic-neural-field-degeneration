@@ -144,6 +144,7 @@ public:
 	bool getHaveFieldsSettled() const;
 	bool getHasRelearningFinished() const;
 	std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
+	int getNumberOfDegeneratedElements();
 
 	void setDataFilePath(const std::string& filePath);
 

@@ -6,6 +6,8 @@
 
 DnfcomposerHandler::DnfcomposerHandler()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::DnfcomposerHandler()\n");
+
 	simulation = getExperimentSimulation();
 	application = std::make_unique<dnf_composer::Application>(simulation, true);
 
@@ -20,6 +22,8 @@ DnfcomposerHandler::DnfcomposerHandler()
 
 DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::DnfcomposerHandler()\n");
+
 	simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
 
 	simulation = getExperimentSimulation();
@@ -39,12 +43,16 @@ DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 
 void DnfcomposerHandler::init()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::init()\n");
+
 	dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
 	readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 }
 
 void DnfcomposerHandler::step()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::step()\n");
+
 	application->init();
 	
 	bool userRequestClose = false;
@@ -52,18 +60,18 @@ void DnfcomposerHandler::step()
 	{
 		if (wasDegenerationRequested)
 			activateDegeneration();
+		else if(wasCloseSimulationRequested)
+			closeSimulation();
 		else if (wasExternalInputUpdated)
 			updateExternalInput();
 		else if (wasRelearningRequested)
 			activateRelearning();
-		else if (wasStartSimulationRequested)
-			startSimulation();
+		//else if (wasStartSimulationRequested)
+			//startSimulation();
 		else if (wasUpdateWeightsRequested)
 			updateWeights();
 		else if (wasSaveWeightsRequested)
 			saveWeightsToFile();
-		else if(wasCloseSimulationRequested)
-			closeSimulation();
 		else
 			application->step();
 
@@ -77,6 +85,8 @@ void DnfcomposerHandler::step()
 
 void DnfcomposerHandler::close()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::close()\n");
+
 	// Wait for the thread to finish its execution
 	dnfcomposerThread.join();
 	readCentroidsThread.join();
@@ -84,6 +94,8 @@ void DnfcomposerHandler::close()
 
 void DnfcomposerHandler::stop()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::stop()\n");
+
 	hasExperimentFinished = true;
 }
 
@@ -91,18 +103,26 @@ void DnfcomposerHandler::stop()
 
 void DnfcomposerHandler::startSimulation()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::startSimulation()\n");
+
 	simulation->init();
 	wasStartSimulationRequested = false;
 }
 
 void DnfcomposerHandler::closeSimulation()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::closeSimulation()\n");
+
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
 	simulationElements.fieldCoupling->readWeights();
 	simulationElements.fieldCoupling->populateIndicesForDegeneration();
 	simulationElements.inputField->clearDegeneration();
+	simulationElements.inputField->populateIndicesForDegeneration();
+
 	simulationElements.outputField->clearDegeneration();
+	simulationElements.outputField->populateIndicesForDegeneration();
+
 	wasCloseSimulationRequested = false;
 }
 
@@ -110,6 +130,8 @@ void DnfcomposerHandler::closeSimulation()
 
 void DnfcomposerHandler::setupUserInterface()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setupUserInterface()\n");
+
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
 	visualization->addPlottingData("perceptual field", "output");
@@ -158,24 +180,32 @@ void DnfcomposerHandler::setupUserInterface()
 void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType,
 	const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setExperimentSetupData()\n");
+
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setExperimentSetupData(currentDegenerationType, maximumAllowedDeviation, typeOfElementsDegenerated);
 }
 
 void DnfcomposerHandler::setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setExpectedFieldBehavior()\n");
+
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setExpectedCentroids(targetPerceptualFieldCentroid, targetDecisionFieldCentroid);
 }
 
 void DnfcomposerHandler::setTrial(const int& trial) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setTrial()\n");
+
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setCurrentTrial(trial);
 }
 
 void DnfcomposerHandler::setRelearningCycles(const int& relearningCycles) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setRelearningCycles()\n");
+
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setRelearningCycles(relearningCycles);
 }
@@ -183,6 +213,8 @@ void DnfcomposerHandler::setRelearningCycles(const int& relearningCycles) const
 void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::RelearningType& relearningType, const int& numberOfRelearningEpochs, 
 	const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setRelearningParameters()\n");
+
 	relearningParameters.relearningType = relearningType;
 	relearningParameters.numberOfRelearningEpochs = numberOfRelearningEpochs;
 	relearningParameters.learningRate = learningRate;
@@ -196,6 +228,8 @@ void DnfcomposerHandler::setRelearningParameters(const RelearningParameters::Rel
 
 void DnfcomposerHandler::setDegeneracy(dnf_composer::element::ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setDegeneracy()\n");
+
 	simulationParameters.degeneracyType = degeneracyType;
 	simulationParameters.fieldToDegenerate = fieldToDegenerate;
 	wasDegenerationRequested = true;
@@ -203,38 +237,52 @@ void DnfcomposerHandler::setDegeneracy(dnf_composer::element::ElementDegeneracyT
 
 void DnfcomposerHandler::setExternalInput(const double& position)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setExternalInput()\n");
+
 	this->simulationParameters.externalInputPosition = position;
 	wasExternalInputUpdated = true;
 }
 
 void DnfcomposerHandler::setRelearning(const int& targetRelearningPositions)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setRelearning()\n");
+
 	relearningParameters.targetRelearningPositions = targetRelearningPositions;
 	wasRelearningRequested = true;
 }
 
 void DnfcomposerHandler::setHaveFieldsSettled(bool haveFieldsSettled)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setHaveFieldsSettled()\n");
+
 	this->haveFieldsSettled = haveFieldsSettled;
 }
 
 void DnfcomposerHandler::setHasRelearningFinished(bool hasRelearningFinished)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setHasRelearningFinished()\n");
+
 	this->hasRelearningFinished = hasRelearningFinished;
 }
 
 void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setIsUserInterfaceActiveAs()\n");
+
 	application->setActivateUserInterfaceAs(isUserInterfaceActive);
 }
 
 void DnfcomposerHandler::setWasStartSimulationRequested(bool wasStartSimulationRequested)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setWasStartSimulationRequested()\n");
+
 	this->wasStartSimulationRequested = wasStartSimulationRequested;
 }
 
 void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationRequested)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setWasCloseSimulationRequested()\n");
+
 	this->wasCloseSimulationRequested = wasCloseSimulationRequested;
 }
  
@@ -242,26 +290,36 @@ void DnfcomposerHandler::setWasCloseSimulationRequested(bool wasCloseSimulationR
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::getInputFieldCentroid()\n");
+
 	return simulationParameters.inputFieldCentroid;
 }
 
 double DnfcomposerHandler::getOutputFieldCentroid() const
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::getOutputFieldCentroid()\n");
+
 	return simulationParameters.outputFieldCentroid;
 }
 
 bool DnfcomposerHandler::getHaveFieldsSettled() const
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::getHaveFieldsSettled()\n");
+
 	return haveFieldsSettled;
 }
 
 bool DnfcomposerHandler::getHasRelearningFinished() const
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::getHasRelearningFinished()\n");
+
 	return hasRelearningFinished;
 }
 
 std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::getUserInterfaceWindow()\n");
+
 	return userInterfaceWindow;
 }
 
@@ -269,12 +327,16 @@ std::shared_ptr<ExperimentWindow> DnfcomposerHandler::getUserInterfaceWindow()
 
 void DnfcomposerHandler::setIncrementOfDegenerationPercentage(double percentage)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setIncrementOfDegenerationPercentage()\n");
+
 	simulationParameters.incrementOfDegenerationInPercentage = percentage;
 }
 
 
 void DnfcomposerHandler::setInitialNumberOfElementsToDegenerate(int count) const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setInitialNumberOfElementsToDegenerate()\n");
+
 	simulationElements.inputField->setNumNeuronsToDegenerate(count);
 	simulationElements.outputField->setNumNeuronsToDegenerate(count);
 	simulationElements.fieldCoupling->setNumWeightsToDegenerate(count);
@@ -283,6 +345,8 @@ void DnfcomposerHandler::setInitialNumberOfElementsToDegenerate(int count) const
 
 void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setNumberOfElementsToDegenerate()\n");
+
 	int numberOfElements;
 	double floatingNumberOfElements;
 
@@ -321,8 +385,15 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 	}
 }
 
+int DnfcomposerHandler::getNumberOfDegeneratedElements()
+{
+	return simulationElements.outputField->getNumberOfDegeneratedNeurons();
+}
+
+
 void DnfcomposerHandler::activateDegeneration()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::activateDegeneration()\n");
 
 	switch (simulationParameters.degeneracyType)
 	{
@@ -337,7 +408,7 @@ void DnfcomposerHandler::activateDegeneration()
 		{
 			simulationElements.outputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.outputField->startDegeneration();
-			log(dnf_composer::WARNING, "Degenerating the decision field.\n");
+			log(dnf_composer::WARNING, "Degenerating the output field.\n");
 		}
 		break;
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -353,6 +424,8 @@ void DnfcomposerHandler::activateDegeneration()
 
 	waitForFieldsToSettle();
 
+	log(dnf_composer::WARNING, "Finished waiting for fields to degenerate.\n");
+
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setNumberOfDegeneratedElements(numberOfDegeneratedElements);
 
@@ -364,6 +437,8 @@ void DnfcomposerHandler::activateDegeneration()
 
 void DnfcomposerHandler::activateRelearning()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::activateRelearning()\n");
+
 	// NOW WE HAVE RELEARNING TYPE, LEARNING RATE, AND NUMBER OF ITERATIONS
 	// USE THIS INFORMATION TO TRAIN THE WEIGHTS
 	simulationElements.fieldCoupling->setLearningRate(relearningParameters.learningRate);
@@ -395,6 +470,8 @@ void DnfcomposerHandler::activateRelearning()
 
 void DnfcomposerHandler::updateExternalInput()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::updateExternalInput()\n");
+
 	static auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("per - per"));
 	static auto kernel_width = kernel->getParameters().sigma;
 	static auto kernel_amplitude = kernel->getParameters().amplitude;
@@ -418,6 +495,8 @@ void DnfcomposerHandler::updateExternalInput()
 
 void DnfcomposerHandler::updateFieldCentroids()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::updateFieldCentroids()\n");
+
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
@@ -435,11 +514,15 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 void DnfcomposerHandler::readWeights()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::readWeights()\n");
+
 	wasUpdateWeightsRequested = true;
 }
 
 void DnfcomposerHandler::updateWeights()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::updateWeights()\n");
+
 	simulationElements.fieldCoupling->readWeights();
 	wasUpdateWeightsRequested = false;
 }
@@ -449,6 +532,8 @@ void DnfcomposerHandler::updateWeights()
 
 void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::setDataFilePath()\n");
+
 	simulationElements.fieldCoupling->setWeightsFilePath(filePath);
 	simulationElements.fcpw.setDataFilePath(filePath);
 }
@@ -456,24 +541,32 @@ void DnfcomposerHandler::setDataFilePath(const std::string& filePath)
 
 void DnfcomposerHandler::saveWeights()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::saveWeights()\n");
+
 	wasSaveWeightsRequested = true;
 }
 
 
 void DnfcomposerHandler::saveWeightsToFile() 
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::saveWeightsToFile()\n");
+
 	simulationElements.fieldCoupling->saveWeights();
 	wasSaveWeightsRequested = false;
 }
 
 void DnfcomposerHandler::waitForFieldsToSettle() const
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::waitForFieldsToSettle()\n");
+
 	for (int i = 0; i < simulationParameters.timeForFieldToSettle; i++)
 		application->step();
 }
 
 void DnfcomposerHandler::allCasesRelearning()
 {
+	log(dnf_composer::DEBUG, "DnfcomposerHandler::allCasesRelearning()\n");
+
 	// add gaussian inputs
 	//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
@@ -485,7 +578,7 @@ void DnfcomposerHandler::allCasesRelearning()
 	//gsp.amplitude = 35;
 	//gsp.sigma = 3;
 	//simulationElements.fcpw.setGaussStimulusParameters(gsp);
-	//log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations");
+	////log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations");
 
 	//std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
@@ -493,6 +586,8 @@ void DnfcomposerHandler::allCasesRelearning()
 
 void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 {
+	//log(dnf_composer::DEBUG, "DnfcomposerHandler::onlyDegeneratedCasesRelearning()\n");
+
 	// add gaussian inputs
 	dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 

@@ -29,8 +29,9 @@ namespace dnf_composer
 			void setDegeneracyType(ElementDegeneracyType degeneracyType);
 			void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
 			ElementDegeneracyType getDegeneracyType();
-		private:
+			int getNumberOfDegeneratedNeurons();
 			void populateIndicesForDegeneration();
+		private:
 			void setRandomUniqueNeuronToZero();
 			void calculateActivation(const double& t, const double& deltaT);
 		};

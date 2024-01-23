@@ -4,15 +4,18 @@
 ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
 	: dnfcomposerHandler(DnfcomposerHandler(params.isComposerVisualizationOn)), params(params)
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::ExperimentHandler()\n");
 	this->params.setOtherDegeneracyParameters();
-	dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
-	dnfcomposerHandler.setRelearningParameters(params.relearningType, params.numberOfRelearningEpochs, params.learningRate, 
-		params.maximumAmountOfDemonstrations, params.updateAllWeights);
-	dnfcomposerHandler.setIncrementOfDegenerationPercentage(params.incrementOfDegenerationPercentage);
+	dnfcomposerHandler.setExperimentSetupData(this->params.degeneracyName, this->params.decisionTolerance, this->params.typeOfElementsDegenerated);
+	dnfcomposerHandler.setRelearningParameters(this->params.relearningType, this->params.numberOfRelearningEpochs, this->params.learningRate,
+		this->params.maximumAmountOfDemonstrations, this->params.updateAllWeights);
+	dnfcomposerHandler.setIncrementOfDegenerationPercentage(this->params.incrementOfDegenerationPercentage);
 }
 
 void ExperimentHandler::printExperimentParameters() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::printExperimentParameters()\n");
+
 	std::ostringstream logStream;
 
 	logStream << "Experiment identifier: " << params.experimentId << std::endl;
@@ -44,11 +47,12 @@ void ExperimentHandler::printExperimentParameters() const
 	logStream << "----------------------------------------" << std::endl << std::endl;
 
 	log(dnf_composer::LogLevel::INFO, logStream.str());
-
 }
 
 void ExperimentHandler::init()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::init()\n");
+
 	params.experimentId = "trials-" + std::to_string(params.numberOfTrials)
 		+ " deg. type-" + std::to_string(static_cast<int>(params.degeneracyType))
 		+ " target field-" + params.fieldToDegenerate
@@ -68,6 +72,10 @@ void ExperimentHandler::init()
 
 void ExperimentHandler::initialDegeneration()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::initialDegeneration()\n");
+
+	log(dnf_composer::WARNING, "Number of degenerated elements before pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+
 	mockPickAndPlace();
 
 	int numberElements = 0;
@@ -93,32 +101,52 @@ void ExperimentHandler::initialDegeneration()
 
 	dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
 
+
+	log(dnf_composer::WARNING, "Number of degenerated elements after pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+
+	//Sleep(100);
+
 	degenerationProcedure();
 
-	Sleep(300);
+	//Sleep(500);
+	log(dnf_composer::WARNING, "Number of degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+
 
 	params.currentPercentageOfDegeneration = params.initialPercentageOfDegeneration;
 	if (params.isDebugModeOn)
-		dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " percent.\n");
+	{
+		std::ostringstream logStream;
+		logStream << "Degenerated to " << std::fixed << std::setprecision(2) << params.currentPercentageOfDegeneration << "%.\n";
+		dnf_composer::log(dnf_composer::INFO, logStream.str());
+	}
 
 	saveWeights();
 
+	log(dnf_composer::WARNING, "Number of degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 	dnfcomposerHandler.setNumberOfElementsToDegenerate();
 }
 
 void ExperimentHandler::step()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::step()\n");
+
 	for(int trial = 1; trial <= params.numberOfTrials; trial++)
 	{
 		if (params.isDebugModeOn)
-			dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(trial) + '\n');
+			dnf_composer::log(dnf_composer::ERROR_, "Trial: " + std::to_string(trial) + '\n');
 
 		if(params.isComposerVisualizationOn)
 			dnfcomposerHandler.setTrial(trial);
 
+		//Sleep(10);
+		//dnfcomposerHandler.setWasStartSimulationRequested(true);
+		//Sleep(100);
+
 		if (params.initialPercentageOfDegeneration != 0)
 			initialDegeneration();
+
+		log(dnf_composer::WARNING, "Number of degenerated elements after initialDegeneration(): " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 		do
 		{
@@ -140,6 +168,7 @@ void ExperimentHandler::step()
 				
 				degenerationProcedure();
 				saveWeights();
+				log(dnf_composer::WARNING, "Number of degenerated elements after degeneration and saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 				if (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations)
 				{
@@ -151,8 +180,11 @@ void ExperimentHandler::step()
 				stats.numOfRelearningCycles = 0;
 				params.currentPercentageOfDegeneration += params.incrementOfDegenerationPercentage;
 				if (params.isDebugModeOn)
-					dnf_composer::log(dnf_composer::INFO, "Degenerated to " + std::to_string(params.currentPercentageOfDegeneration) + " percent .\n");
-
+				{
+					std::ostringstream logStream;
+					logStream << "Degenerated to " << std::fixed << std::setprecision(2) << params.currentPercentageOfDegeneration << "%.\n";
+					dnf_composer::log(dnf_composer::INFO, logStream.str());
+				}
 			}
 			else
 			{
@@ -174,6 +206,8 @@ void ExperimentHandler::step()
 
 void ExperimentHandler::close()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::close()");
+
 	dnfcomposerHandler.close();
 	if (params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.close();
@@ -244,6 +278,8 @@ void ExperimentHandler::placeShape()
 
 bool ExperimentHandler::verifyDecision()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::verifyDecision()\n");
+
 	bool isCorrectDecision = std::abs(data.expectedTargetAngle - data.outputFieldCentroid) <= params.decisionTolerance;
 	if (isCorrectDecision)
 	{
@@ -320,6 +356,8 @@ void ExperimentHandler::getExpectedTargetAngle()
 
 bool ExperimentHandler::mockPickAndPlace()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::mockPickAndPlace()\n");
+
 	log(dnf_composer::INFO, "Performing a mock pick and place.\n");
 
 	stats.shapesPlacedIncorrectly = 0; // binary representation
@@ -346,6 +384,8 @@ bool ExperimentHandler::mockPickAndPlace()
 
 void ExperimentHandler::mockReadShapeHue()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::mockReadShapeHue()\n");
+
 	if(hueToAngleIterator == hueToAngleMap.end())
 		hueToAngleIterator = hueToAngleMap.begin();
 
@@ -368,6 +408,8 @@ void ExperimentHandler::mockReadShapeHue()
 
 void ExperimentHandler::mockReadTargetAngle()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::mockReadTargetAngle()\n");
+
 	//dnfcomposerHandler.updateFieldCentroids();
 	//Sleep(5);
 	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
@@ -383,6 +425,8 @@ void ExperimentHandler::mockReadTargetAngle()
 
 void ExperimentHandler::degenerationProcedure()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::degenerationProcedure()\n");
+
 	if (params.isDebugModeOn)
 		dnf_composer::log(dnf_composer::INFO, "Degeneration procedure started.\n");
 
@@ -406,6 +450,7 @@ void ExperimentHandler::relearningProcedure()
 	// 2. use only the inputs from the incorrect correspondence
 	// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 	// And the learning rate
+	log(dnf_composer::DEBUG, "ExperimentHandler::relearningProcedure()\n");
 
 	if (params.isDebugModeOn)
 		dnf_composer::log(dnf_composer::INFO, "Relearning procedure started.\n");
@@ -423,6 +468,8 @@ void ExperimentHandler::relearningProcedure()
 
 void ExperimentHandler::cleanupPickAndPlace()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::cleanupPickAndPlace()\n");
+
 	stats.shapesPlacedIncorrectly = 0;
 	if(params.isLinkToCoppeliaSimOn)
 		coppeliasimHandler.resetSignals();
@@ -431,21 +478,25 @@ void ExperimentHandler::cleanupPickAndPlace()
 
 void ExperimentHandler::cleanupTrial()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::cleanupTrial()\n");
+
 	if(params.isDataSavingOn)
 		saveLearningCyclesPerTrial();
 	stats.learningCyclesPerTrialHistory.clear();
 	params.currentPercentageOfDegeneration = 0;
 	data.isFieldDead = false;
 	getOriginalWeightsFile();
-	Sleep(300);
 	dnfcomposerHandler.setWasCloseSimulationRequested(true);
-	Sleep(10);
-	dnfcomposerHandler.setWasStartSimulationRequested(true);
+	Sleep(300);
+	//Sleep(300);
+	//dnfcomposerHandler.setWasStartSimulationRequested(true);
 	log(dnf_composer::LogLevel::INFO, "Trial finished.\n");
 }
 
 void ExperimentHandler::saveLearningCyclesPerTrial() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::saveLearningCyclesPerTrial()\n");
+
 	const std::string filename = params.getSavePath();
 
 	std::ofstream file(filename, std::ios::app); // Open the file in append mode
@@ -475,6 +526,8 @@ void ExperimentHandler::saveLearningCyclesPerTrial() const
 
 void ExperimentHandler::backupWeightsFile() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::backupWeightsFile()\n");
+
 	const std::string newFilename = "per - out_weights - copy.txt";
 	std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 	std::string filenameCopy = params.filePathPrefix + params.experimentId + "/weights/" + newFilename;
@@ -498,8 +551,8 @@ void ExperimentHandler::backupWeightsFile() const
 	{
 		sourceSize = sourceCheckFile.tellg();
 		destSize = destCheckFile.tellg();
-		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+		//log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
 	} while (sourceSize != destSize);
 
 	dnf_composer::log(dnf_composer::INFO, "Weights file successfully backed-up.\n");
@@ -508,21 +561,23 @@ void ExperimentHandler::backupWeightsFile() const
 
 void ExperimentHandler::restoreWeightsFile() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::restoreWeightsFile()\n");
+
 	const std::string oldFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights - copy.txt";
 	const std::string newFilename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights.txt";
 
-	log(dnf_composer::DEBUG, "Attempting to restore weights file...\n");
+	//log(dnf_composer::DEBUG, "Attempting to restore weights file...\n");
 
 	// remove weights file
 	const int removeResult = std::remove(newFilename.c_str());
 	std::ifstream oldFile(newFilename.c_str());
 	do
 	{
-		log(dnf_composer::DEBUG, "Checking if weights file still exists...\n");
+		//(dnf_composer::DEBUG, "Checking if weights file still exists...\n");
 		oldFile.open(newFilename.c_str());
 	} while (oldFile.is_open());
 	oldFile.close();
-	dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
+	//dnf_composer::log(dnf_composer::INFO, "Previous weights file successfully deleted.\n");
 
 	// rename copy of weights file
 	std::ifstream currentFile(oldFilename.c_str(), std::ios::binary | std::ios::ate);
@@ -538,8 +593,8 @@ void ExperimentHandler::restoreWeightsFile() const
 	do
 	{
 		destSize = newFile.tellg();
-		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+		//log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
 	} while (sourceSize != destSize);
 
 	dnf_composer::log(dnf_composer::INFO, "Weights file successfully restored.\n");
@@ -547,6 +602,8 @@ void ExperimentHandler::restoreWeightsFile() const
 
 bool ExperimentHandler::doesBackupWeightsFileExist() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::doesBackupWeightsFileExist()\n");
+
 	const std::string filename = params.filePathPrefix + params.experimentId + "/weights/" + "per - out_weights - copy.txt";
 	const std::ifstream file(filename);
 
@@ -562,10 +619,12 @@ bool ExperimentHandler::doesBackupWeightsFileExist() const
 
 void ExperimentHandler::getOriginalWeightsFile() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::getOriginalWeightsFile()\n");
+
 	const std::string sourceFileName = params.filePathPrefix + "weights-backup/per - out_weights.txt";
 	 std::ifstream sourceFile(sourceFileName);
 
-	 log(dnf_composer::DEBUG, "Attempting to get original weights file...\n");
+	// log(dnf_composer::DEBUG, "Attempting to get original weights file...\n");
 
 	if (!sourceFile.is_open()) 
 	{
@@ -605,8 +664,8 @@ void ExperimentHandler::getOriginalWeightsFile() const
 	{
 		sourceSize = sourceCheckFile.tellg();
 		destSize = destCheckFile.tellg();
-		log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-		log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+		//log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
+		//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
 	} while (sourceSize != destSize);
 
 	dnf_composer::log(dnf_composer::INFO, "Original weights file loaded and copied successfully.\n");
@@ -614,6 +673,8 @@ void ExperimentHandler::getOriginalWeightsFile() const
 
 void ExperimentHandler::createExperimentFolderDirectory() 
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::createExperimentFolderDirectory()\n");
+
 	namespace fs = std::filesystem;
 
 	const std::string experimentFolderPath = params.filePathPrefix + params.experimentId;
@@ -629,6 +690,8 @@ void ExperimentHandler::createExperimentFolderDirectory()
 
 void ExperimentHandler::deleteExperimentFolderDirectory() const
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::deleteExperimentFolderDirectory()\n");
+
 	namespace fs = std::filesystem;
 
 	const std::string experimentFolderPath = params.filePathPrefix + params.experimentId;
@@ -639,12 +702,16 @@ void ExperimentHandler::deleteExperimentFolderDirectory() const
 
 void ExperimentHandler::saveWeights()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::saveWeights()\n");
+
 	dnfcomposerHandler.saveWeights();
 	Sleep(300);
 }
 
 void ExperimentHandler::readWeights()
 {
+	log(dnf_composer::DEBUG, "ExperimentHandler::readWeights()\n");
+
 	dnfcomposerHandler.readWeights();
 	Sleep(300);
 }

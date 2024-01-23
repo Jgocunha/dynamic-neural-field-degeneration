@@ -159,7 +159,7 @@ namespace dnf_composer
 		{
 			std::ifstream file(weightsFilePath);
 
-			log(LogLevel::DEBUG, "Attempting to read weights...\n");
+			//log(LogLevel::DEBUG, "Attempting to read weights...\n");
 
 			const int originalMatrixRows = static_cast<int>(weights.size());
 			const int originalMatrixColumns = static_cast<int>( weights[0].size());
@@ -188,8 +188,8 @@ namespace dnf_composer
 				{
 					newMatrixRows = static_cast<int>(weights.size());
 					newMatrixColumns = static_cast<int>(weights[0].size());
-					log(DEBUG, "Original matrix size is: " + std::to_string(originalMatrixRows) + " by " + std::to_string(originalMatrixColumns)
-						+ ". Current matrix size is: " + std::to_string(newMatrixRows) + " by " + std::to_string(newMatrixColumns) + ".\n");
+					//log(DEBUG, "Original matrix size is: " + std::to_string(originalMatrixRows) + " by " + std::to_string(originalMatrixColumns)
+					//	+ ". Current matrix size is: " + std::to_string(newMatrixRows) + " by " + std::to_string(newMatrixColumns) + ".\n");
 				} while (!(newMatrixRows == originalMatrixRows && !weights.empty() &&
 					newMatrixColumns == originalMatrixColumns));
 
@@ -215,7 +215,7 @@ namespace dnf_composer
 		{
 			std::ofstream file(weightsFilePath);
 
-			log(LogLevel::DEBUG, "Attempting to write weights...\n");
+			//log(LogLevel::DEBUG, "Attempting to write weights...\n");
 
 			if (file.is_open()) {
 				for (const auto& row : weights) {

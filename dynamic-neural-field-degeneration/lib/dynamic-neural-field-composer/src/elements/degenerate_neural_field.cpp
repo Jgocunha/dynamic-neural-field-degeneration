@@ -1,5 +1,7 @@
 #include "./elements/degenerate_neural_field.h"
 
+#include "application/application.h"
+
 namespace dnf_composer
 {
 	namespace element
@@ -97,14 +99,21 @@ namespace dnf_composer
 
 		void DegenerateNeuralField::populateIndicesForDegeneration()
 		{
+
 			for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
 				indicesForDegeneration.push_back(i);
+		}
+
+		int DegenerateNeuralField::getNumberOfDegeneratedNeurons()
+		{
+			return static_cast<int>(degeneratedIndices.size());
 		}
 
 		void DegenerateNeuralField::clearDegeneration()
 		{
 			degeneratedIndices.clear();
-		}
+			log(dnf_composer::ERROR_, "DegenerateNeuralField::clearDegeneration() " + std::to_string(degeneratedIndices .size()) +'\n');
+		} 
 
 		void DegenerateNeuralField::setRandomUniqueNeuronToZero()
 		{
