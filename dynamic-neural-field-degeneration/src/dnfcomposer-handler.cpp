@@ -115,8 +115,10 @@ void DnfcomposerHandler::closeSimulation()
 
 	numberOfDegeneratedElements = 0;
 	numberOfRelearningCycles = 0;
+
 	simulationElements.fieldCoupling->readWeights();
 	simulationElements.fieldCoupling->populateIndicesForDegeneration();
+
 	simulationElements.inputField->clearDegeneration();
 	simulationElements.inputField->populateIndicesForDegeneration();
 
@@ -387,7 +389,8 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 
 int DnfcomposerHandler::getNumberOfDegeneratedElements()
 {
-	return simulationElements.outputField->getNumberOfDegeneratedNeurons();
+	// return etc.
+	return simulationElements.fieldCoupling->getNumIndicesForDegeneration();
 }
 
 

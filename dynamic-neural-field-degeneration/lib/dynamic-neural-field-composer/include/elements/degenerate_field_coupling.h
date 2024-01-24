@@ -32,6 +32,7 @@ namespace dnf_composer
 			void setDegeneracyType(ElementDegeneracyType degeneracyType);
 			void setNumWeightsToDegenerate(const int& numWeightsToDegenerate);
 			ElementDegeneracyType getDegeneracyType() const;
+			int getNumIndicesForDegeneration();
 			void updateWeights(const std::vector<double> input, const std::vector<double> output);
 		private:
 			void setRandomWeightToRandomValue();

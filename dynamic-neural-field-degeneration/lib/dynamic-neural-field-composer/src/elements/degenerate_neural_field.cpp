@@ -19,7 +19,8 @@ namespace dnf_composer
 		{
 			NeuralField::init();
 			log(DEBUG, "DegenerateNeuralField::init() with unique name: " + commonParameters.identifiers.uniqueName + ". \n");
-			populateIndicesForDegeneration();
+			//log(ERROR_, "I have removed populateIndicesForDegeneration() from init in neural field.\n");
+			//populateIndicesForDegeneration();
 			degenerate = false;
 		}
 
@@ -99,6 +100,7 @@ namespace dnf_composer
 
 		void DegenerateNeuralField::populateIndicesForDegeneration()
 		{
+			log(ERROR_, "Populating indices for degeneration at neural field.\n");
 
 			for (int i = 0; i < commonParameters.dimensionParameters.size; i++)
 				indicesForDegeneration.push_back(i);

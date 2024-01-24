@@ -9,12 +9,13 @@ namespace dnf_composer
 		{
 			degeneracyType = element::ElementDegeneracyType::NONE;
 			degenerate = false;
+			populateIndicesForDegeneration();
 		}
 
 		void DegenerateFieldCoupling::init()
 		{
 			FieldCoupling::init();
-			populateIndicesForDegeneration();
+			//populateIndicesForDegeneration();
 			findMinMaxWeightValues();
 			degenerate = false;
 		}
@@ -71,6 +72,11 @@ namespace dnf_composer
 			}
 		}
 
+		int DegenerateFieldCoupling::getNumIndicesForDegeneration()
+		{
+			return static_cast<int>(indicesForDegeneration.size());
+		}
+
 		void DegenerateFieldCoupling::setDegeneracyType(ElementDegeneracyType degeneracyType)
 		{
 			this->degeneracyType = degeneracyType;
@@ -83,6 +89,8 @@ namespace dnf_composer
 
 		void DegenerateFieldCoupling::populateIndicesForDegeneration()
 		{
+			log(ERROR_, "Populating indices for degeneration at field coupling.\n");
+
 			for (int i = 0; i < components["output"].size(); i++)
 			{
 				for (int j = 0; j < components["input"].size(); j++)
