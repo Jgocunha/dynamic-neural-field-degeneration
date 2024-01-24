@@ -33,7 +33,7 @@ namespace dnf_composer
 			void setNumWeightsToDegenerate(const int& numWeightsToDegenerate);
 			ElementDegeneracyType getDegeneracyType() const;
 			int getNumIndicesForDegeneration();
-			void updateWeights(const std::vector<double> input, const std::vector<double> output);
+			void updateWeights(const std::vector<double>& input, const std::vector<double>& output) override;
 		private:
 			void setRandomWeightToRandomValue();
 			void setRandomWeightToReduceValue();
@@ -44,7 +44,7 @@ namespace dnf_composer
 			void setRandomUniqueWeightToRandomValue();
 
 			std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-				const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const;
+				const std::vector<double>& input, const std::vector<double>& targetOutput, double learningRate) const;
 		};
 	}
 }
