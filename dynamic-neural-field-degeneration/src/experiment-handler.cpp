@@ -107,7 +107,8 @@ void ExperimentHandler::step()
 		{
 			setExpectedFieldBehaviour();
 			setupProcedure();
-			degenerationProcedure();
+			Sleep(1000);
+			//degenerationProcedure();
 			cleanUpTrial();
 			Sleep(20);
 		}
