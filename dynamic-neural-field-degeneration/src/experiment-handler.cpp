@@ -74,7 +74,7 @@ void ExperimentHandler::initialDegeneration()
 {
 	//log(dnf_composer::DEBUG, "ExperimentHandler::initialDegeneration()\n");
 
-	log(dnf_composer::WARNING, "Number of degenerated elements before pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+	//log(dnf_composer::WARNING, "Number of degenerated elements before pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 	mockPickAndPlace();
 
@@ -102,14 +102,14 @@ void ExperimentHandler::initialDegeneration()
 	dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
 
 
-	log(dnf_composer::WARNING, "Number of not degenerated elements after pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+	//log(dnf_composer::WARNING, "Number of not degenerated elements after pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 	//Sleep(100);
 
 	degenerationProcedure();
 
 	//Sleep(500);
-	log(dnf_composer::WARNING, "Number of not degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+	//log(dnf_composer::WARNING, "Number of not degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 
 	params.currentPercentageOfDegeneration = params.initialPercentageOfDegeneration;
@@ -122,7 +122,7 @@ void ExperimentHandler::initialDegeneration()
 
 	saveWeights();
 
-	log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+	//log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 	dnfcomposerHandler.setNumberOfElementsToDegenerate();
 }
@@ -146,7 +146,7 @@ void ExperimentHandler::step()
 		if (params.initialPercentageOfDegeneration != 0)
 			initialDegeneration();
 
-		log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+		//log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 		do
 		{
@@ -168,7 +168,7 @@ void ExperimentHandler::step()
 				
 				degenerationProcedure();
 				saveWeights();
-				log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
+				//log(dnf_composer::WARNING, "Number of not degenerated elements after saving: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()) + "\n");
 
 				if (stats.numOfRelearningCycles >= params.maximumAmountOfDemonstrations)
 				{

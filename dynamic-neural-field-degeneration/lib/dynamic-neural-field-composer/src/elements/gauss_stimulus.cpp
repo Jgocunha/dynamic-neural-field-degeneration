@@ -21,6 +21,23 @@ namespace dnf_composer
 		{
 			std::vector<double> g(commonParameters.dimensionParameters.size);
 
+			if (commonParameters.dimensionParameters.x_max > 100)
+			{
+				if (parameters.position == 0.0)
+				{
+					parameters.position += 0.65;
+				}
+				else
+				{
+					if (parameters.position == 60.0)
+					{
+						parameters.position += 0.50;
+					}
+					else
+						parameters.position += 0.50;
+				}
+			}
+
 			if (parameters.circular)
 				g = mathtools::circularGauss(commonParameters.dimensionParameters.size, parameters.sigma, parameters.position/commonParameters.dimensionParameters.d_x);
 			else

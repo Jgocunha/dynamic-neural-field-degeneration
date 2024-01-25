@@ -387,12 +387,12 @@ namespace dnf_composer
 					auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
 
 					// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
-					if (it != indicesForDegeneration.end())
-					{
+					//if (it != indicesForDegeneration.end())
+					//{
 						//log(DEBUG, "Found pair and updated weights.\n");
 						weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
-					}
-					else
+					//}
+					//else
 					{
 						//log(DEBUG, "Did not find pair and did not update weights.\n");
 					}
