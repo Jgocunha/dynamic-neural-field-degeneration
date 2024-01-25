@@ -3,7 +3,7 @@
 
 #include "wizards/learning_wizard.h"
 
-constexpr bool trainWeights = true;
+constexpr bool trainWeights = false;
 
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
