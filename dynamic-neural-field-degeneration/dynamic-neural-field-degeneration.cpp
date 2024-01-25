@@ -79,12 +79,12 @@ int main()
         params.numberOfShapesPerTrial = 1;
         params.decisionTolerance = 1.9;
 
-    	params.targetPercentageOfDegeneration = 100 + 1;
+    	params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.02;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
-        params.isComposerVisualizationOn = true;
+        params.isComposerVisualizationOn = false;
         params.isDataSavingOn = !params.isComposerVisualizationOn;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;
