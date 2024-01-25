@@ -103,6 +103,7 @@ void ExperimentHandler::step()
 			dnf_composer::log(dnf_composer::INFO, "Trial: " + std::to_string(i) + '\n');
 		dnfcomposerHandler.setTrial(i);
 
+
 		for (int k = 0; k < static_cast<int>(hueToAngleMap.size()); k++)
 		{
 			setExpectedFieldBehaviour();

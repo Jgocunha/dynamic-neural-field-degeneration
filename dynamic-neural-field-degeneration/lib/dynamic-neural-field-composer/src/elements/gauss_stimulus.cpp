@@ -25,11 +25,18 @@ namespace dnf_composer
 			{
 				if (parameters.position == 0.0)
 				{
-					parameters.position += 0.5;
+					parameters.position += 0.65;
+					log(ERROR_, "Gauss stimulus position was set to 0.0. That is not supported yet. \n");
 				}
 				else
 				{
-					parameters.position += 0.6;
+					if (parameters.position == 60.0)
+					{
+						log(ERROR_, "Gauss stimulus position was set to 60.0. That is not supported yet. \n");
+						parameters.position += 0.35;
+					}
+					else
+						parameters.position += 0.6;
 				}
 			}
 			
