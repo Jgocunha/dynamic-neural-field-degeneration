@@ -23,7 +23,7 @@ targetCentroids = {2.0 ; 6.0; 10.0; 14.0; 18.0; 22.; 26.00};%;
 
 centroidsFilePath = '';
 resultsFilePath = '';
-plotFilePath = '../plots/';
+plotFilePath = './plots/';
 acceptableDeviation = 1.5;
 
 
@@ -38,7 +38,7 @@ for experiment = 1:size(experiments,1)
     for position = 1:size(positions,1)
         %% Variable setup
         centroidsFilePath = ['../', positions{position}, ' ', experiments{experiment}, ' - centroids.txt'];
-        resultsFilePath = ['../analysis/', positions{position}, ' ', experiments{experiment}, ' - analysis.txt'];
+        resultsFilePath = ['./analysis/', positions{position}, ' ', experiments{experiment}, ' - analysis.txt'];
         targetCentroid = targetCentroids{position};
         %delete(resultsFilePath)
         %diary(resultsFilePath)
@@ -100,6 +100,7 @@ for experiment = 1:size(experiments,1)
         end
         subTitle = ['Target centroid position ', positions{position}];
         %plotData(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
+        plotDataAvg(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
     
         %% Adapt values to percentages
         [avgNumIterations, avgIterationsMisbehavior] = adaptToPercentage(experiments{experiment, 1}, avgNumIterations, avgIterationsMisbehavior);
@@ -144,31 +145,30 @@ for experiment = 1:size(experiments,1)
 %     %% Calculate and display the standard deviation of average trials
 %     stdDeviationAvgTrials = std(dataTable{:,'NumTrials'}, 1);
 %     disp(['Standard deviation of average trials: ', num2str(stdDeviationAvgTrials)]);
-
     %% Calculate and display average AvgNumIterations per experiment
     avgAvgNumIterations = mean(dataTable{:,'Avg. % of affected elements until dissapearance of bump'});
-    disp(['Average AvgNumIterations per experiment: ', num2str(avgAvgNumIterations)]);
+    %disp(['Average AvgNumIterations per experiment: ', num2str(avgAvgNumIterations)]);
     %% Calculate and display the standard deviation of AvgNumIterations
     stdDeviationAvgNumIterations = std(dataTable{:,'Avg. % of affected elements until dissapearance of bump'}, 1);
     %disp(['Standard deviation of AvgNumIterations: ', num2str(stdDeviationAvgNumIterations)]);
 
     %% Calculate and display average AvgIterationsMisbehavior per experiment
     avgAvgIterationsMisbehavior = mean(dataTable{:,'Avg. % of affected elements until misbehaviour'}, 1);
-    disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
+   % disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
     %% Calculate and display the standard deviation of AvgIterationsMisbehavior
     stdDeviationAvgIterationsMisbehavior = std(dataTable{:,'Avg. % of affected elements until misbehaviour'}, 1);
     %disp(['Standard deviation of AvgIterationsMisbehavior: ', num2str(stdDeviationAvgIterationsMisbehavior)]);
 
     %% Calculate and display average Avg. deviation per experiment
     avgDeviation = mean(dataTable{:,'Avg. deviation'},1);
-    disp(['Average deviation per experiment: ', num2str(avgDeviation)]);
+    %disp(['Average deviation per experiment: ', num2str(avgDeviation)]);
     %% Calculate and display the Avg. deviation of MaxDeviation
     stdDeviationDeviation = std(dataTable{:,'Avg. deviation'}, 1);
     %disp(['Standard deviation of MaxDeviation: ', num2str(stdDeviationDeviation)]);
 
     %% Calculate and display average MaxDeviation per experiment
     avgMaxDeviation = mean(dataTable{:,'Max. deviation'},1);
-    disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
+   % disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
     %% Calculate and display the standard deviation of MaxDeviation
     stdDeviationMaxDeviation = std(dataTable{:,'Max. deviation'}, 1);
     %disp(['Standard deviation of MaxDeviation: ', num2str(stdDeviationMaxDeviation)]);

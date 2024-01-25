@@ -7,20 +7,20 @@ ExperimentWindow::ExperimentWindow(const std::shared_ptr<dnf_composer::Simulatio
 
 void ExperimentWindow::render()
 {
-	if (ImGui::Begin("Setup details"))
-		renderExperimentDetails();
-	ImGui::End();
+	//if (ImGui::Begin("Setup details"))
+		//renderExperimentDetails();
+	//ImGui::End();
 
 	if (ImGui::Begin("Field analysis"))
 		renderFieldAnalysis();
 	ImGui::End();
 
-	if (ImGui::Begin("Degeneration statistics"))
-		renderDegenerationStatistics();
-	ImGui::End();
+	//if (ImGui::Begin("Degeneration statistics"))
+		//renderDegenerationStatistics();
+	//ImGui::End();
 
-	//if (ImGui::Begin("Plot of decision field centroid plot over time"))
-	//	renderFieldCentroidOverTime();
+	//if (ImGui::Begin("Plot of output field centroid plot over time"))
+		//renderFieldCentroidOverTime();
 	//ImGui::End();
 }
 
