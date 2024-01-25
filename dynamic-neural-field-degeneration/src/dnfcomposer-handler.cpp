@@ -57,7 +57,7 @@ void DnfcomposerHandler::step()
 
 		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(5);
+		Sleep(1);
 	}
 
 	application->close();
@@ -225,7 +225,7 @@ void DnfcomposerHandler::updateExternalInput()
 	static auto kernel_width = kernel->getParameters().sigma;
 	static auto kernel_amplitude = kernel->getParameters().amplitude;
 
-	static double offset = 1.0;
+	static double offset = 0.0;
 	dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
@@ -255,7 +255,7 @@ void DnfcomposerHandler::updateFieldCentroids()
 
 		if(simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->getCloseUI();
-		Sleep(5);
+		Sleep(1);
 	}
 }
 
