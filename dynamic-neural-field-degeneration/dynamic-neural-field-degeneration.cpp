@@ -80,7 +80,7 @@ int main()
         params.decisionTolerance = 1.9;
 
     	params.targetPercentageOfDegeneration = 100;
-        params.learningRate = 0.02;
+        params.learningRate = 0.01;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
