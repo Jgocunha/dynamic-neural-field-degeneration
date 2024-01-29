@@ -369,7 +369,7 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 			floatingNumberOfElements = static_cast<double>(simulationElements.outputField->getSize()) / 100 * simulationParameters.incrementOfDegenerationInPercentage;
 			numberOfElements = static_cast<int>(std::round(floatingNumberOfElements));
 			simulationElements.outputField->setNumNeuronsToDegenerate(numberOfElements);
-			log(dnf_composer::WARNING, "Number of post-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
+			log(dnf_composer::INFO, "Number of post-synaptic neurons to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		}
 		break;
 
@@ -380,7 +380,7 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 		floatingNumberOfElements = static_cast<double>(simulationElements.inputField->getSize() * simulationElements.outputField->getSize()) / 100 * simulationParameters.incrementOfDegenerationInPercentage;
 		numberOfElements = static_cast<int>(std::round(floatingNumberOfElements));
 		simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElements);
-		log(dnf_composer::WARNING, " Number of inter-synaptic connections to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
+		log(dnf_composer::INFO, " Number of inter-synaptic connections to degenerate in each iteration: " + std::to_string(numberOfElements) + ".\n");
 		break;
 	default:
 		break;
@@ -405,13 +405,13 @@ void DnfcomposerHandler::activateDegeneration()
 		{
 			simulationElements.inputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.inputField->startDegeneration();
-			log(dnf_composer::WARNING, "Degenerating the perceptual field.\n");
+			log(dnf_composer::INFO, "Degenerating the perceptual field.\n");
 		}
 		else
 		{
 			simulationElements.outputField->setDegeneracyType(simulationParameters.degeneracyType);
 			simulationElements.outputField->startDegeneration();
-			log(dnf_composer::WARNING, "Degenerating the output field.\n");
+			log(dnf_composer::INFO, "Degenerating the output field.\n");
 		}
 		break;
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
@@ -419,15 +419,13 @@ void DnfcomposerHandler::activateDegeneration()
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE: 
 		simulationElements.fieldCoupling->setDegeneracyType(simulationParameters.degeneracyType);
 		simulationElements.fieldCoupling->startDegeneration();
-		log(dnf_composer::WARNING, "Degenerating the field coupling.\n");
+		log(dnf_composer::INFO, "Degenerating the field coupling.\n");
 		break;
 	default:
 		break;
 	}
 
 	waitForFieldsToSettle();
-
-	log(dnf_composer::WARNING, "Finished waiting for fields to degenerate.\n");
 
 	if (simulationParameters.isUserInterfaceActive)
 		userInterfaceWindow->setNumberOfDegeneratedElements(numberOfDegeneratedElements);
@@ -479,7 +477,7 @@ void DnfcomposerHandler::updateExternalInput()
 	static auto kernel_width = kernel->getParameters().sigma;
 	static auto kernel_amplitude = kernel->getParameters().amplitude;
 
-	static double offset = 1.0;
+	static double offset = 0.0;
 	dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
@@ -600,9 +598,6 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	std::ostringstream logStream;
 
 
-	log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() starting relearning.\n");
-
-
 	logStream << "Target behaviors to relearn ";
 
 	for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++) 
@@ -621,9 +616,7 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 
 			inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 			outputSelected.push_back(outputTargetPeaksForCoupling[index]);
-			//log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() pushing.\n");
 			logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
-			//log(dnf_composer::WARNING, "onlyDegeneratedCasesRelearning() adding to logstream.\n");
 
 		}
 	}
@@ -636,7 +629,6 @@ void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 	simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
 	//std::cout << "Finished setting up the field coupling wizard.\n";
 
-	//log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations.\n");
 
 
 	//gsp.amplitude = 35;

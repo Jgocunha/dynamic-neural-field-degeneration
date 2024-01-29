@@ -57,11 +57,11 @@ ExperimentParameters inputUserParameters()
     }
     else
     {
-        params.numberOfTrials = 50;
-        params.degeneracyType = dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE;
-        params.fieldToDegenerate = "output";
-        params.initialPercentageOfDegeneration = 90;
-        params.incrementOfDegenerationPercentage = 1;
+        params.numberOfTrials = 1;
+        params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
+        params.fieldToDegenerate = "perceptual";
+        params.initialPercentageOfDegeneration = 10;
+        params.incrementOfDegenerationPercentage = 0.2;
         params.numberOfRelearningEpochs = 1;
         params.maximumAmountOfDemonstrations = 2;
     }
@@ -77,14 +77,14 @@ int main()
         ExperimentParameters params = inputUserParameters();
 
         params.numberOfShapesPerTrial = 1;
-        params.decisionTolerance = 1.9;
+        params.decisionTolerance = 2.0;
 
     	params.targetPercentageOfDegeneration = 100;
         params.learningRate = 0.01;
         params.relearningType = RelearningParameters::RelearningType::ONLY_DEGENERATED_CASES;
         params.updateAllWeights = false; 
 
-        params.isComposerVisualizationOn = false;
+        params.isComposerVisualizationOn = true;
         params.isDataSavingOn = !params.isComposerVisualizationOn;
         params.isDebugModeOn = true;
         params.isLinkToCoppeliaSimOn = false;

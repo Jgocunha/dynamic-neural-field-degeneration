@@ -54,13 +54,13 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create noise stimulus and noise kernel
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_per
-	(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 1 }));
+	(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 0.1 }));
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
-	(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 1 }));
+	(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.1 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
-	(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.2 }));
+	(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out
-	(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.2 }));
+	(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.02 }));
 
 	simulation->addElement(noise_per);
 	simulation->addElement(noise_out);
@@ -94,7 +94,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 		dnf_composer::LearningWizard fcpw{ simulation, "per - out" };
 
 		// add gaussian inputs
-		constexpr double offset = 0.0;
+		constexpr  double offset = 0.0;
 		const double kernel_width = k_per_per->getParameters().sigma;
 		const double kernel_amplitude = k_per_per->getParameters().amplitude;
 		//dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 0 };
@@ -110,15 +110,16 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 			{ 274.00 + offset }, // indigo
 			{ 300.00 + offset } // violet
 		};
+
 		std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 		{
-			{ 2.00 + offset },
-			{ 6.00 + offset },
-			{ 10.00 + offset },
-			{ 14.00 + offset },
-			{ 18.00 + offset },
-			{ 22.00 + offset },
-			{ 26.00 + offset }
+			{ 2.00 + 0.15 },
+			{ 6.00 + 0.245 },
+			{ 10.00 + 0.26 },
+			{ 14.00 + 0.10 },
+			{ 18.00 + 0.20 },
+			{ 22.00 + 0.22 },
+			{ 26.00 + 0.25 }
 		};
 
 		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);

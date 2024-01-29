@@ -394,6 +394,7 @@ namespace dnf_composer
 					//}
 					//else
 					//{
+					//{
 						//log(DEBUG, "Did not find pair and did not update weights.\n");
 					//}
 					//{

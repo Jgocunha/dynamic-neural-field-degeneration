@@ -78,7 +78,7 @@ namespace dnf_composer
             {
                 auto kernel = std::dynamic_pointer_cast<dnf_composer::element::GaussKernel>(simulation->getElement("out - out"));
                 auto kernel_width = kernel->getParameters().sigma;
-                auto kernel_amplitude = kernel->getParameters().amplitude;
+                auto kernel_amplitude = kernel->getParameters().amplitude + 15;
                 gaussStimulusParameters.amplitude = kernel_amplitude;
                 gaussStimulusParameters.sigma = kernel_width;
 
@@ -149,10 +149,10 @@ namespace dnf_composer
         //    val += restingLevel;
 
         for (double& val : vec)
-            if (val < 0.01)
+            if (val < 0.00001)
                 val = 0;
 
-        constexpr int safetyFactor = 1;
+        constexpr double safetyFactor = 0.00001;
         // Find the minimum and maximum values in the vector
         const double maxVal = *std::max_element(vec.begin(), vec.end()) + safetyFactor;
         const double minVal = *std::min_element(vec.begin(), vec.end()) - safetyFactor;

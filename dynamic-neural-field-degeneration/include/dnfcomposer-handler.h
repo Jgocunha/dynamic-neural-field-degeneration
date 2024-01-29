@@ -80,7 +80,7 @@ private:
 
 	bool wasSaveWeightsRequested = false;
 
-	const double offset = 1.0;
+	const double offset = 0.0;
 	const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 	{
 		//{ 00.00 + offset }, // red 0
