@@ -16,12 +16,15 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 
 
 %% Read data from file
-dataMatrix = read_data(filePath);
+[dataMatrix, maxColumns]= read_data(filePath);
 
 %% Analysis
 
 % Initialize variables to store results
-degenerationPercentages = (20:2.5:100)';
+initialPer = 90;
+incPer = 1;
+finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
+degenerationPercentages = (initialPer:incPer:finalPer)';
 
 numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour

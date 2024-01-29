@@ -1,4 +1,4 @@
-function [dataMatrix] = read_data(filePath)
+function [dataMatrix, maxColumnSize] = read_data(filePath)
 % Open the file for reading
 fileID = fopen(filePath, 'r');
 
@@ -29,10 +29,10 @@ end
 fclose(fileID);
 
 % Determine the maximum number of columns in the data
-max_columns = max(cellfun(@numel, dataCell))
+maxColumnSize = max(cellfun(@numel, dataCell))
 
 % Pad shorter lines with zeros
-dataCell = cellfun(@(x) [x, zeros(1, max_columns - numel(x))], dataCell, 'UniformOutput', false);
+dataCell = cellfun(@(x) [x, zeros(1, maxColumnSize - numel(x))], dataCell, 'UniformOutput', false);
 
 % Convert the cell array of padded arrays to a numeric matrix
 dataMatrix = vertcat(dataCell{:});

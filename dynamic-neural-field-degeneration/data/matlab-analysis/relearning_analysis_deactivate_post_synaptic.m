@@ -7,7 +7,7 @@ resultPath = '../results/';
 degeneracyType = 'deactivate post-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
 epochs = 1;
-maximumLearningCycles = 50;
+maximumLearningCycles = 200;
 updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
@@ -16,19 +16,18 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 
 
 %% Read data from file
-dataMatrix = read_data(filePath);
+[dataMatrix, maxColumns]= read_data(filePath);
 
 %% Analysis
 
 % Initialize variables to store results
-initialPer = 10;
-maxColumns = 34;
-incPer = 3.6;
-finalPer = 92
+initialPer = 75;
+incPer = 0.36;
+finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
 degenerationPercentages = (initialPer:incPer:finalPer)';
 
 
-numCorrectBehaviour = zeros(1, size(dataMatrix, 2)) % Number of times exhibited correct behaviour
+numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour
 numRecoveredBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times recoverd behaviour
 numDeadFields = zeros(1, size(dataMatrix, 2));  % Number of "dead" fields

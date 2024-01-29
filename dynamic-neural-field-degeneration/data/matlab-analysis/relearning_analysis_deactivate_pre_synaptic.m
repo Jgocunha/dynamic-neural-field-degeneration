@@ -16,12 +16,15 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
  
 
 %% Read data from file
-dataMatrix = read_data(filePath);
+[dataMatrix, maxColumns]= read_data(filePath);
 
 %% Analysis
 
 % Initialize variables to store results
-degenerationPercentages = (0:0.36:9)';
+initialPer = 10;
+incPer = 0.2;
+finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
+degenerationPercentages = (initialPer:incPer:finalPer)';
 
 numCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Number of times exhibited correct behaviour
 numFailedBehaviour = zeros(1, size(dataMatrix, 2));  % Number of times failed correct behaviour
@@ -35,6 +38,8 @@ perCorrectBehaviour = zeros(1, size(dataMatrix, 2)); % Percentage of fields that
 perFailedBehaviour = zeros(1, size(dataMatrix, 2)); % Percentage of fields that failed correct behaviour
 perRecoveredBehaviour = zeros(1, size(dataMatrix, 2)); % Percentage of fields that were able to recover behaviour
 perDeadFields = zeros(1, size(dataMatrix, 2)); % Percentage of fields that died
+
+
 
 % Iterate through each column (degeneration percentage)
 for col = 1:size(dataMatrix, 2)
