@@ -1,7 +1,11 @@
+%% Extract relearning analysis for deactivate weights condition 
+
+%% Clear the MATLAB environment
 clear;
 clc;
+clf;
 
-%% Add floder and sub-folders to PATH
+%% Add folder and sub-folders to PATH
 folder = fileparts(which(mfilename)); 
 addpath(genpath(folder));
 
@@ -16,7 +20,7 @@ updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
     '  Epochs-', num2str(epochs), ' ', 'MaxCycles-', num2str(maximumLearningCycles), ...
-    ' Update-all-weights-', num2str(updateAllWeights), '_0.7.txt'];
+    ' Update-all-weights-', num2str(updateAllWeights), '.txt'];
 
 
 %% Read data from file
@@ -26,7 +30,7 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 
 % Initialize variables to store results
 initialPer = 90;
-incPer = 0.7;
+incPer = 0.5;
 finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
 degenerationPercentages = (initialPer:incPer:finalPer)';
 
@@ -115,21 +119,30 @@ dataTable = table(degenerationPercentages, ...
     'Avg. relearning cycles', ...
     '"Dead" fields %'});
 
-% % Create a table
-% dataTable = table(degenerationPercentages, ...
-%     numCorrectBehaviour', perCorrectBehaviour', ...
-%     numFailedBehaviour', perFailedBehaviour', ...
-%     numRecoveredBehaviour', perRecoveredBehaviour', ...
-%     avgRelearningCycles', ...
-%     numDeadFields', perDeadFields', ...
-%     'VariableNames', ...
-%     {'Deg. %', ...
-%     'Num. correct behaviour','Correct behaviour %', ...
-%     'Num. failed behaviour', 'Failed behaviour %', ...
-%     'Num. recovered behaviour', 'Recovered behaviour %', ...
-%     'Avg. relearning cycles', ...
-%     'Num. "dead" fields', '"Dead" fields %'});
-
 % Display the table
 disp(dataTable);
+
+% Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+figure;
+
+% Plot all in the same plot
+plot(degenerationPercentages, perFailedBehaviour, 'o-', 'LineWidth', 2, 'DisplayName', 'Failed Behavior');
+hold on;
+plot(degenerationPercentages, perRecoveredBehaviour, 's-', 'LineWidth', 2, 'DisplayName', 'Recovered Behavior');
+plot(degenerationPercentages, avgRelearningCycles, '^-', 'LineWidth', 2, 'DisplayName', 'Average Relearning Cycles');
+hold off;
+
+title('Evolution of Behavior and Relearning Cycles');
+xlabel('Degeneration Percentage');
+ylabel('Percentage / Cycles');
+
+grid on;
+
+% Set font style and size
+set(gca, 'FontName', 'Garamond');
+set(gca, 'FontSize', 12);
+
+% Add legend
+legend('Location', 'Best');
+
 
