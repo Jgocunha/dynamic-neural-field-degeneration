@@ -1,0 +1,14 @@
+Avg. % of affected elements until disapearance of bump: 23.552
+Avg. % of affected elements until misbehaviour: 15.6536
+Average Max. deviation per experiment: 7.0286
+                 <strong>Condition</strong>                 <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
+    <strong>___________________________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
+
+    {'deactivate pre-synaptic neurons'}           2            255                              23.804                                                19.765                             5.95     
+    {'deactivate pre-synaptic neurons'}           6            253                              23.891                                                11.813                                8     
+    {'deactivate pre-synaptic neurons'}          10            253                              23.977                                                12.085                             8.25     
+    {'deactivate pre-synaptic neurons'}          14            252                              22.431                                                20.798                              4.2     
+    {'deactivate pre-synaptic neurons'}          18            253                               23.12                                                17.279                              8.5     
+    {'deactivate pre-synaptic neurons'}          22            253                              23.904                                                12.168                             5.95     
+    {'deactivate pre-synaptic neurons'}          26            250                              23.738                                                15.667                             8.35     
+

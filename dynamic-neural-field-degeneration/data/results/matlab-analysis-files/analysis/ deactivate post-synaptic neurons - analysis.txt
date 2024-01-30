@@ -1,0 +1,14 @@
+Avg. % of affected elements until disapearance of bump: 96.3994
+Avg. % of affected elements until misbehaviour: 91.0071
+Average Max. deviation per experiment: 3.1076
+                 <strong>Condition</strong>                  <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
+    <strong>____________________________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
+
+    {'deactivate post-synaptic neurons'}           2            235                              96.769                                                80.564                            5.7226    
+    {'deactivate post-synaptic neurons'}           6            235                              96.758                                                96.758                               1.7    
+    {'deactivate post-synaptic neurons'}          10            231                              95.622                                                95.622                               1.6    
+    {'deactivate post-synaptic neurons'}          14            232                              96.586                                                96.586                               1.6    
+    {'deactivate post-synaptic neurons'}          18            232                              96.481                                                96.481                               1.6    
+    {'deactivate post-synaptic neurons'}          22            233                              96.318                                                96.318                               1.5    
+    {'deactivate post-synaptic neurons'}          26            232                              96.262                                                74.721                            8.0304    
+

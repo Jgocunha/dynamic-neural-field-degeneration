@@ -1,4 +1,4 @@
-function plotDataAvg(lines, locationDirPath, figTitle, subTitle, targetCentroid, acceptableDeviation)
+function plotStdDevOfDeviations(lines, locationDirPath, figTitle, subTitle, targetCentroid, acceptableDeviation)
     % Initialize a matrix to store deviations for each value
     deviations = zeros(numel(lines), max(cellfun(@numel, lines)));
 
@@ -9,11 +9,16 @@ function plotDataAvg(lines, locationDirPath, figTitle, subTitle, targetCentroid,
         end
     end
 
+    stdLine = std(deviations, 1); % Calculate the mean along the columns
     avgLine = mean(deviations, 1); % Calculate the mean along the columns
 
     % Plot the deviations
     figure;
+    plot(stdLine', 'LineWidth', 1.5);
+    hold on;
     plot(avgLine', 'LineWidth', 1.5);
+
+    hold off;
     
     xlabel('Iteration');
     ylabel('Deviation');
@@ -32,6 +37,6 @@ function plotDataAvg(lines, locationDirPath, figTitle, subTitle, targetCentroid,
     valid_title = [locationDirPath, valid_title];
 
     resolution = 1000;
-    print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
+    %print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
 end
 

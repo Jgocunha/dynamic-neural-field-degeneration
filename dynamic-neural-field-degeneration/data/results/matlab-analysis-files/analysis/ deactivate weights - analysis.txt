@@ -1,0 +1,14 @@
+Avg. % of affected elements until disapearance of bump: 92.5116
+Avg. % of affected elements until misbehaviour: 92.5116
+Average Max. deviation per experiment: 0.77051
+          <strong>Condition</strong>           <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
+    <strong>______________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
+
+    {'deactivate weights'}           2            106                              92.514                                                92.514                               0.7    
+    {'deactivate weights'}           6            104                              92.693                                                92.693                              0.75    
+    {'deactivate weights'}          10            100                              92.277                                                92.277                               0.7    
+    {'deactivate weights'}          14            101                              92.569                                                92.569                            0.6525    
+    {'deactivate weights'}          18            102                              92.395                                                92.395                             0.897    
+    {'deactivate weights'}          22            100                              92.614                                                92.614                              0.75    
+    {'deactivate weights'}          26             99                              92.519                                                92.519                            0.9441    
+

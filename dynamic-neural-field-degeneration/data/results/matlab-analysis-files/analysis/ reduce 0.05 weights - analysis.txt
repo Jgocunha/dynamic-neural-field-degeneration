@@ -1,0 +1,14 @@
+Avg. % of affected elements until disapearance of bump: 97.2004
+Avg. % of affected elements until misbehaviour: 97.2004
+Average Max. deviation per experiment: 0.62143
+           <strong>Condition</strong>           <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
+    <strong>_______________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
+
+    {'reduce 0.05 weights'}           2            101                              97.304                                                97.304                             0.55     
+    {'reduce 0.05 weights'}           6             98                              97.393                                                97.393                              0.6     
+    {'reduce 0.05 weights'}          10             96                               97.04                                                 97.04                             0.75     
+    {'reduce 0.05 weights'}          14             96                               97.21                                                 97.21                              0.6     
+    {'reduce 0.05 weights'}          18             96                              97.159                                                97.159                              0.6     
+    {'reduce 0.05 weights'}          22             96                              97.262                                                97.262                             0.55     
+    {'reduce 0.05 weights'}          26             95                              97.035                                                97.035                              0.7     
+

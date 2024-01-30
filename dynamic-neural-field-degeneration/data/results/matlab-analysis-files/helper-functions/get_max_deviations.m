@@ -1,4 +1,4 @@
-function [trialDeviations,maxDeviations] = getMaxDeviations(data, targetCentroid)
+function [trialDeviations,maxDeviations] = get_max_deviations(data, targetCentroid)
 % Determine the number of trials
 numTrials = numel(data);
 
@@ -24,8 +24,6 @@ for trial = 1:numTrials
             maxDeviation = deviation;
         end
 
-        if(deviation == 11)
-            print('hello');
     end
     
     % Store the maximum deviation for the current trial

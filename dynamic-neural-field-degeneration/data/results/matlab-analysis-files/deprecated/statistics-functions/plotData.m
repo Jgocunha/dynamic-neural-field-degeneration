@@ -66,7 +66,7 @@ resolution = 1000;
 %set(gcf, 'Units', 'pixels', 'Position', [100 100 1200 800]); % Adjust the figure size as needed
 
 % Save the plot as an image file with the desired resolution
-print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
+%print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
 
 % Restore the original figure size (optional)
 %set(gcf, 'Units', 'normalized');

@@ -1,6 +1,7 @@
 %% Clear the MATLAB environment
 clear;
 clc;
+clf;
 %% Add floder and sub-folders to PATH
 % Determine where your m-file's folder is.
 folder = fileparts(which(mfilename)); 
@@ -24,7 +25,7 @@ targetCentroids = {2.0 ; 6.0; 10.0; 14.0; 18.0; 22.; 26.00};%;
 centroidsFilePath = '';
 resultsFilePath = '';
 plotFilePath = './plots/';
-acceptableDeviation = 1.5;
+acceptableDeviation = 2.0;
 
 
 
@@ -45,6 +46,24 @@ for experiment = 1:size(experiments,1)
      
          %% Read data
          data = readData(centroidsFilePath);
+
+                  %% Plot data
+        switch experiments{experiment, 1}
+            case 'deactivate weights'
+                title = ['Randomly deactivating one unique ' experiments{experiment, 2}];
+            case 'reduce 0.05 weights' 
+                title = ['Randomly reducing one ' experiments{experiment, 2} ' by 95%'];
+            case 'randomize weights'
+                title = ['Randomly randomizing one ' experiments{experiment, 2}];
+            case 'deactivate pre-synaptic neurons'
+                title = ['Deactivating one unique ' experiments{experiment, 2}];
+            case 'deactivate post-synaptic neurons'
+                title = ['Deactivating one unique ' experiments{experiment, 2}];
+        end
+        subTitle = ['Target centroid position ', positions{position}];
+        %plotData(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
+        plotStdDevOfDeviations(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
+         
 
         %% Remove negative values from the cell array
         newData = {};  % Initialize a new cell array to store filtered values
@@ -80,34 +99,11 @@ for experiment = 1:size(experiments,1)
          [trialDeviations, maxDeviations] = getMaxDeviations(data, targetCentroid);
          % get average centroid value
          [avgCentroidValuePerTrial,avgCentroidValue] = getAvgCentroidValue(data);
-    
-        %% Plot data
-        switch experiments{experiment, 1}
-            case 'deactivate weights'
-                title = ['Randomly deactivating one unique ' experiments{experiment, 2}];
-            case 'reduce 0.4 weights' 
-                title = ['Randomly reducing one ' experiments{experiment, 2} ' by a factor of 0.4'];
-            case 'reduce 0.6 weights' 
-                title = ['Randomly reducing one ' experiments{experiment, 2} ' by a factor of 0.6'];
-            case 'reduce 0.8 weights' 
-                title = ['Randomly reducing one ' experiments{experiment, 2} ' by a factor of 0.8'];
-            case 'randomize weights'
-                title = ['Randomly randomizing one ' experiments{experiment, 2}];
-            case 'deactivate pre-synaptic neurons'
-                title = ['Deactivating one unique ' experiments{experiment, 2}];
-            case 'deactivate post-synaptic neurons'
-                title = ['Deactivating one unique ' experiments{experiment, 2}];
-        end
-        subTitle = ['Target centroid position ', positions{position}];
-        %plotData(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
-        plotDataAvg(data, plotFilePath, title, subTitle, targetCentroid, acceptableDeviation);
-    
         %% Adapt values to percentages
         [avgNumIterations, avgIterationsMisbehavior] = adaptToPercentage(experiments{experiment, 1}, avgNumIterations, avgIterationsMisbehavior);
         %% Store data in table
         newRow = table(cellstr(experiments{experiment, 1}), ...
                        targetCentroid, ...
-                       acceptableDeviation, ...
                        numTrials, ...
                        avgNumIterations, ...
                        avgIterationsMisbehavior(1), ...
@@ -115,7 +111,6 @@ for experiment = 1:size(experiments,1)
                        maxDeviations, ...
                        'VariableNames', {'Condition', ...
                                          'Target centroid', ...
-                                         'Acceptable deviation', ...
                                          'Trials', ...
                                          'Avg. % of affected elements until dissapearance of bump', ...
                                          'Avg. % of affected elements until misbehaviour', ...
@@ -147,28 +142,28 @@ for experiment = 1:size(experiments,1)
 %     disp(['Standard deviation of average trials: ', num2str(stdDeviationAvgTrials)]);
     %% Calculate and display average AvgNumIterations per experiment
     avgAvgNumIterations = mean(dataTable{:,'Avg. % of affected elements until dissapearance of bump'});
-    %disp(['Average AvgNumIterations per experiment: ', num2str(avgAvgNumIterations)]);
+    disp(['Average AvgNumIterations per experiment: ', num2str(avgAvgNumIterations)]);
     %% Calculate and display the standard deviation of AvgNumIterations
     stdDeviationAvgNumIterations = std(dataTable{:,'Avg. % of affected elements until dissapearance of bump'}, 1);
     %disp(['Standard deviation of AvgNumIterations: ', num2str(stdDeviationAvgNumIterations)]);
 
     %% Calculate and display average AvgIterationsMisbehavior per experiment
     avgAvgIterationsMisbehavior = mean(dataTable{:,'Avg. % of affected elements until misbehaviour'}, 1);
-   % disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
+    disp(['Average AvgIterationsMisbehavior per experiment: ', num2str(avgAvgIterationsMisbehavior)]);
     %% Calculate and display the standard deviation of AvgIterationsMisbehavior
     stdDeviationAvgIterationsMisbehavior = std(dataTable{:,'Avg. % of affected elements until misbehaviour'}, 1);
     %disp(['Standard deviation of AvgIterationsMisbehavior: ', num2str(stdDeviationAvgIterationsMisbehavior)]);
 
     %% Calculate and display average Avg. deviation per experiment
     avgDeviation = mean(dataTable{:,'Avg. deviation'},1);
-    %disp(['Average deviation per experiment: ', num2str(avgDeviation)]);
+    disp(['Average deviation per experiment: ', num2str(avgDeviation)]);
     %% Calculate and display the Avg. deviation of MaxDeviation
     stdDeviationDeviation = std(dataTable{:,'Avg. deviation'}, 1);
     %disp(['Standard deviation of MaxDeviation: ', num2str(stdDeviationDeviation)]);
 
     %% Calculate and display average MaxDeviation per experiment
     avgMaxDeviation = mean(dataTable{:,'Max. deviation'},1);
-   % disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
+    disp(['Average MaxDeviation per experiment: ', num2str(avgMaxDeviation)]);
     %% Calculate and display the standard deviation of MaxDeviation
     stdDeviationMaxDeviation = std(dataTable{:,'Max. deviation'}, 1);
     %disp(['Standard deviation of MaxDeviation: ', num2str(stdDeviationMaxDeviation)]);
