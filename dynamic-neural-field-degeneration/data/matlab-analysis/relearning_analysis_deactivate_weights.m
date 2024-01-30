@@ -1,6 +1,10 @@
 clear;
 clc;
 
+%% Add floder and sub-folders to PATH
+folder = fileparts(which(mfilename)); 
+addpath(genpath(folder));
+
 %% Experiment parameters
 % deactivate weights Only-degenerated-cases  Epochs-100 MaxCycles-5 Update-all-weights-0
 resultPath = '../results/';
@@ -12,7 +16,7 @@ updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
     '  Epochs-', num2str(epochs), ' ', 'MaxCycles-', num2str(maximumLearningCycles), ...
-    ' Update-all-weights-', num2str(updateAllWeights), '.txt'];
+    ' Update-all-weights-', num2str(updateAllWeights), '_0.7.txt'];
 
 
 %% Read data from file
@@ -22,7 +26,7 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 
 % Initialize variables to store results
 initialPer = 90;
-incPer = 1;
+incPer = 0.7;
 finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
 degenerationPercentages = (initialPer:incPer:finalPer)';
 
