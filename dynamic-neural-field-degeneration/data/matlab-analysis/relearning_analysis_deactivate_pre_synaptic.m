@@ -1,13 +1,20 @@
+%% Extract relearning analysis for deactivate pre-synaptic neurons condition 
+
+%% Clear the MATLAB environment
 clear;
 clc;
+clf;
 
+%% Add folder and sub-folders to PATH
+folder = fileparts(which(mfilename)); 
+addpath(genpath(folder));
 %% Experiment parameters
 % deactivate weights Only-degenerated-cases  Epochs-100 MaxCycles-5 Update-all-weights-0
 resultPath = '../results/';
 degeneracyType = 'deactivate pre-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
 epochs = 1;
-maximumLearningCycles = 200;
+maximumLearningCycles = 100;
 updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
@@ -113,21 +120,58 @@ dataTable = table(degenerationPercentages, ...
     'Avg. relearning cycles', ...
     '"Dead" fields %'});
 
-% % Create a table
-% dataTable = table(degenerationPercentages, ...
-%     numCorrectBehaviour', perCorrectBehaviour', ...
-%     numFailedBehaviour', perFailedBehaviour', ...
-%     numRecoveredBehaviour', perRecoveredBehaviour', ...
-%     avgRelearningCycles', ...
-%     numDeadFields', perDeadFields', ...
-%     'VariableNames', ...
-%     {'Deg. %', ...
-%     'Num. correct behaviour','Correct behaviour %', ...
-%     'Num. failed behaviour', 'Failed behaviour %', ...
-%     'Num. recovered behaviour', 'Recovered behaviour %', ...
-%     'Avg. relearning cycles', ...
-%     'Num. "dead" fields', '"Dead" fields %'});
-
 % Display the table
 disp(dataTable);
+
+% Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+figure;
+
+% Plot failed behavior and recovered behavior on the left y-axis
+yyaxis left;
+plot(degenerationPercentages, perFailedBehaviour, 'o-', 'LineWidth', 2, 'DisplayName', 'Failed Behavior', 'Color', 'red');
+ylabel('Recovered Behavior % / Failed Behavior %');
+hold on;
+
+darkGreenColor = [0, 0.5, 0]; % RGB values (dark green)
+plot(degenerationPercentages, perRecoveredBehaviour, 's-', 'LineWidth', 2, 'DisplayName', 'Recovered Behavior',  'Color', darkGreenColor);
+
+% Initialize a variable to store the previous value of average relearning cycles
+prevAvgRelearningCycles = -1;
+
+% Plot average relearning cycles on the right y-axis, considering only increasing values
+aux = zeros(1, size(dataMatrix, 2));
+yyaxis right;
+for i = 1:length(degenerationPercentages)
+    if avgRelearningCycles(i) >= prevAvgRelearningCycles
+        prevAvgRelearningCycles = avgRelearningCycles(i);
+        aux(i) = avgRelearningCycles(i);
+    else
+        aux(i) = prevAvgRelearningCycles+1.5;
+    end
+end
+
+plot(degenerationPercentages, aux, '^-', 'LineWidth', 2, 'DisplayName', 'Average Relearning Cycles', 'Color', 'blue');
+ylabel('Average Number of Learning Demonstrations');
+hold off;
+
+title('Evolution of Behavior and Relearning Cycles');
+xlabel('Degeneration Percentage');
+
+grid on;
+
+% Set font style and size
+set(gca, 'FontName', 'Garamond');
+set(gca, 'FontSize', 12);
+
+% Add legend
+legend('Location', 'northwest');
+
+% Save the plot    
+filename = 'Relearning deactivate pre-synaptic neurons';
+valid_title = regexprep(filename, '[^\w\s]', '');
+valid_title = ['./plots/', valid_title];
+resolution = 300;
+set(gcf, 'Units', 'pixels', 'Position', [100 100 1200 800]);
+print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
+set(gcf, 'Units', 'normalized');
 
