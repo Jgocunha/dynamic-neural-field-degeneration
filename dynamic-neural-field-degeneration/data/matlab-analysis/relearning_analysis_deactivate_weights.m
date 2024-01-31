@@ -122,19 +122,26 @@ dataTable = table(degenerationPercentages, ...
 % Display the table
 disp(dataTable);
 
-% Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+%% Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
 figure;
 
 % Plot all in the same plot
-plot(degenerationPercentages, perFailedBehaviour, 'o-', 'LineWidth', 2, 'DisplayName', 'Failed Behavior');
+yyaxis left; % Left y-axis
+plot(degenerationPercentages, perFailedBehaviour, 'o-', 'LineWidth', 2, 'DisplayName', 'Failed Behavior', 'Color', 'red');
+ylabel('Recovered Behavior % / Failed Behavior %');
 hold on;
-plot(degenerationPercentages, perRecoveredBehaviour, 's-', 'LineWidth', 2, 'DisplayName', 'Recovered Behavior');
-plot(degenerationPercentages, avgRelearningCycles, '^-', 'LineWidth', 2, 'DisplayName', 'Average Relearning Cycles');
+
+darkGreenColor = [0, 0.5, 0]; % RGB values (dark green)
+plot(degenerationPercentages, perRecoveredBehaviour, 's-', 'LineWidth', 2, 'DisplayName', 'Recovered Behavior',  'Color', darkGreenColor);
+
+
+yyaxis right; % Right y-axis
+plot(degenerationPercentages, avgRelearningCycles, '^-', 'LineWidth', 2, 'DisplayName', 'Average Relearning Cycles', 'Color', 'blue');
+ylabel('Average Number of Learning Demonstrations');
 hold off;
 
 title('Evolution of Behavior and Relearning Cycles');
 xlabel('Degeneration Percentage');
-ylabel('Percentage / Cycles');
 
 grid on;
 
@@ -143,6 +150,18 @@ set(gca, 'FontName', 'Garamond');
 set(gca, 'FontSize', 12);
 
 % Add legend
-legend('Location', 'Best');
+legend('Location', 'northwest');
 
-
+%% Save the plot    
+% Remove any special characters from the title to create a valid file name
+filename = 'Relearning deactivate weights';
+valid_title = regexprep(filename, '[^\w\s]', '');
+valid_title = ['./plots/', valid_title];
+% Set the desired resolution in DPI (e.g., 300)
+resolution = 300;
+% Set the figure size to match the desired resolution
+set(gcf, 'Units', 'pixels', 'Position', [100 100 1200 800]); % Adjust the figure size as needed
+% Save the plot as an image file with the desired resolution
+print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
+% Restore the original figure size (optional)
+set(gcf, 'Units', 'normalized');
