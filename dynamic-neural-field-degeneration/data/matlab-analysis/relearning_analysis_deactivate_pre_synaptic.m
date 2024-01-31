@@ -8,6 +8,7 @@ clf;
 %% Add folder and sub-folders to PATH
 folder = fileparts(which(mfilename)); 
 addpath(genpath(folder));
+
 %% Experiment parameters
 % deactivate weights Only-degenerated-cases  Epochs-100 MaxCycles-5 Update-all-weights-0
 resultPath = '../results/';
