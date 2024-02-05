@@ -25,20 +25,20 @@ int main(int argc, char* argv[])
 		dnf_composer::user_interface::PlotParameters pp;
 
 		// Show normal noise
+		//std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+		//visualization->addPlottingData("noise per", "output");
+		//pp.annotations = { "Normal noise per", "Spatial dimension", "Amplitude" };
+		//pp.dimensions = { 0, 360, -1, 1 };
+		//app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
+
+		//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+		//visualization->addPlottingData("noise out", "output");
+		//pp.annotations = { "Normal noise out", "Spatial dimension", "Amplitude" };
+		//pp.dimensions = { 0, 28, -1, 1 };
+		//app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
+
+		//// Show kernel
 		std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
-		visualization->addPlottingData("noise per", "output");
-		pp.annotations = { "Normal noise per", "Spatial dimension", "Amplitude" };
-		pp.dimensions = { 0, 360, -1, 1 };
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
-
-		visualization = std::make_shared<dnf_composer::Visualization>(simulation);
-		visualization->addPlottingData("noise out", "output");
-		pp.annotations = { "Normal noise out", "Spatial dimension", "Amplitude" };
-		pp.dimensions = { 0, 28, -1, 1 };
-		app.activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
-
-		// Show kernel
-		visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 		visualization->addPlottingData("perceptual field", "activation");
 		visualization->addPlottingData("perceptual field", "output");
 		pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
