@@ -15,31 +15,14 @@ namespace dnf_composer
 				throw Exception(ErrorCode::GAUSS_STIMULUS_POSITION_OUT_OF_RANGE, elementCommonParameters.identifiers.uniqueName);
 
 			this->commonParameters.identifiers.label = ElementLabel::GAUSS_STIMULUS;
+
+			this->parameters.position += 0.5;
 		}
 
 		void GaussStimulus::init()
 		{
 			std::vector<double> g(commonParameters.dimensionParameters.size);
 
-			if (commonParameters.dimensionParameters.x_max > 100)
-			{
-				if (parameters.position == 0.0)
-				{
-					parameters.position += 0.65;
-					log(ERROR_, "Gauss stimulus position was set to 0.0. That is not supported yet. \n");
-				}
-				else
-				{
-					if (parameters.position == 60.0)
-					{
-						log(ERROR_, "Gauss stimulus position was set to 60.0. That is not supported yet. \n");
-						parameters.position += 0.35;
-					}
-					else
-						parameters.position += 0.6;
-				}
-			}
-			
 			if (parameters.circular)
 				g = mathtools::circularGauss(commonParameters.dimensionParameters.size, parameters.sigma, (parameters.position)/commonParameters.dimensionParameters.d_x);
 			else

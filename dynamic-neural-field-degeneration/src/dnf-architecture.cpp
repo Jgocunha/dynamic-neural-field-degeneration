@@ -12,7 +12,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// element common parameters
 	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };
-	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{28, 0.1};
+	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{180, 0.5};
 
 	// create neural field
 	//const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
@@ -40,14 +40,14 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	dnf_composer::element::GaussKernelParameters gkp2;
 	gkp2.amplitude = 20;  // self-stabilized (with input) //20
 	gkp2.sigma = 25; // 25
-	gkp2.amplitudeGlobal = -0.12;
+	gkp2.amplitudeGlobal = -0.10;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
 		(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
 
 	dnf_composer::element::FieldCouplingParameters fcp;
 	fcp.inputFieldSize = perceptualFieldSpatialDimensions.size;
-	fcp.scalar = 0.4; // 0.5 98% - 0.4 94% - 0.3 90% 
+	fcp.scalar = 0.2; 
 	fcp.learningRate = 0.01;
 	fcp.learningRule = dnf_composer::LearningRule::DELTA_KROGH_HERTZ;
 	const std::shared_ptr<dnf_composer::element::DegenerateFieldCoupling> w_per_out(
@@ -56,9 +56,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create noise stimulus and noise kernel
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_per
-		(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 0.1}));
+		(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 0.01}));
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
-		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.1 }));
+		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.01 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
 		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out
@@ -84,23 +84,12 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	noise_kernel_per->addInput(noise_per);
 	noise_kernel_out->addInput(noise_out);
 
-	//const dnf_composer::element::GaussStimulusParameters gcp_a = { 3, 15, 274.15 + 1.0 };
-	//std::shared_ptr<dnf_composer::element::GaussStimulus> gauss_stimulus(new dnf_composer::element::GaussStimulus({ "gauss stimulus", perceptualFieldSize }, gcp_a));
-
-	//simulation->addElement(gauss_stimulus);
-	//perceptual_field->addInput(gauss_stimulus);
-
 	if(trainWeights)
 	{
 		//set up the field coupling wizard
 		dnf_composer::LearningWizard fcpw{ simulation, "per - out" };
 
-		// add gaussian inputs
-		constexpr  double offset = 0.0;
-		const double kernel_width = k_per_per->getParameters().sigma;
-		const double kernel_amplitude = k_per_per->getParameters().amplitude;
-		//dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 0 };
-		//fcpw.setGaussStimulusParameters(gsp);
+		constexpr double offset = 0.0;
 
 		std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 		{
@@ -115,13 +104,13 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 		 std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 		 {
-			 { 2.00 +  0.15 },
-			 { 6.00 +  0.245 },
-			 { 10.00 + 0.26 },
-			 { 14.00 + 0.10 },
-			 { 18.00 + 0.20 },
-			 { 22.00 + 0.22 },
-			 { 26.00 + 0.25 }
+			{ 78.00 + offset }, // red
+			{ 82.00 + offset }, // orange
+			{ 86.00 + offset }, // yellow
+			{ 90.00 + offset }, // green
+			{ 94.00 + offset }, // blue
+			{ 98.00 + offset }, // indigo
+			{ 102.00 + offset } // violet
 		 };
 
 		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);

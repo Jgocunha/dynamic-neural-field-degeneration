@@ -143,7 +143,7 @@ namespace dnf_composer
 				break;
 			}
 
-			writeWeights();
+			//writeWeights();
 		}
 
 		void FieldCoupling::setLearningRate(double learningRate)
