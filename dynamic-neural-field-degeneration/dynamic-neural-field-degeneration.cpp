@@ -28,8 +28,8 @@ ExperimentParameters setExperimentParameters()
     }
     else
     {
-    	params.numberOfTrials = 1;
-		params.degeneracyType = dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE;
+    	params.numberOfTrials = 10;
+		params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
 		params.fieldToDegenerate = "perceptual";
     }
 
@@ -38,7 +38,7 @@ ExperimentParameters setExperimentParameters()
 	params.decisionTolerance = 2.0;
     params.startingExternalStimulus = 0;
 
-    params.isVisualisationOn = false;
+    params.isVisualisationOn = true;
 	params.isDataSavingOn = !params.isVisualisationOn;
     params.isDebugModeOn = true;
 

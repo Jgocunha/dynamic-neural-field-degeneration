@@ -19,9 +19,9 @@ void ExperimentWindow::render()
 		renderDegenerationStatistics();
 	ImGui::End();
 
-	if (ImGui::Begin("Plot of output field centroid plot over time"))
-		renderFieldCentroidOverTime();
-	ImGui::End();
+	//if (ImGui::Begin("Plot of output field centroid plot over time"))
+		//renderFieldCentroidOverTime();
+	//ImGui::End();
 }
 
 void ExperimentWindow::renderExperimentDetails() const

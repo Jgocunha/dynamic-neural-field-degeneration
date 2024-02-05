@@ -3,6 +3,7 @@
 
 #include "user_interface/logger_window.h"
 #include "user_interface/plot_window.h"
+#include "user_interface/simulation_window.h"
 
 
 DnfcomposerHandler::DnfcomposerHandler()
@@ -168,8 +169,8 @@ void DnfcomposerHandler::setupUserInterface()
 {
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
-	visualization->addPlottingData("perceptual field", "output");
-	visualization->addPlottingData("per - per", "output");
+	//visualization->addPlottingData("perceptual field", "output");
+	//visualization->addPlottingData("per - per", "output");
 
 	dnf_composer::user_interface::PlotParameters pp;
 	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
@@ -178,8 +179,8 @@ void DnfcomposerHandler::setupUserInterface()
 
 	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("output field", "activation");
-	visualization->addPlottingData("output field", "output");
-	visualization->addPlottingData("out - out", "output");
+	//visualization->addPlottingData("output field", "output");
+	//visualization->addPlottingData("out - out", "output");
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
@@ -205,7 +206,7 @@ void DnfcomposerHandler::setupUserInterface()
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->activateUserInterfaceWindow(userInterfaceWindow);
 
-	//application->activateUserInterfaceWindow(std::make_shared<MatrixPlotWindow>(simulation, "per - dec"));
+	application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::SimulationWindow>(simulation));
 }
 
 void DnfcomposerHandler::cleanUpTrial()
