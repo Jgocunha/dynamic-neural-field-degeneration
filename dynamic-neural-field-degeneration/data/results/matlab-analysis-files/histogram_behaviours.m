@@ -12,12 +12,17 @@ addpath(genpath(folder));
 experiments = {%'deactivate weights', 'weight'; ...
                %'reduce 0.05 weights', 'weight'; ... 
                %'randomize weights', 'weight'; ...
-               'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
-               %'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
+               %'deactivate pre-synaptic neurons', 'pre-synaptic neuron'; ...
+               'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
 
 positions = {'78.0'; '82.0'; '86.0'; '90.0'; '94.0'; '98.0'; '102.0'};  
 targetCentroids = {78.0; 82.0; 86.0; 90.0; 94.0; 98.0; 102.0}; 
+percentageJumps = {%1000, 10000, 1000, 36,
+    18};
+% 100% - 720 pre-synaptic
+% 100% - 360 post_synaptic
+
 
 centroidsFilePath = '';
 analysisFilePath = '';
@@ -37,28 +42,82 @@ for experiment = 1:size(experiments,1)
 
         %% Read data
         data = read_data(centroidsFilePath);
-        %data = clean_data(data);
 
         %% Analyse data
         result = categorize_centroids(data, targetCentroids{position}, acceptableDeviation);
+        max_length = find_max_length(result);
+        result = fill_data_cells(result, max_length);
 
-        % Count the occurrences of 0s, 1s, and 2s for each column
-        counts = zeros(length(expectedValues), size(data, 2));
+        % Initialize arrays to store sums for each degree percentage
+        sum_zeros = zeros(max_length, 1);
+        sum_ones = zeros(max_length, 1);
+        sum_twos = zeros(max_length, 1);
         
-        for i = 1:length(expectedValues)
-            for j = 1:size(data, 2)
-                counts(i, j) = sum(result{i}(:, j) == 0);  % Count 0s
-                counts(i, j + size(data, 2)) = sum(result{i}(:, j) == 1);  % Count 1s
-                counts(i, j + 2 * size(data, 2)) = sum(result{i}(:, j) == 2);  % Count 2s
-            end
+        % Iterate through each column
+        for col = 1:percentageJumps{experiment}:max_length
+            % Get the current column
+            current_column = cellfun(@(x) x(col), result);
+            
+            % Count occurrences of 0, 1, and 2
+            sum_zeros(col) = sum(current_column == 0);
+            sum_ones(col) = sum(current_column == 1);
+            sum_twos(col) = sum(current_column == 2);
         end
         
-        % Create a bar graph
+        % Display the sums for each degree percentage
+        disp('Sum of counts of 0, 1, and 2 for each degree percentage:');
+        disp('Deg. %   Sum(0)   Sum(1)   Sum(2)');
+        percentage = 0;
+        for col = 1:percentageJumps{experiment}:max_length
+            disp([num2str(percentage) blanks(9 - length(num2str(col))) num2str(sum_zeros(col)) blanks(9 - length(num2str(sum_zeros(col)))) num2str(sum_ones(col)) blanks(9 - length(num2str(sum_ones(col)))) num2str(sum_twos(col))]);
+            percentage = percentage + 5;
+        end
+        
+              % Calculate percentages
+        total = sum_zeros + sum_ones + sum_twos;
+        percentages_zeros = (sum_zeros ./ total) * 100;
+        percentages_ones = (sum_ones ./ total) * 100;
+        percentages_twos = (sum_twos ./ total) * 100;
+        
+        
+        % Add 100% no behaviors at the next degeneration percentage
+        deg_percentage = 0:percentageJumps{experiment}:((max_length-1)*percentageJumps{experiment});
+        extra_percentage = ones(1, numel(deg_percentage)) * 100; % Ensure dimensions match
+        
+        percentages_zeros(end+1) = 0;
+        percentages_ones(end+1) = 0;
+        percentages_twos(end+1) = 100;
+        deg_percentage(end+1) = deg_percentage(end)+1;
+
+
+        % Define RGB values for dark green, dark yellow, and dark red
+        darkGreen = [0, 0.5, 0]; % RGB: [0, 128, 0]
+        darkYellow = [0.8, 0.8, 0]; % RGB: [204, 204, 0]
+        darkRed = [0.8, 0, 0]; % RGB: [204, 0, 0]
+        
+        % Plot grouped bar plot with adjusted spacing
+        barWidth = 200; % Adjust bar width
+        spacing = 100; % Adjust spacing between bars
         figure;
-        bar(counts);
-        legend('0s - Column 1', '1s - Column 1', '2s - Column 1', '0s - Column 2', '1s - Column 2', '2s - Column 2', 'Location', 'Best');
-        xlabel('Expected Values');
-        ylabel('Counts');
-        title('Counts of 0s, 1s, and 2s for Each Column');
+        bar(deg_percentage - spacing, percentages_zeros, barWidth, 'FaceColor', darkGreen);
+        hold on;
+        bar(deg_percentage, percentages_ones, barWidth, 'FaceColor', darkYellow);
+        bar(deg_percentage + spacing, percentages_twos, barWidth, 'FaceColor', darkRed);
+        hold off;
+
+        
+        xlabel('Degeneration Percentage');
+        ylabel('Percentage');
+        title(['Behavioural analysis for Experiment: ', experiments{experiment}, ', Position: ', positions{position}]);
+        legend('Percentage of correct behaviours', 'Percentage of misbehaviours', 'Percentage of no behaviours');
+        ylim([0 100]); % Set y-axis limits to 0-100%
+        grid on;
     end
+    disp('______________________________________');
+
+
 end
+
+
+
+
