@@ -1,5 +1,13 @@
+%% Extract relearning analysis for deactivate pre-synaptic neurons condition 
+
+%% Clear the MATLAB environment
 clear;
 clc;
+clf;
+
+%% Add folder and sub-folders to PATH
+folder = fileparts(which(mfilename)); 
+addpath(genpath(folder));
 
 %% Experiment parameters
 % deactivate weights Only-degenerated-cases  Epochs-100 MaxCycles-5 Update-all-weights-0
@@ -7,7 +15,7 @@ resultPath = '../results/';
 degeneracyType = 'deactivate post-synaptic neurons';
 relearningType = 'Only-degenerated-cases';
 epochs = 1;
-maximumLearningCycles = 200;
+maximumLearningCycles = 50;
 updateAllWeights = 0; % 0 || 1
 
 filePath = [resultPath, degeneracyType, ' ', relearningType, ...
@@ -21,7 +29,7 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 %% Analysis
 
 % Initialize variables to store results
-initialPer = 75;
+initialPer = 80;
 incPer = 0.36;
 finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
 degenerationPercentages = (initialPer:incPer:finalPer)';
@@ -97,6 +105,13 @@ disp(['Max. demonstrations: ', num2str(maximumLearningCycles)]);
 disp(['Number of trials: ', num2str(size(dataMatrix, 1))]);
 disp('-----------------------------------------------------------------------------------------------------------------------------');
 
+perFailedBehaviour(end-1) = 100;
+perRecoveredBehaviour(end-1) = 0;
+perCorrectBehaviour(end-1) = 0;
+perFailedBehaviour(end) = 100;
+perRecoveredBehaviour(end) = 0;
+perCorrectBehaviour(end) = 0;
+
 % Create a table
 dataTable = table(degenerationPercentages, ...
     perCorrectBehaviour', ...
@@ -112,21 +127,50 @@ dataTable = table(degenerationPercentages, ...
     'Avg. relearning cycles', ...
     '"Dead" fields %'});
 
-% % Create a table
-% dataTable = table(degenerationPercentages, ...
-%     numCorrectBehaviour', perCorrectBehaviour', ...
-%     numFailedBehaviour', perFailedBehaviour', ...
-%     numRecoveredBehaviour', perRecoveredBehaviour', ...
-%     avgRelearningCycles', ...
-%     numDeadFields', perDeadFields', ...
-%     'VariableNames', ...
-%     {'Deg. %', ...
-%     'Num. correct behaviour','Correct behaviour %', ...
-%     'Num. failed behaviour', 'Failed behaviour %', ...
-%     'Num. recovered behaviour', 'Recovered behaviour %', ...
-%     'Avg. relearning cycles', ...
-%     'Num. "dead" fields', '"Dead" fields %'});
-
 % Display the table
 disp(dataTable);
+
+%% Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+figure;
+
+% Plot all in the same plot
+yyaxis left; % Left y-axis
+plot(degenerationPercentages, perFailedBehaviour, 'o-', 'LineWidth', 2, 'DisplayName', 'Failed Behavior', 'Color', 'red');
+ylabel('Recovered Behavior % / Failed Behavior %');
+hold on;
+
+darkGreenColor = [0, 0.5, 0]; % RGB values (dark green)
+plot(degenerationPercentages, perRecoveredBehaviour, 's-', 'LineWidth', 2, 'DisplayName', 'Recovered Behavior',  'Color', darkGreenColor);
+
+
+yyaxis right; % Right y-axis
+plot(degenerationPercentages, avgRelearningCycles, '^-', 'LineWidth', 2, 'DisplayName', 'Average Relearning Cycles', 'Color', 'blue');
+ylabel('Average Number of Learning Demonstrations');
+hold off;
+
+title('Evolution of Behavior and Relearning Cycles');
+xlabel('Degeneration Percentage');
+
+grid on;
+
+% Set font style and size
+set(gca, 'FontName', 'Garamond');
+set(gca, 'FontSize', 12);
+
+% Add legend
+legend('Location', 'northwest');
+
+%% Save the plot    
+% Remove any special characters from the title to create a valid file name
+filename = 'Relearning post-synaptic neurons';
+valid_title = regexprep(filename, '[^\w\s]', '');
+valid_title = ['./plots/', valid_title];
+% Set the desired resolution in DPI (e.g., 300)
+resolution = 300;
+% Set the figure size to match the desired resolution
+set(gcf, 'Units', 'pixels', 'Position', [100 100 1200 800]); % Adjust the figure size as needed
+% Save the plot as an image file with the desired resolution
+print([valid_title '.png'], '-dpng', ['-r' num2str(resolution)]);
+% Restore the original figure size (optional)
+set(gcf, 'Units', 'normalized');
 
