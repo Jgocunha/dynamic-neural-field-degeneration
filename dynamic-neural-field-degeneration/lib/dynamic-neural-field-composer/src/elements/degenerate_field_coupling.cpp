@@ -383,23 +383,33 @@ namespace dnf_composer
 			for (size_t i = 0; i < inputSize; ++i) {
 				for (size_t j = 0; j < outputSize; ++j)
 				{
-					//std::pair<int, int> pair(i, j);
-					//auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
-
-					// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
-					//if (it != indicesForDegeneration.end())
-					//{
-						//log(DEBUG, "Found pair and updated weights.\n");
+					if(degeneracyType != ElementDegeneracyType::WEIGHTS_DEACTIVATE)
+					{
+						log(DEBUG, "Element degeneracy type is NOT weights deactivate!\n");
 						weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
-					//}
-					//else
-					//{
-					//{
-						//log(DEBUG, "Did not find pair and did not update weights.\n");
-					//}
-					//{
-					//}
-					// else do nothing
+					}
+					else
+					{
+						log(DEBUG, "Element degeneracy type IS weights deactivate!\n");
+
+						std::pair<int, int> pair(i, j);
+						auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
+
+						// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
+						if (it != indicesForDegeneration.end())
+						{
+							//log(DEBUG, "Found pair and updated weights.\n");
+							weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
+						}
+						//else
+						//{
+							//log(DEBUG, "Did not find pair and did not update weights.\n");
+						//}
+						//{
+						//}
+						// else do nothing
+					}
+					
 				}
 			}
 

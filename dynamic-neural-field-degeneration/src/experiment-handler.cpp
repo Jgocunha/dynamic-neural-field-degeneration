@@ -85,12 +85,12 @@ void ExperimentHandler::initialDegeneration()
 		if (params.fieldToDegenerate == "perceptual")
 			numberElements = 720 * params.initialPercentageOfDegeneration / 100 ;
 		if (params.fieldToDegenerate == "output")
-			numberElements = 280 * params.initialPercentageOfDegeneration / 100;
+			numberElements = 360 * params.initialPercentageOfDegeneration / 100;
 		break;
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 	case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-		numberElements = 280 * 720 * params.initialPercentageOfDegeneration / 100;
+		numberElements = 360 * 720 * params.initialPercentageOfDegeneration / 100;
 		break;
 	default:
 		break;
