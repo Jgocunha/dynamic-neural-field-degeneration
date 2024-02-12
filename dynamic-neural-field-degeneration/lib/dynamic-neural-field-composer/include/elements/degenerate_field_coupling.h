@@ -16,7 +16,7 @@ namespace dnf_composer
 			std::set<std::pair<int, int>> indicesForDegeneration;
 			double minWeightValue = 0;
 			double maxWeightValue = 0;
-			double weightReductionFactor = 0.05;
+			double weightReductionFactor = 0.005;
 			int numWeightsToDegenerate = 100;
 		public:
 			DegenerateFieldCoupling(const ElementCommonParameters& elementCommonParameters, const FieldCouplingParameters& parameters);

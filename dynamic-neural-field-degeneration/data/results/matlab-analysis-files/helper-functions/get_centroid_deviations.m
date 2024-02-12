@@ -6,6 +6,7 @@ function [deviations] = get_centroid_deviations(deviationsFileName, data, target
     for trial = 1:numel(data)
         for iteration = 1:numel(data{trial})
             deviations(trial, iteration) = min(abs(data{trial}(iteration) - targetCentroid), abs(28 - abs(data{trial}(iteration) + targetCentroid)));
+            %deviations(trial, iteration) = abs(data{trial}(iteration) - targetCentroid);
         end
     end
 

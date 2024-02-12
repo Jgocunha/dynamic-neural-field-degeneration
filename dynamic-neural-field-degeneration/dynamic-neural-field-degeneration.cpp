@@ -60,7 +60,7 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
 			params.numberOfElementsToDegenerate = 1000;
     		break;
         case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
-            params.degeneracyName = "reduce 0.05";
+            params.degeneracyName = "reduce 0.005";
             params.typeOfElementsDegenerated = "weights";
 			params.numberOfElementsToDegenerate = 1000;
             break;
