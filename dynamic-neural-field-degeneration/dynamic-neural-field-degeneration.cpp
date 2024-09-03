@@ -1,7 +1,7 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
-constexpr bool manualMode = true;
+constexpr bool manualMode = false;
 
 ExperimentParameters setExperimentParameters()
 {
@@ -18,7 +18,7 @@ ExperimentParameters setExperimentParameters()
 	        << "7 for WEIGHTS_REDUCE): ";
 	    int degeneracyTypeInput;
 	    std::cin >> degeneracyTypeInput;
-	    params.degeneracyType = static_cast<dnf_composer::element::ElementDegeneracyType>(degeneracyTypeInput);
+	    params.degeneracyType = static_cast<ElementDegeneracyType>(degeneracyTypeInput);
 
 	    if (degeneracyTypeInput == 1)
 	    {
@@ -29,7 +29,7 @@ ExperimentParameters setExperimentParameters()
     else
     {
     	params.numberOfTrials = 10;
-		params.degeneracyType = dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE;
+		params.degeneracyType = ElementDegeneracyType::NEURONS_DEACTIVATE;
 		params.fieldToDegenerate = "perceptual";
     }
 
@@ -49,22 +49,22 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
 {
     switch(params.degeneracyType)
     {
-		case dnf_composer::element::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
     		params.degeneracyName = "deactivate";
             params.typeOfElementsDegenerated = "weights";
 			params.numberOfElementsToDegenerate = 1000;
     		break;
-	    case dnf_composer::element::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
     		params.degeneracyName = "randomize";
             params.typeOfElementsDegenerated = "weights";
 			params.numberOfElementsToDegenerate = 1000;
     		break;
-        case dnf_composer::element::ElementDegeneracyType::WEIGHTS_REDUCE:
+        case ElementDegeneracyType::WEIGHTS_REDUCE:
             params.degeneracyName = "reduce 0.005";
             params.typeOfElementsDegenerated = "weights";
 			params.numberOfElementsToDegenerate = 1000;
             break;
-	    case dnf_composer::element::ElementDegeneracyType::NEURONS_DEACTIVATE:
+	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
             if(params.fieldToDegenerate == "perceptual")
 				params.typeOfElementsDegenerated = "pre-synaptic neurons";
 			else if(params.fieldToDegenerate == "decision")
@@ -93,17 +93,17 @@ int main()
 	catch (const dnf_composer::Exception& ex)
 	{
 		const std::string errorMessage = "Exception: " + std::string(ex.what()) + " ErrorCode: " + std::to_string(static_cast<int>(ex.getErrorCode())) + ". \n";
-		log(dnf_composer::LogLevel::FATAL, errorMessage, dnf_composer::LogOutputMode::CONSOLE);
+		log(dnf_composer::tools::logger::LogLevel::FATAL, errorMessage, dnf_composer::tools::logger::LogOutputMode::CONSOLE);
 		return static_cast<int>(ex.getErrorCode());
 	}
 	catch (const std::exception& ex)
 	{
-		log(dnf_composer::LogLevel::FATAL, "Exception caught: " + std::string(ex.what()) + ". \n", dnf_composer::LogOutputMode::CONSOLE);
+		log(dnf_composer::tools::logger::LogLevel::FATAL, "Exception caught: " + std::string(ex.what()) + ". \n", dnf_composer::tools::logger::LogOutputMode::CONSOLE);
 		return 1;
 	}
 	catch (...)
 	{
-		log(dnf_composer::LogLevel::FATAL, "Unknown exception occurred. \n", dnf_composer::LogOutputMode::CONSOLE);
+		log(dnf_composer::tools::logger::LogLevel::FATAL, "Unknown exception occurred. \n", dnf_composer::tools::logger::LogOutputMode::CONSOLE);
 		return 1;
 	}
 }
