@@ -87,8 +87,8 @@ void DnfcomposerHandler::setDegeneracy(ElementDegeneracyType degeneracyType, con
 void DnfcomposerHandler::setNumberOfElementsToDegenerate(const int& numberOfElementsToDegenerate)
 {
 	this->numberOfElementsToDegenerate = numberOfElementsToDegenerate;
-	//simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElementsToDegenerate);
-	//simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElementsToDegenerate);
+	simulationElements.fieldCoupling->setNumWeightsToDegenerate(numberOfElementsToDegenerate);
+	simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElementsToDegenerate);
 }
 
 void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType, 
@@ -133,15 +133,29 @@ void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAc
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
-	//if (!simulationParameters.isUserInterfaceActive)
-		//return simulationElements.inputField->getCentroid();
+	if (!simulationParameters.isUserInterfaceActive)
+	{
+		const auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
+
+		if (!inputFieldActivationBumps.empty())
+			return inputFieldActivationBumps[0].centroid;
+		else
+			return -1.0;
+	}
 	return simulationParameters.inputFieldCentroid;
 }
 
 double DnfcomposerHandler::getOutputFieldCentroid() const
 {
-	//if(!simulationParameters.isUserInterfaceActive)
-		//return simulationElements.outputField->getCentroid();
+	if (!simulationParameters.isUserInterfaceActive)
+	{
+		const auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
+
+		if (!outputFieldActivationBumps.empty())
+			return outputFieldActivationBumps[0].centroid;
+		else
+			return -1.0;
+	}
 	return simulationParameters.outputFieldCentroid;
 }
 
@@ -163,25 +177,30 @@ void DnfcomposerHandler::initializeFields()
 
 void DnfcomposerHandler::setupUserInterface()
 {
+	application->addWindow<dnf_composer::user_interface::MainWindow>();
+	application->addWindow<imgui_kit::LogWindow>();
+	//application->addWindow<dnf_composer::user_interface::ElementWindow>();
+	application->addWindow<dnf_composer::user_interface::SimulationWindow>();
+
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
-	//visualization->addPlottingData("perceptual field", "output");
-	//visualization->addPlottingData("per - per", "output");
+	visualization->addPlottingData("perceptual field", "output");
+	visualization->addPlottingData("per - per", "output");
 
 	dnf_composer::user_interface::PlotParameters pp;
 	pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-	//pp.dimensions = { 0, 360, -25, 40 };
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.5));
+	pp.dimensions = { 0, 360, -25, 40, 0.5 };
+	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("output field", "activation");
-	//visualization->addPlottingData("output field", "output");
-	//visualization->addPlottingData("out - out", "output");
+	visualization->addPlottingData("output field", "output");
+	visualization->addPlottingData("out - out", "output");
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	//pp.dimensions = { 0, 28, -20, 40 };
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp, 0.1));
+	pp.dimensions = { 0, 28, -20, 40, 0.5};
+	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	//visualization->addPlottingData("per - per", "kernel");
@@ -197,12 +216,8 @@ void DnfcomposerHandler::setupUserInterface()
 	//pp.dimensions = { 0, 20, -1, 4 };
 	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
 
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::LoggerWindow>());
-
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
-	//application->activateUserInterfaceWindow(userInterfaceWindow);
-
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::SimulationWindow>(simulation));
+	application->addWindow<ExperimentWindow>();
 }
 
 void DnfcomposerHandler::cleanUpTrial()
@@ -229,6 +244,7 @@ void DnfcomposerHandler::updateExternalInput()
 	(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
 
 	simulation->addElement(stimulus);
+	stimulus->init();
 	simulationElements.inputField->addInput(stimulus);
 	waitForFieldsToSettle();
 
@@ -244,8 +260,18 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		//simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
-		//simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
+		auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
+		auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
+
+		if (!inputFieldActivationBumps.empty())
+			simulationParameters.inputFieldCentroid = inputFieldActivationBumps[0].centroid;
+		else
+			simulationParameters.inputFieldCentroid = -1.0;
+
+		if (!outputFieldActivationBumps.empty())
+			simulationParameters.outputFieldCentroid = outputFieldActivationBumps[0].centroid;
+		else
+			simulationParameters.outputFieldCentroid = -1.0;
 
 		if(simulationParameters.isUserInterfaceActive)
 			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);

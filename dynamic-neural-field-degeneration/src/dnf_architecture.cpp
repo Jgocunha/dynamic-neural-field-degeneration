@@ -1,6 +1,7 @@
 
 #include "dnf_architecture.h"
 
+#include "degenerate_field_coupling.h"
 #include "degenerate_neural_field.h"
 #include "wizards/learning_wizard.h"
 
@@ -20,7 +21,6 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	const dnf_composer::element::SigmoidFunction activationFunction{0.0, 10.0};
 	const dnf_composer::element::NeuralFieldParameters nfp1 = { 25, -5 , activationFunction };
 	const dnf_composer::element::NeuralFieldParameters nfp2 = { 25, -5 , activationFunction };
-	// DIFFERENT
 	const std::shared_ptr<DegenerateNeuralField> perceptual_field
 		(new DegenerateNeuralField({ "perceptual field", perceptualFieldSpatialDimensions}, nfp1));
 	const std::shared_ptr<DegenerateNeuralField> output_field
@@ -38,7 +38,6 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 		(new dnf_composer::element::GaussKernel({ "per - per", perceptualFieldSpatialDimensions }, gkp1)); // self-excitation u-u
 	simulation->addElement(k_per_per);
 
-
 	dnf_composer::element::GaussKernelParameters gkp2;
 	gkp2.amplitude = 20;  // self-stabilized (with input) //20
 	gkp2.width = 25; // 25
@@ -47,15 +46,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 		(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
 
-	// DIFFERENT
 	dnf_composer::element::FieldCouplingParameters fcp{ perceptualFieldSpatialDimensions.size, 0.2, 0.01, dnf_composer::LearningRule::DELTA_KROGH_HERTZ };
-	/*fcp.inputFieldSize = perceptualFieldSpatialDimensions.size;
-	fcp.scalar = 0.2; 
-	fcp.learningRate = 0.01;
-	fcp.learningRule = dnf_composer::LearningRule::DELTA_KROGH_HERTZ;*/
-	// DIFFERENT
-	const std::shared_ptr<dnf_composer::element::FieldCoupling> w_per_out(
-		new dnf_composer::element::FieldCoupling({ "per - out", outputFieldSpatialDimensions }, fcp));
+	const std::shared_ptr<DegenerateFieldCoupling> w_per_out( 
+		new DegenerateFieldCoupling({ "per - out", outputFieldSpatialDimensions }, fcp));
 	simulation->addElement(w_per_out);
 
 	// create noise stimulus and noise kernel

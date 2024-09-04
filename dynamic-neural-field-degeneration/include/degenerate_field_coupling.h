@@ -14,10 +14,12 @@ private:
 	std::set<std::pair<int, int>> indicesForDegeneration;
 	double minWeightValue = 0;
 	double maxWeightValue = 0;
-	double weightReductionFactor = 0.4;
+	double weightReductionFactor = 0.005;
+	int numWeightsToDegenerate = 100;
 public:
 	DegenerateFieldCoupling(const dnf_composer::element::ElementCommonParameters& elementCommonParameters,
 		const dnf_composer::element::FieldCouplingParameters& fc_parameters);
+
 	void init() override;
 	void step(double t, double deltaT) override;
 
@@ -26,6 +28,7 @@ public:
 
 	void setWeightReductionFactor(const double& factor);
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
+	void setNumWeightsToDegenerate(int count);
 	ElementDegeneracyType getDegeneracyType();
 	void updateWeights(const std::vector<double> input, const std::vector<double> output);
 private:
@@ -35,7 +38,9 @@ private:
 	void setRandomUniqueWeightToZero();
 	void findMinMaxWeightValues();
 	double getWeightReductionFactor();
+	void setRandomUniqueWeightToReduceValue();
+	void setRandomUniqueWeightToRandomValue();
 
 	std::vector<std::vector<double>> learningRuleDegenerate(std::vector<std::vector<double>>& weights,
-		const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate);
+		const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const;
 };

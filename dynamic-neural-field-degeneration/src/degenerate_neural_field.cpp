@@ -50,15 +50,21 @@ void DegenerateNeuralField::startDegeneration()
 	degenerate = true;
 }
 
+void DegenerateNeuralField::setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate)
+{
+	this->numNeuronsToDegenerate = numNeuronsToDegenerate;
+}
+
 void DegenerateNeuralField::applyDegeneracy()
 {
-	double percentage = 0.01; // 1 percent
-	double numNeuronsToDegenerate = commonParameters.dimensionParameters.size * percentage;
+	//double percentage = 0.01; // 1 percent
+	//double numNeuronsToDegenerate = commonParameters.dimensionParameters.size * percentage;
 
 	switch (degeneracyType)
 	{
 	case ElementDegeneracyType::NEURONS_DEACTIVATE:
-		setRandomUniqueNeuronToZero();
+		for (int i = 0; i < numNeuronsToDegenerate; i++)
+			setRandomUniqueNeuronToZero();
 		degenerate = false;
 		break;
 	/*case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
@@ -70,7 +76,7 @@ void DegenerateNeuralField::applyDegeneracy()
 		degenerate = false;
 		break;*/
 	default:
-		std::cout << "Degeneracy type not supported" << std::endl;
+		//std::cout << "Degeneracy type not supported" << std::endl;
 		break;
 	}
 }
@@ -103,7 +109,7 @@ void DegenerateNeuralField::setRandomUniqueNeuronToZero()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(0, indicesForDegeneration.size() - 1);
-	int randomIndex = indicesForDegeneration[dis(gen)];
+	const int randomIndex = indicesForDegeneration[dis(gen)];
 
 	// Push the random index to degeneratedIndices
 	degeneratedIndices.push_back(randomIndex);

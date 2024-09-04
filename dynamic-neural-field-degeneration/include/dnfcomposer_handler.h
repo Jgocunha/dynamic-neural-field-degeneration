@@ -12,6 +12,7 @@
 #include "imgui-platform-kit/log_window.h"
 #include "user_interface/plot_window.h"
 #include "user_interface/simulation_window.h"
+#include "user_interface/main_window.h"
 #include "dnf_architecture.h"
 #include "application/application.h"
 #include <degenerate_neural_field.h>

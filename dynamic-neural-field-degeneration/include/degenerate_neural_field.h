@@ -13,6 +13,7 @@ private:
 	bool degenerate;
 	std::vector<int> indicesForDegeneration;
 	std::vector<int> degeneratedIndices;
+	int numNeuronsToDegenerate = 1;
 public:
 	DegenerateNeuralField(const dnf_composer::element::ElementCommonParameters& elementCommonParameters,
 		const dnf_composer::element::NeuralFieldParameters& parameters);
@@ -24,6 +25,7 @@ public:
 	void applyDegeneracy();
 
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
+	void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
 	ElementDegeneracyType getDegeneracyType();
 private:
 	void populateIndicesForDegeneration();
