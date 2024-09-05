@@ -48,7 +48,7 @@ namespace dnf_composer
 			//renderPlotControl();
 			for(const auto& plot : plots)
 			{
-				//renderElementSelector(plot);
+				renderElementSelector(plot);
 				renderPlot(plot);
 			}
 		}

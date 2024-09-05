@@ -1,7 +1,7 @@
 ﻿
 #include "dynamic-neural-field-degeneration.h"
 
-constexpr bool manualMode = true;
+constexpr bool manualMode = false;
 
 ExperimentParameters setExperimentParameters()
 {
