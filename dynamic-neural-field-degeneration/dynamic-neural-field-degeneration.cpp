@@ -52,25 +52,34 @@ void setDegeneracyNameAndTypeOfElements(ExperimentParameters& params)
 		case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
     		params.degeneracyName = "deactivate";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 1000;
+			params.numberOfElementsToDegeneratePerIteration = 1000;
+			params.totalNumberOfElementsToDegenerate = 720*360;
     		break;
 	    case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
     		params.degeneracyName = "randomize";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 1000;
+			params.numberOfElementsToDegeneratePerIteration = 1000;
+    		params.totalNumberOfElementsToDegenerate = 720 * 360;
     		break;
         case ElementDegeneracyType::WEIGHTS_REDUCE:
             params.degeneracyName = "reduce 0.005";
             params.typeOfElementsDegenerated = "weights";
-			params.numberOfElementsToDegenerate = 1000;
+			params.numberOfElementsToDegeneratePerIteration = 1000;
+			params.totalNumberOfElementsToDegenerate = 720 * 360;
             break;
 	    case ElementDegeneracyType::NEURONS_DEACTIVATE:
             if(params.fieldToDegenerate == "perceptual")
+            {
 				params.typeOfElementsDegenerated = "pre-synaptic neurons";
+				params.totalNumberOfElementsToDegenerate = 720;
+            }
 			else if(params.fieldToDegenerate == "decision")
+			{
 				params.typeOfElementsDegenerated = "post-synaptic neurons";
+				params.totalNumberOfElementsToDegenerate = 360;
+			}
             params.degeneracyName = "deactivate";
-			params.numberOfElementsToDegenerate = 1;
+			params.numberOfElementsToDegeneratePerIteration = 1;
     		break;
 	    default:
             break;

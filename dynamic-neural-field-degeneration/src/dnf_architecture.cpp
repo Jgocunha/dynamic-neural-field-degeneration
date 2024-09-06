@@ -33,7 +33,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	dnf_composer::element::GaussKernelParameters gkp1;
 	gkp1.amplitude = 40;  // self-sustained (without input)
 	gkp1.width = 25;
-	gkp1.amplitudeGlobal = -0.12;
+	gkp1.amplitudeGlobal = -0.08;
+	gkp1.circular = true;
+	gkp1.normalized = true;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_per_per
 		(new dnf_composer::element::GaussKernel({ "per - per", perceptualFieldSpatialDimensions }, gkp1)); // self-excitation u-u
 	simulation->addElement(k_per_per);
@@ -42,6 +44,8 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	gkp2.amplitude = 20;  // self-stabilized (with input) //20
 	gkp2.width = 25; // 25
 	gkp2.amplitudeGlobal = -0.10;
+	gkp2.circular = true;
+	gkp2.normalized = true;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
 		(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
@@ -57,9 +61,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
 		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.01 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
-		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02 }));
+		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02, 0.0 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out
-		(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.02 }));
+		(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.02, 0.0 }));
 
 	simulation->addElement(noise_per);
 	simulation->addElement(noise_out);

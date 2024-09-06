@@ -16,6 +16,8 @@
 #include "dnf_architecture.h"
 #include "application/application.h"
 #include <degenerate_neural_field.h>
+#include "user_interface/element_window.h"
+#include "user_interface/field_metrics_window.h"
 
 
 struct SimulationElements
@@ -77,10 +79,6 @@ public:
 
 	void closeSimulation();
 
-	void setExperimentSetupData(const std::string& currentDegenerationType,
-		const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
-	void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
-	void setTrial(const int& trial) const;
 	void setExternalInput(const double& position);
 	void setDegeneracy(ElementDegeneracyType degeneracyType, const std::string& fieldToDegenerate);
 	void setHaveFieldsSettled(bool haveFieldsSettled);

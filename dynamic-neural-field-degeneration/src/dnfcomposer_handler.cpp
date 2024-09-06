@@ -91,24 +91,6 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate(const int& numberOfElem
 	simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElementsToDegenerate);
 }
 
-void DnfcomposerHandler::setExperimentSetupData(const std::string& currentDegenerationType, 
-	const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const
-{
-	if (simulationParameters.isUserInterfaceActive)
-		userInterfaceWindow->setExperimentSetupData(currentDegenerationType, maximumAllowedDeviation, typeOfElementsDegenerated);
-}
-
-void DnfcomposerHandler::setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const
-{
-	if (simulationParameters.isUserInterfaceActive)
-		userInterfaceWindow->setExpectedCentroids(targetPerceptualFieldCentroid, targetDecisionFieldCentroid);
-}
-
-void DnfcomposerHandler::setTrial(const int& trial) const
-{
-	if (simulationParameters.isUserInterfaceActive)
-		userInterfaceWindow->setCurrentTrial(trial);
-}
 
 void DnfcomposerHandler::setExternalInput(const double& position)
 {
@@ -179,8 +161,9 @@ void DnfcomposerHandler::setupUserInterface()
 {
 	application->addWindow<dnf_composer::user_interface::MainWindow>();
 	application->addWindow<imgui_kit::LogWindow>();
-	//application->addWindow<dnf_composer::user_interface::ElementWindow>();
+	application->addWindow<dnf_composer::user_interface::ElementWindow>();
 	application->addWindow<dnf_composer::user_interface::SimulationWindow>();
+	application->addWindow<dnf_composer::user_interface::FieldMetricsWindow>();
 
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
@@ -202,19 +185,17 @@ void DnfcomposerHandler::setupUserInterface()
 	pp.dimensions = { 0, 28, -20, 40, 0.5};
 	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
-	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
-	//visualization->addPlottingData("per - per", "kernel");
+	/*visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+	visualization->addPlottingData("per - per", "kernel");
+	pp.annotations = { "Kernel_{per}(x-x')", "Spatial dimension", "Amplitude" };
+	pp.dimensions = { 0, 125, -1, 1, 0.5};
+	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
-	//pp.annotations = { "Kernel_{per}(x-x')", "Spatial dimension", "Amplitude" };
-	//pp.dimensions = { 0, 50, -1, 4 };
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
-
-	//visualization = std::make_shared<dnf_composer::Visualization>(simulation);
-	//visualization->addPlottingData("dec - dec", "kernel");
-
-	//pp.annotations = { "Kernel_{out}(x-x')", "Spatial dimension", "Amplitude" };
-	//pp.dimensions = { 0, 20, -1, 4 };
-	//application->activateUserInterfaceWindow(std::make_shared<dnf_composer::user_interface::PlotWindow>(visualization, pp));
+	visualization = std::make_shared<dnf_composer::Visualization>(simulation);
+	visualization->addPlottingData("out - out", "kernel");
+	pp.annotations = { "Kernel_{out}(x-x')", "Spatial dimension", "Amplitude" };
+	pp.dimensions = { 0, 125, -1, 1, 0.5};
+	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);*/
 
 	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->addWindow<ExperimentWindow>();
@@ -223,12 +204,19 @@ void DnfcomposerHandler::setupUserInterface()
 void DnfcomposerHandler::cleanUpTrial()
 {
 	numberOfDegeneratedElements = 0;
+	// call element wise reset here
+	const auto inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+	inputField->reset();
+	const auto outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+	outputField->reset();
 	simulation->close();
 	hasTrialFinished = false;
 }
 
 void DnfcomposerHandler::updateExternalInput()
 {
+	//static int count = 0;
+
 	initializeFields();
 
 	Sleep(100);
@@ -247,12 +235,19 @@ void DnfcomposerHandler::updateExternalInput()
 	stimulus->init();
 	simulationElements.inputField->addInput(stimulus);
 	waitForFieldsToSettle();
+	waitForFieldsToSettle();
+
+	/*if(count)
+		for (int i = 0; i < 100000; i++)
+			application->step();*/
 
 	simulation->removeElement("stimulus");
 	waitForFieldsToSettle();
 
 	haveFieldsSettled = true;
 	wasExternalInputUpdated = false;
+
+	//count++;
 }
 
 void DnfcomposerHandler::updateFieldCentroids()
@@ -272,9 +267,6 @@ void DnfcomposerHandler::updateFieldCentroids()
 			simulationParameters.outputFieldCentroid = outputFieldActivationBumps[0].centroid;
 		else
 			simulationParameters.outputFieldCentroid = -1.0;
-
-		if(simulationParameters.isUserInterfaceActive)
-			userInterfaceWindow->setCentroids(simulationParameters.inputFieldCentroid, simulationParameters.outputFieldCentroid);
 
 		if(simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->hasUIBeenClosed();
@@ -316,9 +308,6 @@ void DnfcomposerHandler::activateDegeneration()
 	}
 
 	waitForFieldsToSettle();
-
-	if(simulationParameters.isUserInterfaceActive)
-		userInterfaceWindow->setNumberOfDegeneratedElements(numberOfDegeneratedElements);
 
 	haveFieldsSettled = true;
 	wasDegenerationRequested = false;

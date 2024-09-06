@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <thread>
+#include <iomanip>
 
 #include "dnfcomposer_handler.h"
 
@@ -23,7 +24,9 @@ struct ExperimentParameters
 	int initialPercentageOfDegeneration = 0;
 	int targetPercentageOfDegeneration = 100;
 	int currentPercentageOfDegeneration = 0;
-	int numberOfElementsToDegenerate = 0;
+	int numberOfElementsToDegeneratePerIteration = 0;
+	int totalNumberOfElementsToDegenerate = 0;
+	int currentTrial = 0;
 
 	bool isDataSavingOn = false;
 	bool isVisualisationOn = true;
@@ -72,7 +75,6 @@ public:
 
 private:
 	void printExperimentSetupToConsole() const;
-	void setExperimentSetupData();
 	void setExpectedFieldBehaviour();
 	void setExperimentAsEnded();
 

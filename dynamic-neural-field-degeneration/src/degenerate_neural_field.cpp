@@ -118,10 +118,10 @@ void DegenerateNeuralField::setRandomUniqueNeuronToZero()
 	indicesForDegeneration.erase(std::remove(indicesForDegeneration.begin(), indicesForDegeneration.end(), randomIndex), indicesForDegeneration.end());
 }
 
-//void DegenerateNeuralField::close()
-//{
-//	NeuralField::close();
-//	indicesForDegeneration.clear();
-//	degeneratedIndices.clear();
-//	degenerate = false;
-//}
+void DegenerateNeuralField::reset()
+{
+	//NeuralField::close();
+	indicesForDegeneration.clear();
+	degeneratedIndices.clear();
+	degenerate = false;
+}

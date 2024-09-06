@@ -20,6 +20,7 @@ public:
 
 	void init() override;
 	void step(double t, double deltaT) override;
+	void reset();
 
 	void startDegeneration();
 	void applyDegeneracy();
