@@ -1,4 +1,3 @@
-
 #include "experiment_handler.h"
 
 ExperimentHandler::ExperimentHandler()
@@ -7,6 +6,7 @@ ExperimentHandler::ExperimentHandler()
 	std::advance(hueToAngleIterator, params.startingExternalStimulus);
 	data.targetInputFieldCentroid = hueToAngleIterator->first;
 	data.targetOutputFieldCentroid = hueToAngleIterator->second;
+	readHueToAngleMap();
 }
 
  void ExperimentHandler::printExperimentSetupToConsole()
@@ -216,5 +216,30 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 		const std::string message = "New centroids appended to " + filename + '\n';
 		dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, message);
 	}
+}
+
+void ExperimentHandler::readHueToAngleMap()
+{
+	std::ifstream file(std::string(PROJECT_DIR) + "/hue_to_angle.json");
+
+	if (!file.is_open()) {
+		std::cerr << "Error: Could not open the JSON colors file." << std::endl;
+	}
+
+	nlohmann::json j;
+	file >> j;
+
+	for (auto& [key, value] : j.items()) {
+
+		if (key == "metadata") {
+			continue; 
+		}
+
+		double hue = std::stod(key);
+		const int angle = value;
+		hueToAngleMap[hue] = angle;
+	}
+
+	file.close();
 }
 

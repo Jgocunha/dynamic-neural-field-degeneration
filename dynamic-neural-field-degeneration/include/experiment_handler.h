@@ -52,15 +52,15 @@ private:
 	ExperimentParameters params;
 	ExperimentData data;
 
-	std::unordered_map<double, int> hueToAngleMap = {
-		{00.00,  78.00}, // red
-		{41.00,  82.00}, // blue
-		{60.00,  86.00}, // yellow
-		{120.00, 90.00}, // green
-		{240.00, 94.00}, // orange
-		{274.00, 98.00}, // indigo
-		{300.00, 102.00} // violet
-	};
+	std::unordered_map<double, int> hueToAngleMap;// = {
+	//	{00.00,  78.00}, // red
+	//	{41.00,  82.00}, // blue
+	//	{60.00,  86.00}, // yellow
+	//	{120.00, 90.00}, // green
+	//	{240.00, 94.00}, // orange
+	//	{274.00, 98.00}, // indigo
+	//	{300.00, 102.00} // violet
+	//};
 
 
 	std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
@@ -85,4 +85,6 @@ private:
 
 	bool hasOutputFieldDegenerated() ;
 	void saveOutputFieldCentroidToFile() const;
+
+	void readHueToAngleMap();
 };

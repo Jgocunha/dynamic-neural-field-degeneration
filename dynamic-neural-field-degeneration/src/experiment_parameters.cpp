@@ -27,8 +27,8 @@ bool ExperimentParameters::readUserDefinedParameters()
         decisionTolerance = jsonData.at("decisionTolerance").get<double>();
         numberOfTrials = jsonData.at("numberOfTrials").get<int>();
 
-        std::string experimentTypeStr = jsonData.at("experimentType").get<std::string>();
-        if (experimentTypeStr == "WEIGHTS_DEACTIVATE") {
+        const std::string experimentTypeStr = jsonData.at("experimentType").get<std::string>();
+        if (experimentTypeStr == "WEIGHTS_DEACTIVATE") { 
             degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
         }
         else if (experimentTypeStr == "NEURONS_DEACTIVATE") {
