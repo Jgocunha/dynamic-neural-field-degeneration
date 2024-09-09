@@ -173,7 +173,7 @@ void DnfcomposerHandler::setupUserInterface()
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 28, -20, 40, 0.5};
+	pp.dimensions = { 0, 28, -20, 40, 0.1};
 	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 	/*visualization = std::make_shared<dnf_composer::Visualization>(simulation);

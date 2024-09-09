@@ -5,7 +5,7 @@
 #include "degenerate_neural_field.h"
 #include "wizards/learning_wizard.h"
 
-constexpr bool trainWeights = false;
+constexpr bool trainWeights = true;
 
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
@@ -14,7 +14,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// element common parameters
 	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };
-	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{180, 0.5};
+	dnf_composer::element::ElementSpatialDimensionParameters outputFieldSpatialDimensions{28, 0.1};
 
 	// create neural field
 	//const dnf_composer::element::HeavisideFunction activationFunction{ 0 };
@@ -31,9 +31,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create interactions and add them to the simulation
 	dnf_composer::element::GaussKernelParameters gkp1;
-	gkp1.amplitude = 40;  // self-sustained (without input)
+	gkp1.amplitude = 60;  // self-sustained (without input)
 	gkp1.width = 25;
-	gkp1.amplitudeGlobal = -0.08;
+	gkp1.amplitudeGlobal = -0.36;
 	gkp1.circular = true;
 	gkp1.normalized = true;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_per_per
@@ -105,13 +105,13 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 		 std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 		 {
-			{ 78.00 + offset }, // red
-			{ 82.00 + offset }, // orange
-			{ 86.00 + offset }, // yellow
-			{ 90.00 + offset }, // green
-			{ 94.00 + offset }, // blue
-			{ 98.00 + offset }, // indigo
-			{ 102.00 + offset } // violet
+			{ 2.00 + 0.00 },
+			{ 6.00 + 0.00 },
+			{ 10.00 + 0.00 },
+			{ 14.00 + 0.00 },
+			{ 18.00 + 0.00 },
+			{ 22.00 + 0.00 },
+			{ 26.00 + 0.00 }
 		 };
 
 		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
