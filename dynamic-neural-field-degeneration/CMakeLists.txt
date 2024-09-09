@@ -53,6 +53,7 @@ set(header
 "include/degenerate_neural_field.h"
 "include/degenerate_field_coupling.h"
 "include/degenerate_element_parameters.h"
+"include/experiment_parameters.h"
 )
 set(src
 "src/coppeliasim_handler.cpp"
@@ -62,6 +63,7 @@ set(src
 "src/user_interface_window.cpp"
 "src/degenerate_neural_field.cpp"
 "src/degenerate_field_coupling.cpp"
+"src/experiment_parameters.cpp"
 )
 
 # Library target definition
