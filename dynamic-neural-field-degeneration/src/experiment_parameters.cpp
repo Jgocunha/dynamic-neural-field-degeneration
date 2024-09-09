@@ -49,6 +49,8 @@ bool ExperimentParameters::readUserDefinedParameters()
         initialPercentageOfDegeneration = jsonData.at("initialPercentageOfDegeneration").get<int>();
         targetPercentageOfDegeneration = jsonData.at("targetPercentageOfDegeneration").get<int>();
         currentPercentageOfDegeneration = jsonData.at("currentPercentageOfDegeneration").get<int>();
+        numberOfElementsToDegeneratePerIteration = jsonData.at("numberOfElementsToDegeneratePerIteration").get<int>();
+        totalNumberOfElementsToDegenerate = jsonData.at("totalNumberOfElementsToDegenerate").get<int>();
 
         isDataSavingOn = jsonData.at("isDataSavingOn").get<bool>();
         isVisualisationOn = jsonData.at("isVisualisationOn").get<bool>();
@@ -70,34 +72,34 @@ void ExperimentParameters::setAutomaticallyDefinedParameters()
     case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
         degeneracyName = "deactivate";
         typeOfElementsDegenerated = "weights";
-        numberOfElementsToDegeneratePerIteration = 1000;
-        totalNumberOfElementsToDegenerate = 720 * 360;
+        //numberOfElementsToDegeneratePerIteration = 1000;
+        //totalNumberOfElementsToDegenerate = 720 * 360;
         break;
     case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
         degeneracyName = "randomize";
         typeOfElementsDegenerated = "weights";
-        numberOfElementsToDegeneratePerIteration = 1000;
-        totalNumberOfElementsToDegenerate = 720 * 360;
+        //numberOfElementsToDegeneratePerIteration = 1000;
+        //totalNumberOfElementsToDegenerate = 720 * 360;
         break;
     case ElementDegeneracyType::WEIGHTS_REDUCE:
         degeneracyName = "reduce 0.005";
         typeOfElementsDegenerated = "weights";
-        numberOfElementsToDegeneratePerIteration = 1000;
-        totalNumberOfElementsToDegenerate = 720 * 360;
+        //numberOfElementsToDegeneratePerIteration = 1000;
+        //totalNumberOfElementsToDegenerate = 720 * 360;
         break;
     case ElementDegeneracyType::NEURONS_DEACTIVATE:
         if (fieldToDegenerate == "perceptual")
         {
             typeOfElementsDegenerated = "pre-synaptic neurons";
-            totalNumberOfElementsToDegenerate = 720;
+            //totalNumberOfElementsToDegenerate = 720;
         }
         else if (fieldToDegenerate == "decision")
         {
             typeOfElementsDegenerated = "post-synaptic neurons";
-            totalNumberOfElementsToDegenerate = 360;
+            //totalNumberOfElementsToDegenerate = 360;
         }
         degeneracyName = "deactivate";
-        numberOfElementsToDegeneratePerIteration = 1;
+        //numberOfElementsToDegeneratePerIteration = 1;
         break;
     default:
         break;

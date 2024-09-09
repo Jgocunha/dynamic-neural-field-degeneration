@@ -2,13 +2,19 @@
     "filePathPrefix": "../../../data/",
     "decisionTolerance": 5.0,
     "numberOfTrials": 10,
-    "experimentType": "WEIGHTS_DEACTIVATE",
+
+    "_comment_type" : "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE", 
+    "experimentType": "NEURONS_DEACTIVATE",
     "fieldToDegenerate": "perceptual",
+    "_comment_total_number": "720*360 = 259200 or 720 or 360",
+    "totalNumberOfElementsToDegenerate": 720,
+    "numberOfElementsToDegeneratePerIteration" : 10,
+    
     "startingExternalStimulus": 0,
     "initialPercentageOfDegeneration": 0,
     "targetPercentageOfDegeneration": 100,
     "currentPercentageOfDegeneration": 0,
-    "numberOfElementsToDegenerate": 0,
+    
     "isDataSavingOn": false,
     "isVisualisationOn": true,
     "isDebugModeOn": true

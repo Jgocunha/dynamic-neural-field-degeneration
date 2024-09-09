@@ -77,10 +77,10 @@ void ExperimentHandler::step()
 
 	for (int i = 0; i < params.numberOfTrials; i++)
 	{
-		params.currentTrial = i;
+		params.currentTrial = i + 1;
 		if (params.isDebugModeOn)
 		{
-			std::string message = "Starting trial " + std::to_string(i) + " out of " + std::to_string(params.numberOfTrials) + ". ";
+			std::string message = "Starting trial " + std::to_string(params.currentTrial) + " out of " + std::to_string(params.numberOfTrials) + ". ";
 			message += "External stimulus: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 			message += "Expected input field centroid: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 			message += "Expected output field centroid: " + std::to_string(data.targetOutputFieldCentroid) + ".";
