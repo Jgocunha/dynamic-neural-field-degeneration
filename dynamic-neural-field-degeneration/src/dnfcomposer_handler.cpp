@@ -117,12 +117,7 @@ double DnfcomposerHandler::getInputFieldCentroid() const
 {
 	if (!simulationParameters.isUserInterfaceActive)
 	{
-		const auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
-
-		if (!inputFieldActivationBumps.empty())
-			return inputFieldActivationBumps[0].centroid;
-		else
-			return -1.0;
+		return simulationElements.inputField->getCentroid();
 	}
 	return simulationParameters.inputFieldCentroid;
 }
@@ -131,12 +126,7 @@ double DnfcomposerHandler::getOutputFieldCentroid() const
 {
 	if (!simulationParameters.isUserInterfaceActive)
 	{
-		const auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
-
-		if (!outputFieldActivationBumps.empty())
-			return outputFieldActivationBumps[0].centroid;
-		else
-			return -1.0;
+		return simulationElements.outputField->getCentroid();
 	}
 	return simulationParameters.outputFieldCentroid;
 }
@@ -163,7 +153,8 @@ void DnfcomposerHandler::setupUserInterface()
 	application->addWindow<imgui_kit::LogWindow>();
 	application->addWindow<dnf_composer::user_interface::ElementWindow>();
 	application->addWindow<dnf_composer::user_interface::SimulationWindow>();
-	application->addWindow<dnf_composer::user_interface::FieldMetricsWindow>();
+	application->addWindow<dnf_composer::user_interface::HeatmapWindow>();
+	//application->addWindow<dnf_composer::user_interface::FieldMetricsWindow>();
 
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
@@ -197,7 +188,7 @@ void DnfcomposerHandler::setupUserInterface()
 	pp.dimensions = { 0, 125, -1, 1, 0.5};
 	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);*/
 
-	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
+	//userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->addWindow<ExperimentWindow>();
 }
 
@@ -235,7 +226,7 @@ void DnfcomposerHandler::updateExternalInput()
 	stimulus->init();
 	simulationElements.inputField->addInput(stimulus);
 	waitForFieldsToSettle();
-	waitForFieldsToSettle();
+	//waitForFieldsToSettle();
 
 	/*if(count)
 		for (int i = 0; i < 100000; i++)
@@ -255,20 +246,10 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
-		auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
 
-		if (!inputFieldActivationBumps.empty())
-			simulationParameters.inputFieldCentroid = inputFieldActivationBumps[0].centroid;
-		else
-			simulationParameters.inputFieldCentroid = -1.0;
-
-		if (!outputFieldActivationBumps.empty())
-			simulationParameters.outputFieldCentroid = outputFieldActivationBumps[0].centroid;
-		else
-			simulationParameters.outputFieldCentroid = -1.0;
-
-		if(simulationParameters.isUserInterfaceActive)
+		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->hasUIBeenClosed();
 		Sleep(1);
 	}
