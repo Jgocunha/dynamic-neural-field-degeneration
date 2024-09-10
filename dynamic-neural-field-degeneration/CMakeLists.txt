@@ -130,11 +130,33 @@ install(EXPORT ${CMAKE_PROJECT_NAME}Targets DESTINATION ${DNF_DEGENERATION_CMAKE
     FILE ${CMAKE_PROJECT_NAME}-config.cmake
 )
 
-# Main executable
-set(EXE_PROJECT_EXAMPLE ${CMAKE_PROJECT_NAME}-exe)
-add_executable(${EXE_PROJECT_EXAMPLE} "dynamic-neural-field-degeneration.cpp")
-target_include_directories(${EXE_PROJECT_EXAMPLE} PRIVATE include)
-target_link_libraries(${EXE_PROJECT_EXAMPLE} PRIVATE 
+# Inducing degeneration executable
+set(INDUCING_DEG_EXE inducing-degeneration)
+add_executable(${INDUCING_DEG_EXE} "experiments/inducing-degeneration.cpp")
+target_include_directories(${INDUCING_DEG_EXE} PRIVATE include)
+target_link_libraries(${INDUCING_DEG_EXE} PRIVATE 
+    imgui::imgui 
+    imgui-platform-kit 
+    dynamic-neural-field-composer 
+    ${CMAKE_PROJECT_NAME}
+)
+
+# Recovering from degeneration
+set(RECOV_DEG_EXE recovering-from-degeneration)
+add_executable(${RECOV_DEG_EXE} "experiments/recovering-from-degeneration.cpp")
+target_include_directories(${RECOV_DEG_EXE} PRIVATE include)
+target_link_libraries(${RECOV_DEG_EXE} PRIVATE 
+    imgui::imgui 
+    imgui-platform-kit 
+    dynamic-neural-field-composer 
+    ${CMAKE_PROJECT_NAME}
+)
+
+# Testbench
+set(TEST_EXE testbench)
+add_executable(${TEST_EXE} "experiments/testbench.cpp")
+target_include_directories(${TEST_EXE} PRIVATE include)
+target_link_libraries(${TEST_EXE} PRIVATE 
     imgui::imgui 
     imgui-platform-kit 
     dynamic-neural-field-composer 

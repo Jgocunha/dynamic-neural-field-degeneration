@@ -5,12 +5,12 @@
 #include "degenerate_neural_field.h"
 #include "wizards/learning_wizard.h"
 
-constexpr bool trainWeights = true;
+constexpr bool trainWeights = false;
 
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("id", 30, 0, 0);
+	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("robustness and adaptability in DNFs experiment", 30, 0, 0);
 
 	// element common parameters
 	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };

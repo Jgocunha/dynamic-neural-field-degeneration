@@ -78,6 +78,7 @@ public:
 	void close();
 	void stop();
 
+	void startSimulation(); // New function that is in the recovery experiment
 	void closeSimulation();
 
 	void setExternalInput(const double& position);

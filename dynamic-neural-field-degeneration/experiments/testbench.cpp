@@ -1,12 +1,9 @@
-﻿
 #include "dynamic-neural-field-degeneration.h"
-
-constexpr bool manualMode = true;
 
 int main()
 {
-    try
-    {
+	try
+	{
 		const auto simulation = getExperimentSimulation();
 		const dnf_composer::Application app{ simulation };
 
@@ -34,7 +31,7 @@ int main()
 
 		pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
 		pp.dimensions = { 0, 280, -20, 40, 1.0 };
-    	app.addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
+		app.addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 		app.init();
 
@@ -47,15 +44,7 @@ int main()
 		}
 		app.close();
 		return 0;
-
-
-		/*ExperimentHandler experiment;
-
-        experiment.init();
-        experiment.close();
-
-        return 0;*/
-    }
+	}
 	catch (const dnf_composer::Exception& ex)
 	{
 		const std::string errorMessage = "Exception: " + std::string(ex.what()) + " ErrorCode: " + std::to_string(static_cast<int>(ex.getErrorCode())) + ". \n";
