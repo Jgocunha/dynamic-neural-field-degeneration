@@ -207,40 +207,40 @@ namespace experiment
 		//	return successfulPickAndPlace;
 		//}
 
-		void ExperimentHandlerRelearning::createShape()
-		{
-			// set the create shape signal to true
-			signals.createShape = true;
-			coppeliasimHandler.setSignals(signals);
-			signals.createShape = false;
+		//void ExperimentHandlerRelearning::createShape()
+		//{
+		//	// set the create shape signal to true
+		//	signals.createShape = true;
+		//	coppeliasimHandler.setSignals(signals);
+		//	signals.createShape = false;
 
-			// wait for the shape created signal to be true
-			while (!coppeliasimHandler.getSignals().isShapeCreated);
-		}
+		//	// wait for the shape created signal to be true
+		//	while (!coppeliasimHandler.getSignals().isShapeCreated);
+		//}
 
-		void ExperimentHandlerRelearning::graspShape()
-		{
-			// go pick up the cuboid
-			signals.graspShape = true;
-			coppeliasimHandler.setSignals(signals);
-			signals.graspShape = false;
+		//void ExperimentHandlerRelearning::graspShape()
+		//{
+		//	// go pick up the cuboid
+		//	signals.graspShape = true;
+		//	coppeliasimHandler.setSignals(signals);
+		//	signals.graspShape = false;
 
-			// wait for the cuboid to be grasped
-			while (!coppeliasimHandler.getSignals().isShapeGrasped);
-		}
+		//	// wait for the cuboid to be grasped
+		//	while (!coppeliasimHandler.getSignals().isShapeGrasped);
+		//}
 
-		void ExperimentHandlerRelearning::placeShape()
-		{
-			// and set place shape to true
-			signals.placeShape = true;
-			coppeliasimHandler.setSignals(signals);
-			signals.placeShape = false;
-			signals.targetAngle = UNDEFINED;
+		//void ExperimentHandlerRelearning::placeShape()
+		//{
+		//	// and set place shape to true
+		//	signals.placeShape = true;
+		//	coppeliasimHandler.setSignals(signals);
+		//	signals.placeShape = false;
+		//	signals.targetAngle = UNDEFINED;
 
-			// when receive shape placed restart cycle
-			while (!coppeliasimHandler.getSignals().isShapePlaced);
-			coppeliasimHandler.setSignals(signals);
-		}
+		//	// when receive shape placed restart cycle
+		//	while (!coppeliasimHandler.getSignals().isShapePlaced);
+		//	coppeliasimHandler.setSignals(signals);
+		//}
 
 		bool ExperimentHandlerRelearning::verifyDecision()
 		{
@@ -258,44 +258,44 @@ namespace experiment
 			return false;
 		}
 
-		void ExperimentHandlerRelearning::readShapeHue()
-		{
-			// wait for the hue of the cuboid
-			do
-			{
-				Sleep(50); // necessary?
-				signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
-				//if (params.isDebugModeOn)
-					//std::cout << "Shape hue: " << signals.shapeHue << std::endl;
-			} while (signals.shapeHue == UNDEFINED);
+		//void ExperimentHandlerRelearning::readShapeHue()
+		//{
+		//	// wait for the hue of the cuboid
+		//	do
+		//	{
+		//		Sleep(50); // necessary?
+		//		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
+		//		//if (params.isDebugModeOn)
+		//			//std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+		//	} while (signals.shapeHue == UNDEFINED);
 
-			// set the hue of the cuboid for dnfcomposer
-			dnfcomposerHandler.setExternalInput(signals.shapeHue);
-			data.shapeHue = signals.shapeHue;
-			signals.shapeHue = UNDEFINED;
+		//	// set the hue of the cuboid for dnfcomposer
+		//	dnfcomposerHandler.setExternalInput(signals.shapeHue);
+		//	data.shapeHue = signals.shapeHue;
+		//	signals.shapeHue = UNDEFINED;
 
-			// wait for the shape hue to be read
-			while (!dnfcomposerHandler.getHaveFieldsSettled());
-			dnfcomposerHandler.setHaveFieldsSettled(false);
-		}
+		//	// wait for the shape hue to be read
+		//	while (!dnfcomposerHandler.getHaveFieldsSettled());
+		//	dnfcomposerHandler.setHaveFieldsSettled(false);
+		//}
 
-		void ExperimentHandlerRelearning::readTargetAngle()
-		{
-			dnfcomposerHandler.updateFieldCentroids();
-			Sleep(10);
-			signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
-			//if (params.isDebugModeOn)
-				//std::cout << "Target angle: " << signals.targetAngle << std::endl;
+		//void ExperimentHandlerRelearning::readTargetAngle()
+		//{
+		//	dnfcomposerHandler.updateFieldCentroids();
+		//	Sleep(10);
+		//	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	//if (params.isDebugModeOn)
+		//		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
-			data.outputFieldCentroid = signals.targetAngle;
-			data.lastOutputFieldCentroid = signals.targetAngle;
+		//	data.outputFieldCentroid = signals.targetAngle;
+		//	data.lastOutputFieldCentroid = signals.targetAngle;
 
-			getExpectedTargetAngle();
-			dnfcomposerHandler.updateFieldCentroids();
+		//	getExpectedTargetAngle();
+		//	dnfcomposerHandler.updateFieldCentroids();
 
-			// set the target angle for CoppeliaSim
-			coppeliasimHandler.setSignals(signals);
-		}
+		//	// set the target angle for CoppeliaSim
+		//	coppeliasimHandler.setSignals(signals);
+		//}
 
 		void ExperimentHandlerRelearning::getExpectedTargetAngle()
 		{
