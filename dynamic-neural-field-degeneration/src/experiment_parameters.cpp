@@ -44,5 +44,6 @@ namespace experiment
     {
         dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, toString());
         degenerationParameters.print();
+        relearningParameters.print();
     }
 }

@@ -27,12 +27,13 @@ public:
 	void applyDegeneracy();
 
 	void setWeightReductionFactor(const double& factor);
+	int getNumIndicesForDegeneration() const;
 	void setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType);
 	void setNumWeightsToDegenerate(int count);
-	experiment::degeneration::ElementDegeneracyType getDegeneracyType();
+	experiment::degeneration::ElementDegeneracyType getDegeneracyType() const;
 	void updateWeights(const std::vector<double> input, const std::vector<double> output);
-private:
 	void populateIndicesForDegeneration();
+private:
 	void setRandomWeightToRandomValue();
 	void setRandomWeightToReduceValue();
 	void setRandomUniqueWeightToZero();

@@ -1,15 +1,16 @@
 #include <exceptions/exception.h>
 #include <tools/logger.h>
 
-#include "relearning_parameters.h"
+#include "exp_handler_recov.h"
 
 int main()
 {
 	try
 	{
-		experiment::relearning::RelearningParameters parameters;
+		experiment::degeneration::e experiment;
 
-		parameters.print();
+		experiment.init();
+		experiment.close();
 
 		return 0;
 	}

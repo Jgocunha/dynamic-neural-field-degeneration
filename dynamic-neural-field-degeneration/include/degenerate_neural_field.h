@@ -29,8 +29,9 @@ public:
 	void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
 	experiment::degeneration::ElementDegeneracyType getDegeneracyType();
 	double getCentroid();
-private:
 	void populateIndicesForDegeneration();
+	void clearDegeneration();
+private:
 	void setRandomUniqueNeuronToZero();
 	void calculateActivation(const double& t, const double& deltaT);
 };

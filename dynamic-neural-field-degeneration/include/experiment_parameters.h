@@ -5,11 +5,13 @@
 #include <tools/logger.h>
 
 #include "degeneration_parameters.h"
+#include "relearning_parameters.h"
 
 namespace experiment
 {
 	struct ExperimentParameters
 	{
+		std::string id = "";
 		int numberOfTrials;
 		int startingExternalStimulus;
 		int currentTrial = 0;
@@ -17,8 +19,10 @@ namespace experiment
 		bool isDataSavingOn;
 		bool isVisualizationOn;
 		bool isDebugModeOn;
+		double incrementOfDegenerationInPercentage;
 
 		degeneration::DegenerationParameters degenerationParameters;
+		relearning::RelearningParameters relearningParameters;
 
 		ExperimentParameters();
 		void read();

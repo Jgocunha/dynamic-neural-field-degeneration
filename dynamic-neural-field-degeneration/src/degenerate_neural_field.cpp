@@ -1,6 +1,4 @@
 #include "degenerate_neural_field.h"
-#include "degenerate_neural_field.h"
-
 
 DegenerateNeuralField::DegenerateNeuralField(const dnf_composer::element::ElementCommonParameters& elementCommonParameters,
 	const dnf_composer::element::NeuralFieldParameters& parameters)
@@ -15,7 +13,7 @@ DegenerateNeuralField::DegenerateNeuralField(const dnf_composer::element::Elemen
 void DegenerateNeuralField::init()
 {
 	NeuralField::init();
-	populateIndicesForDegeneration();
+	populateIndicesForDegeneration(); // probably wont work in the inducing degeneration experiment
 	degenerate = false;
 }
 
@@ -58,9 +56,6 @@ void DegenerateNeuralField::setNumNeuronsToDegenerate(const int& numNeuronsToDeg
 
 void DegenerateNeuralField::applyDegeneracy()
 {
-	//double percentage = 0.01; // 1 percent
-	//double numNeuronsToDegenerate = commonParameters.dimensionParameters.size * percentage;
-
 	switch (degeneracyType)
 	{
 	case experiment::degeneration::ElementDegeneracyType::NEURONS_DEACTIVATE:
@@ -76,8 +71,10 @@ void DegenerateNeuralField::applyDegeneracy()
 		}
 		degenerate = false;
 		break;*/
-	default:
-		//std::cout << "Degeneracy type not supported" << std::endl;
+	case experiment::degeneration::ElementDegeneracyType::NONE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_REDUCE:
 		break;
 	}
 }
@@ -135,6 +132,21 @@ double DegenerateNeuralField::getCentroid()
 		centroid = -1.0;
 	}
 	return centroid;
+}
+
+//void DegenerateNeuralField::setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType)
+//{
+//	this->degeneracyType = degeneracyType;
+//}
+//
+//experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
+//{
+//	return degeneracyType;
+//}
+
+void DegenerateNeuralField::clearDegeneration()
+{
+	degeneratedIndices.clear();
 }
 
 void DegenerateNeuralField::populateIndicesForDegeneration()

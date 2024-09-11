@@ -6,12 +6,13 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 {
 	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
+	populateIndicesForDegeneration(); // for recovering from degeneration experiment
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	populateIndicesForDegeneration();
+	//populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -67,12 +68,17 @@ void DegenerateFieldCoupling::applyDegeneracy()
 	}
 }
 
+int DegenerateFieldCoupling::getNumIndicesForDegeneration() const
+{
+	return static_cast<int>(indicesForDegeneration.size());
+}
+
 void DegenerateFieldCoupling::setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType)
 {
 	this->degeneracyType = degeneracyType;
 }
 
-experiment::degeneration::ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
+experiment::degeneration::ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType() const
 {
 	return degeneracyType;
 }
