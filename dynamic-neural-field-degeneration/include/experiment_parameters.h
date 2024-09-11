@@ -1,41 +1,28 @@
 #pragma once
 
 #include <string>
-#include <stdexcept>
 #include <nlohmann/json.hpp>
-#include <fstream>
-#include <iostream>
 #include <tools/logger.h>
 
-#include "degenerate_element_parameters.h"
+#include "degeneration_parameters.h"
 
-
-struct ExperimentParameters
+namespace experiment
 {
-	std::string filePathPrefix = "../../../data/";
+	struct ExperimentParameters
+	{
+		int numberOfTrials;
+		int startingExternalStimulus;
+		int currentTrial = 0;
+		double decisionTolerance;
+		bool isDataSavingOn;
+		bool isVisualizationOn;
+		bool isDebugModeOn;
 
-	double decisionTolerance = 5;
-	int numberOfTrials = 10;
+		degeneration::DegenerationParameters degenerationParameters;
 
-	ElementDegeneracyType degeneracyType = ElementDegeneracyType::WEIGHTS_DEACTIVATE;
-	std::string degeneracyName = "deactivate-weights";
-	std::string typeOfElementsDegenerated = "weights";
-	std::string fieldToDegenerate = "perceptual";
-
-	int startingExternalStimulus = 0;
-	int initialPercentageOfDegeneration = 0;
-	int targetPercentageOfDegeneration = 100;
-	int currentPercentageOfDegeneration = 0;
-	int numberOfElementsToDegeneratePerIteration = 0;
-	int totalNumberOfElementsToDegenerate = 0;
-	int currentTrial = 0;
-
-	bool isDataSavingOn = false;
-	bool isVisualisationOn = true;
-	bool isDebugModeOn = true;
-
-	ExperimentParameters();
-	bool readUserDefinedParameters();
-	void setAutomaticallyDefinedParameters();
-	void print();
-};
+		ExperimentParameters();
+		void read();
+		std::string toString() const;
+		void print() const;
+	};
+}

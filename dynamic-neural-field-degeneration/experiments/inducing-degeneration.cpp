@@ -1,13 +1,12 @@
-﻿
-#include "dynamic-neural-field-degeneration.h"
+﻿#include <tools/logger.h>
 
-constexpr bool manualMode = true;
+#include "exp_handler_ind.h"
 
 int main()
 {
 	try
 	{
-		ExperimentHandler experiment;
+		experiment::degeneration::ExperimentHandlerInducing experiment;
 
 		experiment.init();
 		experiment.close();

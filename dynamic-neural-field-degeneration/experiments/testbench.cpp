@@ -1,4 +1,11 @@
-#include "dynamic-neural-field-degeneration.h"
+#include <application/application.h>
+#include <user_interface/element_window.h>
+#include <user_interface/heatmap_window.h>
+#include <user_interface/main_window.h>
+#include <user_interface/plot_window.h>
+#include <user_interface/simulation_window.h>
+
+#include "dnf_architecture.h"
 
 int main()
 {
@@ -34,7 +41,6 @@ int main()
 		app.addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 		app.init();
-
 
 		bool userRequestClose = false;
 		while (!userRequestClose)

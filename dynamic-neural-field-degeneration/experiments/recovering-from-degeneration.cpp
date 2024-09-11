@@ -1,4 +1,5 @@
-#include "dynamic-neural-field-degeneration.h"
+#include <exceptions/exception.h>
+#include <tools/logger.h>
 
 int main()
 {

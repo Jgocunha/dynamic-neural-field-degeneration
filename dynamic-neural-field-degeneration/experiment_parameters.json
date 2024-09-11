@@ -1,21 +1,28 @@
 {
-    "filePathPrefix": "../../data/",
-    "decisionTolerance": 5.0,
-    "numberOfTrials": 10,
+    "experiment_parameters":
+    {
+        "numberOfTrials": 10,
+        "startingExternalStimulus": 0,
+        "decisionTolerance": 5.0,
+        "isDataSavingOn": true,
+        "isVisualizationOn": true,
+        "isDebugModeOn": true
+    },
 
-    "_comment_type" : "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE", 
-    "experimentType": "NEURONS_DEACTIVATE",
-    "fieldToDegenerate": "decision",
-    "_comment_total_number": "720*360 = 259200 or 720 or 360",
-    "totalNumberOfElementsToDegenerate": 360,
-    "numberOfElementsToDegeneratePerIteration" : 1,
-    
-    "startingExternalStimulus": 0,
-    "initialPercentageOfDegeneration": 0,
-    "targetPercentageOfDegeneration": 100,
-    "currentPercentageOfDegeneration": 0,
-    
-    "isDataSavingOn": true,
-    "isVisualisationOn": true,
-    "isDebugModeOn": true
+    "degeneration_parameters":
+    {
+        "#comment_type" : "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE", 
+        "experimentType": "NEURONS_DEACTIVATE",
+        "#comment_total_number": "720*280 = 201600 or 720 or 280",
+        "totalNumberOfElementsToDegenerate": 720,
+        "fieldToDegenerate": "perceptual",
+        "numberOfElementsToDegeneratePerIteration" : 1,
+        "initialPercentageOfDegeneration": 0,
+        "targetPercentageOfDegeneration": 100
+    },
+
+    "relearning_parameters":
+    {
+
+    }
 }

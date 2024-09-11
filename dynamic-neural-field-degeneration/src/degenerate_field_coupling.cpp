@@ -4,7 +4,7 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 	const dnf_composer::element::FieldCouplingParameters& parameters)
 	: FieldCoupling(elementCommonParameters, parameters)
 {
-	degeneracyType = ElementDegeneracyType::NONE;
+	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
 }
 
@@ -44,18 +44,18 @@ void DegenerateFieldCoupling::applyDegeneracy()
 {
 	switch (degeneracyType)
 	{
-	case ElementDegeneracyType::WEIGHTS_DEACTIVATE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
 			setRandomUniqueWeightToZero();
 		degenerate = false;
 		break;
-	case ElementDegeneracyType::WEIGHTS_RANDOMIZE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
 			//setRandomWeightToRandomValue();
 			setRandomUniqueWeightToRandomValue();
 		degenerate = false;
 		break;
-	case ElementDegeneracyType::WEIGHTS_REDUCE:
+	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_REDUCE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
 			//setRandomWeightToReduceValue();
 			setRandomUniqueWeightToReduceValue();
@@ -67,12 +67,12 @@ void DegenerateFieldCoupling::applyDegeneracy()
 	}
 }
 
-void DegenerateFieldCoupling::setDegeneracyType(ElementDegeneracyType degeneracyType)
+void DegenerateFieldCoupling::setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType)
 {
 	this->degeneracyType = degeneracyType;
 }
 
-ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
+experiment::degeneration::ElementDegeneracyType DegenerateFieldCoupling::getDegeneracyType()
 {
 	return degeneracyType;
 }

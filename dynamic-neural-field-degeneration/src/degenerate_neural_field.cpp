@@ -6,7 +6,7 @@ DegenerateNeuralField::DegenerateNeuralField(const dnf_composer::element::Elemen
 	const dnf_composer::element::NeuralFieldParameters& parameters)
 	: NeuralField(elementCommonParameters, parameters)
 {
-	degeneracyType = ElementDegeneracyType::NONE;
+	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
 	populateIndicesForDegeneration();
 	degeneratedIndices.clear();
@@ -63,7 +63,7 @@ void DegenerateNeuralField::applyDegeneracy()
 
 	switch (degeneracyType)
 	{
-	case ElementDegeneracyType::NEURONS_DEACTIVATE:
+	case experiment::degeneration::ElementDegeneracyType::NEURONS_DEACTIVATE:
 		for (int i = 0; i < numNeuronsToDegenerate; i++)
 			setRandomUniqueNeuronToZero();
 		degenerate = false;
@@ -82,12 +82,12 @@ void DegenerateNeuralField::applyDegeneracy()
 	}
 }
 
-void DegenerateNeuralField::setDegeneracyType(ElementDegeneracyType degeneracyType)
+void DegenerateNeuralField::setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType)
 {
 	this->degeneracyType = degeneracyType;
 }
 
-ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
+experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
 {
 	return degeneracyType;
 }

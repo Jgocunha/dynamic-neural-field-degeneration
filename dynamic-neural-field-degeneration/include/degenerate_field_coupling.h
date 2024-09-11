@@ -2,14 +2,14 @@
 
 
 #include <algorithm>
+#include <elements/field_coupling.h>
 
-#include "degenerate_element_parameters.h"
-#include "elements/field_coupling.h"
+#include "degeneration_parameters.h"
 
 class DegenerateFieldCoupling : public dnf_composer::element::FieldCoupling
 {
 private:
-	ElementDegeneracyType degeneracyType;
+	experiment::degeneration::ElementDegeneracyType degeneracyType;
 	bool degenerate;
 	std::set<std::pair<int, int>> indicesForDegeneration;
 	double minWeightValue = 0;
@@ -27,9 +27,9 @@ public:
 	void applyDegeneracy();
 
 	void setWeightReductionFactor(const double& factor);
-	void setDegeneracyType(ElementDegeneracyType degeneracyType);
+	void setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType);
 	void setNumWeightsToDegenerate(int count);
-	ElementDegeneracyType getDegeneracyType();
+	experiment::degeneration::ElementDegeneracyType getDegeneracyType();
 	void updateWeights(const std::vector<double> input, const std::vector<double> output);
 private:
 	void populateIndicesForDegeneration();

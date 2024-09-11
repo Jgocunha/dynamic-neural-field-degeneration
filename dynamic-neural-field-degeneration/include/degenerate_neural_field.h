@@ -3,13 +3,13 @@
 #include <set>
 #include <elements/neural_field.h>
 
-#include "degenerate_element_parameters.h"
+#include "degeneration_parameters.h"
 
 
 class DegenerateNeuralField : public dnf_composer::element::NeuralField
 {
 private:
-	ElementDegeneracyType degeneracyType;
+	experiment::degeneration::ElementDegeneracyType degeneracyType;
 	bool degenerate;
 	std::vector<int> indicesForDegeneration;
 	std::vector<int> degeneratedIndices;
@@ -25,9 +25,9 @@ public:
 	void startDegeneration();
 	void applyDegeneracy();
 
-	void setDegeneracyType(ElementDegeneracyType degeneracyType);
+	void setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType);
 	void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
-	ElementDegeneracyType getDegeneracyType();
+	experiment::degeneration::ElementDegeneracyType getDegeneracyType();
 	double getCentroid();
 private:
 	void populateIndicesForDegeneration();
