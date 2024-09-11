@@ -1,10 +1,16 @@
 #include <exceptions/exception.h>
 #include <tools/logger.h>
 
+#include "relearning_parameters.h"
+
 int main()
 {
 	try
 	{
+		experiment::relearning::RelearningParameters parameters;
+
+		parameters.print();
+
 		return 0;
 	}
 	catch (const dnf_composer::Exception& ex)

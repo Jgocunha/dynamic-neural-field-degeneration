@@ -64,7 +64,7 @@ namespace experiment
 
 		void DegenerationParameters::print() const
 		{
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, toString().c_str());
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, toString());
 		}
 
 		void DegenerationParameters::setIdentifiersFromType()
