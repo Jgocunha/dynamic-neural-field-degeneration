@@ -114,15 +114,11 @@ void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAc
 
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
-	if (!simulationParameters.isUserInterfaceActive)
-		return simulationElements.inputField->getCentroid();
 	return simulationParameters.inputFieldCentroid;
 }
 
 double DnfcomposerHandler::getOutputFieldCentroid() const
 {
-	if (!simulationParameters.isUserInterfaceActive)
-		return simulationElements.outputField->getCentroid();
 	return simulationParameters.outputFieldCentroid;
 }
 
@@ -167,7 +163,7 @@ void DnfcomposerHandler::setupUserInterface()
 	visualization->addPlottingData("per - out", "output");
 
 	pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-	pp.dimensions = { 0, 28, -20, 40, 0.5};
+	pp.dimensions = { 0, 28, -20, 40, 0.1};
 	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 	/*visualization = std::make_shared<dnf_composer::Visualization>(simulation);
@@ -182,7 +178,7 @@ void DnfcomposerHandler::setupUserInterface()
 	pp.dimensions = { 0, 125, -1, 1, 0.5};
 	application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);*/
 
-	userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
+	//userInterfaceWindow = std::make_shared<ExperimentWindow>(simulation);
 	application->addWindow<ExperimentWindow>();
 }
 
@@ -220,7 +216,7 @@ void DnfcomposerHandler::updateExternalInput()
 	stimulus->init();
 	simulationElements.inputField->addInput(stimulus);
 	waitForFieldsToSettle();
-	waitForFieldsToSettle();
+	//waitForFieldsToSettle();
 
 	/*if(count)
 		for (int i = 0; i < 100000; i++)

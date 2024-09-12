@@ -1,38 +1,17 @@
-
 #include "experiment_handler.h"
 
-ExperimentHandler::ExperimentHandler(const ExperimentParameters& params)
-	: dnfcomposerHandler(DnfcomposerHandler(params.isVisualisationOn)), params(params)
+ExperimentHandler::ExperimentHandler()
 {
 	data.outputFieldCentroidHistory.reserve(60000);
 	std::advance(hueToAngleIterator, params.startingExternalStimulus);
 	data.targetInputFieldCentroid = hueToAngleIterator->first;
 	data.targetOutputFieldCentroid = hueToAngleIterator->second;
+	readHueToAngleMap();
 }
 
- void ExperimentHandler::printExperimentSetupToConsole() const
+ void ExperimentHandler::printExperimentSetupToConsole()
 {
-	 std::ostringstream logStream;
-
-	logStream << "Starting the experiment." << std::endl;
-	logStream << "----------------------------------------" << std::endl;
-	logStream << "Data saving is " << (params.isDataSavingOn ? "on" : "off") << std::endl;
-	logStream << "Debug mode is " << (params.isDebugModeOn ? "on" : "off") << std::endl;
-	logStream << "Visualization is " << (params.isVisualisationOn ? "on" : "off") << std::endl;
-	logStream << "Number of trials: " << params.numberOfTrials << std::endl;
-	logStream << "Decision tolerance: " << params.decisionTolerance << std::endl;
-	logStream << "Degeneracy type: " << params.degeneracyName << std::endl;
-	logStream << "Number of elements to degenerate per iteration: " << params.numberOfElementsToDegeneratePerIteration << std::endl;
-	logStream << "Total number of elements to degenerate: " << params.totalNumberOfElementsToDegenerate << std::endl;
-	logStream << "Initial percentage of degeneration: " << params.initialPercentageOfDegeneration << std::endl;
-	logStream << "Target percentage of degeneration: " << params.targetPercentageOfDegeneration << std::endl;
-	logStream << "----------------------------------------" << std::endl;
-	log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
-	//if (params.isDebugModeOn)
-	//{
-	//	const std::string message = "External stimulus: " + std::to_string(data.targetOutputFieldCentroid) + '\n';
-	//	dnf_composer::log(dnf_composer::LogLevel::INFO, message);
-	//
+	 params.print();
 }
 
 
@@ -85,16 +64,23 @@ void ExperimentHandler::init()
 //	setExperimentAsEnded();
 //}
 
+void ExperimentHandler::setExperimentSetupData()
+{
+	//dnfcomposerHandler.setExperimentSetupData(params.degeneracyName, params.decisionTolerance, params.typeOfElementsDegenerated);
+	dnfcomposerHandler.setNumberOfElementsToDegenerate(params.numberOfElementsToDegeneratePerIteration);
+}
+
 void ExperimentHandler::step()
 {
 	printExperimentSetupToConsole();
+	setExperimentSetupData();
 
 	for (int i = 0; i < params.numberOfTrials; i++)
 	{
-		params.currentTrial = i;
+		params.currentTrial = i + 1;
 		if (params.isDebugModeOn)
 		{
-			std::string message = "Starting trial " + std::to_string(i) + " out of " + std::to_string(params.numberOfTrials) + ". ";
+			std::string message = "Starting trial " + std::to_string(params.currentTrial) + " out of " + std::to_string(params.numberOfTrials) + ". ";
 			message += "External stimulus: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 			message += "Expected input field centroid: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 			message += "Expected output field centroid: " + std::to_string(data.targetOutputFieldCentroid) + ".";
@@ -151,8 +137,8 @@ void ExperimentHandler::degenerationProcedure()
 		{
 			std::string message = "Trial: " + std::to_string(params.currentTrial) + ". ";
 			message += "Number of degenerated " + params.typeOfElementsDegenerated + ": "
-				+ std::to_string(data.outputFieldCentroidHistory.size()) + "/" + std::to_string(params.totalNumberOfElementsToDegenerate)
-				+ " (" + std::to_string(static_cast<int>(static_cast<double>(data.outputFieldCentroidHistory.size()) / params.totalNumberOfElementsToDegenerate * 100)) + "%%). ";
+				+ std::to_string(data.outputFieldCentroidHistory.size() * params.numberOfElementsToDegeneratePerIteration) + "/" + std::to_string(params.totalNumberOfElementsToDegenerate)
+				+ " (" + std::to_string(static_cast<int>(static_cast<double>(data.outputFieldCentroidHistory.size() * params.numberOfElementsToDegeneratePerIteration) / params.totalNumberOfElementsToDegenerate * 100)) + "%%). ";
 
 			// Use stringstream to format the doubles with 2 decimal places
 			std::ostringstream stream;
@@ -230,5 +216,30 @@ void ExperimentHandler::saveOutputFieldCentroidToFile() const
 		const std::string message = "New centroids appended to " + filename + '\n';
 		dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, message);
 	}
+}
+
+void ExperimentHandler::readHueToAngleMap()
+{
+	std::ifstream file(std::string(PROJECT_DIR) + "/hue_to_angle.json");
+
+	if (!file.is_open()) {
+		std::cerr << "Error: Could not open the JSON colors file." << std::endl;
+	}
+
+	nlohmann::json j;
+	file >> j;
+
+	for (auto& [key, value] : j.items()) {
+
+		if (key == "metadata") {
+			continue; 
+		}
+
+		double hue = std::stod(key);
+		const int angle = value;
+		hueToAngleMap[hue] = angle;
+	}
+
+	file.close();
 }
 

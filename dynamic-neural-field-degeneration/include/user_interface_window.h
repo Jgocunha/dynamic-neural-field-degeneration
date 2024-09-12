@@ -2,6 +2,7 @@
 
 #include "imgui-platform-kit/user_interface.h"
 #include "simulation/simulation.h"
+#include "degenerate_neural_field.h"
 
 
 class ExperimentWindow : public imgui_kit::UserInterfaceWindow
