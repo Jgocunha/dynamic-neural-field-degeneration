@@ -1,4 +1,7 @@
 #pragma once
+
+#include <bitset>
+
 #include "dnfc_handler_recov.h"
 #include "experiment_parameters.h"
 
@@ -24,6 +27,21 @@ namespace experiment
 			std::vector<int> learningCyclesPerTrialHistory;
 		};
 
+		struct Signals
+		{
+			bool createShape = false;
+			bool isShapeCreated = false;
+		
+			bool graspShape = false;
+			bool isShapeGrasped = false;
+		
+			bool placeShape = false;
+			bool isShapePlaced = false;
+		
+			double shapeHue = -1;
+			double targetAngle = -1;
+		};
+
 		class ExperimentHandlerRelearning
 		{
 		private:
@@ -34,8 +52,12 @@ namespace experiment
 			ExperimentParameters parameters;
 			ExperimentData data;
 			ExperimentStatistics statistics;
+			Signals signals;
 
-			double currentPercentageOfDegeneration;
+			double currentPercentageOfDegeneration = 0.0;
+			int numberOfShapesPerTrial = 1;
+			bool isComposerVisualizationOn = true;
+			double targetPercentageOfDegeneration = 100.0;
 
 			std::unordered_map<double, int> hueToAngleMap;
 			std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();

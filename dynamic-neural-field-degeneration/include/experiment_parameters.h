@@ -19,7 +19,7 @@ namespace experiment
 		bool isDataSavingOn;
 		bool isVisualizationOn;
 		bool isDebugModeOn;
-		double incrementOfDegenerationInPercentage;
+		double incrementOfDegenerationInPercentage = 10;
 
 		degeneration::DegenerationParameters degenerationParameters;
 		relearning::RelearningParameters relearningParameters;
@@ -28,5 +28,6 @@ namespace experiment
 		void read();
 		std::string toString() const;
 		void print() const;
+		std::string getSavePath() const;
 	};
 }

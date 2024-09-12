@@ -7,7 +7,7 @@ int main()
 {
 	try
 	{
-		experiment::degeneration::e experiment;
+		experiment::relearning::ExperimentHandlerRelearning experiment;
 
 		experiment.init();
 		experiment.close();

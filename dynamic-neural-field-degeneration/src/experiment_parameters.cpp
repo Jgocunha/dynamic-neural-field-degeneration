@@ -46,4 +46,30 @@ namespace experiment
         degenerationParameters.print();
         relearningParameters.print();
     }
+
+
+    std::string ExperimentParameters::getSavePath() const
+	{
+        std::string filename = std::string(OUTPUT_DIRECTORY) + "/results/";
+
+        filename = filename + degenerationParameters.name;
+
+        switch (relearningParameters.type)
+        {
+        case relearning::RelearningType::ONLY_DEGENERATED_CASES:
+            filename = filename + " Only-degenerated-cases ";
+            break;
+        case relearning::RelearningType::ALL_CASES:
+            filename = filename + "All-cases ";
+            break;
+        }
+
+        filename = filename + " Epochs-" + std::to_string(relearningParameters.numberOfEpochs);
+        filename = filename + " MaxCycles-" + std::to_string(relearningParameters.maxAmountOfDemonstrations);
+        filename = filename + " Update-all-weights-" + std::to_string(relearningParameters.updateAllWeights);
+        filename = filename + ".txt";
+
+        return filename;
+	}
+
 }
