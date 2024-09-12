@@ -18,6 +18,7 @@
 #include <degenerate_neural_field.h>
 #include "user_interface/element_window.h"
 #include "user_interface/field_metrics_window.h"
+#include "user_interface/heatmap_window.h"
 
 
 struct SimulationElements

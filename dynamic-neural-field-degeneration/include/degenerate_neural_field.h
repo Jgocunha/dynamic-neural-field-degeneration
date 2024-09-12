@@ -28,6 +28,7 @@ public:
 	void setDegeneracyType(ElementDegeneracyType degeneracyType);
 	void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
 	ElementDegeneracyType getDegeneracyType();
+	double getCentroid();
 private:
 	void populateIndicesForDegeneration();
 	void setRandomUniqueNeuronToZero();

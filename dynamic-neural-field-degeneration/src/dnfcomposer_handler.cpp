@@ -91,7 +91,6 @@ void DnfcomposerHandler::setNumberOfElementsToDegenerate(const int& numberOfElem
 	simulationElements.inputField->setNumNeuronsToDegenerate(numberOfElementsToDegenerate);
 }
 
-
 void DnfcomposerHandler::setExternalInput(const double& position)
 {
 	this->simulationParameters.externalInputPosition = position;
@@ -116,28 +115,14 @@ void DnfcomposerHandler::setCentroidDataBeingAccessed(bool isCentroidDataBeingAc
 double DnfcomposerHandler::getInputFieldCentroid() const
 {
 	if (!simulationParameters.isUserInterfaceActive)
-	{
-		const auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
-
-		if (!inputFieldActivationBumps.empty())
-			return inputFieldActivationBumps[0].centroid;
-		else
-			return -1.0;
-	}
+		return simulationElements.inputField->getCentroid();
 	return simulationParameters.inputFieldCentroid;
 }
 
 double DnfcomposerHandler::getOutputFieldCentroid() const
 {
 	if (!simulationParameters.isUserInterfaceActive)
-	{
-		const auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
-
-		if (!outputFieldActivationBumps.empty())
-			return outputFieldActivationBumps[0].centroid;
-		else
-			return -1.0;
-	}
+		return simulationElements.outputField->getCentroid();
 	return simulationParameters.outputFieldCentroid;
 }
 
@@ -163,7 +148,7 @@ void DnfcomposerHandler::setupUserInterface()
 	application->addWindow<imgui_kit::LogWindow>();
 	application->addWindow<dnf_composer::user_interface::ElementWindow>();
 	application->addWindow<dnf_composer::user_interface::SimulationWindow>();
-	application->addWindow<dnf_composer::user_interface::FieldMetricsWindow>();
+	application->addWindow<dnf_composer::user_interface::HeatmapWindow>();
 
 	std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 	visualization->addPlottingData("perceptual field", "activation");
@@ -229,7 +214,7 @@ void DnfcomposerHandler::updateExternalInput()
 	dnf_composer::element::GaussStimulusParameters gsp = { kernel_width, kernel_amplitude, 20 };
 	gsp.position = simulationParameters.externalInputPosition + offset;
 	const std::shared_ptr<dnf_composer::element::GaussStimulus> stimulus
-	(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
+		(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
 
 	simulation->addElement(stimulus);
 	stimulus->init();
@@ -255,20 +240,10 @@ void DnfcomposerHandler::updateFieldCentroids()
 	bool userRequestClose = false;
 	while (!userRequestClose && !hasExperimentFinished)
 	{
-		auto inputFieldActivationBumps = simulationElements.inputField->getBumps();
-		auto outputFieldActivationBumps = simulationElements.outputField->getBumps();
+		simulationParameters.inputFieldCentroid = simulationElements.inputField->getCentroid();
+		simulationParameters.outputFieldCentroid = simulationElements.outputField->getCentroid();
 
-		if (!inputFieldActivationBumps.empty())
-			simulationParameters.inputFieldCentroid = inputFieldActivationBumps[0].centroid;
-		else
-			simulationParameters.inputFieldCentroid = -1.0;
-
-		if (!outputFieldActivationBumps.empty())
-			simulationParameters.outputFieldCentroid = outputFieldActivationBumps[0].centroid;
-		else
-			simulationParameters.outputFieldCentroid = -1.0;
-
-		if(simulationParameters.isUserInterfaceActive)
+		if (simulationParameters.isUserInterfaceActive)
 			userRequestClose = application->hasUIBeenClosed();
 		Sleep(1);
 	}
