@@ -21,8 +21,8 @@ namespace experiment
 			double learningRate;
 			int numberOfEpochs;
 			int maxAmountOfDemonstrations;
-			int targetRelearningPositions;
 			bool updateAllWeights;
+			int targetRelearningPositions = 0;
 
 			RelearningParameters();
 			void read();

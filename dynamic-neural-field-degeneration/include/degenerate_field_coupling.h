@@ -31,14 +31,14 @@ public:
 	void setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType);
 	void setNumWeightsToDegenerate(int count);
 	experiment::degeneration::ElementDegeneracyType getDegeneracyType() const;
-	void updateWeights(const std::vector<double> input, const std::vector<double> output);
+	virtual void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
 	void populateIndicesForDegeneration();
 private:
 	void setRandomWeightToRandomValue();
 	void setRandomWeightToReduceValue();
 	void setRandomUniqueWeightToZero();
 	void findMinMaxWeightValues();
-	double getWeightReductionFactor();
+	double getWeightReductionFactor() const;
 	void setRandomUniqueWeightToReduceValue();
 	void setRandomUniqueWeightToRandomValue();
 

@@ -31,6 +31,7 @@ namespace experiment
 			int currentPercentage = 0;
 			int numberOfElementsToDegeneratePerIteration;
 			int totalNumberOfElementsToDegenerate;
+			double incrementOfDegenerationInPercentage;
 
 			DegenerationParameters();
 			void read();

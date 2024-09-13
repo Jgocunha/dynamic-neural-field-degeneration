@@ -431,6 +431,7 @@ namespace experiment
 			(new dnf_composer::element::GaussStimulus({ "stimulus", {simulationElements.inputField->getMaxSpatialDimension(), simulationElements.inputField->getStepSize()} }, gsp));
 
 			simulation->addElement(stimulus);
+			stimulus->init();
 			simulationElements.inputField->addInput(stimulus);
 			waitForFieldsToSettle();
 
@@ -508,7 +509,7 @@ namespace experiment
 				application->step();
 		}
 
-		void DnfcomposerHandler::allCasesRelearning()
+		void DnfcomposerHandler:: allCasesRelearning()
 		{
 			//log(DEBUG,, "DnfcomposerHandler::allCasesRelearning()\n");
 
@@ -548,15 +549,14 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					//int index = 6 - i;
-					//if (index == 2)
-					//	index = 4;
-					//else
-					//	if (index == 4)
-					//		index = 2;
-					constexpr int index = 0;
-					log(dnf_composer::tools::logger::WARNING, "onlyDegeneratedCasesRelearning() indexing is hardcoded.\n");
-
+					int index = 6 - i;
+					if (index == 2)
+						index = 4;
+					else
+						if (index == 4)
+							index = 2;
+					//constexpr int index = 0;
+					//log(dnf_composer::tools::logger::WARNING, "onlyDegeneratedCasesRelearning() indexing is hardcoded.\n");
 
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);

@@ -55,9 +55,7 @@ namespace experiment
 			Signals signals;
 
 			double currentPercentageOfDegeneration = 0.0;
-			int numberOfShapesPerTrial = 1;
-			bool isComposerVisualizationOn = true;
-			double targetPercentageOfDegeneration = 100.0;
+			int numberOfShapesPerTrial = 7;
 
 			std::unordered_map<double, int> hueToAngleMap;
 			std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
@@ -102,6 +100,7 @@ namespace experiment
 
 			void saveWeights();
 			void readWeights();
+			void readHueToAngleMap();
 		};
 	}
 }

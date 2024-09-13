@@ -44,6 +44,7 @@ namespace experiment
 			targetPercentage = degenerationParams.at("targetPercentageOfDegeneration").get<int>();
 			numberOfElementsToDegeneratePerIteration = degenerationParams.at("numberOfElementsToDegeneratePerIteration").get<int>();
 			totalNumberOfElementsToDegenerate = degenerationParams.at("totalNumberOfElementsToDegenerate").get<int>();
+			incrementOfDegenerationInPercentage = degenerationParams.at("incrementOfDegenerationInPercentage").get<double>();
 		}
 
 		std::string DegenerationParameters::toString() const
@@ -58,6 +59,7 @@ namespace experiment
 			logStream << "Target percentage of degeneration: " << targetPercentage << std::endl;
 			logStream << "Number of elements to degenerate per iteration: " << numberOfElementsToDegeneratePerIteration << std::endl;
 			logStream << "Total number of elements to degenerate: " << totalNumberOfElementsToDegenerate << std::endl;
+			logStream << "Increment of degeneration in percentage: " << incrementOfDegenerationInPercentage << std::endl;
 			logStream << "----------------------------------------" << std::endl;
 			return logStream.str();
 		}
@@ -91,7 +93,6 @@ namespace experiment
 				name = "deactivate";
 				break;
 			case ElementDegeneracyType::NONE:
-			default:
 				break;
 			}
 			name = name + " " + typeOfElement;

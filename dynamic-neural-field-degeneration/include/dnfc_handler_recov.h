@@ -72,23 +72,23 @@ namespace experiment
 			const double offset = 0.0;
 			const std::vector<std::vector<double>> inputTargetPeaksForCoupling =
 			{
-				//{ 00.00 + offset }, // red 0
-				//{ 41.00 + offset }, // orange 1
+				{ 00.00 + offset }, // red 0
+				{ 41.00 + offset }, // orange 1
 				{ 60.00 + offset }, // yellow 2
-				//{ 120.00 + offset }, // green 3
-				//{ 240.00 + offset }, // blue 4
-				//{ 274.00 + offset }, // indigo 5
-				//{ 300.00 + offset } // violet 6
+				{ 120.00 + offset }, // green 3
+				{ 240.00 + offset }, // blue 4
+				{ 274.00 + offset }, // indigo 5
+				{ 300.00 + offset } // violet 6
 			};
 			const std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 			{
-				//{ 2.00 + offset },
-				//{ 6.00 + offset },
+				{ 2.00 + offset },
+				{ 6.00 + offset },
 				{ 10.00 + offset },
-				//{ 14.00 + offset },
-				//{ 18.00 + offset },
-				//{ 22.00 + offset },
-				//{ 26.00 + offset }
+				{ 14.00 + offset },
+				{ 18.00 + offset },
+				{ 22.00 + offset },
+				{ 26.00 + offset }
 			};
 
 

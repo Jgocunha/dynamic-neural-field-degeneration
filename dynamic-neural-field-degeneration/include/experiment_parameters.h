@@ -19,7 +19,6 @@ namespace experiment
 		bool isDataSavingOn;
 		bool isVisualizationOn;
 		bool isDebugModeOn;
-		double incrementOfDegenerationInPercentage = 10;
 
 		degeneration::DegenerationParameters degenerationParameters;
 		relearning::RelearningParameters relearningParameters;

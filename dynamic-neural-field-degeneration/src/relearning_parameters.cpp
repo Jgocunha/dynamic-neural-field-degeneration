@@ -33,7 +33,6 @@ namespace experiment
 			learningRate = relearningParameters.at("learningRate").get<double>();
 			numberOfEpochs = relearningParameters.at("numberOfEpochs").get<int>();
 			maxAmountOfDemonstrations = relearningParameters.at("maxAmountOfDemonstrations").get<int>();
-			targetRelearningPositions = relearningParameters.at("targetRelearningPositions").get<int>();
 			updateAllWeights = relearningParameters.at("updateAllWeights").get<bool>();
 		}
 
@@ -46,7 +45,6 @@ namespace experiment
 			logStream << "Learning rate: " << learningRate << std::endl;
 			logStream << "Number of epochs: " << numberOfEpochs << std::endl;
 			logStream << "Max amount of demonstrations: " << maxAmountOfDemonstrations << std::endl;
-			logStream << "Target relearning positions: " << targetRelearningPositions << std::endl;
 			logStream << "Update all weights: " << (updateAllWeights ? "true" : "false") << std::endl;
 			logStream << "----------------------------------------" << std::endl;
 			return logStream.str();

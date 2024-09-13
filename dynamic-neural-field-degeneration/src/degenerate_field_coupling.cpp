@@ -29,12 +29,11 @@ void DegenerateFieldCoupling::startDegeneration()
 	degenerate = true;
 }
 
-void DegenerateFieldCoupling::updateWeights(const std::vector<double> input, const std::vector<double> output)
+void DegenerateFieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
 {
 	weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
 	writeWeights();
 }
-
 
 void DegenerateFieldCoupling::setNumWeightsToDegenerate(int count)
 {
@@ -131,7 +130,7 @@ void DegenerateFieldCoupling::setWeightReductionFactor(const double& factor)
 	weightReductionFactor = factor;
 }
 
-double DegenerateFieldCoupling::getWeightReductionFactor()
+double DegenerateFieldCoupling::getWeightReductionFactor() const
 {
 	return weightReductionFactor;
 }
@@ -344,8 +343,6 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 //		}
 //	}
 //}
-
-
 
 std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate(std::vector<std::vector<double>>& weights,
 	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const

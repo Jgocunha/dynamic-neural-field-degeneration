@@ -10,22 +10,22 @@
 
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
-    "experimentType": "NEURONS_DEACTIVATE",
+    "experimentType": "WEIGHTS_DEACTIVATE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
-    "totalNumberOfElementsToDegenerate": 720,
+    "totalNumberOfElementsToDegenerate": 201600,
     "fieldToDegenerate": "perceptual",
-    "numberOfElementsToDegeneratePerIteration": 1,
-    "initialPercentageOfDegeneration": 0,
-    "targetPercentageOfDegeneration": 100
+    "numberOfElementsToDegeneratePerIteration": 1000,
+    "initialPercentageOfDegeneration": 80,
+    "targetPercentageOfDegeneration": 100,
+    "incrementOfDegenerationInPercentage": 1
   },
 
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
-    "relearningType": "ONLY_DEGENERATED_CASES",
-    "learningRate": 0.1,
+    "relearningType": "ALL_CASES",
+    "learningRate": 0.01,
     "numberOfEpochs": 1,
-    "maxAmountOfDemonstrations": 100,
-    "targetRelearningPositions": 1,
+    "maxAmountOfDemonstrations": 10,
     "updateAllWeights": false
   }
 }
