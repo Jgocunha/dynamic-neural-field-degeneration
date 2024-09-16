@@ -15,7 +15,7 @@
     "totalNumberOfElementsToDegenerate": 201600,
     "fieldToDegenerate": "perceptual",
     "numberOfElementsToDegeneratePerIteration": 1000,
-    "initialPercentageOfDegeneration": 80,
+    "initialPercentageOfDegeneration": 0,
     "targetPercentageOfDegeneration": 100,
     "incrementOfDegenerationInPercentage": 1
   },
@@ -27,6 +27,6 @@
     "numberOfEpochs": 10,
     "maxAmountOfDemonstrations": 10,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
-    "updateAllWeights": false
+    "updateAllWeights": true
   }
 }

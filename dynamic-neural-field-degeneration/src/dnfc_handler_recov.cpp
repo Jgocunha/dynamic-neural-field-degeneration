@@ -18,6 +18,7 @@ namespace experiment
 			simulationElements.fcpw = dnf_composer::LearningWizard{ simulation, "per - out" };
 
 			setupUserInterface();
+			readPeaksForCoupling();
 		}
 
 		DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
@@ -37,6 +38,7 @@ namespace experiment
 
 			if (simulationParameters.isUserInterfaceActive)
 				setupUserInterface();
+			readPeaksForCoupling();
 		}
 
 		// init step close and stop methods
@@ -549,15 +551,25 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					/*int index = 6 - i;
-					if (index == 2)
-						index = 4;
+					int index = 0;
+					if (inputTargetPeaksForCoupling.size() == 7)
+					{
+						index = 6 - i;
+						if (index == 2)
+							index = 4;
+						else
+							if (index == 4)
+								index = 2;
+					}
 					else
-						if (index == 4)
-							index = 2;*/
-					constexpr int index = 0;
-					log(dnf_composer::tools::logger::WARNING, "onlyDegeneratedCasesRelearning() indexing is not hardcoded atm.");
-					log(dnf_composer::tools::logger::WARNING, "constexpr int index = 0, when using just one target behaviour.");
+					{
+						if (inputTargetPeaksForCoupling.size() == 1)
+							index = 0;
+						else
+						{
+							log(dnf_composer::tools::logger::WARNING, "Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
+						}
+					}
 
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
@@ -579,5 +591,32 @@ namespace experiment
 			////std::cout << "Finished setting up the gaussian stimulus parameters.\n";
 
 		}
+
+		void DnfcomposerHandler::readPeaksForCoupling()
+		{
+			std::ifstream file(std::string(PROJECT_DIR) + "/hue_to_angle.json");
+
+			if (!file.is_open()) {
+				std::cerr << "Error: Could not open the JSON colors file." << std::endl;
+			}
+
+			nlohmann::json j;
+			file >> j;
+
+			for (auto& [key, value] : j.items()) {
+
+				if (key == "metadata") {
+					continue;
+				}
+				const double hue = std::stod(key); 
+				const double angle = value.get<double>();
+
+				inputTargetPeaksForCoupling.push_back({ hue + offset });
+				outputTargetPeaksForCoupling.push_back({ angle + offset });
+			}
+
+			file.close();
+		}
+
 	}
 }

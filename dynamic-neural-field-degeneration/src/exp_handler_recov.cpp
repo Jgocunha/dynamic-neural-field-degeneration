@@ -512,7 +512,7 @@ namespace experiment
 
 		bool ExperimentHandlerRelearning::doesBackupWeightsFileExist() const
 		{
-			const std::string filename = std::string(OUTPUT_DIRECTORY) + parameters.id + "/weights/" + "per - out_weights - copy.txt";
+			const std::string filename = std::string(OUTPUT_DIRECTORY) + "/" + parameters.id + "/weights/" + "per - out_weights - copy.txt";
 			const std::ifstream file(filename);
 
 			if (file.good())
