@@ -28,7 +28,7 @@ namespace experiment
 			double externalInputPosition = 0.0, expectedOutputCentroid = 0.0;
 			double inputFieldCentroid = 0.0, outputFieldCentroid = 0.0;
 
-			const int timeForFieldToSettle = 35;
+			const int timeForFieldToSettle = 45;
 
 			degeneration::ElementDegeneracyType degeneracyType = degeneration::ElementDegeneracyType::NONE;
 			std::string fieldToDegenerate = "perceptual";

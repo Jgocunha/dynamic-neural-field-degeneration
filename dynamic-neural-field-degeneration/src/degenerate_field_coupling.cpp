@@ -377,11 +377,16 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 			auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
 
 			// If the pair is found in the set (then it still hasn't degenerated), then update the weight.
-			//if (it != indicesForDegeneration.end())
-			//{
-			weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
-			//}
-			// else do nothing
+			if (updateAllWeights)
+				weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
+			else
+			{
+				if (it != indicesForDegeneration.end())
+				{
+					weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
+				}
+				// else do nothing
+			}
 		}
 	}
 

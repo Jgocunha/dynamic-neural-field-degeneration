@@ -549,19 +549,19 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					int index = 6 - i;
+					/*int index = 6 - i;
 					if (index == 2)
 						index = 4;
 					else
 						if (index == 4)
-							index = 2;
-					//constexpr int index = 0;
-					//log(dnf_composer::tools::logger::WARNING, "onlyDegeneratedCasesRelearning() indexing is hardcoded.\n");
+							index = 2;*/
+					constexpr int index = 0;
+					log(dnf_composer::tools::logger::WARNING, "onlyDegeneratedCasesRelearning() indexing is not hardcoded atm.");
+					log(dnf_composer::tools::logger::WARNING, "constexpr int index = 0, when using just one target behaviour.");
 
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
-
 				}
 			}
 
@@ -572,8 +572,6 @@ namespace experiment
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
 			//std::cout << "Finished setting up the field coupling wizard.\n";
-
-
 
 			//gsp.amplitude = 35;
 			//gsp.sigma = 3;

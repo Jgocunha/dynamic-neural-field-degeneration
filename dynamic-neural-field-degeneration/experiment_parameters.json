@@ -22,10 +22,11 @@
 
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
-    "relearningType": "ALL_CASES",
+    "relearningType": "ONLY_DEGENERATED_CASES",
     "learningRate": 0.01,
-    "numberOfEpochs": 1,
+    "numberOfEpochs": 10,
     "maxAmountOfDemonstrations": 10,
+    "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
     "updateAllWeights": false
   }
 }
