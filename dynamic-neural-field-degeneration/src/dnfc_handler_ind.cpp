@@ -76,6 +76,11 @@ namespace experiment
 
 		void DnfcomposerHandlerInducing::closeSimulation()
 		{
+			simulationElements.inputField->clearDegeneration();
+			simulationElements.outputField->clearDegeneration();
+			simulationElements.fieldCoupling->populateIndicesForDegeneration();
+			simulationElements.inputField->populateIndicesForDegeneration();
+			simulationElements.outputField->populateIndicesForDegeneration();
 			hasTrialFinished = true;
 		}
 
@@ -140,6 +145,14 @@ namespace experiment
 		void DnfcomposerHandlerInducing::initializeFields()
 		{
 			simulation->init();
+			//const auto inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+			//inputField->reset();
+			//const auto outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+			//outputField->reset();
+			//const auto fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+			//fieldCoupling->populateIndicesForDegeneration();
+			//simulation->init();
+			//simulation->step();
 			wasIntializationRequested = false;
 		}
 
@@ -169,7 +182,7 @@ namespace experiment
 			visualization->addPlottingData("per - out", "output");
 
 			pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 28, -20, 40, 0.1 };
+			pp.dimensions = { 0, 280, -20, 40, 1.0 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 		}
 
@@ -177,11 +190,13 @@ namespace experiment
 		{
 			numberOfDegeneratedElements = 0;
 			// call element wise reset here
-			const auto inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
-			inputField->reset();
-			const auto outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
-			outputField->reset();
-			simulation->close();
+			//const auto inputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.inputFieldId));
+			//inputField->reset();
+			//const auto outputField = std::dynamic_pointer_cast<DegenerateNeuralField>(simulation->getElement(simulationParameters.outputFieldId));
+			//outputField->reset();
+			//const auto fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
+			//fieldCoupling->populateIndicesForDegeneration();
+			//simulation->close();
 			hasTrialFinished = false;
 		}
 

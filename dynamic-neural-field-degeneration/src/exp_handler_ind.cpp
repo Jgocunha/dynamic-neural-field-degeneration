@@ -22,7 +22,7 @@ namespace experiment
 			data.targetInputFieldCentroid = hueToAngleIterator->first;
 			data.targetOutputFieldCentroid = hueToAngleIterator->second;
 
-			++hueToAngleIterator;
+			//++hueToAngleIterator;
 		}
 
 		void ExperimentHandlerInducing::setExperimentAsEnded()
@@ -55,14 +55,21 @@ namespace experiment
 					message += "External stimulus: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 					message += "Expected input field centroid: " + std::to_string(data.targetInputFieldCentroid) + ". ";
 					message += "Expected output field centroid: " + std::to_string(data.targetOutputFieldCentroid) + ".";
-					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, message.c_str());
+					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, message);
 				}
 
 				for (int k = 0; k < static_cast<int>(hueToAngleMap.size()); k++)
 				{
-					setExpectedFieldBehaviour();
-					setupProcedure();
-					degenerationProcedure();
+					//bool isOutputFieldDegenerated = hasOutputFieldDegenerated();
+					//do
+					//{
+						//dnfcomposerHandler.initializeFields();
+						setExpectedFieldBehaviour();
+						setupProcedure();
+						degenerationProcedure();
+						//isOutputFieldDegenerated = hasOutputFieldDegenerated();
+					//} while (!isOutputFieldDegenerated);
+					//++hueToAngleIterator;
 					cleanUpTrial();
 					Sleep(20);
 				}

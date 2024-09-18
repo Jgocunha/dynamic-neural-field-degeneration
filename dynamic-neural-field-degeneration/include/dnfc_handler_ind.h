@@ -87,8 +87,8 @@ namespace experiment
 			std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
 
 			void updateFieldCentroids();
-		private:
 			void initializeFields();
+		private:
 			void setupUserInterface();
 			void updateExternalInput();
 			void activateDegeneration();

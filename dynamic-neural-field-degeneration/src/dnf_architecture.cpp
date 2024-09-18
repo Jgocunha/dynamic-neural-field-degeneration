@@ -31,8 +31,8 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create interactions and add them to the simulation
 	dnf_composer::element::GaussKernelParameters gkp1;
-	gkp1.amplitude = 60;  // self-sustained (without input)
-	gkp1.width = 25;
+	gkp1.amplitude = 60; //33.6 // self-sustained (without input)
+	gkp1.width = 20;
 	gkp1.amplitudeGlobal = -0.36;
 	gkp1.circular = true;
 	gkp1.normalized = true;
@@ -41,7 +41,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	simulation->addElement(k_per_per);
 
 	dnf_composer::element::GaussKernelParameters gkp2;
-	gkp2.amplitude = 20;  // self-stabilized (with input) //20
+	gkp2.amplitude = 18;  // self-stabilized (with input) //20
 	gkp2.width = 25; // 25
 	gkp2.amplitudeGlobal = -0.10;
 	gkp2.circular = true;
@@ -49,8 +49,8 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
 		(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
-
-	dnf_composer::element::FieldCouplingParameters fcp{ perceptualFieldSpatialDimensions.size, 0.2, 0.01, dnf_composer::LearningRule::DELTA_KROGH_HERTZ };
+	// 0.366
+	dnf_composer::element::FieldCouplingParameters fcp{ perceptualFieldSpatialDimensions.size, 0.4, 0.01, dnf_composer::LearningRule::DELTA_KROGH_HERTZ };
 	const std::shared_ptr<DegenerateFieldCoupling> w_per_out( 
 		new DegenerateFieldCoupling({ "per - out", outputFieldSpatialDimensions }, fcp));
 	simulation->addElement(w_per_out);

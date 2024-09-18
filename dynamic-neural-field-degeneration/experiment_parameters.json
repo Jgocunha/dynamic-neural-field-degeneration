@@ -10,11 +10,11 @@
 
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
-    "experimentType": "WEIGHTS_DEACTIVATE",
+    "experimentType": "NEURONS_DEACTIVATE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
-    "totalNumberOfElementsToDegenerate": 201600,
+    "totalNumberOfElementsToDegenerate": 720,
     "fieldToDegenerate": "perceptual",
-    "numberOfElementsToDegeneratePerIteration": 1000,
+    "numberOfElementsToDegeneratePerIteration": 1,
     "initialPercentageOfDegeneration": 0,
     "targetPercentageOfDegeneration": 100,
     "incrementOfDegenerationInPercentage": 1
