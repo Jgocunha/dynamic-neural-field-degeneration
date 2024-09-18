@@ -31,9 +31,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create interactions and add them to the simulation
 	dnf_composer::element::GaussKernelParameters gkp1;
-	gkp1.amplitude = 60; //33.6 // self-sustained (without input)
-	gkp1.width = 20;
-	gkp1.amplitudeGlobal = -0.36;
+	gkp1.amplitude = 40; //33.6 // self-sustained (without input)
+	gkp1.width = 25;
+	gkp1.amplitudeGlobal = -0.12;
 	gkp1.circular = true;
 	gkp1.normalized = true;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_per_per
@@ -41,9 +41,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	simulation->addElement(k_per_per);
 
 	dnf_composer::element::GaussKernelParameters gkp2;
-	gkp2.amplitude = 18;  // self-stabilized (with input) //20
+	gkp2.amplitude = 20;  // self-stabilized (with input) //20
 	gkp2.width = 25; // 25
-	gkp2.amplitudeGlobal = -0.10;
+	gkp2.amplitudeGlobal = -0.12;
 	gkp2.circular = true;
 	gkp2.normalized = true;
 	const std::shared_ptr<dnf_composer::element::GaussKernel> k_out_out
