@@ -75,7 +75,7 @@ namespace experiment
 			if (parameters.isDebugModeOn)
 			{
 				std::ostringstream logStream;
-				logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.\n";
+				logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
 				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
 			}
 
@@ -120,7 +120,7 @@ namespace experiment
 						{
 							data.isFieldDead = true;
 							if (parameters.isDebugModeOn)
-								dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "Re-learning did not work.\n");
+								dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "Re-learning did not work.");
 						}
 						statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
 						statistics.numOfRelearningCycles = 0;
@@ -128,7 +128,7 @@ namespace experiment
 						if (parameters.isDebugModeOn)
 						{
 							std::ostringstream logStream;
-							logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.\n";
+							logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
 							dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
 						}
 					}
@@ -174,7 +174,7 @@ namespace experiment
 
 		//	if (parameters.isDebugModeOn)
 		//	{
-		//		dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '\n');
+		//		dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '');
 		//		std::ostringstream logStream;
 		//		logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
 		//		dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
@@ -291,7 +291,7 @@ namespace experiment
 
 		bool ExperimentHandlerRelearning::mockPickAndPlace()
 		{
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Performing a mock pick and place.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Performing a mock pick and place.");
 
 			statistics.shapesPlacedIncorrectly = 0; // binary representation
 			bool successfulPickAndPlace = true;
@@ -306,7 +306,7 @@ namespace experiment
 
 			if (parameters.isDebugModeOn)
 			{
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '\n');
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
 				std::ostringstream logStream;
 				logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
 				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
@@ -350,7 +350,7 @@ namespace experiment
 		void ExperimentHandlerRelearning::degenerationProcedure()
 		{
 			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Degeneration procedure started.\n");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Degeneration procedure started.");
 
 			// Disable the user interface whilst degenerating to consume less time.
 			if (parameters.isVisualizationOn)
@@ -372,10 +372,10 @@ namespace experiment
 			// 2. use only the inputs from the incorrect correspondence
 			// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 			// And the learning rate
-			//log(dnf_composer::DEBUG, "ExperimentHandler::relearningProcedure()\n");
+			//log(dnf_composer::DEBUG, "ExperimentHandler::relearningProcedure()");
 
 			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Relearning procedure started.\n");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Relearning procedure started.");
 
 			dnfcomposerHandler.setRelearning(statistics.shapesPlacedIncorrectly);
 
@@ -383,7 +383,7 @@ namespace experiment
 			dnfcomposerHandler.setHasRelearningFinished(false);
 
 			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Relearning procedure finished.\n");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Relearning procedure finished.");
 
 			statistics.numOfRelearningCycles++;
 		}
@@ -393,7 +393,7 @@ namespace experiment
 			statistics.shapesPlacedIncorrectly = 0;
 			//if (parameters.isLinkToCoppeliaSimOn)
 				//coppeliasimHandler.resetSignals();
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Pick and place procedure finished.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Pick and place procedure finished.");
 		}
 
 		void ExperimentHandlerRelearning::cleanupTrial()
@@ -408,7 +408,7 @@ namespace experiment
 			Sleep(300);
 			//Sleep(300);
 			//dnfcomposerHandler.setWasStartSimulationRequested(true);
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Trial finished.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Trial finished.");
 		}
 
 		void ExperimentHandlerRelearning::saveLearningCyclesPerTrial() const
@@ -421,20 +421,20 @@ namespace experiment
 				for (const int cycles : statistics.learningCyclesPerTrialHistory)
 					file << cycles << " "; 
 
-				file << "\n";
+				file << "";
 
 				file.flush();
 
 				if (file.good()) {
 					file.close();
-					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Number of relearning cycles needed saved to file.\n");
+					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Number of relearning cycles needed saved to file.");
 				}
 				else {
-					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::ERROR, "Error while writing to file: " + filename + '\n');
+					dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::ERROR, "Error while writing to file: " + filename + '.');
 				}
 			}
 			else {
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::ERROR, "Unable to open file: " + filename + '\n');
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::ERROR, "Unable to open file: " + filename + '.');
 			}
 		}
 
@@ -447,7 +447,7 @@ namespace experiment
 			std::ifstream source(filename, std::ios::binary);
 			std::ofstream dest(filenameCopy, std::ios::binary);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Attempting to back up weights file...\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Attempting to back up weights file...");
 
 			dest << source.rdbuf();
 
@@ -463,11 +463,11 @@ namespace experiment
 			{
 				sourceSize = sourceCheckFile.tellg();
 				destSize = destCheckFile.tellg();
-				////log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-				////log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+				////log(dnf_composer::DEBUG, "Checking if file size is correct... ");
+				////log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.");
 			} while (sourceSize != destSize);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file successfully backed-up.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file successfully backed-up.");
 
 		}
 
@@ -476,18 +476,18 @@ namespace experiment
 			const std::string oldFilename = std::string(OUTPUT_DIRECTORY) + "/" + parameters.id + "/weights/" + "per - out_weights - copy.txt";
 			const std::string newFilename = std::string(OUTPUT_DIRECTORY) + "/" + parameters.id + "/weights/" + "per - out_weights.txt";
 
-			////log(dnf_composer::DEBUG, "Attempting to restore weights file...\n");
+			////log(dnf_composer::DEBUG, "Attempting to restore weights file...");
 
 			// remove weights file
 			const int removeResult = std::remove(newFilename.c_str());
 			std::ifstream oldFile(newFilename.c_str());
 			do
 			{
-				//(dnf_composer::DEBUG, "Checking if weights file still exists...\n");
+				//(dnf_composer::DEBUG, "Checking if weights file still exists...");
 				oldFile.open(newFilename.c_str());
 			} while (oldFile.is_open());
 			oldFile.close();
-			//dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, "Previous weights file successfully deleted.\n");
+			//dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, "Previous weights file successfully deleted.");
 
 			// rename copy of weights file
 			std::ifstream currentFile(oldFilename.c_str(), std::ios::binary | std::ios::ate);
@@ -497,17 +497,17 @@ namespace experiment
 			currentFile.close();
 			const int renameResult = std::rename(oldFilename.c_str(), newFilename.c_str());
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "File successfully renamed.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "File successfully renamed.");
 
 			std::ifstream newFile(newFilename.c_str(), std::ios::binary | std::ios::ate);
 			do
 			{
 				destSize = newFile.tellg();
-				//log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-				//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+				//log(dnf_composer::DEBUG, "Checking if file size is correct... ");
+				//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.");
 			} while (sourceSize != destSize);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file successfully restored.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file successfully restored.");
 		}
 
 		bool ExperimentHandlerRelearning::doesBackupWeightsFileExist() const
@@ -517,11 +517,11 @@ namespace experiment
 
 			if (file.good())
 			{
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file exists.\n");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file exists.");
 				return true;
 			}
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file does not exist.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Weights file does not exist.");
 			return false;
 		}
 
@@ -530,7 +530,7 @@ namespace experiment
 			const std::string sourceFileName = std::string(OUTPUT_DIRECTORY) + "/weights-backup/per - out_weights.txt";
 			std::ifstream sourceFile(sourceFileName);
 
-			// //log(dnf_composer::DEBUG, "Attempting to get original weights file...\n");
+			// //log(dnf_composer::DEBUG, "Attempting to get original weights file...");
 
 			if (!sourceFile.is_open())
 			{
@@ -570,11 +570,11 @@ namespace experiment
 			{
 				sourceSize = sourceCheckFile.tellg();
 				destSize = destCheckFile.tellg();
-				//log(dnf_composer::DEBUG, "Checking if file size is correct... \n");
-				//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.\n");
+				//log(dnf_composer::DEBUG, "Checking if file size is correct... ");
+				//log(dnf_composer::DEBUG, "Source file size is: " + to_string(sourceSize) + " bytes. Destination file size is: " + to_string(destSize) + " bytes.");
 			} while (sourceSize != destSize);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Original weights file loaded and copied successfully.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Original weights file loaded and copied successfully.");
 		}
 
 		void ExperimentHandlerRelearning::createExperimentFolderDirectory()
@@ -589,7 +589,7 @@ namespace experiment
 
 			dnfcomposerHandler.setDataFilePath(weightsFolderPath);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Experiment folder directory created.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Experiment folder directory created.");
 		}
 
 		void ExperimentHandlerRelearning::deleteExperimentFolderDirectory() const
@@ -599,7 +599,7 @@ namespace experiment
 			const std::string experimentFolderPath = std::string(OUTPUT_DIRECTORY) + "/" + parameters.id;
 			fs::remove_all(experimentFolderPath);
 
-			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Experiment folder directory deleted.\n");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Experiment folder directory deleted.");
 		}
 
 		void ExperimentHandlerRelearning::saveWeights()

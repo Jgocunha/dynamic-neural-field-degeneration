@@ -8,6 +8,7 @@ namespace experiment
 		{
 			data.outputFieldCentroidHistory.reserve(60000);
 			std::advance(hueToAngleIterator, params.startingExternalStimulus);
+			hueToAngleIterator = hueToAngleMap.begin();
 			data.targetInputFieldCentroid = hueToAngleIterator->first;
 			data.targetOutputFieldCentroid = hueToAngleIterator->second;
 			readHueToAngleMap();
@@ -90,7 +91,7 @@ namespace experiment
 			dnfcomposerHandler.setExternalInput(data.targetInputFieldCentroid);
 
 			if (params.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "Added gaussian stimulus to perceptual field.\n");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "Added gaussian stimulus to perceptual field.");
 
 			while (!dnfcomposerHandler.getHaveFieldsSettled());
 			dnfcomposerHandler.setHaveFieldsSettled(false);
@@ -105,6 +106,8 @@ namespace experiment
 				// save centroid of the output field
 				//dnfcomposerHandler.setCentroidDataBeingAccessed(true);
 				data.outputFieldCentroidHistory.push_back(dnfcomposerHandler.getOutputFieldCentroid());
+
+				Sleep(10000);
 				//dnfcomposerHandler.setCentroidDataBeingAccessed(false);
 
 				// apply degeneration and wait for the fields to settle
@@ -118,10 +121,28 @@ namespace experiment
 
 					std::ostringstream stream;
 					stream << std::fixed << std::setprecision(2);
-					stream << "Perceptual field centroid is " << dnfcomposerHandler.getInputFieldCentroid() << " and should be " << data.targetInputFieldCentroid
-						<< " (deviation of " << std::abs(dnfcomposerHandler.getInputFieldCentroid() - data.targetInputFieldCentroid) << "). ";
-					stream << "Output field centroid is " << dnfcomposerHandler.getOutputFieldCentroid() << " and should be " << data.targetOutputFieldCentroid
-						<< " (deviation of " << std::abs(dnfcomposerHandler.getOutputFieldCentroid() - data.targetOutputFieldCentroid) << ").\n";
+
+					// Function to compute circular deviation
+					auto circularDeviation = [](double a, double b, double range) -> double {
+						double diff = std::abs(a - b);
+						return std::min(diff, range - diff);
+						};
+
+					// Perceptual field (range 0-360)
+					const double perceptualCentroid = dnfcomposerHandler.getInputFieldCentroid();
+					const double targetPerceptualCentroid = data.targetInputFieldCentroid;
+					const double perceptualDeviation = circularDeviation(perceptualCentroid, targetPerceptualCentroid, 360.0);
+
+					// Output field (range 0-28)
+					const double outputCentroid = dnfcomposerHandler.getOutputFieldCentroid();
+					const double targetOutputCentroid = data.targetOutputFieldCentroid;
+					const double outputDeviation = circularDeviation(outputCentroid, targetOutputCentroid, 28.0);
+
+					// Stream output
+					stream << "Perceptual field centroid is " << perceptualCentroid << " and should be " << targetPerceptualCentroid
+						<< " (deviation of " << perceptualDeviation << "). ";
+					stream << "Output field centroid is " << outputCentroid << " and should be " << targetOutputCentroid
+						<< " (deviation of " << outputDeviation << ").";
 
 					message += stream.str();
 					log(dnf_composer::tools::logger::INFO, message);
@@ -170,7 +191,7 @@ namespace experiment
 			{
 				if (params.isDebugModeOn)
 				{
-					const std::string message = "Failed to open the file for writing " + filename + '\n';
+					const std::string message = "Failed to open the file for writing " + filename + '.';
 					dnf_composer::tools::logger::log(dnf_composer::tools::logger::FATAL, message);
 				}
 			}
@@ -183,7 +204,7 @@ namespace experiment
 
 			if (params.isDebugModeOn)
 			{
-				const std::string message = "New centroids appended to " + filename + '\n';
+				const std::string message = "New centroids appended to " + filename + '.';
 				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, message);
 			}
 		}

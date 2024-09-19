@@ -6,13 +6,13 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 {
 	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
-	populateIndicesForDegeneration(); // for recovering from degeneration experiment
+	//populateIndicesForDegeneration(); // for recovering from degeneration experiment
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	//populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
+	populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -102,7 +102,7 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 		for (int j = 0; j < components["input"].size(); j++)
 		{
 			minWeightValue = std::min(minWeightValue, weights[j][i]);
-			maxWeightValue = std::max(maxWeightValue, weights[j][i]);
+			maxWeightValue = std::max(maxWeightValue, weights[j][i]) -0.0055;
 		}
 	}
 }

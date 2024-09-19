@@ -10,7 +10,7 @@
 
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
-    "experimentType": "WEIGHTS_REDUCE",
+    "experimentType": "WEIGHTS_RANDOMIZE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
     "totalNumberOfElementsToDegenerate": 201600,
     "#comment_fieldToDegenerate": "perceptual, output",
@@ -28,6 +28,6 @@
     "numberOfEpochs": 10,
     "maxAmountOfDemonstrations": 10,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
-    "updateAllWeights": true
+    "updateAllWeights": false
   }
 }
