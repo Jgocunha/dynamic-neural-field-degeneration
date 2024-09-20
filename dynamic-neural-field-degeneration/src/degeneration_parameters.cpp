@@ -88,7 +88,7 @@ namespace experiment
 			case ElementDegeneracyType::NEURONS_DEACTIVATE:
 				if (field == "perceptual")
 					typeOfElement = "pre-synaptic neurons";
-				else if (field == "decision")
+				else //if (field == "output")
 					typeOfElement = "post-synaptic neurons";
 				name = "deactivate";
 				break;

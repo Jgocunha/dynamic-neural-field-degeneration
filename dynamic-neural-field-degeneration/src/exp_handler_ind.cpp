@@ -5,12 +5,10 @@ namespace experiment
 	namespace degeneration
 	{
 		ExperimentHandlerInducing::ExperimentHandlerInducing()
+			: params(), dnfcomposerHandler(params.isVisualizationOn)
 		{
 			data.outputFieldCentroidHistory.reserve(60000);
 			std::advance(hueToAngleIterator, params.startingExternalStimulus);
-			hueToAngleIterator = hueToAngleMap.begin();
-			data.targetInputFieldCentroid = hueToAngleIterator->first;
-			data.targetOutputFieldCentroid = hueToAngleIterator->second;
 			readHueToAngleMap();
 		}
 
@@ -46,6 +44,7 @@ namespace experiment
 		{
 			params.print();
 			setExperimentSetupData();
+			setExpectedFieldBehaviour();
 
 			for (int i = 0; i < params.numberOfTrials; i++)
 			{
@@ -105,9 +104,9 @@ namespace experiment
 			{
 				// save centroid of the output field
 				//dnfcomposerHandler.setCentroidDataBeingAccessed(true);
+				Sleep(2);
 				data.outputFieldCentroidHistory.push_back(dnfcomposerHandler.getOutputFieldCentroid());
 
-				Sleep(10000);
 				//dnfcomposerHandler.setCentroidDataBeingAccessed(false);
 
 				// apply degeneration and wait for the fields to settle

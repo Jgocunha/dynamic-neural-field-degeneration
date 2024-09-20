@@ -20,11 +20,12 @@ namespace experiment
 		class ExperimentHandlerInducing
 		{
 		private:
+			ExperimentParameters params;
+			ExperimentData data;
+
 			DnfcomposerHandlerInducing dnfcomposerHandler;
 			std::thread experimentThread;
 
-			ExperimentParameters params;
-			ExperimentData data;
 
 			std::unordered_map<double, int> hueToAngleMap;
 			std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();
