@@ -30,8 +30,8 @@ namespace experiment
 			createExperimentFolderDirectory();
 			getOriginalWeightsFile();
 			dnfcomposerHandler.init();
-			//if (parameters.isLinkToCoppeliaSimOn)
-				//coppeliasimHandler.init();
+			if (parameters.isLinkToCoppeliaSimOn)
+				coppeliasimHandler.init();
 			experimentThread = std::thread(&ExperimentHandlerRelearning::step, this);
 		}
 
@@ -60,13 +60,10 @@ namespace experiment
 			dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
 
 			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements after pick and place: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
-
-			//Sleep(100);
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements before degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
 
 			degenerationProcedure();
 
-			//Sleep(500);
 			if (parameters.isDebugModeOn)
 				dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
 
@@ -88,10 +85,6 @@ namespace experiment
 		{
 			for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
 			{
-				//Sleep(10);
-				//dnfcomposerHandler.setWasStartSimulationRequested(true);
-				//Sleep(100);
-
 				if (parameters.degenerationParameters.initialPercentage != 0)
 					initialDegeneration();
 
@@ -99,9 +92,9 @@ namespace experiment
 				{
 					bool successfulPickAndPlace = false;
 
-					//if (parameters.isLinkToCoppeliaSimOn)
-					//	successfulPickAndPlace = bonafidePickAndPlace();
-					//else
+					if (parameters.isLinkToCoppeliaSimOn)
+						successfulPickAndPlace = bonafidePickAndPlace();
+					else
 						successfulPickAndPlace = mockPickAndPlace();
 
 					if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
@@ -151,72 +144,72 @@ namespace experiment
 		void ExperimentHandlerRelearning::close()
 		{
 			dnfcomposerHandler.close();
-			//if (parameters.isLinkToCoppeliaSimOn)
-				//coppeliasimHandler.close();
+			if (parameters.isLinkToCoppeliaSimOn)
+				coppeliasimHandler.close();
 		}
 
-		//bool ExperimentHandlerRelearning::bonafidePickAndPlace()
-		//{
-		//	statistics.shapesPlacedIncorrectly = 0; // binary representation
-		//	bool successfulPickAndPlace = true;
+		bool ExperimentHandlerRelearning::bonafidePickAndPlace()
+		{
+			statistics.shapesPlacedIncorrectly = 0; // binary representation
+			bool successfulPickAndPlace = true;
 
-		//	for (int i = 0; i < parameters.numberOfShapesPerTrial; i++)
-		//	{
-		//		createShape();
-		//		readShapeHue();
-		//		readTargetAngle();
-		//		if (!verifyDecision())
-		//			successfulPickAndPlace = false;
-		//		graspShape();
-		//		placeShape();
-		//		coppeliasimHandler.resetSignals();
-		//	}
+			for (int i = 0; i < numberOfShapesPerTrial; i++)
+			{
+				createShape();
+				readShapeHue();
+				readTargetAngle();
+				if (!verifyDecision())
+					successfulPickAndPlace = false;
+				graspShape();
+				placeShape();
+				coppeliasimHandler.resetSignals();
+			}
 
-		//	if (parameters.isDebugModeOn)
-		//	{
-		//		dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '');
-		//		std::ostringstream logStream;
-		//		logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
-		//		dnf_composer::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
-		//	}
+			if (parameters.isDebugModeOn)
+			{
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
+				std::ostringstream logStream;
+				logStream << "Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.");
+				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
+			}
 
-		//	return successfulPickAndPlace;
-		//}
+			return successfulPickAndPlace;
+		}
 
-		//void ExperimentHandlerRelearning::createShape()
-		//{
-		//	// set the create shape signal to true
-		//	signals.createShape = true;
-		//	coppeliasimHandler.setSignals(signals);
-		//	signals.createShape = false;
+		void ExperimentHandlerRelearning::createShape()
+		{
+			// set the create shape signal to true
+			signals.createShape = true;
+			coppeliasimHandler.setSignals(signals);
+			signals.createShape = false;
 
-		//	// wait for the shape created signal to be true
-		//	while (!coppeliasimHandler.getSignals().isShapeCreated);
-		//}
+			// wait for the shape created signal to be true
+			while (!coppeliasimHandler.getSignals().isShapeCreated);
+		}
 
-		//void ExperimentHandlerRelearning::graspShape()
-		//{
-		//	// go pick up the cuboid
-		//	signals.graspShape = true;
-		//	coppeliasimHandler.setSignals(signals);
-		//	signals.graspShape = false;
+		void ExperimentHandlerRelearning::graspShape()
+		{
+			// go pick up the cuboid
+			signals.graspShape = true;
+			coppeliasimHandler.setSignals(signals);
+			signals.graspShape = false;
 
-		//	// wait for the cuboid to be grasped
-		//	while (!coppeliasimHandler.getSignals().isShapeGrasped);
-		//}
+			// wait for the cuboid to be grasped
+			while (!coppeliasimHandler.getSignals().isShapeGrasped);
+		}
 
-		//void ExperimentHandlerRelearning::placeShape()
-		//{
-		//	// and set place shape to true
-		//	signals.placeShape = true;
-		//	coppeliasimHandler.setSignals(signals);
-		//	signals.placeShape = false;
-		//	signals.targetAngle = UNDEFINED;
+		void ExperimentHandlerRelearning::placeShape()
+		{
+			// and set place shape to true
+			signals.placeShape = true;
+			coppeliasimHandler.setSignals(signals);
+			signals.placeShape = false;
+			signals.targetAngle = -1;
 
-		//	// when receive shape placed restart cycle
-		//	while (!coppeliasimHandler.getSignals().isShapePlaced);
-		//	coppeliasimHandler.setSignals(signals);
-		//}
+			// when receive shape placed restart cycle
+			while (!coppeliasimHandler.getSignals().isShapePlaced);
+			coppeliasimHandler.setSignals(signals);
+		}
 
 		bool ExperimentHandlerRelearning::verifyDecision()
 		{
@@ -230,42 +223,71 @@ namespace experiment
 			return false;
 		}
 
-		//void ExperimentHandlerRelearning::readShapeHue()
-		//{
-		//	// wait for the hue of the cuboid
-		//	do
-		//	{
-		//		Sleep(50); // necessary?
-		//		signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
-		//		//if (parameters.isDebugModeOn)
-		//			//std::cout << "Shape hue: " << signals.shapeHue << std::endl;
-		//	} while (signals.shapeHue == UNDEFINED);
+		void ExperimentHandlerRelearning::readShapeHue()
+		{
+			// wait for the hue of the cuboid
+			Sleep(50); // necessary?
+			signals.shapeHue = -1;
+			do
+			{
+				signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
+				//if (parameters.isDebugModeOn)
+					std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+			} while (signals.shapeHue == -1);
 
-		//	// set the hue of the cuboid for dnfcomposer
-		//	dnfcomposerHandler.setExternalInput(signals.shapeHue);
-		//	data.shapeHue = signals.shapeHue;
-		//	signals.shapeHue = UNDEFINED;
+			// set the hue of the cuboid for dnfcomposer
+			dnfcomposerHandler.setExternalInput(signals.shapeHue);
+			data.shapeHue = signals.shapeHue;
+			signals.shapeHue = -1;
 
-		//	// wait for the shape hue to be read
-		//	while (!dnfcomposerHandler.getHaveFieldsSettled());
-		//	dnfcomposerHandler.setHaveFieldsSettled(false);
-		//}
+			// wait for the shape hue to be read
+			while (!dnfcomposerHandler.getHaveFieldsSettled());
+			dnfcomposerHandler.setHaveFieldsSettled(false);
+		}
+
+		void ExperimentHandlerRelearning::readTargetAngle()
+		{
+			//dnfcomposerHandler.updateFieldCentroids();
+			Sleep(10);
+			signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+			//if (params.isDebugModeOn)
+				//std::cout << "Target angle: " << signals.targetAngle << std::endl;
+
+			data.outputFieldCentroid = signals.targetAngle;
+			data.lastOutputFieldCentroid = signals.targetAngle;
+
+			getExpectedTargetAngle();
+			//dnfcomposerHandler.updateFieldCentroids();
+			Sleep(20);
+
+			// set the target angle for CoppeliaSim
+			coppeliasimHandler.setSignals(signals);
+		}
 
 		//void ExperimentHandlerRelearning::readTargetAngle()
 		//{
-		//	dnfcomposerHandler.updateFieldCentroids();
-		//	Sleep(10);
-		//	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	//signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	//Sleep(30);
+		//	signals.targetAngle = -1;
+		//	do
+		//	{
+		//		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	} while (signals.targetAngle == -1);
 		//	//if (parameters.isDebugModeOn)
-		//		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
+		//		std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
 		//	data.outputFieldCentroid = signals.targetAngle;
 		//	data.lastOutputFieldCentroid = signals.targetAngle;
 
 		//	getExpectedTargetAngle();
-		//	dnfcomposerHandler.updateFieldCentroids();
+		//	signals.targetAngle = -1;
+		//	do
+		//	{
+		//		signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	} while (signals.targetAngle == -1);
 
 		//	// set the target angle for CoppeliaSim
+		//	std::cout << "Target angle: " << signals.targetAngle << std::endl;
 		//	coppeliasimHandler.setSignals(signals);
 		//}
 
@@ -277,7 +299,7 @@ namespace experiment
 
 			for (auto it = hueToAngleMap.begin(); it != hueToAngleMap.end(); ++it)
 			{
-				double difference = std::abs(data.shapeHue - it->first);
+				const double difference = std::abs(data.shapeHue - it->first);
 				if (difference <= parameters.decisionTolerance && difference < minDifference)
 				{
 					minDifference = difference;
@@ -391,8 +413,8 @@ namespace experiment
 		void ExperimentHandlerRelearning::cleanupPickAndPlace()
 		{
 			statistics.shapesPlacedIncorrectly = 0;
-			//if (parameters.isLinkToCoppeliaSimOn)
-				//coppeliasimHandler.resetSignals();
+			if (parameters.isLinkToCoppeliaSimOn)
+				coppeliasimHandler.resetSignals();
 			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "Pick and place procedure finished.");
 		}
 

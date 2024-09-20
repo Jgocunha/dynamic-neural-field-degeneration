@@ -3,6 +3,7 @@
 #include <thread>
 #include "experiment_parameters.h"
 #include "dnfc_handler_ind.h"
+#include "coppeliasim_handler.h"
 
 namespace experiment
 {
@@ -25,7 +26,6 @@ namespace experiment
 
 			DnfcomposerHandlerInducing dnfcomposerHandler;
 			std::thread experimentThread;
-
 
 			std::unordered_map<double, int> hueToAngleMap;
 			std::unordered_map<double, int>::iterator hueToAngleIterator = hueToAngleMap.begin();

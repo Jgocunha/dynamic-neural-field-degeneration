@@ -51,9 +51,6 @@ set(header
 "include/degenerate_neural_field.h"
 "include/degenerate_field_coupling.h"
 
-#"include/experiment_parameters.h"
-#"include/dnfcomposer_handler.h"
-#"include/experiment_handler.h"
 "include/dnfc_handler_ind.h"
 "include/dnfc_handler_recov.h"
 "include/exp_handler_ind.h"
@@ -70,9 +67,6 @@ set(src
 "src/degenerate_neural_field.cpp"
 "src/degenerate_field_coupling.cpp"
 
-#"src/experiment_parameters.cpp"
-#"src/dnfcomposer_handler.cpp"
-#"src/experiment_handler.cpp"
 "src/dnfc_handler_ind.cpp"
 "src/dnfc_handler_recov.cpp"
 "src/exp_handler_ind.cpp"
@@ -109,6 +103,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE imgui-platform-kit)
 # Setup dynamic-neural-field-composer
 find_package(dynamic-neural-field-composer REQUIRED)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE dynamic-neural-field-composer)
+
+# Setup coppeliasim-cpp-client
+find_package(coppeliasim-cpp-client REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE coppeliasim-cpp-client)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
     DNF_DEGENERATION=1
@@ -153,7 +151,8 @@ target_include_directories(${INDUCING_DEG_EXE} PRIVATE include)
 target_link_libraries(${INDUCING_DEG_EXE} PRIVATE 
     imgui::imgui 
     imgui-platform-kit 
-    dynamic-neural-field-composer 
+    dynamic-neural-field-composer
+    coppeliasim-cpp-client
     ${CMAKE_PROJECT_NAME}
 )
 
@@ -164,7 +163,8 @@ target_include_directories(${RECOV_DEG_EXE} PRIVATE include)
 target_link_libraries(${RECOV_DEG_EXE} PRIVATE 
     imgui::imgui 
     imgui-platform-kit 
-    dynamic-neural-field-composer 
+    dynamic-neural-field-composer
+    coppeliasim-cpp-client
     ${CMAKE_PROJECT_NAME}
 )
 
@@ -175,6 +175,7 @@ target_include_directories(${TEST_EXE} PRIVATE include)
 target_link_libraries(${TEST_EXE} PRIVATE 
     imgui::imgui 
     imgui-platform-kit 
-    dynamic-neural-field-composer 
+    dynamic-neural-field-composer
+    coppeliasim-cpp-client
     ${CMAKE_PROJECT_NAME}
 )

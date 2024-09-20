@@ -5,7 +5,8 @@
     "decisionTolerance": 5.0,
     "isDataSavingOn": true,
     "isVisualizationOn": false,
-    "isDebugModeOn": true
+    "isDebugModeOn": true,
+    "isLinkToCoppeliaSimOn": true
   },
 
   "degeneration_parameters": {

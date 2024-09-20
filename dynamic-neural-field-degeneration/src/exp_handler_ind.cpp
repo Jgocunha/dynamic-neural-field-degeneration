@@ -82,6 +82,7 @@ namespace experiment
 		{
 			experimentThread.join();
 			dnfcomposerHandler.close();
+
 		}
 
 		void ExperimentHandlerInducing::setupProcedure()
