@@ -9,7 +9,7 @@
   },
 
   "degeneration_parameters": {
-    "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
+    "#comment_type": "NEURONS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, WEIGHTS_DEACTIVATE",
     "experimentType": "NEURONS_DEACTIVATE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
     "totalNumberOfElementsToDegenerate": 280,

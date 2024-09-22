@@ -21,7 +21,7 @@ namespace experiment
 			data.targetInputFieldCentroid = hueToAngleIterator->first;
 			data.targetOutputFieldCentroid = hueToAngleIterator->second;
 
-			//++hueToAngleIterator;
+			++hueToAngleIterator;
 		}
 
 		void ExperimentHandlerInducing::setExperimentAsEnded()
@@ -44,7 +44,7 @@ namespace experiment
 		{
 			params.print();
 			setExperimentSetupData();
-			setExpectedFieldBehaviour();
+			//setExpectedFieldBehaviour();
 
 			for (int i = 0; i < params.numberOfTrials; i++)
 			{
