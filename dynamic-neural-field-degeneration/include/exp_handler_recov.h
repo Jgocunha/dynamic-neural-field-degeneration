@@ -46,7 +46,6 @@ namespace experiment
 		{
 		private:
 			std::thread experimentThread;
-			//CoppeliasimHandler coppeliasimHandler;
 			DnfcomposerHandler dnfcomposerHandler;
 
 			ExperimentParameters parameters;
@@ -68,13 +67,7 @@ namespace experiment
 			void close();
 
 		private:
-			bool bonafidePickAndPlace();
-			void createShape();
-			void graspShape();
-			void placeShape();
 			bool verifyDecision();
-			void readShapeHue();
-			void readTargetAngle();
 			void getExpectedTargetAngle();
 			void initialDegeneration();
 

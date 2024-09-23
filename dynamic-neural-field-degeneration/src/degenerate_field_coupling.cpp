@@ -6,13 +6,13 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 {
 	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
-	//populateIndicesForDegeneration(); // for recovering from degeneration experiment
+	populateIndicesForDegeneration(); // for recovering from degeneration experiment
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
+	//populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
 	findMinMaxWeightValues();
 	degenerate = false;
 }

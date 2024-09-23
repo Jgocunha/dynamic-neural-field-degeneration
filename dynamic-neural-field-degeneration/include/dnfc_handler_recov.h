@@ -106,11 +106,6 @@ namespace experiment
 			void startSimulation();
 			void closeSimulation();
 
-			void setExperimentSetupData(const std::string& currentDegenerationType,
-				const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
-			void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
-			void setTrial(const int& trial) const;
-			void setRelearningCycles(const int& relearningCycles) const;
 			void setRelearningParameters(const RelearningType& relearningType,
 				const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
 			void setIncrementOfDegenerationPercentage(double percentage);
@@ -133,7 +128,7 @@ namespace experiment
 			bool getHaveFieldsSettled() const;
 			bool getHasRelearningFinished() const;
 			std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
-			int getNumberOfDegeneratedElements();
+			int getNumberOfDegeneratedElements() const;
 
 			void setDataFilePath(const std::string& filePath);
 
