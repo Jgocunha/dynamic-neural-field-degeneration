@@ -118,7 +118,7 @@ namespace experiment
 			void setRelearning(const int& targetRelearningPositions);
 			void setHaveFieldsSettled(bool haveFieldsSettled);
 			void setHasRelearningFinished(bool hasRelearningFinished);
-			void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+			void setIsUserInterfaceActiveAs(bool isUserInterfaceActive);
 
 			void setWasStartSimulationRequested(bool wasStartSimulationRequested);
 			void setWasCloseSimulationRequested(bool wasCloseSimulationRequested);

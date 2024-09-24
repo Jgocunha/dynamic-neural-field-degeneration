@@ -14,9 +14,6 @@ namespace experiment
 			simulationElements.fieldCoupling = std::dynamic_pointer_cast<DegenerateFieldCoupling>(simulation->getElement(simulationParameters.fieldCouplingId));
 
 			simulationElements.fcpw = dnf_composer::LearningWizard{ simulation, "per - out" };
-
-			if(simulationParameters.isUserInterfaceActive)
-				setupUserInterface();
 			readPeaksForCoupling();
 		}
 
@@ -35,8 +32,6 @@ namespace experiment
 
 			simulationElements.fcpw = dnf_composer::LearningWizard{ simulation, "per - out" };
 
-			if (simulationParameters.isUserInterfaceActive)
-				setupUserInterface();
 			readPeaksForCoupling();
 		}
 
@@ -44,6 +39,8 @@ namespace experiment
 
 		void DnfcomposerHandler::init()
 		{
+			if (simulationParameters.isUserInterfaceActive)
+				setupUserInterface();
 			dnfcomposerThread = std::thread(&DnfcomposerHandler::step, this);
 			readCentroidsThread = std::thread(&DnfcomposerHandler::updateFieldCentroids, this);
 		}
@@ -194,8 +191,9 @@ namespace experiment
 			this->hasRelearningFinished = hasRelearningFinished;
 		}
 
-		void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const
+		void DnfcomposerHandler::setIsUserInterfaceActiveAs(bool isUserInterfaceActive)
 		{
+			simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
 			application->setActivateUserInterfaceAs(isUserInterfaceActive);
 		}
 

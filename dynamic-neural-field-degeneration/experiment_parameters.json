@@ -4,33 +4,33 @@
     "startingExternalStimulus": 0,
     "decisionTolerance": 1.5,
     "isDataSavingOn": true,
-    "isVisualizationOn": false,
+    "isVisualizationOn": true,
     "isDebugModeOn": false
   },
 
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
-    "experimentType": "WEIGHTS_DEACTIVATE",
+    "experimentType": "NEURONS_DEACTIVATE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
-    "totalNumberOfElementsToDegenerate": 201600,
+    "totalNumberOfElementsToDegenerate": 720,
     "#comment_fieldToDegenerate": "perceptual, output",
-    "fieldToDegenerate": "output",
-    "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1000",
-    "numberOfElementsToDegeneratePerIteration": 1000,
+    "fieldToDegenerate": "perceptual",
+    "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1008",
+    "numberOfElementsToDegeneratePerIteration": 1,
     "#comment_initialPercentageOfDegeneration": "20, 90, 70, 70",
-    "initialPercentageOfDegeneration": 0,
+    "initialPercentageOfDegeneration": 20,
     "targetPercentageOfDegeneration": 100,
-    "#comment_incrementOfDegenerationInPercentage": "0.0, 0.36, 0.5",
-    "incrementOfDegenerationInPercentage": 0.5
+    "#comment_incrementOfDegenerationInPercentage": "0.14, 0.36, 0.5",
+    "incrementOfDegenerationInPercentage": 0.14
   },
 
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
     "learningRate": 0.01,
-    "numberOfEpochs": 1,
-    "maxAmountOfDemonstrations": 50,
+    "numberOfEpochs": 10,
+    "maxAmountOfDemonstrations": 5,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
-    "updateAllWeights": false
+    "updateAllWeights": true
   }
 }
