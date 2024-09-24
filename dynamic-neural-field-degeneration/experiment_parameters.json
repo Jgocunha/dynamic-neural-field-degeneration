@@ -1,33 +1,36 @@
 {
   "experiment_parameters": {
-    "numberOfTrials": 100,
+    "numberOfTrials": 10,
     "startingExternalStimulus": 0,
-    "decisionTolerance": 5.0,
-    "isDataSavingOn": false,
-    "isVisualizationOn": true,
-    "isDebugModeOn": true
+    "decisionTolerance": 1.5,
+    "isDataSavingOn": true,
+    "isVisualizationOn": false,
+    "isDebugModeOn": false
   },
 
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
-    "experimentType": "NEURONS_DEACTIVATE",
+    "experimentType": "WEIGHTS_DEACTIVATE",
     "#comment_total_number": "720*280 = 201600 or 720 or 280",
-    "totalNumberOfElementsToDegenerate": 280,
+    "totalNumberOfElementsToDegenerate": 201600,
     "#comment_fieldToDegenerate": "perceptual, output",
     "fieldToDegenerate": "output",
-    "numberOfElementsToDegeneratePerIteration": 1,
-    "initialPercentageOfDegeneration": 85,
+    "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1000",
+    "numberOfElementsToDegeneratePerIteration": 1000,
+    "#comment_initialPercentageOfDegeneration": "20, 90, 70, 70",
+    "initialPercentageOfDegeneration": 0,
     "targetPercentageOfDegeneration": 100,
-    "incrementOfDegenerationInPercentage": 0.36
+    "#comment_incrementOfDegenerationInPercentage": "0.0, 0.36, 0.5",
+    "incrementOfDegenerationInPercentage": 0.5
   },
 
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
-    "learningRate": 0.02,
-    "numberOfEpochs": 100,
-    "maxAmountOfDemonstrations": 10,
+    "learningRate": 0.01,
+    "numberOfEpochs": 1,
+    "maxAmountOfDemonstrations": 50,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
-    "updateAllWeights": true
+    "updateAllWeights": false
   }
 }

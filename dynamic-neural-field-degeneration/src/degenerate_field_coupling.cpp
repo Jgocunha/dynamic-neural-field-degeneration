@@ -259,7 +259,7 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 
 	if (indicesForDegeneration.empty())
 	{
-		std::cout << "No more unique combinations to degenerate" << std::endl;
+		dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::WARNING, "No more unique combinations to degenerate");
 	}
 	/*else
 	{

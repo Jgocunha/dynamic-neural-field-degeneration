@@ -29,6 +29,7 @@ namespace experiment
 			parameters.print();
 			createExperimentFolderDirectory();
 			getOriginalWeightsFile();
+			dnfcomposerHandler.setIsUserInterfaceActiveAs(parameters.isVisualizationOn);
 			dnfcomposerHandler.init();
 			experimentThread = std::thread(&ExperimentHandlerRelearning::step, this);
 		}
@@ -85,6 +86,10 @@ namespace experiment
 			{
 				if (parameters.degenerationParameters.initialPercentage != 0)
 					initialDegeneration();
+
+				dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
+				dnfcomposerHandler.setNumberOfElementsToDegenerate();
+
 				do
 				{
 					const bool successfulPickAndPlace = mockPickAndPlace();
@@ -135,6 +140,8 @@ namespace experiment
 
 		void ExperimentHandlerRelearning::close()
 		{
+			if (experimentThread.joinable())
+				experimentThread.join();
 			dnfcomposerHandler.close();
 		}
 

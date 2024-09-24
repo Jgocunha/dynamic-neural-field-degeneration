@@ -6,8 +6,6 @@ namespace experiment
 	{
 		DnfcomposerHandler::DnfcomposerHandler()
 		{
-			//log(DEBUG,, "DnfcomposerHandler::DnfcomposerHandler()");
-
 			simulation = getExperimentSimulation();
 			application = std::make_unique<dnf_composer::Application>(simulation, true);
 
@@ -17,7 +15,8 @@ namespace experiment
 
 			simulationElements.fcpw = dnf_composer::LearningWizard{ simulation, "per - out" };
 
-			setupUserInterface();
+			if(simulationParameters.isUserInterfaceActive)
+				setupUserInterface();
 			readPeaksForCoupling();
 		}
 
@@ -78,6 +77,8 @@ namespace experiment
 					userRequestClose = application->hasUIBeenClosed();
 			}
 
+			if (readCentroidsThread.joinable())
+				readCentroidsThread.join();
 			application->close();
 		}
 
@@ -150,9 +151,7 @@ namespace experiment
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 		}
 
-
 		// public set methods for UI
-
 
 		void DnfcomposerHandler::setRelearningParameters(const RelearningType& relearningType, const int& numberOfRelearningEpochs,
 			const double& learningRate, const int& maximumRelearningCycles, const bool updateAllWeights)
@@ -250,7 +249,6 @@ namespace experiment
 			simulationElements.outputField->setNumNeuronsToDegenerate(count);
 			simulationElements.fieldCoupling->setNumWeightsToDegenerate(count);
 		}
-
 
 		void DnfcomposerHandler::setNumberOfElementsToDegenerate() const
 		{
@@ -427,7 +425,6 @@ namespace experiment
 			simulationElements.fcpw.setDataFilePath(filePath);
 		}
 
-
 		void DnfcomposerHandler::saveWeights()
 		{
 			wasSaveWeightsRequested = true;
@@ -551,6 +548,5 @@ namespace experiment
 
 			file.close();
 		}
-
 	}
 }
