@@ -16,8 +16,8 @@ experiments = {'deactivate weights', 'weight'; ...
                'deactivate post-synaptic neurons', 'post synaptic neuron'; ...
                };
 
-positions = {'78.0'; '82.0'; '86.0'; '90.0'; '94.0'; '98.0'; '102.0'};  
-targetCentroids = {78.0; 82.0; 86.0; 90.0; 94.0; 98.0; 102.0}; 
+positions = {'2.0'; '6.0'; '10.0'; '14.0'; '18.0'; '22.0'; '26.0'};  
+targetCentroids = {2.0; 6.0; 10.0; 14.0; 18.0; 22.0; 26.0}; 
 
 centroidsFilePath = '';
 analysisFilePath = '';
@@ -75,8 +75,8 @@ for experiment = 1:size(experiments,1)
 
     end
     %% Display and save table
-    delete(analysisFilePath)
-    diary(analysisFilePath)
+    %delete(analysisFilePath)
+    %diary(analysisFilePath)
 
     % Calculate and display Avg. % of affected elements until disapearance of bump
     avgAvgNumIterations = mean(dataTable{:,'Avg. % of affected elements until disapearance of bump'});

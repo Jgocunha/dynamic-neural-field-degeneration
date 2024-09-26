@@ -1,14 +1,14 @@
-Avg. % of affected elements until disapearance of bump: 23.7846
-Avg. % of affected elements until misbehaviour: 13.3848
-Average Max. deviation per experiment: 14.1071
+Avg. % of affected elements until disapearance of bump: 22.7513
+Avg. % of affected elements until misbehaviour: 14.7704
+Average Max. deviation per experiment: 7.0714
                  <strong>Condition</strong>                 <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
     <strong>___________________________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
 
-    {'deactivate pre-synaptic neurons'}           78           125                              24.428                                                20.073                            25.75     
-    {'deactivate pre-synaptic neurons'}           82           120                              24.109                                                4.9722                            21.75     
-    {'deactivate pre-synaptic neurons'}           86           117                              24.081                                                6.4518                                9     
-    {'deactivate pre-synaptic neurons'}           90           120                              23.439                                                23.237                             2.75     
-    {'deactivate pre-synaptic neurons'}           94           119                              23.133                                                19.032                             9.75     
-    {'deactivate pre-synaptic neurons'}           98           114                              23.748                                                5.2169                             5.75     
-    {'deactivate pre-synaptic neurons'}          102           113                              23.556                                                 14.71                               24     
+    {'deactivate pre-synaptic neurons'}           2            421                              22.177                                                17.477                             8.55     
+    {'deactivate pre-synaptic neurons'}           6            102                              23.637                                                10.377                                8     
+    {'deactivate pre-synaptic neurons'}          10            102                              23.524                                                12.362                             8.15     
+    {'deactivate pre-synaptic neurons'}          14            102                              20.974                                                19.755                             3.45     
+    {'deactivate pre-synaptic neurons'}          18            102                              21.985                                                18.147                             8.35     
+    {'deactivate pre-synaptic neurons'}          22            102                                23.9                                                10.522                              4.6     
+    {'deactivate pre-synaptic neurons'}          26            101                              23.062                                                14.752                              8.4     
 
