@@ -1,5 +1,15 @@
 # Load required libraries
+library(dplyr)
+library(tidyr)
 library(ggplot2)
+library(extrafont)
+library(ggsignif)
+library(moments)
+library(Hmisc)
+library(effsize)
+library(rstatix)
+library(splines)  # Required for spline interpolation
+library(coin)
 
 # Define the function to read data from the file
 read_data <- function(filePath) {
@@ -99,23 +109,46 @@ results <- data.frame(
 # Display the table
 print(results)
 
-# Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+# Function to interpolate data using spline
+interpolate_spline <- function(x, y, n = 100) {
+  spline_data <- as.data.frame(spline(x, y, n = n))
+  names(spline_data) <- c("x", "y")
+  return(spline_data)
+}
+
+# Interpolating the data points
+failed_behavior_spline <- interpolate_spline(degenerationPercentages, perFailedBehaviour)
+recovered_behavior_spline <- interpolate_spline(degenerationPercentages, perRecoveredBehaviour)
+avg_relearning_spline <- interpolate_spline(degenerationPercentages, avgRelearningCycles * relearning_scalar)
+
+# Plot the evolution of failed behavior, recovered behavior, and average relearning cycles with spline interpolation
 relearning_scalar <- 1.6
 y_axis_scale <- 1.6
 dot_size <- 3
 alpha_plots <- 0.7
+spline_size <- 1
+
 ggplot() +
   # Dot plot for Failed Behavior
   geom_point(aes(x = degenerationPercentages, y = perFailedBehaviour, color = 'Failed Behavior'), 
              size = dot_size + 0.5, alpha = alpha_plots) +
   
+  # Line plot for Failed Behavior using spline interpolation
+  geom_line(data = failed_behavior_spline, aes(x = x, y = y, color = 'Failed Behavior'), size = spline_size) +
+  
   # Dot plot for Recovered Behavior
   geom_point(aes(x = degenerationPercentages, y = perRecoveredBehaviour, color = 'Recovered Behavior'), 
              size = dot_size, shape = 15, alpha = alpha_plots) +
   
+  # Line plot for Recovered Behavior using spline interpolation
+  geom_line(data = recovered_behavior_spline, aes(x = x, y = y, color = 'Recovered Behavior'), size = spline_size) +
+  
   # Dot plot for Average Relearning Cycles on the secondary y-axis
   geom_point(aes(x = degenerationPercentages, y = avgRelearningCycles * relearning_scalar, 
                  color = 'Average Relearning Cycles'), size = dot_size, shape = 17, alpha = alpha_plots) +
+  
+  # Line plot for Average Relearning Cycles using spline interpolation
+  geom_line(data = avg_relearning_spline, aes(x = x, y = y, color = 'Average Relearning Cycles'), size = spline_size) +
   
   # Scaling the secondary y-axis with aligned tick marks
   scale_y_continuous(
@@ -141,9 +174,8 @@ ggplot() +
                                 'Recovered Behavior' = 'darkgreen', 
                                 'Average Relearning Cycles' = 'blue')) +
   labs(
-    # title = 'Behavior Evolution vs. Degeneration Percentage',
-    # subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles',
-    # caption = 'Data represents the evolution of behavior across different degeneration percentages.',
+    title = 'Behavior Evolution vs. Degeneration Percentage',
+    subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles',
     color = 'Legend'
   ) +
   theme_minimal(base_size = 15) +  # Use a minimal theme for a cleaner look
@@ -161,6 +193,7 @@ ggplot() +
     plot.subtitle = element_text(size = 12, face = "italic"),
     plot.caption = element_text(size = 10, face = "italic", color = "darkgray")
   )
+
 # Save the plot as an image
-filename <- 'Relearning_deactivate_weights.png'
-ggsave(paste0('./plots/', filename, '.png'), width = 12, height = 8, dpi = 300)
+#filename <- 'Relearning_deactivate_weights_with_spline.png'
+#ggsave(paste0('./plots/', filename), width = 12, height = 8, dpi = 300)

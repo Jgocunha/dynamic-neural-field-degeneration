@@ -121,19 +121,68 @@ dataTable <- data.frame(
 print(dataTable)
 
 # Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
+relearning_scalar <- 25
+y_axis_scale <- 25
+dot_size <- 3
+alpha_plots <- 0.7
 ggplot() +
-  geom_line(aes(x = degenerationPercentages, y = perFailedBehaviour, color = 'red')) +
-  geom_point(aes(x = degenerationPercentages, y = perFailedBehaviour), color = 'red') +
-  geom_line(aes(x = degenerationPercentages, y = perRecoveredBehaviour, color = 'darkgreen')) +
-  geom_point(aes(x = degenerationPercentages, y = perRecoveredBehaviour), color = 'darkgreen') +
-  geom_line(aes(x = degenerationPercentages, y = avgRelearningCycles, color = 'blue'), linetype = "dashed") +
-  geom_point(aes(x = degenerationPercentages, y = avgRelearningCycles), color = 'blue') +
-  scale_y_continuous(sec.axis = sec_axis(~., name = "Average Relearning Cycles")) +
-  labs(title = 'Evolution of Behavior and Relearning Cycles', x = 'Degeneration Percentage', 
-       y = 'Recovered Behavior % / Failed Behavior %') +
-  scale_color_manual(name = "Legend", values = c('red' = 'red', 'darkgreen' = 'darkgreen', 'blue' = 'blue')) +
-  theme_minimal()
+  # Dot plot for Failed Behavior
+  geom_point(aes(x = degenerationPercentages, y = perFailedBehaviour, color = 'Failed Behavior'), 
+             size = dot_size + 0.5, alpha = alpha_plots) +
+  
+  # Dot plot for Recovered Behavior
+  geom_point(aes(x = degenerationPercentages, y = perRecoveredBehaviour, color = 'Recovered Behavior'), 
+             size = dot_size, shape = 15, alpha = alpha_plots) +
+  
+  # Dot plot for Average Relearning Cycles on the secondary y-axis
+  geom_point(aes(x = degenerationPercentages, y = avgRelearningCycles * relearning_scalar, 
+                 color = 'Average Relearning Cycles'), size = dot_size, shape = 17, alpha = alpha_plots) +
+  
+  # Scaling the secondary y-axis with aligned tick marks
+  scale_y_continuous(
+    name = 'Behavior Percentage (%)',
+    limits = c(0, 100),  # Set limits for the left y-axis
+    breaks = seq(0, 100, by = 10),  # Tick marks every 10 units
+    sec.axis = sec_axis(
+      ~ . / y_axis_scale, 
+      name = 'Average Relearning Cycles',
+      breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
+    )
+  ) +
+  
+  # Scaling the x-axis with 0.5 incremental ticks
+  scale_x_continuous(
+    name = 'Degeneration Percentage (%)',
+    limits = c(85, 100),  # Set limits for the x-axis
+    breaks = seq(85, 100, by = 5)  # Set ticks at 0.5 intervals
+  ) +
+  
+  # Color and theme adjustments
+  scale_color_manual(values = c('Failed Behavior' = 'red', 
+                                'Recovered Behavior' = 'darkgreen', 
+                                'Average Relearning Cycles' = 'blue')) +
+  labs(
+    # title = 'Behavior Evolution vs. Degeneration Percentage',
+    # subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles',
+    # caption = 'Data represents the evolution of behavior across different degeneration percentages.',
+    color = 'Legend'
+  ) +
+  theme_minimal(base_size = 15) +  # Use a minimal theme for a cleaner look
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.title.y.right = element_text(margin = margin(l = 10), size = 14, face = "bold"),  # Add margin to the right y-axis label
+    legend.title = element_text(size = 14, face = "bold"),
+    legend.position = "top",  # Place the legend at the top for better readability
+    legend.justification = c("right"),
+    legend.background = element_rect(fill = "white", color = NA),
+    text = element_text(family = "Garamond", size = 14),
+    panel.grid.major = element_line(color = "lightgray", size = 0.5),
+    panel.grid.minor = element_blank(),  # Remove minor grid lines for a cleaner look
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 12, face = "italic"),
+    plot.caption = element_text(size = 10, face = "italic", color = "darkgray")
+  )
 
 # Save the plot
-#filename <- 'Relearning_post_synaptic_neurons'
-#ggsave(paste0('./plots/', filename, '.png'), width = 12, height = 8, dpi = 300)
+filename <- 'Relearning_post_synaptic_neurons'
+ggsave(paste0('./plots/', filename, '.png'), width = 12, height = 8, dpi = 300)
