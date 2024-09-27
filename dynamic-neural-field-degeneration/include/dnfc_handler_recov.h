@@ -138,7 +138,6 @@ namespace experiment
 			void setNumberOfElementsToDegenerate() const;
 			void saveWeights();
 
-
 		private:
 			void setupUserInterface();
 			void updateExternalInput();

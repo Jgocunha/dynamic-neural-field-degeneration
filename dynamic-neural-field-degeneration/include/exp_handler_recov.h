@@ -42,6 +42,17 @@ namespace experiment
 			double targetAngle = -1;
 		};
 
+		struct LogMsg
+		{
+			int trial = 0;
+			int relearningAttempt = 0;
+			int maxRelearningAttempts = 0;
+			double initialDegenerationPercentage = 0.0;
+			double currentPercentageOfDegeneration = 0.0;
+			double maxPercentageOfDegeneration = 0.0;
+			std::bitset<7> shapes;
+		};
+
 		class ExperimentHandlerRelearning
 		{
 		private:
@@ -52,6 +63,7 @@ namespace experiment
 			ExperimentData data;
 			ExperimentStatistics statistics;
 			Signals signals;
+			LogMsg msg;
 
 			double currentPercentageOfDegeneration = 0.0;
 			int numberOfShapesPerTrial = 7;

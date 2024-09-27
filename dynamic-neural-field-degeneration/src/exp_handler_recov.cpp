@@ -27,11 +27,17 @@ namespace experiment
 				+ " demos-" + std::to_string(parameters.relearningParameters.maxAmountOfDemonstrations);
 
 			parameters.print();
+			if (!parameters.isDebugModeOn)
+				dnf_composer::tools::logger::Logger::setMinLogLevel(dnf_composer::tools::logger::ERROR);
 			createExperimentFolderDirectory();
 			getOriginalWeightsFile();
 			dnfcomposerHandler.setIsUserInterfaceActiveAs(parameters.isVisualizationOn);
 			dnfcomposerHandler.init();
 			experimentThread = std::thread(&ExperimentHandlerRelearning::step, this);
+
+			msg.maxPercentageOfDegeneration = parameters.degenerationParameters.targetPercentage;
+			msg.initialDegenerationPercentage = parameters.degenerationParameters.initialPercentage;
+			msg.maxRelearningAttempts = parameters.relearningParameters.maxAmountOfDemonstrations;
 		}
 
 		void ExperimentHandlerRelearning::initialDegeneration()
@@ -58,22 +64,23 @@ namespace experiment
 
 			dnfcomposerHandler.setInitialNumberOfElementsToDegenerate(numberElements);
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements before degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
+			//dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements before degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
+
+			std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+				<< "Starting initial degeneration procedure, target initial degeneration is: " << std::fixed << std::setprecision(2) << msg.initialDegenerationPercentage << "%." << std::endl;
 
 			degenerationProcedure();
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
-
+			//dnf_composer::tools::logger::log(dnf_composer::tools::logger::WARNING, "Number of not degenerated elements after degeneration: " + std::to_string(dnfcomposerHandler.getNumberOfDegeneratedElements()));
 
 			currentPercentageOfDegeneration = parameters.degenerationParameters.initialPercentage;
-			if (parameters.isDebugModeOn)
-			{
-				std::ostringstream logStream;
-				logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
-			}
+			msg.currentPercentageOfDegeneration = currentPercentageOfDegeneration;
+			std::ostringstream logStream;
+			logStream << "Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
+
+			std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+				<< "Completed initial degeneration procedure." << std::endl;
 
 			saveWeights();
 
@@ -84,6 +91,7 @@ namespace experiment
 		{
 			for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
 			{
+				msg.trial = trial;
 				if (parameters.degenerationParameters.initialPercentage != 0)
 					initialDegeneration();
 
@@ -103,29 +111,35 @@ namespace experiment
 							saveWeights();
 						}
 
+						std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+							<< " Pick and place finished with success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Increasing degeneration to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration + parameters.degenerationParameters.incrementOfDegenerationInPercentage << "%." << std::endl;
+
 						degenerationProcedure();
+						msg.currentPercentageOfDegeneration = currentPercentageOfDegeneration;
 						saveWeights();
 
 						if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
 						{
 							data.isFieldDead = true;
-							if (parameters.isDebugModeOn)
-								dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "(relearning-experiment) Re-learning did not work.");
+							dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "(relearning-experiment) Re-learning did not work.");
+							std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+								<< " Pick and place finished without success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Re-learning attempt number: " << statistics.numOfRelearningCycles << " out of " << parameters.relearningParameters.maxAmountOfDemonstrations
+								<< ". Reached maximum number of re-learning attempts. Starting next trial." << std::endl;
 						}
 						statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
 						statistics.numOfRelearningCycles = 0;
 						currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
-						if (parameters.isDebugModeOn)
-						{
-							std::ostringstream logStream;
-							logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
-							dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
-						}
+
+						std::ostringstream logStream;
+						logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+						dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
 					}
 					else
 					{
 						if (!doesBackupWeightsFileExist())
 							backupWeightsFile();
+						std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+							<< " Pick and place finished without success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Re-learning attempt number: " << statistics.numOfRelearningCycles << " out of " << parameters.relearningParameters.maxAmountOfDemonstrations << "." << std::endl;
 						relearningProcedure();
 					}
 					cleanupPickAndPlace();
@@ -192,13 +206,10 @@ namespace experiment
 					successfulPickAndPlace = false;
 			}
 
-			if (parameters.isDebugModeOn)
-			{
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
-				std::ostringstream logStream;
-				logStream << "(relearning-experiment) Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
-			}
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
+			std::ostringstream logStream;
+			logStream << "(relearning-experiment) Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
 
 			return successfulPickAndPlace;
 		}
@@ -237,8 +248,7 @@ namespace experiment
 
 		void ExperimentHandlerRelearning::degenerationProcedure()
 		{
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Degeneration procedure started.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Degeneration procedure started.");
 
 			// Disable the user interface whilst degenerating to consume less time.
 			if (parameters.isVisualizationOn)
@@ -261,16 +271,14 @@ namespace experiment
 			// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 			// And the learning rate
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure started.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure started.");
 
 			dnfcomposerHandler.setRelearning(statistics.shapesPlacedIncorrectly);
 
 			while (!dnfcomposerHandler.getHasRelearningFinished());
 			dnfcomposerHandler.setHasRelearningFinished(false);
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure finished.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure finished.");
 
 			statistics.numOfRelearningCycles++;
 		}
@@ -304,7 +312,7 @@ namespace experiment
 				for (const int cycles : statistics.learningCyclesPerTrialHistory)
 					file << cycles << " "; 
 
-				file << "";
+				file << "\n";
 
 				file.flush();
 

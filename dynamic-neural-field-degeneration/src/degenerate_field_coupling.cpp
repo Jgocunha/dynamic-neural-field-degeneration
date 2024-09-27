@@ -102,7 +102,7 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 		for (int j = 0; j < components["input"].size(); j++)
 		{
 			minWeightValue = std::min(minWeightValue, weights[j][i]);
-			maxWeightValue = std::max(maxWeightValue, weights[j][i]) -0.0055;
+			maxWeightValue = std::max(maxWeightValue, weights[j][i]) - 0.001;
 		}
 	}
 }
@@ -380,6 +380,7 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 			{
 				std::pair<int, int> pair(i, j);
 				auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
+				//auto it = std::ranges::find(indicesForDegeneration, pair);
 				if (it != indicesForDegeneration.end())
 				{
 					weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
