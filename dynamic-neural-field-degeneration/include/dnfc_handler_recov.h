@@ -70,28 +70,8 @@ namespace experiment
 			bool wasSaveWeightsRequested = false;
 
 			const double offset = 0.0;
-			std::vector<std::vector<double>> inputTargetPeaksForCoupling;// =
-			//{
-			//	{ 00.00 + offset }, // red 0
-			//	{ 41.00 + offset }, // orange 1
-			//	{ 60.00 + offset }, // yellow 2
-			//	{ 120.00 + offset }, // green 3
-			//	{ 240.00 + offset }, // blue 4
-			//	{ 274.00 + offset }, // indigo 5
-			//	{ 300.00 + offset } // violet 6
-			//};
-			std::vector<std::vector<double>> outputTargetPeaksForCoupling;/* =
-			{
-				{ 2.00 + offset },
-				{ 6.00 + offset },
-				{ 10.00 + offset },
-				{ 14.00 + offset },
-				{ 18.00 + offset },
-				{ 22.00 + offset },
-				{ 26.00 + offset }
-			};*/
-
-
+			std::vector<std::vector<double>> inputTargetPeaksForCoupling;
+			std::vector<std::vector<double>> outputTargetPeaksForCoupling;
 		public:
 			DnfcomposerHandler();
 			DnfcomposerHandler(bool isUserInterfaceActive);
@@ -106,11 +86,6 @@ namespace experiment
 			void startSimulation();
 			void closeSimulation();
 
-			void setExperimentSetupData(const std::string& currentDegenerationType,
-				const double& maximumAllowedDeviation, const std::string& typeOfElementsDegenerated) const;
-			void setExpectedFieldBehavior(const double& targetPerceptualFieldCentroid, const double& targetDecisionFieldCentroid) const;
-			void setTrial(const int& trial) const;
-			void setRelearningCycles(const int& relearningCycles) const;
 			void setRelearningParameters(const RelearningType& relearningType,
 				const int& numberOfRelearningEpochs, const double& learningRate, const int& maximumRelearningCycles, bool updateAllWeights);
 			void setIncrementOfDegenerationPercentage(double percentage);
@@ -123,7 +98,7 @@ namespace experiment
 			void setRelearning(const int& targetRelearningPositions);
 			void setHaveFieldsSettled(bool haveFieldsSettled);
 			void setHasRelearningFinished(bool hasRelearningFinished);
-			void setIsUserInterfaceActiveAs(bool isUserInterfaceActive) const;
+			void setIsUserInterfaceActiveAs(bool isUserInterfaceActive);
 
 			void setWasStartSimulationRequested(bool wasStartSimulationRequested);
 			void setWasCloseSimulationRequested(bool wasCloseSimulationRequested);
@@ -133,7 +108,7 @@ namespace experiment
 			bool getHaveFieldsSettled() const;
 			bool getHasRelearningFinished() const;
 			std::shared_ptr<ExperimentWindow> getUserInterfaceWindow();
-			int getNumberOfDegeneratedElements();
+			int getNumberOfDegeneratedElements() const;
 
 			void setDataFilePath(const std::string& filePath);
 
@@ -142,8 +117,6 @@ namespace experiment
 			void readWeights();
 			void setNumberOfElementsToDegenerate() const;
 			void saveWeights();
-
-
 		private:
 			void setupUserInterface();
 			void updateExternalInput();

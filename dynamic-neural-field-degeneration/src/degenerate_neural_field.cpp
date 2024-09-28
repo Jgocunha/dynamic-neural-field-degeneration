@@ -63,14 +63,14 @@ void DegenerateNeuralField::applyDegeneracy()
 			setRandomUniqueNeuronToZero();
 		degenerate = false;
 		break;
-	/*case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
-		while (numNeuronsToDegenerate > 0)
-		{
-			setRandomUniqueNeuronToZero();
-			numNeuronsToDegenerate--;
-		}
-		degenerate = false;
-		break;*/
+		/*case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
+			while (numNeuronsToDegenerate > 0)
+			{
+				setRandomUniqueNeuronToZero();
+				numNeuronsToDegenerate--;
+			}
+			degenerate = false;
+			break;*/
 	case experiment::degeneration::ElementDegeneracyType::NONE:
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
@@ -110,7 +110,7 @@ double DegenerateNeuralField::getCentroid()
 			// Calculate the circular distance from the midpoint to the position
 			double distance = 0.0;
 			if (isAtLimits)
-				distance = fmod(static_cast<double>(i) - static_cast<double>(commonParameters.dimensionParameters.size) * 0.5 
+				distance = fmod(static_cast<double>(i) - static_cast<double>(commonParameters.dimensionParameters.size) * 0.5
 					+ static_cast<double>(commonParameters.dimensionParameters.size) * 10, static_cast<double>(commonParameters.dimensionParameters.size));
 			else
 				distance = fmod(static_cast<double>(i) - static_cast<double>(commonParameters.dimensionParameters.size) * 0.5, static_cast<double>(commonParameters.dimensionParameters.size));

@@ -6,13 +6,13 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 {
 	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
-	//populateIndicesForDegeneration(); // for recovering from degeneration experiment
+	populateIndicesForDegeneration(); // for recovering from degeneration experiment
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
+	//populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -102,7 +102,7 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 		for (int j = 0; j < components["input"].size(); j++)
 		{
 			minWeightValue = std::min(minWeightValue, weights[j][i]);
-			maxWeightValue = std::max(maxWeightValue, weights[j][i]) -0.0055;
+			maxWeightValue = std::max(maxWeightValue, weights[j][i]) - 0.001;
 		}
 	}
 }
@@ -259,7 +259,7 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 
 	if (indicesForDegeneration.empty())
 	{
-		std::cout << "No more unique combinations to degenerate" << std::endl;
+		dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::WARNING, "No more unique combinations to degenerate");
 	}
 	/*else
 	{
@@ -380,6 +380,7 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 			{
 				std::pair<int, int> pair(i, j);
 				auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
+				//auto it = std::ranges::find(indicesForDegeneration, pair);
 				if (it != indicesForDegeneration.end())
 				{
 					weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
