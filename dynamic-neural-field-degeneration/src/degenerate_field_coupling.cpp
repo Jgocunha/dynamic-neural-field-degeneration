@@ -102,7 +102,7 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 		for (int j = 0; j < components["input"].size(); j++)
 		{
 			minWeightValue = std::min(minWeightValue, weights[j][i]);
-			maxWeightValue = std::max(maxWeightValue, weights[j][i]) -0.0055;
+			maxWeightValue = std::max(maxWeightValue, weights[j][i]) - 0.001;// -0.0055;
 		}
 	}
 }
