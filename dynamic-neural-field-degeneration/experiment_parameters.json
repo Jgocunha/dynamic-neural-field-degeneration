@@ -28,8 +28,8 @@
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
     "learningRate": 0.01,
-    "numberOfEpochs": 1,
-    "maxAmountOfDemonstrations": 200,
+    "numberOfEpochs": 100,
+    "maxAmountOfDemonstrations": 5,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
     "updateAllWeights": false
   }
