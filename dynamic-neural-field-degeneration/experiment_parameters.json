@@ -4,7 +4,7 @@
     "startingExternalStimulus": 0,
     "decisionTolerance": 2,
     "isDataSavingOn": true,
-    "isVisualizationOn": true,
+    "isVisualizationOn": false,
     "isDebugModeOn": false
   },
 
@@ -18,7 +18,7 @@
     "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1008",
     "numberOfElementsToDegeneratePerIteration": 1008,
     "#comment_initialPercentageOfDegeneration": "20, 88, 80",
-    "initialPercentageOfDegeneration": 0,
+    "initialPercentageOfDegeneration": 80,
     "targetPercentageOfDegeneration": 100,
     "#comment_incrementOfDegenerationInPercentage": "0.1389, 0.278, 0.5",
     "incrementOfDegenerationInPercentage": 0.5
@@ -28,8 +28,8 @@
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
     "learningRate": 0.01,
-    "numberOfEpochs": 5,
-    "maxAmountOfDemonstrations": 20,
+    "numberOfEpochs": 1,
+    "maxAmountOfDemonstrations": 200,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
     "updateAllWeights": false
   }
