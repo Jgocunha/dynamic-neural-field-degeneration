@@ -227,7 +227,6 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToReduceValue()
 	}*/
 }
 
-
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {
 	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found

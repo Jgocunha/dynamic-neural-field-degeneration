@@ -10,7 +10,7 @@ constexpr bool trainWeights = false;
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("robustness and adaptability in DNFs experiment", 30, 0, 0);
+	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("robustness and adaptability in DNFs experiment", 35, 0, 0);
 
 	// element common parameters
 	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };
@@ -61,9 +61,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
 		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.01 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
-		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02, 0.0 }));
+		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02, 0.0, true, true }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out
-		(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.02, 0.0 }));
+		(new dnf_composer::element::GaussKernel({ "noise kernel out", outputFieldSpatialDimensions }, { 0.25, 0.02, 0.0, true, true}));
 
 	simulation->addElement(noise_per);
 	simulation->addElement(noise_out);

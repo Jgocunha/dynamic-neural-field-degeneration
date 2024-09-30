@@ -19,8 +19,6 @@ namespace experiment
 
 		DnfcomposerHandler::DnfcomposerHandler(bool isUserInterfaceActive)
 		{
-			//log(DEBUG,, "DnfcomposerHandler::DnfcomposerHandler()");
-
 			simulationParameters.isUserInterfaceActive = isUserInterfaceActive;
 
 			simulation = getExperimentSimulation();
@@ -296,8 +294,6 @@ namespace experiment
 
 		void DnfcomposerHandler::activateDegeneration()
 		{
-			//log(DEBUG,, "DnfcomposerHandler::activateDegeneration()");
-
 			switch (simulationParameters.degeneracyType)
 			{
 			case degeneration::ElementDegeneracyType::NEURONS_DEACTIVATE:
@@ -335,8 +331,6 @@ namespace experiment
 
 		void DnfcomposerHandler::activateRelearning()
 		{
-			//log(DEBUG,, "DnfcomposerHandler::activateRelearning()");
-
 			// NOW WE HAVE RELEARNING TYPE, LEARNING RATE, AND NUMBER OF ITERATIONS
 			// USE THIS INFORMATION TO TRAIN THE WEIGHTS
 			simulationElements.fieldCoupling->setLearningRate(relearningParameters.learningRate);
@@ -357,10 +351,7 @@ namespace experiment
 			}
 
 			simulationElements.fcpw.simulateAssociation();
-			//std::cout << "Finished simulating association.";
-
 			simulationElements.fcpw.trainWeights(relearningParameters.numberOfEpochs);
-			//std::cout << "Finished training weights.";
 
 			wasRelearningRequested = false;
 			hasRelearningFinished = true;
@@ -442,31 +433,14 @@ namespace experiment
 
 		void DnfcomposerHandler:: allCasesRelearning()
 		{
-			//log(DEBUG,, "DnfcomposerHandler::allCasesRelearning()");
-
-			// add gaussian inputs
-			//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
-
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-			//std::cout << "Finished setting up the field coupling wizard.";
-
-
-			//gsp.amplitude = 35;
-			//gsp.sigma = 3;
-			//simulationElements.fcpw.setGaussStimulusParameters(gsp);
-			////log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations");
-
-			//std::cout << "Finished setting up the gaussian stimulus parameters.";
-
 		}
 
 		void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 		{
-			//log(dnf_composer::DEBUG, "DnfcomposerHandler::onlyDegeneratedCasesRelearning()");
-
 			// add gaussian inputs
-			dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
+			//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
 			std::vector<std::vector<double>> inputSelected;
 			std::vector<std::vector<double>> outputSelected;
@@ -480,7 +454,7 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					int index = 0;
+					/*int index = 0;
 					if (inputTargetPeaksForCoupling.size() == 7)
 					{
 						index = 6 - i;
@@ -498,8 +472,9 @@ namespace experiment
 						{
 							log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
 						}
-					}
-
+					}*/
+					constexpr int index = 0;
+					log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";

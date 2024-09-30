@@ -27,7 +27,7 @@ public:
 
 	void setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType);
 	void setNumNeuronsToDegenerate(const int& numNeuronsToDegenerate);
-	experiment::degeneration::ElementDegeneracyType getDegeneracyType();
+	experiment::degeneration::ElementDegeneracyType getDegeneracyType() const;
 	double getCentroid();
 	void populateIndicesForDegeneration();
 	void clearDegeneration();

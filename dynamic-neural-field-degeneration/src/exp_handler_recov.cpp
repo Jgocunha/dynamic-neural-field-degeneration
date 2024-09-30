@@ -42,8 +42,6 @@ namespace experiment
 
 		void ExperimentHandlerRelearning::initialDegeneration()
 		{
-			mockPickAndPlace();
-
 			int numberElements = 0;
 			switch (parameters.degenerationParameters.type)
 			{
@@ -91,6 +89,7 @@ namespace experiment
 		{
 			for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
 			{
+				mockPickAndPlace();
 				msg.trial = trial;
 				if (parameters.degenerationParameters.initialPercentage != 0)
 					initialDegeneration();
