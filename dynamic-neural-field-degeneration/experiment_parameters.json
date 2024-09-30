@@ -4,7 +4,7 @@
     "startingExternalStimulus": 0,
     "decisionTolerance": 5.0,
     "isDataSavingOn": true,
-    "isVisualizationOn": false,
+    "isVisualizationOn": true,
     "isDebugModeOn": true
   },
 
