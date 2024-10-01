@@ -13,7 +13,7 @@ DegenerateNeuralField::DegenerateNeuralField(const dnf_composer::element::Elemen
 void DegenerateNeuralField::init()
 {
 	NeuralField::init();
-	populateIndicesForDegeneration(); // probably wont work in the inducing degeneration experiment
+	//populateIndicesForDegeneration(); // probably wont work in the inducing degeneration experiment
 	degenerate = false;
 }
 

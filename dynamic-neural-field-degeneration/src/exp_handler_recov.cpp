@@ -110,7 +110,7 @@ namespace experiment
 							saveWeights();
 						}
 
-						std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+						std::cout << "Trial number: " << trial << " Re-learning attempt: " << statistics.numOfRelearningCycles << " Current deg.: " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "% "
 							<< " Pick and place finished with success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Increasing degeneration to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration + parameters.degenerationParameters.incrementOfDegenerationInPercentage << "%." << std::endl;
 
 						degenerationProcedure();
@@ -121,7 +121,7 @@ namespace experiment
 						{
 							data.isFieldDead = true;
 							dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "(relearning-experiment) Re-learning did not work.");
-							std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+							std::cout << "Trial number: " << trial << " Re-learning attempt: " << statistics.numOfRelearningCycles << " Current deg.: " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "% "
 								<< " Pick and place finished without success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Re-learning attempt number: " << statistics.numOfRelearningCycles << " out of " << parameters.relearningParameters.maxAmountOfDemonstrations
 								<< ". Reached maximum number of re-learning attempts. Starting next trial." << std::endl;
 						}
@@ -137,7 +137,7 @@ namespace experiment
 					{
 						if (!doesBackupWeightsFileExist())
 							backupWeightsFile();
-						std::cout << "Trial number: " << msg.trial << " Re-learning attempt: " << msg.relearningAttempt << " Current deg.: " << std::fixed << std::setprecision(2) << msg.currentPercentageOfDegeneration << "% "
+						std::cout << "Trial number: " << trial << " Re-learning attempt: " << statistics.numOfRelearningCycles << " Current deg.: " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "% "
 							<< " Pick and place finished without success " << std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() << ". Re-learning attempt number: " << statistics.numOfRelearningCycles << " out of " << parameters.relearningParameters.maxAmountOfDemonstrations << "." << std::endl;
 						relearningProcedure();
 					}

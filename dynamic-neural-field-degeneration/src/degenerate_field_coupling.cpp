@@ -379,7 +379,6 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 			{
 				std::pair<int, int> pair(i, j);
 				auto it = std::find(indicesForDegeneration.begin(), indicesForDegeneration.end(), pair);
-				//auto it = std::ranges::find(indicesForDegeneration, pair);
 				if (it != indicesForDegeneration.end())
 				{
 					weights[i][j] += learningRate * (error[j] - eta * weights[i][j]) * input[i];
