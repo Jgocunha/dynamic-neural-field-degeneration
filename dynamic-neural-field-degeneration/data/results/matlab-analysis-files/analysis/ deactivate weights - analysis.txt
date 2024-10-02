@@ -1,14 +1,14 @@
-Avg. % of affected elements until disapearance of bump: 71.9159
-Avg. % of affected elements until misbehaviour: 71.9159
+Avg. % of affected elements until disapearance of bump: 92.2091
+Avg. % of affected elements until misbehaviour: 92.2091
 Average Max. deviation per experiment: 1.1312
           <strong>Condition</strong>           <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
     <strong>______________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
 
-    {'deactivate weights'}           2            181                              72.073                                                72.073                             1.393    
-    {'deactivate weights'}           6            102                              71.883                                                71.883                            1.0571    
-    {'deactivate weights'}          10            102                              71.883                                                71.883                             1.075    
-    {'deactivate weights'}          14            101                              71.849                                                71.849                               1.4    
-    {'deactivate weights'}          18            102                              71.913                                                71.913                               0.9    
-    {'deactivate weights'}          22            102                              71.974                                                71.974                               0.8    
-    {'deactivate weights'}          26            102                              71.837                                                71.837                             1.293    
+    {'deactivate weights'}           2            181                               92.41                                                 92.41                             1.393    
+    {'deactivate weights'}           6            102                              92.167                                                92.167                            1.0571    
+    {'deactivate weights'}          10            102                              92.167                                                92.167                             1.075    
+    {'deactivate weights'}          14            101                              92.123                                                92.123                               1.4    
+    {'deactivate weights'}          18            102                              92.205                                                92.205                               0.9    
+    {'deactivate weights'}          22            102                              92.283                                                92.283                               0.8    
+    {'deactivate weights'}          26            102                              92.108                                                92.108                             1.293    
 
