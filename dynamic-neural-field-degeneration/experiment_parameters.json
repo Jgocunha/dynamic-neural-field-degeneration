@@ -17,7 +17,7 @@
     "fieldToDegenerate": "perceptual",
     "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1008",
     "numberOfElementsToDegeneratePerIteration": 1,
-    "#comment_initialPercentageOfDegeneration": "14, 88, 80",
+    "#comment_initialPercentageOfDegeneration": "14, 85, 80",
     "initialPercentageOfDegeneration": 14,
     "targetPercentageOfDegeneration": 100,
     "#comment_incrementOfDegenerationInPercentage": "0.1389, 0.278, 0.5",
