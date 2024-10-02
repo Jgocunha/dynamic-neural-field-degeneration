@@ -83,7 +83,7 @@ experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegene
 
 double DegenerateNeuralField::getCentroid()
 {
-	const std::vector<double> f_output = dnf_composer::tools::math::heaviside(components["activation"], 0.1);
+	const std::vector<double> f_output = dnf_composer::tools::math::heaviside(components["activation"], 2.0);
 	double centroid = 0.0;
 
 	if (*std::ranges::max_element(f_output) > 0)
