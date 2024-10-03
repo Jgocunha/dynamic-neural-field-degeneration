@@ -23,7 +23,6 @@
     "#comment_incrementOfDegenerationInPercentage": "0.1389, 0.278, 0.5",
     "incrementOfDegenerationInPercentage": 0.5
   },
-
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
