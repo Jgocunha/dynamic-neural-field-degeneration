@@ -11,6 +11,26 @@ library(rstatix)
 library(splines)  # Required for spline interpolation
 library(coin)
 
+#font_import()
+loadfonts(device="all")
+
+# List available Windows fonts
+fonts <- windowsFonts()
+#print(names(fonts))
+
+# Get the script directory
+if (interactive()) {
+  script_directory <- rstudioapi::getActiveDocumentContext()$path
+  script_directory <- dirname(script_directory)
+} else {
+  script_directory <- getwd()  # Fallback to current working directory
+}
+setwd(script_directory)
+
+# Load the data
+current_directory <- getwd()
+
+
 # Define the function to read data from the file
 read_data <- function(filePath) {
   # Read the file into a matrix
@@ -41,7 +61,7 @@ dataMatrix <- data$dataMatrix
 maxColumns <- data$maxColumnSize
 
 # Analysis parameters
-initialPer <- 90
+initialPer <- 80
 incPer <- 0.5
 finalPer <- initialPer + (incPer * maxColumns) - 1 * incPer
 degenerationPercentages <- seq(initialPer, finalPer, by = incPer)
@@ -78,7 +98,7 @@ for (col in 1:ncol(dataMatrix)) {
   numCorrectBehaviour[col] <- nrow(dataMatrix) - numFailedBehaviour[col]
   
   # Calculate average relearning cycles
-  avgRelearningCycles[col] <- mean(validData[validData > 0 & validData < maximumLearningCycles], na.rm = TRUE)
+  avgRelearningCycles[col] <- mean(validData[validData < maximumLearningCycles], na.rm = TRUE)
   
   # Calculate percentages
   perCorrectBehaviour[col] <- numCorrectBehaviour[col] / nrow(dataMatrix) * 100
@@ -116,17 +136,18 @@ interpolate_spline <- function(x, y, n = 100) {
   return(spline_data)
 }
 
+# Plot the evolution of failed behavior, recovered behavior, and average relearning cycles with spline interpolation
+relearning_scalar <- 3.2
+y_axis_scale <- relearning_scalar
+dot_size <- 3
+alpha_plots <- 0.7
+spline_size <- 1
+
 # Interpolating the data points
 failed_behavior_spline <- interpolate_spline(degenerationPercentages, perFailedBehaviour)
 recovered_behavior_spline <- interpolate_spline(degenerationPercentages, perRecoveredBehaviour)
 avg_relearning_spline <- interpolate_spline(degenerationPercentages, avgRelearningCycles * relearning_scalar)
 
-# Plot the evolution of failed behavior, recovered behavior, and average relearning cycles with spline interpolation
-relearning_scalar <- 1.6
-y_axis_scale <- 1.6
-dot_size <- 3
-alpha_plots <- 0.7
-spline_size <- 1
 
 ggplot() +
   # Dot plot for Failed Behavior
@@ -165,8 +186,8 @@ ggplot() +
   # Scaling the x-axis with 0.5 incremental ticks
   scale_x_continuous(
     name = 'Degeneration Percentage (%)',
-    limits = c(90, 97.0),  # Set limits for the x-axis
-    breaks = seq(90, 97, by = 0.5)  # Set ticks at 0.5 intervals
+    limits = c(90, 100),  # Set limits for the x-axis
+    breaks = seq(90, 100, by = 0.5)  # Set ticks at 0.5 intervals
   ) +
   
   # Color and theme adjustments
@@ -186,7 +207,7 @@ ggplot() +
     legend.position = "top",  # Place the legend at the top for better readability
     legend.justification = c("right"),
     legend.background = element_rect(fill = "white", color = NA),
-    text = element_text(family = "Garamond", size = 14),
+    text = element_text(family = "EB Garamond", size = 14),
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
     panel.grid.minor = element_blank(),  # Remove minor grid lines for a cleaner look
     plot.title = element_text(face = "bold", size = 16),
