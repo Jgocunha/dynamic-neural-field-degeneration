@@ -22,6 +22,7 @@ acceptableDeviation <- 2.0
 
 current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
+# Helper functions
 read_data <- function(centroidFilePath) {
   # Open the file and read it line by line
   lines <- readLines(centroidFilePath)
@@ -65,26 +66,227 @@ clean_data <- function(data) {
   return(newData)  # Return the cleaned data
 }
 
+get_iterations_trial <- function(data) {
+  # Determine the number of trials
+  numTrials <- length(data)
+  
+  # Initialize a vector to store the number of iterations per trial
+  numIterationsPerTrial <- numeric(numTrials)
+  
+  # Iterate over each trial
+  for (trial in 1:numTrials) {
+    # Get the number of iterations for the current trial
+    numIterations <- length(data[[trial]])
+    
+    # Store the number of iterations for the current trial
+    numIterationsPerTrial[trial] <- numIterations
+  }
+  
+  # Calculate the average number of iterations
+  avgNumIterations <- mean(numIterationsPerTrial)
+  
+  # Return both the number of iterations per trial and the average number of iterations
+  return(list(numIterationsPerTrial = numIterationsPerTrial, avgNumIterations = avgNumIterations))
+}
+
+get_iterations_misbehavior <- function(data, targetCentroid, acceptableDeviation) {
+  # Determine the number of trials
+  numTrials <- length(data)
+  
+  # Initialize a vector to store the iteration indices where misbehavior occurs
+  aboveOrBelowThreshold <- numeric(numTrials)
+  
+  # Iterate over each trial
+  for (trial in 1:numTrials) {
+    # Get the actual number of iterations for the current trial
+    numIterations <- length(data[[trial]])
+    
+    # Iterate over each iteration within the current trial
+    for (iteration in 1:numIterations) {
+      # Calculate the deviation from the target centroid
+      deviation <- min(abs(data[[trial]][iteration] - targetCentroid),
+                       abs(28 - abs(data[[trial]][iteration] + targetCentroid)))
+      
+      # Check if the deviation exceeds the acceptable deviation
+      if (deviation >= acceptableDeviation) {
+        aboveOrBelowThreshold[trial] <- iteration
+        break  # Exit the loop if the condition is met
+      } else {
+        # If no deviation is found, record the last iteration
+        aboveOrBelowThreshold[trial] <- iteration
+      }
+    }
+  }
+  
+  # Calculate the average number of iterations until misbehavior
+  avgIterations <- mean(aboveOrBelowThreshold)
+  
+  return(list(aboveOrBelowThreshold = aboveOrBelowThreshold, avgIterations = avgIterations))
+}
+
+get_max_deviations <- function(data, targetCentroid) {
+  # Determine the number of trials
+  numTrials <- length(data)
+  
+  # Initialize a vector to store the maximum deviations for each trial
+  trialDeviations <- numeric(numTrials)
+  
+  # Iterate over each trial
+  for (trial in 1:numTrials) {
+    # Get the number of iterations for the current trial
+    numIterations <- length(data[[trial]])
+    
+    # Initialize the maximum deviation for the current trial
+    maxDeviation <- 0
+    
+    # Iterate over each iteration within the current trial
+    for (iteration in 1:numIterations) {
+      # Calculate the deviation from the target centroid
+      deviation <- min(abs(data[[trial]][iteration] - targetCentroid),
+                       abs(28 - abs(data[[trial]][iteration] + targetCentroid)))
+      
+      # Update the maximum deviation if the current deviation is higher
+      if (deviation > maxDeviation) {
+        maxDeviation <- deviation
+      }
+    }
+    
+    # Store the maximum deviation for the current trial
+    trialDeviations[trial] <- maxDeviation
+  }
+  
+  # Find the overall maximum deviation across all trials
+  maxDeviations <- max(trialDeviations)
+  
+  return(list(trialDeviations = trialDeviations, maxDeviations = maxDeviations))
+}
+
+get_avg_centroid <- function(data) {
+  # Determine the number of trials
+  numTrials <- length(data)
+  
+  # Initialize a vector to store the average centroid value for each trial
+  avgCentroidValuePerTrial <- numeric(numTrials)
+  
+  # Iterate over each trial
+  for (trial in 1:numTrials) {
+    # Calculate and store the average centroid value for the current trial
+    avgCentroidValuePerTrial[trial] <- mean(data[[trial]])
+  }
+  
+  # Calculate the overall average centroid value across all trials
+  avgCentroidValue <- mean(avgCentroidValuePerTrial)
+  
+  return(list(avgCentroidValuePerTrial = avgCentroidValuePerTrial, avgCentroidValue = avgCentroidValue))
+}
+
+adapt_to_percentage <- function(experiment, avgNumIterations, avgIterationsMisbehavior) {
+  # Set the size based on the experiment type
+  if (experiment == 'deactivate weights') {
+    size <- 202
+  } else if (experiment == 'reduce 0.005 weights') {
+    size <- 202
+  } else if (experiment == 'randomize weights') {
+    size <- 202
+  } else if (experiment == 'deactivate pre-synaptic neurons') {
+    size <- 720
+  } else if (experiment == 'deactivate post-synaptic neurons') {
+    size <- 280
+  } else {
+    stop("Unknown experiment type")
+  }
+  
+  # Calculate percentages
+  avgNumIterationsPercentage <- (avgNumIterations * 100) / size
+  avgIterationsMisbehaviorPercentage <- (avgIterationsMisbehavior * 100) / size
+  
+  return(list(avgNumIterationsPercentage = avgNumIterationsPercentage, 
+              avgIterationsMisbehaviorPercentage = avgIterationsMisbehaviorPercentage))
+}
+
+
+
 
 # Create a loop to run the analysis for each experiment
 for (experiment in 1:nrow(experiments)) {
-  totalNumTrials <- 0  # Initialize total number of trials
-  dataTable <- data.frame()  # Create an empty data frame
+  totalNumTrials <- 0
   
-  # Construct analysis file path
-  analysisFilePath <- paste0('./analysis/', experiments$experiment_name[experiment], ' - analysis.txt')
+  # Initialize an empty data frame to store results outside the inner loop
+  dataTable <- data.frame(
+    Condition = character(),
+    Target_centroid = numeric(),
+    Trials = integer(),
+    Avg_percent_affected_elements_until_disappearance = numeric(),
+    Avg_percent_affected_elements_until_misbehavior = numeric(),
+    Max_deviation = numeric(),
+    stringsAsFactors = FALSE
+  )
   
-  # Loop over each position
   for (position in 1:length(positions)) {
+    # Correctly format the position as a string with one decimal place
+    positionStr <- sprintf("%.1f", positions[position])
     
-    # Variable setup: Construct centroids file path
-    centroidsFilePath <- paste0('../', positions[position], ' ', experiments$experiment_name[experiment], ' - centroids.txt')
+    # Construct the correct file path
+    centroidsFilePath <- paste0('../', positionStr, ' ', experiments$experiment_name[experiment], ' - centroids.txt')
     
-    # Get target centroid for the current position
     targetCentroid <- targetCentroids[position]
     
     # Read and clean data
     data <- read_data(centroidsFilePath)
     data <- clean_data(data)
+    
+    # Analyse data
+    # Get number of trials
+    numTrials <- length(data)
+    
+    # Get iterations until disappearance of peak
+    iterationResults <- get_iterations_trial(data)
+    avgNumIterations <- iterationResults$avgNumIterations
+    
+    # Get iterations until misbehavior of peak
+    misbehaviorResults <- get_iterations_misbehavior(data, targetCentroid, acceptableDeviation)
+    avgIterationsMisbehavior <- misbehaviorResults$avgIterations
+    
+    # Get deviations and maximum deviation
+    deviationResults <- get_max_deviations(data, targetCentroid)
+    maxDeviations <- deviationResults$maxDeviations
+    
+    # Adapt values to percentages
+    percentageResults <- adapt_to_percentage(experiments$experiment_name[experiment], avgNumIterations, avgIterationsMisbehavior)
+    avgNumIterationsPercentage <- percentageResults$avgNumIterationsPercentage
+    avgIterationsMisbehaviorPercentage <- percentageResults$avgIterationsMisbehaviorPercentage
+    
+    # Store data in table
+    newRow <- data.frame(
+      Condition = experiments$experiment_name[experiment],
+      Target_centroid = targetCentroid,
+      Trials = numTrials,
+      Avg_percent_affected_elements_until_disappearance = avgNumIterationsPercentage,
+      Avg_percent_affected_elements_until_misbehavior = avgIterationsMisbehaviorPercentage,
+      Max_deviation = maxDeviations,
+      stringsAsFactors = FALSE
+    )
+    
+    # Append newRow to dataTable
+    dataTable <- rbind(dataTable, newRow)
+    
+    # Increment the total number of trials for this experiment
+    totalNumTrials <- totalNumTrials + numTrials
   }
+  # Calculate and display Avg. % of affected elements until disappearance of bump
+  avgAvgNumIterations <- mean(dataTable$Avg_percent_affected_elements_until_disappearance)
+  print(paste('Avg. % of affected elements until disappearance of bump: ', round(avgAvgNumIterations, 4)))
+  
+  # Calculate and display average Avg. % of affected elements until misbehaviour
+  avgAvgIterationsMisbehavior <- mean(dataTable$Avg_percent_affected_elements_until_misbehavior)
+  print(paste('Avg. % of affected elements until misbehavior: ', round(avgAvgIterationsMisbehavior, 4)))
+  
+  # Calculate and display average Max. deviation per experiment
+  avgMaxDeviation <- mean(dataTable$Max_deviation)
+  print(paste('Average Max. deviation per experiment: ', round(avgMaxDeviation, 4)))
+  
+  print(dataTable)
 }
+
+# Display the complete dataTable after all iterations
+#print(dataTable)
