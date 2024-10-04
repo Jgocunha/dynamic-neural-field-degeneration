@@ -1,14 +1,14 @@
-Avg. % of affected elements until disapearance of bump: 69.7374
-Avg. % of affected elements until misbehaviour: 68.0252
+Avg. % of affected elements until disapearance of bump: 89.6624
+Avg. % of affected elements until misbehaviour: 87.4609
 Average Max. deviation per experiment: 2.1529
                  <strong>Condition</strong>                  <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
     <strong>____________________________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
 
-    {'deactivate post-synaptic neurons'}           2            253                              70.079                                                63.221                            5.4375    
-    {'deactivate post-synaptic neurons'}           6            102                              68.472                                                68.472                            1.2333    
-    {'deactivate post-synaptic neurons'}          10            102                              69.333                                                69.333                           0.96667    
-    {'deactivate post-synaptic neurons'}          14            102                              70.071                                                70.071                               1.1    
-    {'deactivate post-synaptic neurons'}          18            102                              69.891                                                69.891                              1.05    
-    {'deactivate post-synaptic neurons'}          22            102                              69.774                                                69.774                            0.9143    
-    {'deactivate post-synaptic neurons'}          26            102                              70.542                                                65.414                            4.3682    
+    {'deactivate post-synaptic neurons'}           2            253                              90.102                                                81.285                            5.4375    
+    {'deactivate post-synaptic neurons'}           6            102                              88.036                                                88.036                            1.2333    
+    {'deactivate post-synaptic neurons'}          10            102                              89.142                                                89.142                           0.96667    
+    {'deactivate post-synaptic neurons'}          14            102                              90.091                                                90.091                               1.1    
+    {'deactivate post-synaptic neurons'}          18            102                               89.86                                                 89.86                              1.05    
+    {'deactivate post-synaptic neurons'}          22            102                              89.709                                                89.709                            0.9143    
+    {'deactivate post-synaptic neurons'}          26            102                              90.697                                                84.104                            4.3682    
 

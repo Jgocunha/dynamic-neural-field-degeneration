@@ -1,14 +1,14 @@
-Avg. % of affected elements until disapearance of bump: 72.2819
-Avg. % of affected elements until misbehaviour: 72.2819
+Avg. % of affected elements until disapearance of bump: 92.6783
+Avg. % of affected elements until misbehaviour: 92.6783
 Average Max. deviation per experiment: 1.0877
            <strong>Condition</strong>            <strong>Target centroid</strong>    <strong>Trials</strong>    <strong>Avg. % of affected elements until disapearance of bump</strong>    <strong>Avg. % of affected elements until misbehaviour</strong>    <strong>Max. deviation</strong>
     <strong>________________________</strong>    <strong>_______________</strong>    <strong>______</strong>    <strong>______________________________________________________</strong>    <strong>______________________________________________</strong>    <strong>______________</strong>
 
-    {'reduce 0.005 weights'}           2            179                               72.33                                                 72.33                            1.4136    
-    {'reduce 0.005 weights'}           6            102                              72.261                                                72.261                               1.1    
-    {'reduce 0.005 weights'}          10            102                              72.295                                                72.295                               0.9    
-    {'reduce 0.005 weights'}          14            102                              72.435                                                72.435                               0.9    
-    {'reduce 0.005 weights'}          18            102                               72.28                                                 72.28                               1.1    
-    {'reduce 0.005 weights'}          22            101                              72.147                                                72.147                                 1    
-    {'reduce 0.005 weights'}          26            102                              72.223                                                72.223                               1.2    
+    {'reduce 0.005 weights'}           2            179                               92.74                                                 92.74                            1.4136    
+    {'reduce 0.005 weights'}           6            102                              92.652                                                92.652                               1.1    
+    {'reduce 0.005 weights'}          10            102                              92.696                                                92.696                               0.9    
+    {'reduce 0.005 weights'}          14            102                              92.875                                                92.875                               0.9    
+    {'reduce 0.005 weights'}          18            102                              92.676                                                92.676                               1.1    
+    {'reduce 0.005 weights'}          22            101                              92.506                                                92.506                                 1    
+    {'reduce 0.005 weights'}          26            102                              92.603                                                92.603                               1.2    
 

@@ -75,8 +75,8 @@ for experiment = 1:size(experiments,1)
 
     end
     %% Display and save table
-    %delete(analysisFilePath)
-    %diary(analysisFilePath)
+    delete(analysisFilePath)
+    diary(analysisFilePath)
 
     % Calculate and display Avg. % of affected elements until disapearance of bump
     avgAvgNumIterations = mean(dataTable{:,'Avg. % of affected elements until disapearance of bump'});
