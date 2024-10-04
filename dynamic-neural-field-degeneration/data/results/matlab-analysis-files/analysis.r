@@ -204,9 +204,6 @@ adapt_to_percentage <- function(experiment, avgNumIterations, avgIterationsMisbe
               avgIterationsMisbehaviorPercentage = avgIterationsMisbehaviorPercentage))
 }
 
-
-
-
 # Create a loop to run the analysis for each experiment
 for (experiment in 1:nrow(experiments)) {
   totalNumTrials <- 0
@@ -287,6 +284,3 @@ for (experiment in 1:nrow(experiments)) {
   
   print(dataTable)
 }
-
-# Display the complete dataTable after all iterations
-#print(dataTable)
