@@ -57,9 +57,9 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 	// create noise stimulus and noise kernel
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_per
-		(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 0.01}));
+		(new dnf_composer::element::NormalNoise({ "noise per", perceptualFieldSpatialDimensions }, { 0.1}));
 	const std::shared_ptr<dnf_composer::element::NormalNoise> noise_out
-		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.01 }));
+		(new dnf_composer::element::NormalNoise({ "noise out", outputFieldSpatialDimensions }, { 0.1 }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_per
 		(new dnf_composer::element::GaussKernel({ "noise kernel per", perceptualFieldSpatialDimensions }, { 0.25, 0.02, 0.0, true, true }));
 	const std::shared_ptr<dnf_composer::element::GaussKernel> noise_kernel_out

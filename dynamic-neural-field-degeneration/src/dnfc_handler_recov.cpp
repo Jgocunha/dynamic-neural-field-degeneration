@@ -445,45 +445,45 @@ namespace experiment
 			std::vector<std::vector<double>> inputSelected;
 			std::vector<std::vector<double>> outputSelected;
 
-			std::ostringstream logStream;
+			//std::ostringstream logStream;
 
 
-			logStream << "(relearning-experiment) Target behaviors to relearn ";
+			//logStream << "(relearning-experiment) Target behaviors to relearn ";
 
 			for (int i = 0; i < inputTargetPeaksForCoupling.size(); i++)
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					/*int index = 0;
-					if (inputTargetPeaksForCoupling.size() == 7)
-					{
+					int index = 0;
+					//if (inputTargetPeaksForCoupling.size() == 7)
+					//{
 						index = 6 - i;
 						if (index == 2)
 							index = 4;
 						else
 							if (index == 4)
 								index = 2;
-					}
-					else
-					{
-						if (inputTargetPeaksForCoupling.size() == 1)
-							index = 0;
-						else
-						{
-							log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
-						}
-					}*/
-					constexpr int index = 0;
-					log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");
+					//}
+					//else
+					//{
+					//	if (inputTargetPeaksForCoupling.size() == 1)
+					//		index = 0;
+					//	else
+					//	{
+					//		log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
+					//	}
+					//}
+					/*constexpr int index = 0;
+					log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");*/
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
-					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
+					//logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
 				}
 			}
 
-			logStream << std::endl;
+			//logStream << std::endl;
 
-			log(dnf_composer::tools::logger::INFO, logStream.str());
+			//log(dnf_composer::tools::logger::INFO, logStream.str());
 
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
