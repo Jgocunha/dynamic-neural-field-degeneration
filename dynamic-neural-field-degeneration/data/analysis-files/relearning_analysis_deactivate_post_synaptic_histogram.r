@@ -39,8 +39,8 @@ resultPath <- '../results/'
 degeneracyType <- 'deactivate post-synaptic neurons'
 relearningType <- 'Only-degenerated-cases'
 epochs <- 1
-maximumLearningCycles <- 200
-updateAllWeights <- 1
+maximumLearningCycles <- 50
+updateAllWeights <- 0
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 

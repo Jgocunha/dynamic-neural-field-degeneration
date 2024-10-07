@@ -39,8 +39,8 @@ resultPath <- '../results/'
 degeneracyType <- 'deactivate pre-synaptic neurons'
 relearningType <- 'Only-degenerated-cases'
 epochs <- 1
-maximumLearningCycles <- 200
-updateAllWeights <- 1
+maximumLearningCycles <- 100
+updateAllWeights <- 0
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
@@ -122,7 +122,8 @@ y_axis_scale <- relearning_scalar
 
 # Reshape the filtered results data frame to long format for behaviour percentages
 results_long <- results_filtered %>%
-  select(Degeneracy, CorrectBehaviour, FailedBehaviour, RecoveredBehaviour) %>%
+  select(Degeneracy, FailedBehaviour, RecoveredBehaviour) %>%
+  #select(Degeneracy, CorrectBehaviour, FailedBehaviour, RecoveredBehaviour) %>%
   pivot_longer(cols = -Degeneracy, names_to = "BehaviourType", values_to = "Percentage")
 
 # Create the bar chart with average relearning cycles
@@ -163,11 +164,14 @@ ggplot() +
     axis.text = element_text(size = 12)
   )  +
   scale_fill_manual(values = c(
-    "CorrectBehaviour" = "#B3CDE0",  # Light Blue
+    #"CorrectBehaviour" = "#B3CDE0",  # Light Blue
     "RecoveredBehaviour" = "#B7E4D9",  # Green
     "FailedBehaviour" = "#F4B3B4"   # Light Red
   ),
-  labels = c("Correct behaviour", "Failed behaviour", "Recovered behaviour")) +
+  labels = c(
+    #"Correct behaviour", 
+    "Failed behaviour", 
+    "Recovered behaviour")) +
   scale_x_continuous(breaks = seq(10, 20, by = 1)) +
   scale_y_continuous(
     name = 'Behaviour Percentage (%)',
