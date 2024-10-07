@@ -454,7 +454,7 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					int index = 0;
+					/*int index = 0;
 					//if (inputTargetPeaksForCoupling.size() == 7)
 					//{
 						index = 6 - i;
@@ -473,8 +473,8 @@ namespace experiment
 					//		log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
 					//	}
 					//}
-					/*constexpr int index = 0;
 					log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");*/
+					constexpr int index = 0;
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					//logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
