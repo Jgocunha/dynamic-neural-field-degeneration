@@ -1,6 +1,8 @@
 # Load required libraries
 library(ggplot2)
 library(extrafont)
+library(dplyr)
+library(tidyr)
 
 #font_import()
 loadfonts(device="all")
@@ -32,13 +34,13 @@ read_data <- function(filePath) {
   return(list(dataMatrix = dataMatrix, maxColumnSize = maxColumnSize))
 }
 
-# Experiment parameters
+# Set experiment parameters
 resultPath <- '../results/'
-degeneracyType <- 'deactivate post-synaptic neurons'
+degeneracyType <- 'deactivate pre-synaptic neurons'
 relearningType <- 'Only-degenerated-cases'
 epochs <- 1
 maximumLearningCycles <- 200
-updateAllWeights <- 1  # 0 or 1
+updateAllWeights <- 1
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
@@ -51,11 +53,10 @@ dataMatrix <- data$dataMatrix
 maxColumns <- data$maxColumnSize
 
 # Analysis parameters
-initialPer <- 75
-incPer <- 0.278
+initialPer <- 10
+incPer <- 0.1389
 finalPer <- initialPer + (incPer * maxColumns) - 1 * incPer
 degenerationPercentages <- seq(initialPer, finalPer, by = incPer)
-
 
 # Initialize result variables
 numCorrectBehaviour <- rep(0, ncol(dataMatrix))
@@ -111,24 +112,29 @@ results <- data.frame(
 # Display the table
 print(results)
 
-# Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
-relearning_scalar <- 1
+# Filter the results to include only degeneration percentages from 89% onwards
+results_filtered <- results %>%
+  filter(Degeneracy >= 10)
+
+# Define a scaling factor for the secondary axis
+relearning_scalar <- 30
 y_axis_scale <- relearning_scalar
-dot_size <- 3
-alpha_plots <- 0.7
+
+# Reshape the filtered results data frame to long format for behaviour percentages
+results_long <- results_filtered %>%
+  select(Degeneracy, CorrectBehaviour, FailedBehaviour, RecoveredBehaviour) %>%
+  pivot_longer(cols = -Degeneracy, names_to = "BehaviourType", values_to = "Percentage")
+
+# Create the bar chart with average relearning cycles
 ggplot() +
-  # Dot plot for Failed Behavior
-  geom_point(aes(x = degenerationPercentages, y = perFailedBehaviour, color = 'Failed Behavior'), 
-             size = dot_size + 0.5, alpha = alpha_plots) +
-  
-  # Dot plot for Recovered Behavior
-  geom_point(aes(x = degenerationPercentages, y = perRecoveredBehaviour, color = 'Recovered Behavior'), 
-             size = dot_size, shape = 15, alpha = alpha_plots) +
-  
-  # Dot plot for Average Relearning Cycles on the secondary y-axis
-  geom_point(aes(x = degenerationPercentages, y = avgRelearningCycles * relearning_scalar, 
-                 color = 'Average Relearning Cycles'), size = dot_size, shape = 17, alpha = alpha_plots) +
-  
+  # Bar plot for behaviour percentages
+  geom_bar(data = results_long, aes(x = Degeneracy, y = Percentage, fill = BehaviourType), 
+           stat = "identity", position = "dodge", color = "white") +
+  # Plot for average relearning cycles
+  #geom_line(data = results_filtered, aes(x = Degeneracy, y = AvgRelearningCycles * 100 / max(AvgRelearningCycles), 
+   #                                      group = 1), color = "black", size = 1) +  # Scale to percentage
+  geom_point(data = results_filtered, aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar), 
+                 color = "#4A4A4A", size = 5, fill = "#4A4A4A",stroke = 1.5, shape = 18 , alpha = 0.8) +
   # Scaling the secondary y-axis with aligned tick marks
   scale_y_continuous(
     name = 'Behavior Percentage (%)',
@@ -140,36 +146,35 @@ ggplot() +
       breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
     )
   ) +
-  
-  # Scaling the x-axis with 0.5 incremental ticks
-  scale_x_continuous(
-    name = 'Degeneration Percentage (%)',
-    limits = c(75, 100),  # Set limits for the x-axis
-    breaks = seq(75, 100, by = 1)  # Set ticks at 0.5 intervals
-  ) +
-  
-  # Color and theme adjustments
-  scale_color_manual(values = c('Failed Behavior' = 'red', 
-                                'Recovered Behavior' = 'darkgreen', 
-                                'Average Relearning Cycles' = 'blue')) +
-  labs(
-    title = 'Behavior Evolution vs. Degeneration Percentage',
-    subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles needed to recover said behavior',
-    caption = 'Data represents the evolution of behavior across different degeneration percentages.',
-    color = 'Legend'
-  ) +
-  theme_minimal(base_size = 15) +  # Use a minimal theme for a cleaner look
+  labs(title = "Behaviour Analysis and Average Relearning Cycles by Degeneration Percentage (89% and Above)",
+       x = "Degeneration Percentage (%)",
+       y = "Percentage (%)",
+       fill = "Behaviour Type") +
+  theme_minimal(base_size = 15) +
   theme(
-    axis.title = element_text(size = 14, face = "bold"),
-    axis.title.y.right = element_text(margin = margin(l = 10), size = 14, face = "bold"),  # Add margin to the right y-axis label
-    legend.title = element_text(size = 14, face = "bold"),
-    legend.position = "top",  # Place the legend at the top for better readability
-    legend.justification = c("right"),
-    legend.background = element_rect(fill = "white", color = NA),
-    text = element_text(family = "EB Garamond", size = 14),
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
-    panel.grid.minor = element_blank(),  # Remove minor grid lines for a cleaner look
-    plot.title = element_text(face = "bold", size = 16),
-    plot.subtitle = element_text(size = 12, face = "italic"),
-    plot.caption = element_text(size = 10, face = "italic", color = "darkgray")
-  )
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    legend.position = "top",
+    text = element_text(family = "EB Garamond", size = 14),
+    legend.title = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(size = 12)
+  )  +
+  scale_fill_manual(values = c(
+    "CorrectBehaviour" = "#B3CDE0",  # Light Blue
+    "RecoveredBehaviour" = "#B7E4D9",  # Green
+    "FailedBehaviour" = "#F4B3B4"   # Light Red
+  ),
+  labels = c("Correct behaviour", "Failed behaviour", "Recovered behaviour")) +
+  scale_x_continuous(breaks = seq(10, 20, by = 1)) +
+  scale_y_continuous(
+    name = 'Behaviour Percentage (%)',
+    limits = c(0, 100),  # Set limits for the left y-axis
+    breaks = seq(0, 100, by = 10),  # Tick marks every 10 units
+    sec.axis = sec_axis(
+      ~ . / y_axis_scale,  # Scale back to average relearning cycles
+      name = 'Average Relearning Cycles',
+      breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
+    ))

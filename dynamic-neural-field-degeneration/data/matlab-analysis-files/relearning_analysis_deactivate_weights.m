@@ -29,7 +29,7 @@ filePath = [resultPath, degeneracyType, ' ', relearningType, ...
 %% Analysis
 
 % Initialize variables to store results
-initialPer = 90;
+initialPer = 80;
 incPer = 0.5;
 finalPer = initialPer + ( incPer * maxColumns  ) - 1 * incPer;
 degenerationPercentages = (initialPer:incPer:finalPer)';
@@ -70,7 +70,7 @@ for col = 1:size(dataMatrix, 2)
     numFailedBehaviour(col) = sum(validData > 0) + numDeadFields(col); 
  
     % Count the number of times relearned (value > 0)
-    numRecoveredBehaviour(col) = sum(validData > 0 & validData < maximumLearningCycles);
+    numRecoveredBehaviour(col) = sum(validData < maximumLearningCycles);
 
      % Count the number of fields that exhibited correct behaviour
     numCorrectBehaviour(col) = size(dataMatrix, 1) - numFailedBehaviour(col);

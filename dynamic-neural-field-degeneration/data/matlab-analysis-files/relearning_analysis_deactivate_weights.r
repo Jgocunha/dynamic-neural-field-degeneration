@@ -1,5 +1,25 @@
 # Load required libraries
 library(ggplot2)
+library(extrafont)
+
+#font_import()
+loadfonts(device="all")
+
+# List available Windows fonts
+fonts <- windowsFonts()
+#print(names(fonts))
+
+# Get the script directory
+if (interactive()) {
+  script_directory <- rstudioapi::getActiveDocumentContext()$path
+  script_directory <- dirname(script_directory)
+} else {
+  script_directory <- getwd()  # Fallback to current working directory
+}
+setwd(script_directory)
+
+# Load the data
+current_directory <- getwd()
 
 # Define the function to read data from the file
 read_data <- function(filePath) {
@@ -31,7 +51,7 @@ dataMatrix <- data$dataMatrix
 maxColumns <- data$maxColumnSize
 
 # Analysis parameters
-initialPer <- 90
+initialPer <- 80
 incPer <- 0.5
 finalPer <- initialPer + (incPer * maxColumns) - 1 * incPer
 degenerationPercentages <- seq(initialPer, finalPer, by = incPer)
@@ -68,7 +88,7 @@ for (col in 1:ncol(dataMatrix)) {
   numCorrectBehaviour[col] <- nrow(dataMatrix) - numFailedBehaviour[col]
   
   # Calculate average relearning cycles
-  avgRelearningCycles[col] <- mean(validData[validData > 0 & validData < maximumLearningCycles], na.rm = TRUE)
+  avgRelearningCycles[col] <- mean(validData[validData < maximumLearningCycles], na.rm = TRUE)
   
   # Calculate percentages
   perCorrectBehaviour[col] <- numCorrectBehaviour[col] / nrow(dataMatrix) * 100
@@ -76,15 +96,6 @@ for (col in 1:ncol(dataMatrix)) {
   perFailedBehaviour[col] <- numFailedBehaviour[col] / nrow(dataMatrix) * 100
   perDeadFields[col] <- numDeadFields[col] / nrow(dataMatrix) * 100
 }
-
-# Display the summary information
-cat('Degeneracy type: ', degeneracyType, '\n')
-cat('Training dataset: ', relearningType, '\n')
-cat('Update all weights: ', updateAllWeights, '\n')
-cat('Epochs: ', epochs, '\n')
-cat('Max. demonstrations: ', maximumLearningCycles, '\n')
-cat('Number of trials: ', nrow(dataMatrix), '\n')
-cat('-----------------------------------------------------------------------------------------------------------------------------\n')
 
 # Create a data frame to hold the results
 results <- data.frame(
@@ -100,8 +111,8 @@ results <- data.frame(
 print(results)
 
 # Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
-relearning_scalar <- 1.6
-y_axis_scale <- 1.6
+relearning_scalar <- 3.2
+y_axis_scale <- relearning_scalar
 dot_size <- 3
 alpha_plots <- 0.7
 ggplot() +
@@ -132,8 +143,8 @@ ggplot() +
   # Scaling the x-axis with 0.5 incremental ticks
   scale_x_continuous(
     name = 'Degeneration Percentage (%)',
-    limits = c(90, 97.0),  # Set limits for the x-axis
-    breaks = seq(90, 97, by = 0.5)  # Set ticks at 0.5 intervals
+    limits = c(90, 100.0),  # Set limits for the x-axis
+    breaks = seq(90, 100.0, by = 0.5)  # Set ticks at 0.5 intervals
   ) +
   
   # Color and theme adjustments
@@ -141,9 +152,9 @@ ggplot() +
                                 'Recovered Behavior' = 'darkgreen', 
                                 'Average Relearning Cycles' = 'blue')) +
   labs(
-    # title = 'Behavior Evolution vs. Degeneration Percentage',
-    # subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles',
-    # caption = 'Data represents the evolution of behavior across different degeneration percentages.',
+     title = 'Behavior Evolution vs. Degeneration Percentage',
+     subtitle = 'Visualization of Failed and Recovered Behavior with Average Relearning Cycles needed to recover said behavior',
+     caption = 'Data represents the evolution of behavior across different degeneration percentages.',
     color = 'Legend'
   ) +
   theme_minimal(base_size = 15) +  # Use a minimal theme for a cleaner look
@@ -154,7 +165,7 @@ ggplot() +
     legend.position = "top",  # Place the legend at the top for better readability
     legend.justification = c("right"),
     legend.background = element_rect(fill = "white", color = NA),
-    text = element_text(family = "Garamond", size = 14),
+    text = element_text(family = "EB Garamond", size = 14),
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
     panel.grid.minor = element_blank(),  # Remove minor grid lines for a cleaner look
     plot.title = element_text(face = "bold", size = 16),
@@ -162,5 +173,5 @@ ggplot() +
     plot.caption = element_text(size = 10, face = "italic", color = "darkgray")
   )
 # Save the plot as an image
-filename <- 'Relearning_deactivate_weights.png'
-ggsave(paste0('./plots/', filename, '.png'), width = 12, height = 8, dpi = 300)
+#filename <- 'Relearning_deactivate_weights.png'
+#ggsave(paste0('./plots/', filename, '.png'), width = 12, height = 8, dpi = 300)
