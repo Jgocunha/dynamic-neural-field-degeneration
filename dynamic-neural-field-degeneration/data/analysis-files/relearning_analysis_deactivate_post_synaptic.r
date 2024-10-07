@@ -35,14 +35,14 @@ read_data <- function(filePath) {
 # Experiment parameters
 resultPath <- '../results/'
 degeneracyType <- 'deactivate post-synaptic neurons'
-relearningType <- 'Only-degenerated-cases'
+relearningType <- 'All-cases'
 epochs <- 1
 maximumLearningCycles <- 200
 updateAllWeights <- 1  # 0 or 1
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
-                   '  Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                   ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                    ' Update-all-weights-', updateAllWeights, '.txt')
 
 # Read data from the file
@@ -112,7 +112,7 @@ results <- data.frame(
 print(results)
 
 # Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
-relearning_scalar <- 1
+relearning_scalar <- 90
 y_axis_scale <- relearning_scalar
 dot_size <- 3
 alpha_plots <- 0.7

@@ -39,12 +39,12 @@ resultPath <- '../results/'
 degeneracyType <- 'deactivate pre-synaptic neurons'
 relearningType <- 'Only-degenerated-cases'
 epochs <- 1
-maximumLearningCycles <- 100
-updateAllWeights <- 0
+maximumLearningCycles <- 200
+updateAllWeights <- 1
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
-                   '  Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                   ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                    ' Update-all-weights-', updateAllWeights, '.txt')
 
 # Read data from the file

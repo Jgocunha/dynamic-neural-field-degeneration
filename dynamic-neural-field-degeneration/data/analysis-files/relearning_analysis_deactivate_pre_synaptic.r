@@ -112,7 +112,7 @@ results <- data.frame(
 print(results)
 
 # Plot the evolution of failed behavior, recovered behavior, and average relearning cycles
-relearning_scalar <- 70
+relearning_scalar <- 80
 y_axis_scale <- relearning_scalar
 dot_size <- 3
 alpha_plots <- 0.7
@@ -144,8 +144,8 @@ ggplot() +
   # Scaling the x-axis with 0.5 incremental ticks
   scale_x_continuous(
     name = 'Degeneration Percentage (%)',
-    limits = c(10, 18),  # Set limits for the x-axis
-    breaks = seq(10, 18, by = 1)  # Set ticks at 0.5 intervals
+    limits = c(10, 19),  # Set limits for the x-axis
+    breaks = seq(10, 19, by = 1)  # Set ticks at 0.5 intervals
   ) +
   
   # Color and theme adjustments

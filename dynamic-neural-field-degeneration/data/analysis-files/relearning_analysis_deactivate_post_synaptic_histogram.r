@@ -37,14 +37,14 @@ read_data <- function(filePath) {
 # Set experiment parameters
 resultPath <- '../results/'
 degeneracyType <- 'deactivate post-synaptic neurons'
-relearningType <- 'Only-degenerated-cases'
+relearningType <- 'All-cases'
 epochs <- 1
-maximumLearningCycles <- 50
-updateAllWeights <- 0
+maximumLearningCycles <- 200
+updateAllWeights <- 1
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
-                   '  Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                   ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                    ' Update-all-weights-', updateAllWeights, '.txt')
 
 # Read data from the file
@@ -117,7 +117,7 @@ results_filtered <- results %>%
   filter(Degeneracy >= 75)
 
 # Define a scaling factor for the secondary axis
-relearning_scalar <- 10
+relearning_scalar <- 90
 y_axis_scale <- relearning_scalar
 
 # Reshape the filtered results data frame to long format for behaviour percentages
