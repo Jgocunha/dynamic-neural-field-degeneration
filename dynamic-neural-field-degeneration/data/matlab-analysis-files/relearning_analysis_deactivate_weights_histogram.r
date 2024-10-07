@@ -156,7 +156,7 @@ ggplot() +
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
     legend.position = "top",
-    text = element_text(family = "Garamond", size = 14),
+    text = element_text(family = "EB Garamond", size = 14),
     legend.title = element_blank(),
     plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
     axis.title = element_text(face = "bold"),
