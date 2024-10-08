@@ -3,6 +3,7 @@ library(ggplot2)
 library(extrafont)
 library(dplyr)
 library(tidyr)
+library(svglite)
 
 #font_import()
 loadfonts(device="all")
@@ -37,14 +38,14 @@ read_data <- function(filePath) {
 # Set experiment parameters
 resultPath <- '../results/'
 degeneracyType <- 'deactivate post-synaptic neurons'
-relearningType <- 'All-cases'
+relearningType <- 'Only-degenerated-cases'
 epochs <- 1
-maximumLearningCycles <- 200
-updateAllWeights <- 1
+maximumLearningCycles <- 50
+updateAllWeights <- 0
 
 # Construct file path
 filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
-                   ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                   '  Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                    ' Update-all-weights-', updateAllWeights, '.txt')
 
 # Read data from the file
@@ -53,8 +54,9 @@ dataMatrix <- data$dataMatrix
 maxColumns <- data$maxColumnSize
 
 # Analysis parameters
-initialPer <- 75
-incPer <- 0.278
+initialPer <- 80
+finalPer <- 100
+incPer <- 0.36
 finalPer <- initialPer + (incPer * maxColumns) - 1 * incPer
 degenerationPercentages <- seq(initialPer, finalPer, by = incPer)
 
@@ -109,21 +111,35 @@ results <- data.frame(
   DeadFields = perDeadFields
 )
 
+# Behavior percentage(%) y-axis scaling
+bp_max <- 100
+bp_min <- 0
+
+# Filter the results to include only degeneration percentages from initialPer% onwards
+results_filtered <- results %>%
+  filter(Degeneracy >= initialPer)
+
+# Define a scaling factor for the secondary axis
+relearning_scalar <- 35
+y_axis_scale <- relearning_scalar
+
 # Display the table
 print(results)
 
-# Filter the results to include only degeneration percentages from 89% onwards
-results_filtered <- results %>%
-  filter(Degeneracy >= 75)
-
-# Define a scaling factor for the secondary axis
-relearning_scalar <- 90
-y_axis_scale <- relearning_scalar
-
 # Reshape the filtered results data frame to long format for behaviour percentages
 results_long <- results_filtered %>%
-  select(Degeneracy, CorrectBehaviour, FailedBehaviour, RecoveredBehaviour) %>%
+  select(Degeneracy, 
+         #CorrectBehaviour, 
+         FailedBehaviour, 
+         RecoveredBehaviour) %>%
   pivot_longer(cols = -Degeneracy, names_to = "BehaviourType", values_to = "Percentage")
+
+# Filter results to exclude AvgRelearningCycles with a value of 0
+results_filtered_non_zero <- results_filtered %>%
+  filter(AvgRelearningCycles > 0)
+
+results_filtered_zero <- results_filtered %>%
+  filter(AvgRelearningCycles == 0)
 
 # Create the bar chart with average relearning cycles
 ggplot() +
@@ -133,8 +149,10 @@ ggplot() +
   # Plot for average relearning cycles
   #geom_line(data = results_filtered, aes(x = Degeneracy, y = AvgRelearningCycles * 100 / max(AvgRelearningCycles), 
    #                                      group = 1), color = "black", size = 1) +  # Scale to percentage
-  geom_point(data = results_filtered, aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar), 
-                 color = "#4A4A4A", size = 5, fill = "#4A4A4A",stroke = 1.5, shape = 18 , alpha = 0.8) +
+  geom_point(data = results_filtered_non_zero, aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar), 
+                color = "#4A4A4A", size = 5, fill = "#4A4A4A",stroke = 1.5, shape = 18 , alpha = 0.8) +
+  geom_point(data = results_filtered_zero, aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar), 
+             color = "#4A4A4A", size = 3, fill = "#4A4A4A",stroke = 1.5, shape = 3 , alpha = 0.8) +
   # Scaling the secondary y-axis with aligned tick marks
   scale_y_continuous(
     name = 'Behavior Percentage (%)',
@@ -146,7 +164,7 @@ ggplot() +
       breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
     )
   ) +
-  labs(title = "Behaviour Analysis and Average Relearning Cycles by Degeneration Percentage (89% and Above)",
+  labs(#title = "Behaviour Analysis and Average Relearning Cycles by Degeneration Percentage",
        x = "Degeneration Percentage (%)",
        y = "Percentage (%)",
        fill = "Behaviour Type") +
@@ -155,26 +173,73 @@ ggplot() +
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
-    legend.position = "top",
     text = element_text(family = "EB Garamond", size = 14),
+    legend.position = c(0.05, 0.95),  # Top-left inside the plot
+    legend.justification = c("left", "top"),  # Aligns the legend to the top-left corner
+    legend.background = element_rect(fill = "white", color = NA, size = 0.5),  # White background for clarity
     legend.title = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
+    #plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
     axis.title = element_text(face = "bold"),
-    axis.text = element_text(size = 12)
+    axis.text = element_text(size = 12),
+    axis.title.y.right = element_text(margin = margin(l = 10))  # Add space between label and axis values
   )  +
   scale_fill_manual(values = c(
-    "CorrectBehaviour" = "#B3CDE0",  # Light Blue
+    #"CorrectBehaviour" = "#B3CDE0",  # Light Blue
     "RecoveredBehaviour" = "#B7E4D9",  # Green
     "FailedBehaviour" = "#F4B3B4"   # Light Red
   ),
-  labels = c("Correct behaviour", "Failed behaviour", "Recovered behaviour")) +
-  scale_x_continuous(breaks = seq(75, 100, by = 1)) +
+  labels = c(#"Correct behaviour", 
+             "Failed behaviour", 
+             "Recovered behaviour")) +
+  scale_x_continuous(breaks = seq(initialPer, finalPer, by = 1)) +
   scale_y_continuous(
     name = 'Behaviour Percentage (%)',
-    limits = c(0, 100),  # Set limits for the left y-axis
-    breaks = seq(0, 100, by = 10),  # Tick marks every 10 units
+    limits = c(bp_min, bp_max),  # Set limits for the left y-axis
+    breaks = seq(bp_min, bp_max, by = 10),  # Tick marks every 10 units
     sec.axis = sec_axis(
       ~ . / y_axis_scale,  # Scale back to average relearning cycles
       name = 'Average Relearning Cycles',
-      breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
-    ))
+      breaks = seq(bp_min, bp_max / y_axis_scale, by = 10 / y_axis_scale),  # Match the breaks on the secondary axis
+      labels = scales::number_format(accuracy = 0.01)  # Format with two decimal places
+      )
+    )
+
+# Updated dimensions (increased size)
+new_width <- 10      # New width in inches
+new_height <- (new_width / 3.5) * 3  # Calculate new height to maintain aspect ratio
+
+# Construct the filename based on the experiment parameters (now for SVG)
+plot_filename <- paste0("./plots/", degeneracyType, ' ', relearningType, 
+                        ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                        ' Update-all-weights-', updateAllWeights, '.svg')
+
+# Save the plot with the updated dimensions
+ggsave(
+  filename = plot_filename,
+  plot = last_plot(),  # Save the most recent plot
+  device = "svg",      # Save as SVG
+  width = new_width,   # Use the new width
+  height = new_height, # Use the calculated height
+  units = "in"        # Specify inches for size
+)
+
+# Print the plot file path to verify where it's saved
+print(plot_filename)
+
+# Construct the filename for the results table
+results_filename <- paste0("./analysis/", degeneracyType, ' ', relearningType, 
+                           ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
+                           ' Update-all-weights-', updateAllWeights, '.txt')
+
+# Export the results table to a text file
+write.table(
+  results,                # The data frame to write
+  file = results_filename, # The output file name
+  sep = "\t",            # Use tab as the separator
+  row.names = FALSE,     # Do not include row names
+  col.names = TRUE,      # Include column names
+  quote = TRUE           # Quote character strings
+)
+
+# Print the results file path to verify where it's saved
+print(results_filename)
