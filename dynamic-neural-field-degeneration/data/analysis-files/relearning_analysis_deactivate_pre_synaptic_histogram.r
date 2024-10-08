@@ -141,6 +141,10 @@ results_filtered_non_zero <- results_filtered %>%
 results_filtered_zero <- results_filtered %>%
   filter(AvgRelearningCycles == 0)
 
+# Font parameters
+font <- "EB Garamond"
+font_size <- 24
+
 # Create the bar chart with average relearning cycles
 ggplot() +
   # Bar plot for behaviour percentages
@@ -173,14 +177,15 @@ ggplot() +
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
-    text = element_text(family = "EB Garamond", size = 14),
+    text = element_text(family = font, size = font_size),
     legend.position = c(0.1, 0.95),  # Top-left inside the plot
     legend.justification = c("left", "top"),  # Aligns the legend to the top-left corner
     legend.background = element_rect(fill = "white", color = NA, size = 0.5),  # White background for clarity
     legend.title = element_blank(),
     #plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
+    legend.text = element_text(size = font_size),
     axis.title = element_text(face = "bold"),
-    axis.text = element_text(size = 12),
+    axis.text = element_text(size = font_size),
     axis.title.y.right = element_text(margin = margin(l = 10))  # Add space between label and axis values
   )  +
   scale_fill_manual(values = c(
