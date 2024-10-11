@@ -272,15 +272,24 @@ for (experiment in 1:nrow(experiments)) {
   }
   # Calculate and display Avg. % of affected elements until disappearance of bump
   avgAvgNumIterations <- mean(dataTable$Avg_percent_affected_elements_until_disappearance)
+  stdAvgNumIterations <- sd(dataTable$Avg_percent_affected_elements_until_disappearance)
+  seAvgNumIterations <- stdAvgNumIterations / sqrt(nrow(dataTable))
   print(paste('Avg. % of affected elements until disappearance of bump: ', round(avgAvgNumIterations, 4)))
+  print(paste('Standard Error: ', round(seAvgNumIterations, 4)))
   
   # Calculate and display average Avg. % of affected elements until misbehaviour
   avgAvgIterationsMisbehavior <- mean(dataTable$Avg_percent_affected_elements_until_misbehavior)
+  stdAvgIterationsMisbehavior <- sd(dataTable$Avg_percent_affected_elements_until_misbehavior)
+  seAvgIterationsMisbehavior <- stdAvgIterationsMisbehavior / sqrt(nrow(dataTable))
   print(paste('Avg. % of affected elements until misbehavior: ', round(avgAvgIterationsMisbehavior, 4)))
+  print(paste('Standard Error: ', round(seAvgIterationsMisbehavior, 4)))
   
   # Calculate and display average Max. deviation per experiment
   avgMaxDeviation <- mean(dataTable$Max_deviation)
+  stdMaxDeviation <- sd(dataTable$Max_deviation)
+  seMaxDeviation <- stdMaxDeviation / sqrt(nrow(dataTable))
   print(paste('Average Max. deviation per experiment: ', round(avgMaxDeviation, 4)))
+  print(paste('Standard Error: ', round(seMaxDeviation, 4)))
   
   print(dataTable)
 }

@@ -1,0 +1,181 @@
+library(rstudioapi)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(gganimate)
+library(extrafont)
+
+#loadfonts(device = "win")
+
+# Defining the experiments as a data frame
+experiments <- data.frame(
+  experiment_name = c(
+    'deactivate weights', 
+    'reduce 0.005 weights', 
+    'randomize weights', 
+    'deactivate pre-synaptic neurons',
+    'deactivate post-synaptic neurons'
+    ),
+  variable = c('weight', 'weight', 'weight', 'pre-synaptic neuron', 'post synaptic neuron'),
+  stringsAsFactors = FALSE
+)
+# Positions and target centroids
+positions <- c(2.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0)
+targetCentroids <- c(2.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0)
+
+# File paths
+centroidsFilePath <- ''
+analysisFilePath <- ''
+plotFilePath <- './plots/'
+
+# Acceptable deviation
+acceptableDeviation <- 2.0
+degenerationInterval <- 1  # Interval to analyze columns in steps of 20
+
+current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
+
+# Number of random trials to select
+X <- 10  # You can change X to select the number of random trials
+
+# Helper functions
+read_data <- function(centroidFilePath) {
+  # Open the file and read it line by line
+  lines <- readLines(centroidFilePath)
+  
+  # Initialize an empty list to store the filtered lines
+  data <- list()
+  
+  for (line in lines) {
+    # Split the line into components and convert to numeric values
+    lineData <- as.numeric(unlist(strsplit(line, "\\s+")))
+    
+    # Remove NA and values equal to 0
+    lineData <- lineData[!is.na(lineData) & lineData != 0]
+    
+    # If the line has data, add it to the data list
+    if (length(lineData) > 0) {
+      data <- append(data, list(lineData))
+    }
+  }
+  
+  return(data)
+}
+
+clean_data <- function(data) {
+  # Initialize an empty list to store filtered values
+  newData <- list()
+  
+  # Loop through each element in the data list
+  for (i in 1:length(data)) {
+    if (is.numeric(data[[i]])) {
+      # Keep only non-negative numeric values
+      if (all(data[[i]] >= 0)) {
+        newData <- append(newData, list(data[[i]]))
+      }
+    } else if (is.logical(data[[i]]) || is.character(data[[i]])) {
+      # Keep logical and character values as they are
+      newData <- append(newData, list(data[[i]]))
+    }
+  }
+  
+  return(newData)  # Return the cleaned data
+}
+
+get_max_centroid_deviations <- function(data, targetCentroid) {
+  max_deviations <- numeric(length(data))
+  max_value <- 0.0
+  
+  for (trial in 1:length(data)) {
+    deviations <- numeric(length(data[[trial]]))
+    
+    for (iteration in 1:length(data[[trial]])) {
+      deviations[iteration] <- min(abs(data[[trial]][iteration] - targetCentroid), 
+                                   abs(28 - abs(data[[trial]][iteration] + targetCentroid)))
+    }
+    
+    for (iteration in 1:length(data[[trial]])) {
+      if (deviations[iteration] >= max_value) {
+        max_value <- deviations[iteration]
+      }
+      max_deviations[iteration] <- max_value
+    }
+  }
+  
+  return(max_deviations)
+}
+
+# Function to generate plots and animate
+plot_and_animate <- function(deviations, targetCentroid, positionStr, experimentNameStr, trialsToPlot) {
+  # Create a data frame for ggplot
+  deviation_df <- do.call(rbind, lapply(1:length(deviations), function(trialIndex) {
+    trialID <- trialsToPlot[trialIndex]  # Get the actual trial identifier
+    data.frame(
+      trial = as.factor(trialID),  # Use the actual trial ID for the legend
+      iteration = 1:length(deviations[[trialIndex]]),
+      deviation = deviations[[trialIndex]]
+    )
+  }))
+  
+  # Create the ggplot with more colors for more trials
+  p <- ggplot(deviation_df, aes(x = iteration, y = deviation, color = trial)) +  # Use trial for color mapping
+    geom_line(size = 1.2) +  # Slightly thicker lines for modern aesthetic
+    geom_point(size = 2) +   # Larger points for emphasis
+    scale_color_viridis_d(name = "Trial", option = "C") +  # Use a continuous color scale with viridis
+    labs(title = paste("Centroid Absolute Deviation from Target over Iterations"),
+         subtitle = paste("Target Centroid:", targetCentroid),
+         x = "Iteration", 
+         y = "Deviation") +
+    theme_minimal(base_family = "Times New Roman") +  # Set Times New Roman font
+    theme(
+      legend.position = "right",  # Place legend on the right
+      text = element_text(size = 14, family = "Times New Roman"),  # Use Times New Roman font throughout
+      plot.title = element_text(face = "bold", size = 16),  # Bold title
+      plot.subtitle = element_text(size = 14),
+      axis.title = element_text(face = "bold"),  # Bold axis titles
+      panel.grid.major = element_line(color = "gray80"),  # Lighter grid lines for modern feel
+      panel.grid.minor = element_blank()  # Remove minor grid lines
+    ) +
+    transition_reveal(iteration)
+  
+  # Save as GIF
+  anim_save(paste0("./plots/abs-centroid-dev-pos-condition-gif/abs_dev_", positionStr, "_", experimentNameStr, ".gif"), 
+            animation = animate(p, fps = 10, width = 800, height = 600, dpi = 300))
+}
+
+
+# Loop through each experiment
+for (experiment in 1:nrow(experiments)) {
+  
+  # Define the title based on experiment
+  experimentTitle <- switch(experiments$experiment_name[experiment],
+                            'deactivate pre-synaptic neurons' = paste("Deactivating one unique", experiments$variable[experiment]),
+                            'deactivate post-synaptic neurons' = paste("Deactivating one unique", experiments$variable[experiment]),
+                            'reduce 0.05 weights' = paste("Randomly reducing one", experiments$variable[experiment], "by 95%"),
+                            'randomize weights' = paste("Randomly randomizing one", experiments$variable[experiment]),
+                            'deactivate weights' = paste("Randomly deactivating one unique", experiments$variable[experiment])
+  )
+  
+  # Loop through positions
+  for (positionIndex in 1:length(positions)) {
+    positionStr <- sprintf("%.1f", positions[positionIndex])
+    targetCentroid <- targetCentroids[positionIndex]
+    subTitle <- paste("Target centroid position", positionStr)
+    
+    # Load centroid data
+    centroidsFilePath <- paste0('../', positionStr, ' ', experiments$experiment_name[experiment], ' - centroids.txt')
+    data <- read_data(centroidsFilePath)
+    data <- clean_data(data)
+    
+    # Randomly select X trials
+    trialsToPlot <- sample(1:length(data), X)
+    deviations <- list()
+    
+    # Store deviations for each selected trial
+    for (trial in trialsToPlot) {
+      deviations <- append(deviations, list(get_max_centroid_deviations(data[trial], targetCentroid)))
+    }
+    
+    # Plot and animate the selected trials
+    plot_and_animate(deviations, targetCentroid, positionStr, experiments$experiment_name[experiment], trialsToPlot)
+  }
+}
