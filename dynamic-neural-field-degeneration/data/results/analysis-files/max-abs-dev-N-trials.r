@@ -2,10 +2,14 @@ library(rstudioapi)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
-library(gganimate)
 library(extrafont)
+library(gganimate)
+library(gifski)
 
 #loadfonts(device = "win")
+
+# Get the script directory
+current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
 # Defining the experiments as a data frame
 experiments <- data.frame(
@@ -16,7 +20,7 @@ experiments <- data.frame(
     'deactivate pre-synaptic neurons',
     'deactivate post-synaptic neurons'
     ),
-  variable = c('weight', 'weight', 'weight', 'pre-synaptic neuron', 'post synaptic neuron'),
+  variable = c('Weight', 'Weight', 'Weight', 'Pre-Synaptic Neuron', 'Post-Synaptic Neuron'),
   stringsAsFactors = FALSE
 )
 # Positions and target centroids
@@ -25,14 +29,22 @@ targetCentroids <- c(2.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0)
 
 # File paths
 centroidsFilePath <- ''
-analysisFilePath <- ''
-plotFilePath <- './plots/'
+plotFilePath <- './plots/max-abs-dev-N-trials/'
+
+# Loop through each position and create a corresponding directory
+for (pos in positions) {
+  # Create a directory name using the position
+  dir_name <- paste0(pos)
+  
+  # Full path for the new directory
+  full_path <- file.path(plotFilePath, dir_name)
+  
+  # Create the directory
+  dir.create(full_path, showWarnings = FALSE) # showWarnings = FALSE suppresses warnings if the directory already exists
+}
 
 # Acceptable deviation
 acceptableDeviation <- 2.0
-degenerationInterval <- 1  # Interval to analyze columns in steps of 20
-
-current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
 # Number of random trials to select
 X <- 10  # You can change X to select the number of random trials
@@ -105,7 +117,7 @@ get_max_centroid_deviations <- function(data, targetCentroid) {
 }
 
 # Function to generate plots and animate
-plot_and_animate <- function(deviations, targetCentroid, positionStr, experimentNameStr, trialsToPlot) {
+plot_and_animate <- function(deviations, targetCentroid, positionStr, experimentNameStr, trialsToPlot, experimentTitle) {
   # Create a data frame for ggplot
   deviation_df <- do.call(rbind, lapply(1:length(deviations), function(trialIndex) {
     trialID <- trialsToPlot[trialIndex]  # Get the actual trial identifier
@@ -116,31 +128,52 @@ plot_and_animate <- function(deviations, targetCentroid, positionStr, experiment
     )
   }))
   
+  Title <- paste0("Max. Abs. Deviation of Centroid as Degeneration Progresses for ", X,
+                  " Randomly Selected Trials")
+  SubTitle <- paste0(experimentTitle, " - Target Centroid Position is ", positionStr)
+  
   # Create the ggplot with more colors for more trials
-  p <- ggplot(deviation_df, aes(x = iteration, y = deviation, color = trial)) +  # Use trial for color mapping
-    geom_line(size = 1.2) +  # Slightly thicker lines for modern aesthetic
-    geom_point(size = 2) +   # Larger points for emphasis
-    scale_color_viridis_d(name = "Trial", option = "C") +  # Use a continuous color scale with viridis
-    labs(title = paste("Centroid Absolute Deviation from Target over Iterations"),
-         subtitle = paste("Target Centroid:", targetCentroid),
-         x = "Iteration", 
-         y = "Deviation") +
-    theme_minimal(base_family = "Times New Roman") +  # Set Times New Roman font
+  p <- ggplot(deviation_df, aes(x = iteration, y = deviation, color = trial)) +
+    geom_line(size = 1.2) +  # Line thickness
+    geom_point(size = 2) +
+    scale_color_brewer(palette = "Paired", name = "Trial") +  # Use pastel palette from ColorBrewer    
+    labs(
+        title = Title,
+         subtitle = SubTitle,
+         x = "Simulation Iterations", 
+         y = "Absolute Deviation") +
+    #theme_minimal(base_family = "Times New Roman") +  # Set Times New Roman font
+    theme_classic(base_family = "Times New Roman") +
     theme(
       legend.position = "right",  # Place legend on the right
-      text = element_text(size = 14, family = "Times New Roman"),  # Use Times New Roman font throughout
+      text = element_text(size = 14, family = "Times New Roman"),
       plot.title = element_text(face = "bold", size = 16),  # Bold title
-      plot.subtitle = element_text(size = 14),
       axis.title = element_text(face = "bold"),  # Bold axis titles
-      panel.grid.major = element_line(color = "gray80"),  # Lighter grid lines for modern feel
-      panel.grid.minor = element_blank()  # Remove minor grid lines
+      panel.grid.major = element_line(color = "lightgray", size = 0.5),
     ) +
+    scale_x_continuous(breaks = seq(0, 500, by = 10), expand = c(0, 0)) +  # Start x-axis at 0
+    scale_y_continuous(expand = c(0, 0)) +  # Start y-axis at 0
     transition_reveal(iteration)
   
-  # Save as GIF
-  anim_save(paste0("./plots/abs-centroid-dev-pos-condition-gif/abs_dev_", positionStr, "_", experimentNameStr, ".gif"), 
-            animation = animate(p, fps = 10, width = 800, height = 600, dpi = 300))
-}
+  # Create the animation
+  animation <- animate(p, fps = 10, width = 800, height = 600, dpi = 300)
+  animation_to_save <- animation + 
+    enter_grow() + 
+    exit_fade() +
+    exit_shrink()
+  
+  # Check if animation is a valid object
+  print(animation_to_save)
+  
+  # Save the animation as .gif
+  anim_save(paste0(plotFilePath, "/", targetCentroid, "/", experimentNameStr, ".gif"), 
+            animation = animation)
+  # Save the animation as .svg frames
+  animate(p, nframes = 2, device = "svg",
+          renderer = file_renderer(paste0(plotFilePath, "/", targetCentroid, "/"), 
+                                   prefix = paste0(experimentNameStr, "frame"), 
+                                   overwrite = TRUE))
+  }
 
 
 # Loop through each experiment
@@ -148,11 +181,11 @@ for (experiment in 1:nrow(experiments)) {
   
   # Define the title based on experiment
   experimentTitle <- switch(experiments$experiment_name[experiment],
-                            'deactivate pre-synaptic neurons' = paste("Deactivating one unique", experiments$variable[experiment]),
-                            'deactivate post-synaptic neurons' = paste("Deactivating one unique", experiments$variable[experiment]),
-                            'reduce 0.05 weights' = paste("Randomly reducing one", experiments$variable[experiment], "by 95%"),
-                            'randomize weights' = paste("Randomly randomizing one", experiments$variable[experiment]),
-                            'deactivate weights' = paste("Randomly deactivating one unique", experiments$variable[experiment])
+                            'deactivate pre-synaptic neurons' = paste("Deactivating One Unique", experiments$variable[experiment]),
+                            'deactivate post-synaptic neurons' = paste("Deactivating One Unique", experiments$variable[experiment]),
+                            'reduce 0.05 weights' = paste("Randomly Reducing One", experiments$variable[experiment], "by 95%"),
+                            'randomize weights' = paste("Randomly Randomizing One", experiments$variable[experiment]),
+                            'deactivate weights' = paste("Randomly Deactivating One Unique", experiments$variable[experiment])
   )
   
   # Loop through positions
@@ -176,6 +209,6 @@ for (experiment in 1:nrow(experiments)) {
     }
     
     # Plot and animate the selected trials
-    plot_and_animate(deviations, targetCentroid, positionStr, experiments$experiment_name[experiment], trialsToPlot)
+    p <- plot_and_animate(deviations, targetCentroid, positionStr, experiments$experiment_name[experiment], trialsToPlot, experimentTitle)
   }
 }
