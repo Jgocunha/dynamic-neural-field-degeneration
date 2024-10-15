@@ -2,9 +2,19 @@ library(rstudioapi)
 
 # Defining the experiments as a data frame
 experiments <- data.frame(
-  experiment_name = c('deactivate weights', 'reduce 0.005 weights', 'randomize weights', 
-                      'deactivate pre-synaptic neurons', 'deactivate post-synaptic neurons'),
-  variable = c('weight', 'weight', 'weight', 'pre-synaptic neuron', 'post synaptic neuron'),
+  experiment_name = c(
+    'deactivate weights', 
+    'reduce 0.005 weights', 
+    'randomize weights', 
+    'deactivate pre-synaptic neurons', 
+    'deactivate post-synaptic neurons'
+    ),
+  variable = c(
+    'weight', 
+    'weight', 
+    'weight', 
+    'pre-synaptic neuron', 
+    'post synaptic neuron'),
   stringsAsFactors = FALSE
 )
 
@@ -292,4 +302,59 @@ for (experiment in 1:nrow(experiments)) {
   print(paste('Standard Error: ', round(seMaxDeviation, 4)))
   
   print(dataTable)
+  
+  # Construct results: Add summary statistics first
+  results_summary <- data.frame(
+    Metric = c(
+      'Avg. % of affected elements until disappearance of bump',
+      'Standard Error (disappearance)',
+      'Avg. % of affected elements until misbehavior',
+      'Standard Error (misbehavior)',
+      'Average Max. deviation per experiment',
+      'Standard Error (max deviation)'
+    ),
+    Value = c(
+      round(avgAvgNumIterations, 4),
+      round(seAvgNumIterations, 4),
+      round(avgAvgIterationsMisbehavior, 4),
+      round(seAvgIterationsMisbehavior, 4),
+      round(avgMaxDeviation, 4),
+      round(seMaxDeviation, 4)
+    ),
+    stringsAsFactors = FALSE
+  )
+  
+  # Create the directory if it doesn't exist
+  if (!dir.exists("./analysis/")) {
+    dir.create("./analysis/")
+  }
+  
+  # Construct the filename for the results table
+  results_filename <- paste0("./analysis/", experiments$experiment_name[experiment], ' - analysis.txt')
+  
+  # Write the data table (detailed trial results) by appending it to the file
+  write.table(
+    dataTable,               # The data frame to write (dataTable)
+    file = results_filename, # The same file name
+    sep = "\t",              # Use tab as the separator
+    row.names = FALSE,       # Do not include row names
+    col.names = TRUE,        # Include column names
+    quote = TRUE,            # Quote character strings
+    append = FALSE            # Do not Append to the existing file
+  )
+  
+  # Write a separator to the file (a blank line or header for the next section)
+  write("\nSummary Statistics:\n", file = results_filename, append = TRUE)
+  
+  # Write summary statistics to the file first
+  write.table(
+    results_summary,         # The summary statistics
+    file = results_filename, # The output file name
+    sep = "\t",              # Use tab as the separator
+    row.names = FALSE,       # Do not include row names
+    col.names = FALSE,        # Do not Include column names
+    quote = TRUE,             # Quote character strings
+    append = TRUE            # Append to the existing file
+  )
+  
 }

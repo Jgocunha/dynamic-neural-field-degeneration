@@ -19,10 +19,24 @@ experiments <- data.frame(
     'randomize weights', 
     'deactivate pre-synaptic neurons',
     'deactivate post-synaptic neurons'
-    ),
-  variable = c('Weight', 'Weight', 'Weight', 'Pre-Synaptic Neuron', 'Post-Synaptic Neuron'),
+  ),
+  variable = c(
+    'Weight', 
+    'Weight', 
+    'Weight', 
+    'Pre-synaptic neuron', 
+    'Post-synaptic neuron'
+  ),
+  deg_per = c(
+    0.496,
+    0.496,
+    0.496,
+    0.1389,
+    0.3571
+  ),
   stringsAsFactors = FALSE
 )
+
 # Positions and target centroids
 positions <- c(2.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0)
 targetCentroids <- c(2.0, 6.0, 10.0, 14.0, 18.0, 22.0, 26.0)
@@ -47,7 +61,7 @@ for (pos in positions) {
 acceptableDeviation <- 2.0
 
 # Number of random trials to select
-X <- 10  # You can change X to select the number of random trials
+X <- 5  # You can change X to select the number of random trials
 
 # Helper functions
 read_data <- function(centroidFilePath) {
@@ -116,44 +130,59 @@ get_max_centroid_deviations <- function(data, targetCentroid) {
   return(max_deviations)
 }
 
-# Function to generate plots and animate
-plot_and_animate <- function(deviations, targetCentroid, positionStr, experimentNameStr, trialsToPlot, experimentTitle) {
-  # Create a data frame for ggplot
+get_centroid_deviations <- function(data, targetCentroid) {
+  for (trial in 1:length(data)) {
+    deviations <- numeric(length(data[[trial]]))
+    
+    for (iteration in 1:length(data[[trial]])) {
+      deviations[iteration] <- min(abs(data[[trial]][iteration] - targetCentroid), 
+                                   abs(28 - abs(data[[trial]][iteration] + targetCentroid)))
+    }
+  }
+  return(deviations)
+}
+
+plot_and_animate <- function(deviations, targetCentroid, positionStr, experimentNameStr, trialsToPlot, experimentTitle, deg_per) {
+  # Create a data frame for ggplot with degeneration percentages
   deviation_df <- do.call(rbind, lapply(1:length(deviations), function(trialIndex) {
     trialID <- trialsToPlot[trialIndex]  # Get the actual trial identifier
+    iterations <- 1:length(deviations[[trialIndex]])
+    deg_per_x <- iterations * deg_per  # Convert iterations to degeneration percentages
     data.frame(
       trial = as.factor(trialID),  # Use the actual trial ID for the legend
-      iteration = 1:length(deviations[[trialIndex]]),
+      degeneration_percentage = deg_per_x,  # Use degeneration percentage for the x-axis
       deviation = deviations[[trialIndex]]
     )
   }))
   
-  Title <- paste0("Max. Abs. Deviation of Centroid as Degeneration Progresses for ", X,
-                  " Randomly Selected Trials")
+  # Title and Subtitle
+  Title <- paste0("Max. Abs. Deviation of Centroid as Degeneration Progresses for ", 
+                  length(trialsToPlot), " Randomly Selected Trials")
   SubTitle <- paste0(experimentTitle, " - Target Centroid Position is ", positionStr)
   
-  # Create the ggplot with more colors for more trials
-  p <- ggplot(deviation_df, aes(x = iteration, y = deviation, color = trial)) +
+  # Create the ggplot with degeneration percentages on x-axis
+  p <- ggplot(deviation_df, aes(x = degeneration_percentage, y = deviation, color = trial)) +
     geom_line(size = 1.2) +  # Line thickness
     geom_point(size = 2) +
     scale_color_brewer(palette = "Paired", name = "Trial") +  # Use pastel palette from ColorBrewer    
     labs(
-        title = Title,
-         subtitle = SubTitle,
-         x = "Simulation Iterations", 
-         y = "Absolute Deviation") +
-    #theme_minimal(base_family = "Times New Roman") +  # Set Times New Roman font
+      title = Title,
+      subtitle = SubTitle,
+      x = "Degeneration Percentage (%)",  # Adjusted x-axis label
+      y = "Absolute Deviation"
+    ) +
     theme_classic(base_family = "Times New Roman") +
     theme(
       legend.position = "right",  # Place legend on the right
       text = element_text(size = 14, family = "Times New Roman"),
       plot.title = element_text(face = "bold", size = 16),  # Bold title
       axis.title = element_text(face = "bold"),  # Bold axis titles
-      panel.grid.major = element_line(color = "lightgray", size = 0.5),
+      panel.grid.major = element_line(color = "lightgray", size = 0.5)
     ) +
-    scale_x_continuous(breaks = seq(0, 500, by = 10), expand = c(0, 0)) +  # Start x-axis at 0
-    scale_y_continuous(expand = c(0, 0)) +  # Start y-axis at 0
-    transition_reveal(iteration)
+    scale_x_continuous(breaks = seq(0, max(deviation_df$degeneration_percentage) * 1.05, by = deg_per * 10), 
+                       expand = c(0, 0), limits = c(0, max(deviation_df$degeneration_percentage) * 1.05)) +  # Adjust x-axis for degeneration percentage
+    scale_y_continuous(expand = c(0, 0), limits = c(0, max(deviation_df$deviation) * 1.05)) +
+    transition_reveal(degeneration_percentage)
   
   # Create the animation
   animation <- animate(p, fps = 10, width = 800, height = 600, dpi = 300)
@@ -168,13 +197,13 @@ plot_and_animate <- function(deviations, targetCentroid, positionStr, experiment
   # Save the animation as .gif
   anim_save(paste0(plotFilePath, "/", targetCentroid, "/", experimentNameStr, ".gif"), 
             animation = animation)
+  
   # Save the animation as .svg frames
   animate(p, nframes = 2, device = "svg",
           renderer = file_renderer(paste0(plotFilePath, "/", targetCentroid, "/"), 
                                    prefix = paste0(experimentNameStr, "frame"), 
                                    overwrite = TRUE))
-  }
-
+}
 
 # Loop through each experiment
 for (experiment in 1:nrow(experiments)) {
@@ -205,10 +234,21 @@ for (experiment in 1:nrow(experiments)) {
     
     # Store deviations for each selected trial
     for (trial in trialsToPlot) {
+      # Max. Abs. Dev.
       deviations <- append(deviations, list(get_max_centroid_deviations(data[trial], targetCentroid)))
+      # Abs. Dev.
+      #deviations <- append(deviations, list(get_centroid_deviations(data[trial], targetCentroid)))
     }
     
     # Plot and animate the selected trials
-    p <- plot_and_animate(deviations, targetCentroid, positionStr, experiments$experiment_name[experiment], trialsToPlot, experimentTitle)
+    p <- plot_and_animate(
+      deviations, 
+      targetCentroid, 
+      positionStr, 
+      experiments$experiment_name[experiment], 
+      trialsToPlot,
+      experimentTitle,
+      experiments$deg_per[experiment] 
+      )
   }
 }
