@@ -32,7 +32,7 @@ void DegenerateFieldCoupling::startDegeneration()
 void DegenerateFieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
 {
 	weights = learningRuleDegenerate(weights, input, output, parameters.learningRate);
-	//writeWeights();
+	writeWeights();
 }
 
 void DegenerateFieldCoupling::setNumWeightsToDegenerate(int count)
@@ -226,7 +226,6 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToReduceValue()
 		std::cout << "Attempting to find unique combination" << std::endl;
 	}*/
 }
-
 
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {

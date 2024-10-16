@@ -63,14 +63,6 @@ void DegenerateNeuralField::applyDegeneracy()
 			setRandomUniqueNeuronToZero();
 		degenerate = false;
 		break;
-		/*case ElementDegeneracyType::NEURONS_DEACTIVATE_PERCENTAGE:
-			while (numNeuronsToDegenerate > 0)
-			{
-				setRandomUniqueNeuronToZero();
-				numNeuronsToDegenerate--;
-			}
-			degenerate = false;
-			break;*/
 	case experiment::degeneration::ElementDegeneracyType::NONE:
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_DEACTIVATE:
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
@@ -84,14 +76,14 @@ void DegenerateNeuralField::setDegeneracyType(experiment::degeneration::ElementD
 	this->degeneracyType = degeneracyType;
 }
 
-experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
+experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegeneracyType() const
 {
 	return degeneracyType;
 }
 
 double DegenerateNeuralField::getCentroid()
 {
-	const std::vector<double> f_output = dnf_composer::tools::math::heaviside(components["activation"], 2.0);
+	const std::vector<double> f_output = dnf_composer::tools::math::heaviside(components["activation"], 0.1);
 	double centroid = 0.0;
 
 	if (*std::ranges::max_element(f_output) > 0)
@@ -134,15 +126,6 @@ double DegenerateNeuralField::getCentroid()
 	return centroid;
 }
 
-//void DegenerateNeuralField::setDegeneracyType(experiment::degeneration::ElementDegeneracyType degeneracyType)
-//{
-//	this->degeneracyType = degeneracyType;
-//}
-//
-//experiment::degeneration::ElementDegeneracyType DegenerateNeuralField::getDegeneracyType()
-//{
-//	return degeneracyType;
-//}
 
 void DegenerateNeuralField::clearDegeneration()
 {

@@ -8,8 +8,8 @@ namespace experiment
 	{
 		ExperimentHandlerRelearning::ExperimentHandlerRelearning()
 		{
-			dnfcomposerHandler.setRelearningParameters(parameters.relearningParameters.type, parameters.relearningParameters.numberOfEpochs, 
-				parameters.relearningParameters.learningRate,parameters.relearningParameters.maxAmountOfDemonstrations, 
+			dnfcomposerHandler.setRelearningParameters(parameters.relearningParameters.type, parameters.relearningParameters.numberOfEpochs,
+				parameters.relearningParameters.learningRate, parameters.relearningParameters.maxAmountOfDemonstrations,
 				parameters.relearningParameters.updateAllWeights);
 			dnfcomposerHandler.setIncrementOfDegenerationPercentage(parameters.degenerationParameters.incrementOfDegenerationInPercentage);
 			readHueToAngleMap();
@@ -28,7 +28,7 @@ namespace experiment
 
 			parameters.print();
 			//if (!parameters.isDebugModeOn)
-				dnf_composer::tools::logger::Logger::setMinLogLevel(dnf_composer::tools::logger::ERROR);
+			dnf_composer::tools::logger::Logger::setMinLogLevel(dnf_composer::tools::logger::ERROR);
 			createExperimentFolderDirectory();
 			getOriginalWeightsFile();
 			dnfcomposerHandler.setIsUserInterfaceActiveAs(parameters.isVisualizationOn);
@@ -40,8 +40,6 @@ namespace experiment
 
 		void ExperimentHandlerRelearning::initialDegeneration()
 		{
-			mockPickAndPlace();
-
 			int numberElements = 0;
 			switch (parameters.degenerationParameters.type)
 			{
@@ -84,61 +82,106 @@ namespace experiment
 			dnfcomposerHandler.setNumberOfElementsToDegenerate();
 		}
 
+		//void ExperimentHandlerRelearning::step()
+		//{
+		//	for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
+		//	{
+		//		/*bonafidePickAndPlace();
+		//		if (parameters.degenerationParameters.initialPercentage != 0)
+		//			initialDegeneration();*/
+
+		//		//dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
+		//		//dnfcomposerHandler.setNumberOfElementsToDegenerate();
+
+		//		do
+		//		{
+		//			const bool successfulPickAndPlace = bonafidePickAndPlace();
+
+		//			//if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
+		//			//{
+		//			//	if (doesBackupWeightsFileExist())
+		//			//	{
+		//			//		restoreWeightsFile();
+		//			//		readWeights();
+		//			//		saveWeights();
+		//			//	}
+
+		//			//	degenerationProcedure();
+		//			//	saveWeights();
+
+		//			//	if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
+		//			//	{
+		//			//		data.isFieldDead = true;
+		//			//	}
+		//			//	statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
+		//			//	statistics.numOfRelearningCycles = 0;
+		//			//	currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
+
+		//			//	std::ostringstream logStream;
+		//			//	logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+		//			//	dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
+		//			//}
+		//			//else
+		//			//{
+		//			//	if (!doesBackupWeightsFileExist())
+		//			//		backupWeightsFile();
+		//			//	relearningProcedure();
+		//			//}
+		//			cleanupPickAndPlace();
+
+		//		} while ((currentPercentageOfDegeneration < parameters.degenerationParameters.targetPercentage) && !(data.isFieldDead));
+
+		//		cleanupTrial();
+		//	}
+		//	dnfcomposerHandler.stop();
+		//	deleteExperimentFolderDirectory();
+		//}
+
 		void ExperimentHandlerRelearning::step()
 		{
 			for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
 			{
+				//bonafidePickAndPlace(); 
 				//if (parameters.degenerationParameters.initialPercentage != 0)
 					//initialDegeneration();
 
-				//dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
-				//dnfcomposerHandler.setNumberOfElementsToDegenerate();
+				dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
+				dnfcomposerHandler.setNumberOfElementsToDegenerate();
 
 				do
 				{
-					bool successfulPickAndPlace = false;
+					const bool successfulPickAndPlace = bonafidePickAndPlace();
 
-					if (parameters.isLinkToCoppeliaSimOn)
-						successfulPickAndPlace = bonafidePickAndPlace();
+					if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
+					{
+						if (doesBackupWeightsFileExist())
+						{
+							restoreWeightsFile();
+							readWeights();
+							saveWeights();
+						}
+
+						degenerationProcedure();
+						saveWeights();
+
+						if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
+						{
+							data.isFieldDead = true;
+						}
+						statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
+						statistics.numOfRelearningCycles = 0;
+						currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
+
+						std::ostringstream logStream;
+						logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+						dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
+					}
 					else
-						successfulPickAndPlace = mockPickAndPlace();
-
-					Sleep(150);
-
-					//if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
-					//{
-					//	if (doesBackupWeightsFileExist())
-					//	{
-					//		restoreWeightsFile();
-					//		readWeights();
-					//		saveWeights();
-					//	}
-
-					//	//degenerationProcedure();
-					//	saveWeights();
-
-					//	if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
-					//	{
-					//		data.isFieldDead = true;
-					//		if (parameters.isDebugModeOn)
-					//			dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, "(relearning-experiment) Re-learning did not work.");
-					//	}
-					//	statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
-					//	statistics.numOfRelearningCycles = 0;
-					//	currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
-					//	if (parameters.isDebugModeOn)
-					//	{
-					//		std::ostringstream logStream;
-					//		logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
-					//		dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
-					//	}
-					//}
-					//else
-					//{
-					//	if (!doesBackupWeightsFileExist())
-					//		backupWeightsFile();
-					//	relearningProcedure();
-					//}
+					{
+						if (!doesBackupWeightsFileExist())
+							backupWeightsFile();
+						relearningProcedure();
+					}
 					cleanupPickAndPlace();
 
 				} while ((currentPercentageOfDegeneration < parameters.degenerationParameters.targetPercentage) && !(data.isFieldDead));
@@ -156,6 +199,7 @@ namespace experiment
 			dnfcomposerHandler.close();
 		}
 
+		// specific to coppeliasim
 		bool ExperimentHandlerRelearning::bonafidePickAndPlace()
 		{
 			statistics.shapesPlacedIncorrectly = 0; // binary representation
@@ -169,7 +213,7 @@ namespace experiment
 				signals.shapeHue = data.shapeHue;
 				//readTargetAngle();
 				coppeliasimHandler.setSignals(signals);
-				Sleep(200);
+				Sleep(2000);
 				mockReadTargetAngle();
 				signals.targetAngle = data.outputFieldCentroid;
 				coppeliasimHandler.setSignals(signals);
@@ -192,7 +236,7 @@ namespace experiment
 
 			return successfulPickAndPlace;
 		}
-
+		// specific to coppeliasim
 		void ExperimentHandlerRelearning::createShape()
 		{
 			// set the create shape signal to true
@@ -203,7 +247,7 @@ namespace experiment
 			// wait for the shape created signal to be true
 			while (!coppeliasimHandler.getSignals().isShapeCreated);
 		}
-
+		// specific to coppeliasim
 		void ExperimentHandlerRelearning::graspShape()
 		{
 			// go pick up the cuboid
@@ -214,7 +258,7 @@ namespace experiment
 			// wait for the cuboid to be grasped
 			while (!coppeliasimHandler.getSignals().isShapeGrasped);
 		}
-
+		// specific to coppeliasim
 		void ExperimentHandlerRelearning::placeShape()
 		{
 			// and set place shape to true
@@ -239,7 +283,7 @@ namespace experiment
 			statistics.shapesPlacedIncorrectly = statistics.shapesPlacedIncorrectly << 1;
 			return false;
 		}
-
+		// specific to coppeliasim
 		void ExperimentHandlerRelearning::readShapeHue()
 		{
 			// wait for the hue of the cuboid
@@ -250,7 +294,7 @@ namespace experiment
 				//Sleep(50);
 				signals.shapeHue = coppeliasimHandler.getSignals().shapeHue;
 				//if (parameters.isDebugModeOn)
-					std::cout << "Shape hue: " << signals.shapeHue << std::endl;
+				std::cout << "Shape hue: " << signals.shapeHue << std::endl;
 			} while (signals.shapeHue < 0);
 
 			// set the hue of the cuboid for dnfcomposer
@@ -283,7 +327,7 @@ namespace experiment
 			// set the target angle for CoppeliaSim
 			coppeliasimHandler.setSignals(signals);
 		}*/
-
+		// specific to coppeliasim
 		void ExperimentHandlerRelearning::readTargetAngle()
 		{
 			//Sleep(10);
@@ -295,7 +339,7 @@ namespace experiment
 				signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 			} while (signals.targetAngle < 0);
 			//if (parameters.isDebugModeOn)
-				std::cout << "Target angle: " << signals.targetAngle << std::endl;
+			std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
 			data.outputFieldCentroid = signals.targetAngle;
 			data.lastOutputFieldCentroid = signals.targetAngle;
@@ -350,13 +394,10 @@ namespace experiment
 					successfulPickAndPlace = false;
 			}
 
-			if (parameters.isDebugModeOn)
-			{
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
-				std::ostringstream logStream;
-				logStream << "(relearning-experiment) Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
-			}
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Binary representation of placed boxes: " + std::bitset<7>(statistics.shapesPlacedIncorrectly).to_string() + '.');
+			std::ostringstream logStream;
+			logStream << "(relearning-experiment) Pick and place procedure finished, with" << (successfulPickAndPlace ? " success." : "out success.") << std::endl;
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, logStream.str());
 
 			return successfulPickAndPlace;
 		}
@@ -369,7 +410,7 @@ namespace experiment
 			data.shapeHue = hueToAngleIterator->first;
 			data.expectedTargetAngle = hueToAngleIterator->second;
 			//if (parameters.isDebugModeOn)
-				std::cout << "External stimulus: " << data.shapeHue << std::endl;
+				//std::cout << "External stimulus: " << data.shapeHue << std::endl;
 			++hueToAngleIterator;
 
 			dnfcomposerHandler.setExternalInput(data.shapeHue);
@@ -378,13 +419,14 @@ namespace experiment
 			dnfcomposerHandler.setHaveFieldsSettled(false);
 		}
 
+
 		void ExperimentHandlerRelearning::mockReadTargetAngle()
 		{
 			//dnfcomposerHandler.updateFieldCentroids();
 			//Sleep(5);
 			signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
 			//if (parameters.isDebugModeOn)
-				std::cout << "Target angle: " << signals.targetAngle << std::endl;
+			//std::cout << "Target angle: " << signals.targetAngle << std::endl;
 
 			data.outputFieldCentroid = signals.targetAngle;
 			data.lastOutputFieldCentroid = signals.targetAngle;
@@ -392,11 +434,24 @@ namespace experiment
 			getExpectedTargetAngle();
 			//dnfcomposerHandler.updateFieldCentroids();
 		}
+		//void ExperimentHandlerRelearning::mockReadTargetAngle()
+		//{
+		//	//dnfcomposerHandler.updateFieldCentroids();
+		//	//Sleep(5);
+		//	signals.targetAngle = dnfcomposerHandler.getOutputFieldCentroid();
+		//	//if (parameters.isDebugModeOn)
+		//		//std::cout << "Target angle: " << signals.targetAngle << std::endl;
+
+		//	data.outputFieldCentroid = signals.targetAngle;
+		//	data.lastOutputFieldCentroid = signals.targetAngle;
+
+		//	//getExpectedTargetAngle(); //[commented out in optimization-relearning-experiment]
+		//	//dnfcomposerHandler.updateFieldCentroids();
+		//}
 
 		void ExperimentHandlerRelearning::degenerationProcedure()
 		{
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Degeneration procedure started.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Degeneration procedure started.");
 
 			// Disable the user interface whilst degenerating to consume less time.
 			if (parameters.isVisualizationOn)
@@ -418,18 +473,15 @@ namespace experiment
 			// 2. use only the inputs from the incorrect correspondence
 			// Here we can also test running for 1 iteration vs. 100 iterations per learning cycle
 			// And the learning rate
-			//log(dnf_composer::DEBUG, "ExperimentHandler::relearningProcedure()");
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure started.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure started.");
 
 			dnfcomposerHandler.setRelearning(statistics.shapesPlacedIncorrectly);
 
 			while (!dnfcomposerHandler.getHasRelearningFinished());
 			dnfcomposerHandler.setHasRelearningFinished(false);
 
-			if (parameters.isDebugModeOn)
-				dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure finished.");
+			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Relearning procedure finished.");
 
 			statistics.numOfRelearningCycles++;
 		}
@@ -452,8 +504,6 @@ namespace experiment
 			getOriginalWeightsFile();
 			dnfcomposerHandler.setWasCloseSimulationRequested(true);
 			Sleep(300);
-			//Sleep(300);
-			//dnfcomposerHandler.setWasStartSimulationRequested(true);
 			dnf_composer::tools::logger::log(dnf_composer::tools::logger::LogLevel::INFO, "(relearning-experiment) Trial finished.");
 		}
 
@@ -465,7 +515,7 @@ namespace experiment
 
 			if (file.is_open()) {
 				for (const int cycles : statistics.learningCyclesPerTrialHistory)
-					file << cycles << " "; 
+					file << cycles << " ";
 
 				file << "\n";
 
