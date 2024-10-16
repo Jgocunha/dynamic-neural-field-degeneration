@@ -142,7 +142,7 @@ namespace experiment
 			//visualization->addPlottingData("per - out", "output");
 
 			pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 28, -15, 25, 0.1 };
+			pp.dimensions = { 0, 28, -15, 20, 0.1 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 		}
 
@@ -351,10 +351,7 @@ namespace experiment
 			}
 
 			simulationElements.fcpw.simulateAssociation();
-			//std::cout << "Finished simulating association.";
-
 			simulationElements.fcpw.trainWeights(relearningParameters.numberOfEpochs);
-			//std::cout << "Finished training weights.";
 
 			wasRelearningRequested = false;
 			hasRelearningFinished = true;
@@ -434,31 +431,16 @@ namespace experiment
 				application->step();
 		}
 
-		void DnfcomposerHandler:: allCasesRelearning()
+		void DnfcomposerHandler::allCasesRelearning()
 		{
-			//log(DEBUG,, "DnfcomposerHandler::allCasesRelearning()");
-
-			// add gaussian inputs
-			//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
-
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
-			//std::cout << "Finished setting up the field coupling wizard.";
-
-
-			//gsp.amplitude = 35;
-			//gsp.sigma = 3;
-			//simulationElements.fcpw.setGaussStimulusParameters(gsp);
-			////log(dnf_composer::WARNING, "allCasesRelearning() finished setting target peak locations");
-
-			//std::cout << "Finished setting up the gaussian stimulus parameters.";
-
 		}
 
 		void DnfcomposerHandler::onlyDegeneratedCasesRelearning()
 		{
 			// add gaussian inputs
-			dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
+			//dnf_composer::element::GaussStimulusParameters gsp = { 3, 35, 20 };
 
 			std::vector<std::vector<double>> inputSelected;
 			std::vector<std::vector<double>> outputSelected;
@@ -473,25 +455,34 @@ namespace experiment
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
 					int index = 0;
-					if (inputTargetPeaksForCoupling.size() == 7)
+					//if (inputTargetPeaksForCoupling.size() == 7)
 					{
-						index = 6 - i;
-						if (index == 2)
-							index = 4;
-						else
-							if (index == 4)
-								index = 2;
+						if (i == 0)
+							index = 6;
+						else if (i == 1) // unknown
+							index = 1; // unknown
+						else if (i == 2)
+							index = 3;
+						else if (i == 3) // unknown
+							index = 3; // unknown
+						else if (i == 4)
+							index = 2;
+						else if (i == 5)
+							index = 5;
+						else if (i == 6) // unknown
+							index = 6; // unknown
 					}
-					else
-					{
-						if (inputTargetPeaksForCoupling.size() == 1)
-							index = 0;
-						else
-						{
-							log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
-						}
-					}
-
+					//else
+					//{
+					//	if (inputTargetPeaksForCoupling.size() == 1)
+							//index = 0;
+					//	else
+					//	{
+					//		log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
+					//	}
+					//}
+					//constexpr int index = 0;
+					//log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
@@ -501,6 +492,7 @@ namespace experiment
 			logStream << std::endl;
 
 			log(dnf_composer::tools::logger::INFO, logStream.str());
+			std::cout << logStream.str();
 
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
@@ -529,7 +521,7 @@ namespace experiment
 				if (key == "metadata") {
 					continue;
 				}
-				const double hue = std::stod(key); 
+				const double hue = std::stod(key);
 				const double angle = value.get<double>();
 
 				inputTargetPeaksForCoupling.push_back({ hue + offset });
@@ -538,6 +530,5 @@ namespace experiment
 
 			file.close();
 		}
-
 	}
 }

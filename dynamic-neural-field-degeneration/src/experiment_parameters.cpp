@@ -2,10 +2,10 @@
 
 namespace experiment
 {
-	ExperimentParameters::ExperimentParameters()
-	{
-		read();
-	}
+    ExperimentParameters::ExperimentParameters()
+    {
+        read();
+    }
 
     void ExperimentParameters::read()
     {
@@ -24,23 +24,21 @@ namespace experiment
         isDataSavingOn = experimentParams.at("isDataSavingOn").get<bool>();
         isVisualizationOn = experimentParams.at("isVisualizationOn").get<bool>();
         isDebugModeOn = experimentParams.at("isDebugModeOn").get<bool>();
-        isLinkToCoppeliaSimOn = experimentParams.at("isLinkToCoppeliaSimOn").get<bool>();
     }
 
-	std::string ExperimentParameters::toString() const
-	{
+    std::string ExperimentParameters::toString() const
+    {
         std::ostringstream logStream;
         logStream << "Experiment parameters" << std::endl;
         logStream << "----------------------------------------" << std::endl;
         logStream << "Data saving is " << (isDataSavingOn ? "on" : "off") << std::endl;
         logStream << "Debug mode is " << (isDebugModeOn ? "on" : "off") << std::endl;
         logStream << "Visualization is " << (isVisualizationOn ? "on" : "off") << std::endl;
-        logStream << "Link to CoppeliaSim is " << (isLinkToCoppeliaSimOn ? "on" : "off") << std::endl;
         logStream << "Number of trials: " << numberOfTrials << std::endl;
         logStream << "Decision tolerance: " << decisionTolerance << std::endl;
         logStream << "----------------------------------------" << std::endl;
         return logStream.str();
-	}
+    }
 
     void ExperimentParameters::print() const
     {
@@ -51,7 +49,7 @@ namespace experiment
 
 
     std::string ExperimentParameters::getSavePath() const
-	{
+    {
         std::string filename = std::string(OUTPUT_DIRECTORY) + "/results/";
 
         filename = filename + degenerationParameters.name;
@@ -72,6 +70,6 @@ namespace experiment
         filename = filename + ".txt";
 
         return filename;
-	}
+    }
 
 }
