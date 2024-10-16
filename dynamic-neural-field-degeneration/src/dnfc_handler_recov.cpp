@@ -119,30 +119,30 @@ namespace experiment
 		void DnfcomposerHandler::setupUserInterface()
 		{
 			application->addWindow<dnf_composer::user_interface::MainWindow>();
-			application->addWindow<imgui_kit::LogWindow>();
-			application->addWindow<dnf_composer::user_interface::ElementWindow>();
-			application->addWindow<dnf_composer::user_interface::SimulationWindow>();
+			//application->addWindow<imgui_kit::LogWindow>();
+			//application->addWindow<dnf_composer::user_interface::ElementWindow>();
+			//application->addWindow<dnf_composer::user_interface::SimulationWindow>();
 			application->addWindow<dnf_composer::user_interface::HeatmapWindow>();
-			application->addWindow<ExperimentWindow>();
+			//application->addWindow<ExperimentWindow>();
 
 			std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 			visualization->addPlottingData("perceptual field", "activation");
-			visualization->addPlottingData("perceptual field", "output");
-			visualization->addPlottingData("per - per", "output");
+			//visualization->addPlottingData("perceptual field", "output");
+			//visualization->addPlottingData("per - per", "output");
 
 			dnf_composer::user_interface::PlotParameters pp;
 			pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 360, -25, 40, 0.5 };
+			pp.dimensions = { 0, 360, -25, 45, 0.5 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 			visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 			visualization->addPlottingData("output field", "activation");
-			visualization->addPlottingData("output field", "output");
-			visualization->addPlottingData("out - out", "output");
-			visualization->addPlottingData("per - out", "output");
+			//visualization->addPlottingData("output field", "output");
+			//visualization->addPlottingData("out - out", "output");
+			//visualization->addPlottingData("per - out", "output");
 
 			pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 280, -20, 40, 1.0 };
+			pp.dimensions = { 0, 28, -15, 25, 0.1 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 		}
 
