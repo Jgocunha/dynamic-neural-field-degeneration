@@ -82,106 +82,51 @@ namespace experiment
 			dnfcomposerHandler.setNumberOfElementsToDegenerate();
 		}
 
-		//void ExperimentHandlerRelearning::step()
-		//{
-		//	for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
-		//	{
-		//		/*bonafidePickAndPlace();
-		//		if (parameters.degenerationParameters.initialPercentage != 0)
-		//			initialDegeneration();*/
-
-		//		//dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
-		//		//dnfcomposerHandler.setNumberOfElementsToDegenerate();
-
-		//		do
-		//		{
-		//			const bool successfulPickAndPlace = bonafidePickAndPlace();
-
-		//			//if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
-		//			//{
-		//			//	if (doesBackupWeightsFileExist())
-		//			//	{
-		//			//		restoreWeightsFile();
-		//			//		readWeights();
-		//			//		saveWeights();
-		//			//	}
-
-		//			//	degenerationProcedure();
-		//			//	saveWeights();
-
-		//			//	if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
-		//			//	{
-		//			//		data.isFieldDead = true;
-		//			//	}
-		//			//	statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
-		//			//	statistics.numOfRelearningCycles = 0;
-		//			//	currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
-
-		//			//	std::ostringstream logStream;
-		//			//	logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
-		//			//	dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
-		//			//}
-		//			//else
-		//			//{
-		//			//	if (!doesBackupWeightsFileExist())
-		//			//		backupWeightsFile();
-		//			//	relearningProcedure();
-		//			//}
-		//			cleanupPickAndPlace();
-
-		//		} while ((currentPercentageOfDegeneration < parameters.degenerationParameters.targetPercentage) && !(data.isFieldDead));
-
-		//		cleanupTrial();
-		//	}
-		//	dnfcomposerHandler.stop();
-		//	deleteExperimentFolderDirectory();
-		//}
-
 		void ExperimentHandlerRelearning::step()
 		{
 			for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
 			{
-				//bonafidePickAndPlace(); 
-				//if (parameters.degenerationParameters.initialPercentage != 0)
-					//initialDegeneration();
+				/*bonafidePickAndPlace();
+				if (parameters.degenerationParameters.initialPercentage != 0)
+					initialDegeneration();*/
 
-				dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
-				dnfcomposerHandler.setNumberOfElementsToDegenerate();
+				//dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
+				//dnfcomposerHandler.setNumberOfElementsToDegenerate();
 
 				do
 				{
 					const bool successfulPickAndPlace = bonafidePickAndPlace();
 
-					if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
-					{
-						if (doesBackupWeightsFileExist())
-						{
-							restoreWeightsFile();
-							readWeights();
-							saveWeights();
-						}
+					//if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
+					//{
+					//	if (doesBackupWeightsFileExist())
+					//	{
+					//		restoreWeightsFile();
+					//		readWeights();
+					//		saveWeights();
+					//	}
 
-						degenerationProcedure();
-						saveWeights();
+					//	degenerationProcedure();
+					//	saveWeights();
 
-						if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
-						{
-							data.isFieldDead = true;
-						}
-						statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
-						statistics.numOfRelearningCycles = 0;
-						currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
+					//	if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
+					//	{
+					//		data.isFieldDead = true;
+					//	}
+					//	statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
+					//	statistics.numOfRelearningCycles = 0;
+					//	currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
 
-						std::ostringstream logStream;
-						logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
-						dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
-					}
-					else
-					{
-						if (!doesBackupWeightsFileExist())
-							backupWeightsFile();
-						relearningProcedure();
-					}
+					//	std::ostringstream logStream;
+					//	logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+					//	dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
+					//}
+					//else
+					//{
+					//	if (!doesBackupWeightsFileExist())
+					//		backupWeightsFile();
+					//	relearningProcedure();
+					//}
 					cleanupPickAndPlace();
 
 				} while ((currentPercentageOfDegeneration < parameters.degenerationParameters.targetPercentage) && !(data.isFieldDead));
@@ -191,6 +136,61 @@ namespace experiment
 			dnfcomposerHandler.stop();
 			deleteExperimentFolderDirectory();
 		}
+
+		//void ExperimentHandlerRelearning::step()
+		//{
+		//	for (int trial = 1; trial <= parameters.numberOfTrials; trial++)
+		//	{
+		//		//bonafidePickAndPlace(); 
+		//		//if (parameters.degenerationParameters.initialPercentage != 0)
+		//			//initialDegeneration();
+
+		//		dnfcomposerHandler.setDegeneracy(parameters.degenerationParameters.type, parameters.degenerationParameters.field);
+		//		dnfcomposerHandler.setNumberOfElementsToDegenerate();
+
+		//		do
+		//		{
+		//			const bool successfulPickAndPlace = bonafidePickAndPlace();
+
+		//			if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
+		//			{
+		//				if (doesBackupWeightsFileExist())
+		//				{
+		//					restoreWeightsFile();
+		//					readWeights();
+		//					saveWeights();
+		//				}
+
+		//				degenerationProcedure();
+		//				saveWeights();
+
+		//				if (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations)
+		//				{
+		//					data.isFieldDead = true;
+		//				}
+		//				statistics.learningCyclesPerTrialHistory.push_back(statistics.numOfRelearningCycles);
+		//				statistics.numOfRelearningCycles = 0;
+		//				currentPercentageOfDegeneration += parameters.degenerationParameters.incrementOfDegenerationInPercentage;
+
+		//				std::ostringstream logStream;
+		//				logStream << "(relearning-experiment) Degenerated to " << std::fixed << std::setprecision(2) << currentPercentageOfDegeneration << "%.";
+		//				dnf_composer::tools::logger::log(dnf_composer::tools::logger::INFO, logStream.str());
+		//			}
+		//			else
+		//			{
+		//				if (!doesBackupWeightsFileExist())
+		//					backupWeightsFile();
+		//				relearningProcedure();
+		//			}
+		//			cleanupPickAndPlace();
+
+		//		} while ((currentPercentageOfDegeneration < parameters.degenerationParameters.targetPercentage) && !(data.isFieldDead));
+
+		//		cleanupTrial();
+		//	}
+		//	dnfcomposerHandler.stop();
+		//	deleteExperimentFolderDirectory();
+		//}
 
 		void ExperimentHandlerRelearning::close()
 		{
