@@ -103,7 +103,7 @@ namespace experiment
 					else
 						successfulPickAndPlace = mockPickAndPlace();
 
-					Sleep(200);
+					Sleep(150);
 
 					//if (successfulPickAndPlace || (statistics.numOfRelearningCycles >= parameters.relearningParameters.maxAmountOfDemonstrations))
 					//{
