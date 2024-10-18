@@ -29,7 +29,7 @@
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
     "learningRate": 0.0025,
-    "numberOfEpochs": 7,
+    "numberOfEpochs": 4,
     "maxAmountOfDemonstrations": 200,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
     "updateAllWeights": false

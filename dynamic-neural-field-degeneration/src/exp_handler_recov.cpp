@@ -213,7 +213,7 @@ namespace experiment
 				signals.shapeHue = data.shapeHue;
 				//readTargetAngle();
 				coppeliasimHandler.setSignals(signals);
-				Sleep(2000);
+				Sleep(500);
 				mockReadTargetAngle();
 				signals.targetAngle = data.outputFieldCentroid;
 				coppeliasimHandler.setSignals(signals);
