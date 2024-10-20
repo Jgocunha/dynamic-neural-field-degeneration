@@ -10,7 +10,7 @@ constexpr bool trainWeights = false;
 std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 {
 	// create simulation object
-	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("robustness and adaptability in DNFs experiment", 5, 0, 0);
+	std::shared_ptr<dnf_composer::Simulation> simulation = std::make_shared<dnf_composer::Simulation>("robustness and adaptability in DNFs experiment", 35, 0, 0);
 
 	// element common parameters
 	dnf_composer::element::ElementSpatialDimensionParameters perceptualFieldSpatialDimensions{ 360, 0.5 };
@@ -50,7 +50,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 	(new dnf_composer::element::GaussKernel({ "out - out", outputFieldSpatialDimensions }, gkp2)); // self-excitation v-v
 	simulation->addElement(k_out_out);
 	// 0.366
-	dnf_composer::element::FieldCouplingParameters fcp{ perceptualFieldSpatialDimensions.size, 0.15, 0.01, dnf_composer::LearningRule::DELTA_KROGH_HERTZ };
+	dnf_composer::element::FieldCouplingParameters fcp{ perceptualFieldSpatialDimensions.size, 0.4, 0.01, dnf_composer::LearningRule::DELTA_KROGH_HERTZ };
 	const std::shared_ptr<DegenerateFieldCoupling> w_per_out(
 		new DegenerateFieldCoupling({ "per - out", outputFieldSpatialDimensions }, fcp));
 	simulation->addElement(w_per_out);
@@ -105,7 +105,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 
 		std::vector<std::vector<double>> outputTargetPeaksForCoupling =
 		{
-		   { 2.00 + 0.00 },
+		  { 2.00 + 0.00 },
 		   { 6.00 + 0.00 },
 		   { 10.00 + 0.00 },
 		   { 14.00 + 0.00 },
@@ -117,7 +117,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 		fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 		fcpw.simulateAssociation();
-		fcpw.trainWeights(100);
+		fcpw.trainWeights(1);
 		fcpw.saveWeights();
 	}
 

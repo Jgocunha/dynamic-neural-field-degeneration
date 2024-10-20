@@ -19,7 +19,7 @@
     "#comment_numberOfElementsToDegeneratePerIteration": "1, 1, 1008",
     "numberOfElementsToDegeneratePerIteration": 1008,
     "#comment_initialPercentageOfDegeneration": "20, 88, 80",
-    "initialPercentageOfDegeneration": 0,
+    "initialPercentageOfDegeneration": 90,
     "targetPercentageOfDegeneration": 100,
     "#comment_incrementOfDegenerationInPercentage": "0.1389, 0.278, 0.5",
     "incrementOfDegenerationInPercentage": 0.5
@@ -28,8 +28,8 @@
   "relearning_parameters": {
     "#comment_type": "ALL_CASES, ONLY_DEGENERATED_CASES",
     "relearningType": "ONLY_DEGENERATED_CASES",
-    "learningRate": 0.0025,
-    "numberOfEpochs": 4,
+    "learningRate": 0.005,
+    "numberOfEpochs": 2,
     "maxAmountOfDemonstrations": 200,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
     "updateAllWeights": false

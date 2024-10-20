@@ -458,19 +458,19 @@ namespace experiment
 					//if (inputTargetPeaksForCoupling.size() == 7)
 					{
 						if (i == 0)
-							index = 6;
-						else if (i == 1) // unknown
-							index = 1; // unknown
+							index = 5; // orange {41, 6}
+						else if (i == 1) 
+							index = 4; // violet {300, 26}
 						else if (i == 2)
-							index = 3;
-						else if (i == 3) // unknown
-							index = 3; // unknown
+							index = 3; // indigo {274, 22}
+						else if (i == 3) 
+							index = 1; // green {120, 14}
 						else if (i == 4)
-							index = 2;
+							index = 2; // blue {240, 18}
 						else if (i == 5)
-							index = 5;
-						else if (i == 6) // unknown
-							index = 6; // unknown
+							index = 6; // yellow {60, 10}
+						else if (i == 6) 
+							index = 0; // red {0, 2}
 					}
 					//else
 					//{
