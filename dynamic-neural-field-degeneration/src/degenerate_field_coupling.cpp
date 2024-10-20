@@ -51,13 +51,11 @@ void DegenerateFieldCoupling::applyDegeneracy()
 		break;
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
-			//setRandomWeightToRandomValue();
 			setRandomUniqueWeightToRandomValue();
 		degenerate = false;
 		break;
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_REDUCE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
-			//setRandomWeightToReduceValue();
 			setRandomUniqueWeightToReduceValue();
 		degenerate = false;
 		break;
@@ -109,20 +107,11 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	//static int maxAttempts = components["output"].size() * components["input"].size();
-	int row_idx, col_idx;
+	const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
+	const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
 
-	//while(1)
-	//{
-	row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
-	col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
-	//if (weights[row_idx][col_idx] > 0)
-	//{
-	double aux = dnf_composer::tools::utils::generateRandomNumber(minWeightValue, maxWeightValue);
+	const double aux = dnf_composer::tools::utils::generateRandomNumber(minWeightValue, maxWeightValue);
 	weights[row_idx][col_idx] = aux;
-	//break;
-	//}
-//}
 }
 
 void DegenerateFieldCoupling::setWeightReductionFactor(const double& factor)
@@ -137,13 +126,10 @@ double DegenerateFieldCoupling::getWeightReductionFactor() const
 
 void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 {
-	//static int maxAttempts = components["output"].size() * components["input"].size();
-	int row_idx, col_idx;
-
 	while (true)
 	{
-		row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
-		col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
+		const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
+		const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
 		if (weights[row_idx][col_idx] != 0)
 		{
 			weights[row_idx][col_idx] = weights[row_idx][col_idx] * weightReductionFactor;

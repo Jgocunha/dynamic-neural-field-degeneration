@@ -117,7 +117,7 @@ std::shared_ptr<dnf_composer::Simulation> getExperimentSimulation()
 		fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 		fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
 		fcpw.simulateAssociation();
-		fcpw.trainWeights(1);
+		fcpw.trainWeights(100);
 		fcpw.saveWeights();
 	}
 
