@@ -1,0 +1,17 @@
+"Condition"	"Target_centroid"	"Trials"	"Avg_percent_affected_elements_until_disappearance"	"Avg_percent_affected_elements_until_misbehavior"	"Max_deviation"
+"deactivate pre-synaptic neurons"	2	421	22.1773555027712	17.4772367379256	8.55
+"deactivate pre-synaptic neurons"	6	102	23.6369825708061	10.3771786492375	8
+"deactivate pre-synaptic neurons"	10	102	23.5239651416122	12.3624727668845	8.15
+"deactivate pre-synaptic neurons"	14	102	20.9735838779956	19.7549019607843	3.45
+"deactivate pre-synaptic neurons"	18	102	21.9852941176471	18.1467864923747	8.35
+"deactivate pre-synaptic neurons"	22	102	23.8997821350763	10.52151416122	4.6
+"deactivate pre-synaptic neurons"	26	101	23.0624312431243	14.7524752475248	8.4
+
+Summary Statistics:
+
+"Avg. % of affected elements until disappearance of bump"	22.7513
+"Standard Error (disappearance)"	0.4045
+"Avg. % of affected elements until misbehavior"	14.7704
+"Standard Error (misbehavior)"	1.437
+"Average Max. deviation per experiment"	7.0714
+"Standard Error (max deviation)"	0.7993

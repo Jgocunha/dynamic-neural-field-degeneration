@@ -1,0 +1,17 @@
+"Condition"	"Target_centroid"	"Trials"	"Avg_percent_affected_elements_until_disappearance"	"Avg_percent_affected_elements_until_misbehavior"	"Max_deviation"
+"randomize weights"	2	100	87.2970297029703	87.2970297029703	1.95778
+"randomize weights"	6	100	87.3712871287129	87.3712871287129	1.2
+"randomize weights"	10	100	86.5445544554455	86.5445544554455	1.03529
+"randomize weights"	14	100	86.9851485148515	86.9851485148515	1.3625
+"randomize weights"	18	100	87.1831683168317	87.1831683168317	1.0375
+"randomize weights"	22	100	87.0990099009901	87.0990099009901	1.4
+"randomize weights"	26	100	87.460396039604	87.450495049505	3.0857
+
+Summary Statistics:
+
+"Avg. % of affected elements until disappearance of bump"	87.1344
+"Standard Error (disappearance)"	0.1157
+"Avg. % of affected elements until misbehavior"	87.133
+"Standard Error (misbehavior)"	0.1151
+"Average Max. deviation per experiment"	1.5827
+"Standard Error (max deviation)"	0.2771
