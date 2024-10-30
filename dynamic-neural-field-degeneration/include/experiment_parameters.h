@@ -19,6 +19,7 @@ namespace experiment
 		bool isDataSavingOn;
 		bool isVisualizationOn;
 		bool isDebugModeOn;
+		bool isLinkToCoppeliaSimOn = true;
 
 		degeneration::DegenerationParameters degenerationParameters;
 		relearning::RelearningParameters relearningParameters;

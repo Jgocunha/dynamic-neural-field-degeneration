@@ -110,30 +110,21 @@ namespace experiment
 		void DnfcomposerHandler::setupUserInterface()
 		{
 			application->addWindow<dnf_composer::user_interface::MainWindow>();
-			application->addWindow<imgui_kit::LogWindow>();
-			application->addWindow<dnf_composer::user_interface::ElementWindow>();
-			application->addWindow<dnf_composer::user_interface::SimulationWindow>();
 			application->addWindow<dnf_composer::user_interface::HeatmapWindow>();
-			application->addWindow<ExperimentWindow>();
 
 			std::shared_ptr<dnf_composer::Visualization> visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 			visualization->addPlottingData("perceptual field", "activation");
-			visualization->addPlottingData("perceptual field", "output");
-			visualization->addPlottingData("per - per", "output");
 
 			dnf_composer::user_interface::PlotParameters pp;
 			pp.annotations = { "Perceptual field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 360, -25, 40, 0.5 };
+			pp.dimensions = { 0, 360, -25, 45, 0.5 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 
 			visualization = std::make_shared<dnf_composer::Visualization>(simulation);
 			visualization->addPlottingData("output field", "activation");
-			visualization->addPlottingData("output field", "output");
-			visualization->addPlottingData("out - out", "output");
-			visualization->addPlottingData("per - out", "output");
 
 			pp.annotations = { "Output field activation", "Spatial dimension", "Amplitude of activation" };
-			pp.dimensions = { 0, 280, -20, 40, 1.0 };
+			pp.dimensions = { 0, 28, -15, 20, 0.1 };
 			application->addWindow<dnf_composer::user_interface::PlotWindow>(visualization, pp);
 		}
 
@@ -407,7 +398,7 @@ namespace experiment
 				application->step();
 		}
 
-		void DnfcomposerHandler:: allCasesRelearning()
+		void DnfcomposerHandler::allCasesRelearning()
 		{
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputTargetPeaksForCoupling);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputTargetPeaksForCoupling);
@@ -426,11 +417,23 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					if (inputTargetPeaksForCoupling.size() > 1)
+					int index = 0;
 					{
-						log(dnf_composer::tools::logger::ERROR, "(relearning-experiment) Indexing algorithm for behaviour relearning is manually indexed. Make sure to select only one association in the hue_to_angle.json!");
+						if (i == 0)
+							index = 5; // orange {41, 6}
+						else if (i == 1)
+							index = 4; // violet {300, 26}
+						else if (i == 2)
+							index = 3; // indigo {274, 22}
+						else if (i == 3)
+							index = 1; // green {120, 14}
+						else if (i == 4)
+							index = 2; // blue {240, 18}
+						else if (i == 5)
+							index = 6; // yellow {60, 10}
+						else if (i == 6)
+							index = 0; // red {0, 2}
 					}
-					constexpr int index = 0;
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
@@ -440,6 +443,7 @@ namespace experiment
 			logStream << std::endl;
 
 			log(dnf_composer::tools::logger::INFO, logStream.str());
+			std::cout << logStream.str();
 
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
@@ -461,7 +465,7 @@ namespace experiment
 				if (key == "metadata") {
 					continue;
 				}
-				const double hue = std::stod(key); 
+				const double hue = std::stod(key);
 				const double angle = value.get<double>();
 
 				inputTargetPeaksForCoupling.push_back({ hue + offset });

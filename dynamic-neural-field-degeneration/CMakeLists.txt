@@ -54,6 +54,7 @@ set(header
 "include/relearning_parameters.h"
 "include/degeneration_parameters.h"
 "include/experiment_parameters.h"
+"include/coppeliasim_handler.h"
 )
 
 set(src
@@ -66,6 +67,7 @@ set(src
 "src/relearning_parameters.cpp"
 "src/degeneration_parameters.cpp"
 "src/experiment_parameters.cpp"
+"src/coppeliasim_handler.cpp"
 )
 
 # Library target definition
@@ -95,6 +97,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE imgui-platform-kit)
 # Setup dynamic-neural-field-composer
 find_package(dynamic-neural-field-composer REQUIRED)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE dynamic-neural-field-composer)
+
+# Setup coppeliasim-cpp-client
+find_package(coppeliasim-cpp-client REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE coppeliasim-cpp-client)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
     DNF_DEGENERATION=1
@@ -139,6 +145,7 @@ target_include_directories(${RECOV_DEG_EXE} PRIVATE include)
 target_link_libraries(${RECOV_DEG_EXE} PRIVATE 
     imgui::imgui 
     imgui-platform-kit 
-    dynamic-neural-field-composer 
+    dynamic-neural-field-composer
+    coppeliasim-cpp-client
     ${CMAKE_PROJECT_NAME}
 )

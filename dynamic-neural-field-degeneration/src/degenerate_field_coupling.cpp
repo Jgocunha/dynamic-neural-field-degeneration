@@ -6,13 +6,12 @@ DegenerateFieldCoupling::DegenerateFieldCoupling(const dnf_composer::element::El
 {
 	degeneracyType = experiment::degeneration::ElementDegeneracyType::NONE;
 	degenerate = false;
-	populateIndicesForDegeneration(); // for recovering from degeneration experiment
+	populateIndicesForDegeneration();
 }
 
 void DegenerateFieldCoupling::init()
 {
 	FieldCoupling::init();
-	//populateIndicesForDegeneration(); // uncomment for inducing degeneration experiment
 	findMinMaxWeightValues();
 	degenerate = false;
 }
@@ -51,13 +50,11 @@ void DegenerateFieldCoupling::applyDegeneracy()
 		break;
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_RANDOMIZE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
-			//setRandomWeightToRandomValue();
 			setRandomUniqueWeightToRandomValue();
 		degenerate = false;
 		break;
 	case experiment::degeneration::ElementDegeneracyType::WEIGHTS_REDUCE:
 		for (int i = 0; i < numWeightsToDegenerate; i++)
-			//setRandomWeightToReduceValue();
 			setRandomUniqueWeightToReduceValue();
 		degenerate = false;
 		break;
@@ -109,8 +106,9 @@ void DegenerateFieldCoupling::findMinMaxWeightValues()
 
 void DegenerateFieldCoupling::setRandomWeightToRandomValue()
 {
-	const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, static_cast<int>(components["input"].size()) - 1);
-	const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, static_cast<int>(components["output"].size()) - 1);
+	const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
+	const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
+
 	const double aux = dnf_composer::tools::utils::generateRandomNumber(minWeightValue, maxWeightValue);
 	weights[row_idx][col_idx] = aux;
 }
@@ -129,8 +127,8 @@ void DegenerateFieldCoupling::setRandomWeightToReduceValue()
 {
 	while (true)
 	{
-		const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, static_cast<int>(components["input"].size()) - 1);
-		const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, static_cast<int>(components["output"].size()) - 1);
+		const int row_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["input"].size() - 1);
+		const int col_idx = dnf_composer::tools::utils::generateRandomNumber(0, (int)components["output"].size() - 1);
 		if (weights[row_idx][col_idx] != 0)
 		{
 			weights[row_idx][col_idx] = weights[row_idx][col_idx] * weightReductionFactor;
@@ -196,7 +194,6 @@ void DegenerateFieldCoupling::setRandomUniqueWeightToReduceValue()
 void DegenerateFieldCoupling::setRandomUniqueWeightToZero()
 {
 	bool uniqueCombinationFound = false; // Flag to indicate if a unique combination is found
-	//static int count = 0;
 
 	// Loop until a unique combination is found or indicesForDegeneration is empty
 	while (!uniqueCombinationFound && !indicesForDegeneration.empty())
@@ -230,6 +227,7 @@ std::vector<std::vector<double>> DegenerateFieldCoupling::learningRuleDegenerate
 	const std::vector<double>& input, const std::vector<double>& targetOutput, const double& learningRate) const
 {
 	const double eta = 0.5;
+
 	const size_t inputSize = input.size();
 	const size_t outputSize = targetOutput.size(); //fixed from int to size_t
 

@@ -1,12 +1,7 @@
 {
   "00.00": 2,
-  "41.00": 6,
-  "60.00": 10,
-  "120.00": 14,
-  "240.00": 18,
-  "274.00": 22,
-  "300.00": 26,
   "metadata": {
+    "#comment": "Use only a single behaviour association. Results are similar but experiment takes way less to run.",
     "00.00": 2,
     "41.00": 6,
     "60.00": 10,
