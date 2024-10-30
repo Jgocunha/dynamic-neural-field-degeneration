@@ -426,27 +426,11 @@ namespace experiment
 			{
 				if (!(relearningParameters.targetRelearningPositions & (1 << i)))
 				{
-					/*int index = 0;
-					if (inputTargetPeaksForCoupling.size() == 7)
+					if (inputTargetPeaksForCoupling.size() > 1)
 					{
-						index = 6 - i;
-						if (index == 2)
-							index = 4;
-						else
-							if (index == 4)
-								index = 2;
+						log(dnf_composer::tools::logger::ERROR, "(relearning-experiment) Indexing algorithm for behaviour relearning is manually indexed. Make sure to select only one association in the hue_to_angle.json!");
 					}
-					else
-					{
-						if (inputTargetPeaksForCoupling.size() == 1)
-							index = 0;
-						else
-						{
-							log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() will not work with 2-6 target behaviors.");
-						}
-					}*/
 					constexpr int index = 0;
-					log(dnf_composer::tools::logger::WARNING, "(relearning-experiment) Automatic indexing system in onlyDegeneratedCasesRelearning() is not working!");
 					inputSelected.push_back(inputTargetPeaksForCoupling[index]);
 					outputSelected.push_back(outputTargetPeaksForCoupling[index]);
 					logStream << outputTargetPeaksForCoupling[index][0] - offset << " ";
@@ -459,13 +443,6 @@ namespace experiment
 
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPre(inputSelected);
 			simulationElements.fcpw.setTargetPeakLocationsForNeuralFieldPost(outputSelected);
-			//std::cout << "Finished setting up the field coupling wizard.";
-
-			//gsp.amplitude = 35;
-			//gsp.sigma = 3;
-			//simulationElements.fcpw.setGaussStimulusParameters(gsp);
-			////std::cout << "Finished setting up the gaussian stimulus parameters.";
-
 		}
 
 		void DnfcomposerHandler::readPeaksForCoupling()
