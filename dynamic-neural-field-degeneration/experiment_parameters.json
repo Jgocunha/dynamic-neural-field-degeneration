@@ -3,9 +3,9 @@
     "numberOfTrials": 100,
     "startingExternalStimulus": 0,
     "decisionTolerance": 2,
-    "isDataSavingOn": true,
-    "isVisualizationOn": false,
-    "isDebugModeOn": true
+    "isDataSavingOn": false,
+    "isVisualizationOn": true,
+    "isDebugModeOn": false
   },
 
   "degeneration_parameters": {
@@ -30,6 +30,6 @@
     "numberOfEpochs": 1,
     "maxAmountOfDemonstrations": 200,
     "#comment_update": "When deactivating neurons, updateAllWeights should be set to true",
-    "updateAllWeights": true
+    "updateAllWeights": false
   }
 }
