@@ -146,16 +146,13 @@ void DegenerateNeuralField::setRandomUniqueNeuronToZero()
 		return;
 	}
 
-	// Randomly select an index from indicesForDegeneration
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(0, indicesForDegeneration.size() - 1);
 	const int randomIndex = indicesForDegeneration[dis(gen)];
 
-	// Push the random index to degeneratedIndices
 	degeneratedIndices.push_back(randomIndex);
 
-	// Remove the random index from indicesForDegeneration
 	indicesForDegeneration.erase(std::remove(indicesForDegeneration.begin(), indicesForDegeneration.end(), randomIndex), indicesForDegeneration.end());
 }
 
