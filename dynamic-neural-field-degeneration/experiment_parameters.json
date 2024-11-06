@@ -7,7 +7,6 @@
     "isVisualizationOn": true,
     "isDebugModeOn": false
   },
-
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
     "experimentType": "WEIGHTS_DEACTIVATE",
