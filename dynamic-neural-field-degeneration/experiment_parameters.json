@@ -5,7 +5,7 @@
     "decisionTolerance": 2,
     "isDataSavingOn": false,
     "isVisualizationOn": true,
-    "isDebugModeOn": false
+    "isDebugModeOn": true
   },
   "degeneration_parameters": {
     "#comment_type": "WEIGHTS_DEACTIVATE, WEIGHTS_RANDOMIZE, WEIGHTS_REDUCE, NEURONS_DEACTIVATE",
