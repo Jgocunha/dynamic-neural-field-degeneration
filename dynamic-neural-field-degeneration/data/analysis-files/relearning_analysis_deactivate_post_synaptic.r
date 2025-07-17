@@ -33,15 +33,15 @@ read_data <- function(filePath) {
 }
 
 # Experiment parameters
-resultPath <- '../results/'
+resultPath <- '/analysis/'
 degeneracyType <- 'deactivate post-synaptic neurons'
-relearningType <- 'All-cases'
+relearningType <- 'Only-degenerated-cases'
 epochs <- 1
-maximumLearningCycles <- 200
-updateAllWeights <- 1  # 0 or 1
+maximumLearningCycles <- 50
+updateAllWeights <- 0  # 0 or 1
 
 # Construct file path
-filePath <- paste0(resultPath, degeneracyType, ' ', relearningType, 
+filePath <- paste0(current_directory, resultPath, degeneracyType, ' ', relearningType, 
                    ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                    ' Update-all-weights-', updateAllWeights, '.txt')
 

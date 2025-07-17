@@ -157,7 +157,7 @@ results_filtered_zero <- results_filtered %>%
   filter(AvgRelearningCycles == 0)
 
 # Font parameters
-font <- "Times New Roman"
+font <- "Garamond"
 font_size <- 24
 
 # Create the bar chart with average relearning cycles
@@ -168,12 +168,14 @@ ggplot() +
   
   # Plot for average relearning cycles (correctly scaled for secondary axis starting at 1)
   geom_point(data = results_filtered_non_zero, 
-             aes(x = Degeneracy, y = (AvgRelearningCycles - 1) * y_axis_scale),  # Adjusted scaling
-             color = "#4A4A4A", size = 5, fill = "#4A4A4A", stroke = 1.5, shape = 18, alpha = 0.8) +
+             aes(x = Degeneracy, y = (AvgRelearningCycles - 1) * y_axis_scale,
+                 shape = "Mean Relearning Cycles"),  # Add shape aesthetic for legend
+             color = "#4A4A4A", size = 5, fill = "#4A4A4A", stroke = 1.5, alpha = 0.8) +
   
   geom_point(data = results_filtered_zero, 
-             aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar), 
-             color = "#4A4A4A", size = 3, fill = "#4A4A4A", stroke = 1.5, shape = 3 , alpha = 0.8) +
+             aes(x = Degeneracy, y = AvgRelearningCycles * relearning_scalar,
+                 shape = "Mean Relearning Cycles"), 
+             color = "#4A4A4A", size = 3, fill = "#4A4A4A", stroke = 1.5, alpha = 0.8) +
   
   geom_errorbar(data = results_filtered_non_zero, 
                 aes(x = Degeneracy, 
@@ -181,25 +183,10 @@ ggplot() +
                     ymax = (AvgRelearningCycles - 1 + StdErrRelearningCycles) * y_axis_scale), 
                 width = 0.2, color = "#4A4A4A", alpha = 0.8) +
   
-  # Add text labels for the number of valid elements next to each diamond
-  #geom_text(data = results_filtered_non_zero, 
-  #          aes(x = Degeneracy, y = (AvgRelearningCycles - 1) * y_axis_scale, 
-  #              label = NumValidElements), 
-  #          vjust = -1.5, size = 3, color = "black", family = font) +  # Adjust position with vjust# Scaling the secondary y-axis with aligned tick marks
-  scale_y_continuous(
-    name = 'Behavior Percentage (%)',
-    limits = c(0, 100),  # Set limits for the left y-axis
-    breaks = seq(0, 100, by = 10),  # Tick marks every 10 units
-    sec.axis = sec_axis(
-      ~ . / y_axis_scale, 
-      name = 'Average Relearning Cycles',
-      breaks = seq(0, 100 / y_axis_scale, by = 10 / y_axis_scale)  # Match the breaks on the secondary axis
-    )
-  ) +
-  labs(#title = "Behaviour Analysis and Average Relearning Cycles by Degeneration Percentage (89% and Above)",
-    x = "Degeneration Percentage (%)",
-    y = "Percentage (%)",
-    fill = "Behaviour Type") +
+  labs(x = "Degeneration (%)",
+       y = "Percentage (%)",
+       fill = "Behaviour Type",
+       shape = "") +  # Empty title for shape legend
   theme_minimal(base_size = 15) +
   theme(
     panel.grid.major = element_line(color = "lightgray", size = 0.5),
@@ -208,39 +195,48 @@ ggplot() +
     text = element_text(family = font, size = font_size),
     legend.position = c(0.05, 0.9),  # Top-left inside the plot
     legend.justification = c("left", "top"),  # Aligns the legend to the top-left corner
-    legend.background = element_rect(fill = "white", color = NA, size = 0.5),  # White background for clarity
+    legend.background = element_rect(fill = alpha("white", 0.7), color = NA, size = 0.5),  # Semi-transparent white background
     legend.title = element_blank(),
-    #plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
     legend.text = element_text(size = font_size),
     axis.title = element_text(face = "bold"),
     axis.text = element_text(size = font_size),
-    axis.title.y.right = element_text(margin = margin(l = 10))  # Add space between label and axis values
-  )  +
+    axis.title.y.right = element_text(margin = margin(l = 10)),  # Add space between label and axis values
+    legend.box = "vertical",  # Stack legends vertically
+    legend.spacing.y = unit(0.1, "cm"),  # Reduce spacing between legend items
+    legend.margin = margin(0, 0, 0, 0),  # Remove margins around legend
+    legend.box.spacing = unit(0.1, "cm"), # Reduce spacing between legend boxes
+    legend.key.height = unit(0.8, "cm"),  # Reduce height of legend keys
+    legend.key.width = unit(0.8, "cm")    # Reduce width of legend keys
+  ) +
   scale_fill_manual(values = c(
-    #"CorrectBehaviour" = "#B3CDE0",  # Light Blue
     "RecoveredBehaviour" = "#B7E4D9",  # Green
     "FailedBehaviour" = "#F4B3B4"   # Light Red
   ),
   labels = c(
-    #"Correct behaviour", 
     "Failed behaviour", 
     "Recovered behaviour")) +
-  scale_x_continuous(breaks = seq(initialPer, finalPer, by = 1)) +
+  scale_shape_manual(values = c("Mean Relearning Cycles" = 18),  # Diamond shape
+                     labels = c("Mean Relearning Cycles" = "Mean relearning cycles")) +
+  scale_x_continuous(breaks = seq(initialPer, finalPer+1, by = 1)) +
   # Scaling the secondary y-axis with aligned tick marks, ensuring the secondary y-axis starts at 1
   scale_y_continuous(
-    name = 'Behaviour Percentage (%)',
+    name = 'Behaviour (%)',
     limits = c(bp_min, bp_max),  # Set limits for the left y-axis
-    breaks = seq(bp_min, bp_max, by = 10),  # Tick marks every 10 units
+    breaks = seq(bp_min, bp_max, by = 20),  # Tick marks every 20 units
     sec.axis = sec_axis(
       ~ . / y_axis_scale + 1,  # Adjust the scaling so that the secondary y-axis starts from 1
-      name = 'Average Relearning Cycles',
-      breaks = seq(1, bp_max / y_axis_scale + 1, by = 10 / y_axis_scale),  # Match the breaks on the secondary axis
+      name = 'Relearning Cycles',
+      breaks = seq(1, bp_max / y_axis_scale + 1, by = 20 / y_axis_scale),  # Match the breaks on the secondary axis
       labels = scales::number_format(accuracy = 0.01)  # Format with two decimal places
     )
+  ) +
+  guides(
+    fill = guide_legend(order = 1, override.aes = list(shape = NA)),
+    shape = guide_legend(order = 2, override.aes = list(fill = "#4A4A4A", color = "#4A4A4A"))
   )
 
-new_width <- 10      # New width in inches
-new_height <- (new_width / 3.5) * 3  # Calculate new height to maintain aspect ratio
+new_width <- 20      # New width in inches
+new_height <- 4.5  # Calculate new height to maintain aspect ratio
 
 # Construct the filename based on the experiment parameters
 plot_filename <- paste0("./plots/", degeneracyType, ' ', relearningType, 
@@ -252,7 +248,6 @@ ggsave(
   filename = plot_filename,
   plot = last_plot(),  # Save the most recent plot
   device = "svg",      # Save as SVG
-  #device = svglite::svglite,
   width = new_width,   # Use the new width
   height = new_height, # Use the calculated height
   units = "in"        # Specify inches for size
