@@ -192,8 +192,8 @@ ggplot() +
        shape = "") +  # Empty title for shape legend
   theme_minimal(base_size = 15) +
   theme(
-    panel.grid.major = element_line(color = "lightgray", size = 0.5),
-    panel.grid.minor = element_blank(),
+    panel.grid.minor.x = element_line(color = "lightgray", size = 0.3),  # Make minor grid lines visible
+    panel.grid.major.x = element_line(color = "gray", size = 0.5),
     panel.border = element_blank(),
     text = element_text(family = font, size = font_size),
     legend.position = c(0.05, 0.9),  # Top-left inside the plot
@@ -221,16 +221,17 @@ ggplot() +
     "Recovered behaviour")) +
   scale_shape_manual(values = c("Mean Relearning Cycles" = 18),  # Diamond shape
                      labels = c("Mean Relearning Cycles" = "Mean relearning cycles")) +
-  scale_x_continuous(breaks = seq(initialPer, finalPer, by = 1)) +
+  scale_x_continuous(breaks = seq(initialPer, finalPer, by = 1), 
+                     minor_breaks = seq(initialPer, finalPer, by = 0.5)) +
   # Scaling the secondary y-axis with aligned tick marks, ensuring the secondary y-axis starts at 1
   scale_y_continuous(
     name = 'Behaviour (%)',
     limits = c(bp_min, bp_max),  # Set limits for the left y-axis
-    breaks = seq(bp_min, bp_max, by = 10),  # Tick marks every 10 units
+    breaks = seq(bp_min, bp_max, by = 20),  # Tick marks every 10 units
     sec.axis = sec_axis(
       ~ . / y_axis_scale + 1,  # Adjust the scaling so that the secondary y-axis starts from 1
       name = 'Relearning Cycles',
-      breaks = seq(1, bp_max / y_axis_scale + 1, by = 10 / y_axis_scale),  # Match the breaks on the secondary axis
+      breaks = seq(1, bp_max / y_axis_scale + 1, by = 20 / y_axis_scale),  # Match the breaks on the secondary axis
       labels = scales::number_format(accuracy = 0.01)  # Format with two decimal places
     )
   ) +

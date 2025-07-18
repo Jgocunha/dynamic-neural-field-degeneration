@@ -202,8 +202,8 @@ ggplot() +
        shape = "") +  # Empty title for shape legend
   theme_minimal(base_size = 15) +
   theme(
-    panel.grid.major = element_line(color = "lightgray", size = 0.5),
-    panel.grid.minor = element_blank(),
+    panel.grid.minor.x = element_line(color = "lightgray", size = 0.3),  # Make minor grid lines visible
+    panel.grid.major.x = element_line(color = "gray", size = 0.5),
     panel.border = element_blank(),
     text = element_text(family = font, size = font_size),
     legend.position = c(0.05, 0.9),  # Top-left inside the plot
@@ -230,7 +230,8 @@ ggplot() +
     "Recovered behaviour")) +
   scale_shape_manual(values = c("Mean Relearning Cycles" = 18),  # Diamond shape
                      labels = c("Mean Relearning Cycles" = "Mean relearning cycles")) +
-  scale_x_continuous(breaks = seq(initialPer, finalPer+2, by = 2)) +
+  scale_x_continuous(breaks = seq(initialPer, finalPer+2, by = 2), 
+                     minor_breaks = seq(initialPer, finalPer, by = 1)) +
   guides(
     fill = guide_legend(order = 1, override.aes = list(shape = NA)),
     shape = guide_legend(order = 2, override.aes = list(fill = "#4A4A4A", color = "#4A4A4A"))
