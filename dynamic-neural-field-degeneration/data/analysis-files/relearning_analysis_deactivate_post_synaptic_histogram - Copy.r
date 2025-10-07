@@ -222,14 +222,14 @@ plot_filename <- paste0("./plots/line_plots", degeneracyType, ' ', relearningTyp
                         ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
                         ' Update-all-weights-', updateAllWeights, '.svg')
 
-ggsave(
-  filename = plot_filename,
-  plot = combined_plot,
-  device = "svg",
-  width = new_width,
-  height = new_height,
-  units = "in"
-)
+#ggsave(
+#  filename = plot_filename,
+#  plot = combined_plot,
+#  device = "svg",
+#  width = new_width,
+#  height = new_height,
+#  units = "in"
+#)
 
 print(plot_filename)
 

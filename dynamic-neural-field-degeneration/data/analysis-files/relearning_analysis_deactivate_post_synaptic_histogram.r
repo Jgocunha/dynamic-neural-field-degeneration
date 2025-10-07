@@ -242,19 +242,28 @@ ggplot() +
     legend.box.spacing = unit(0.1, "cm") # Reduce spacing between legend boxes
   )
 
-new_width <- 20      # New width in inches
-new_height <- 4.5
+new_width <- 12      # New width in inches
+new_height <- 4
 
 # Construct the filename based on the experiment parameters
 plot_filename <- paste0("./plots/", degeneracyType, ' ', relearningType, 
                         ' Epochs-', epochs, ' ', 'MaxCycles-', maximumLearningCycles, 
-                        ' Update-all-weights-', updateAllWeights, '.svg')
+                        ' Update-all-weights-', updateAllWeights, '.pdf')
 
+# Save the plot with the updated dimensions
+#ggsave(
+#  filename = plot_filename,
+#  plot = last_plot(),  # Save the most recent plot
+#  device = "svg",      # Save as SVG
+#  width = new_width,   # Use the new width
+#  height = new_height, # Use the calculated height
+#  units = "in"        # Specify inches for size
+#)
 # Save the plot with the updated dimensions
 ggsave(
   filename = plot_filename,
   plot = last_plot(),  # Save the most recent plot
-  device = "svg",      # Save as SVG
+  device = "pdf",      # Save as PDF
   width = new_width,   # Use the new width
   height = new_height, # Use the calculated height
   units = "in"        # Specify inches for size
