@@ -158,7 +158,7 @@ results_filtered_zero <- results_filtered %>%
 
 # Font parameters
 font <- "Garamond"
-font_size <- 24
+font_size <- 34
 
 # Create the bar chart with average relearning cycles
 ggplot() +
@@ -242,8 +242,8 @@ ggplot() +
     legend.box.spacing = unit(0.1, "cm") # Reduce spacing between legend boxes
   )
 
-new_width <- 12      # New width in inches
-new_height <- 4
+new_width <- 16      # New width in inches
+new_height <- 5
 
 # Construct the filename based on the experiment parameters
 plot_filename <- paste0("./plots/", degeneracyType, ' ', relearningType, 

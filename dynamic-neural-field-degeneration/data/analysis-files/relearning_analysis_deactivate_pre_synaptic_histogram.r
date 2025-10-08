@@ -158,7 +158,7 @@ results_filtered_zero <- results_filtered %>%
 
 # Font parameters
 font <- "Garamond"
-font_size <- 24
+font_size <- 34
 
 # Create the bar chart with average relearning cycles
 ggplot() +
@@ -236,8 +236,8 @@ ggplot() +
     shape = guide_legend(order = 2, override.aes = list(fill = "#4A4A4A", color = "#4A4A4A"))
   )
 
-new_width <- 12      # New width in inches
-new_height <- 4  # Calculate new height to maintain aspect ratio
+new_width <- 16      # New width in inches
+new_height <- 5  # Calculate new height to maintain aspect ratio
 
 # Construct the filename based on the experiment parameters
 plot_filename <- paste0("./plots/", degeneracyType, ' ', relearningType, 
