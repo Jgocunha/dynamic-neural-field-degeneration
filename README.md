@@ -2,6 +2,14 @@
 
 ![Alt text](https://res.cloudinary.com/doyaoy7aj/image/upload/v1730798144/dnf-deg-logo.png)
 
+---
+
+[![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square&logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/20)
+[![CMake](https://img.shields.io/badge/CMake-3.31%2B-064F8C?style=flat-square&logo=cmake&logoColor=white)](https://cmake.org)
+[![R](https://img.shields.io/badge/R-analysis-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.r-project.org)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgMy40NDlMOS43NSAyLjF2OS40NTFIMG0xMC45NDktOS42MDJMMjQgMHYxMS40SDEwLjk0OU0wIDEyLjZoOS43NXY5LjQ1MUwwIDIwLjY5OU0xMC45NDkgMTIuNkgyNFYyNGwtMTIuOS0xLjgwMSIvPjwvc3ZnPg%3D%3D&logoColor=white)](https://github.com/Jgocunha/dynamic-neural-field-degeneration)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+
 ## Overview
 
 **dynamic-neural-field-degeneration** is a framework designed to simulate and study the effects of 
@@ -67,3 +75,9 @@ For the relearning experiment, which is coupled with a robotic simulation, you c
 ## Documentation
 
 For a full exploration of the repository, refer to the Wiki.
+
+## Citation
+
+If you use this work in your research, please cite:
+
+> J. G. Cunha, R. H. Cuijpers, W. Erlhagen, E. Bicho, "Robustness and Adaptability in a Dynamic Neural Field Architecture Subject to Degeneration," in: *ROBOT 2025 – 8th Iberian Conference*, status: In press.
