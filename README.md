@@ -80,4 +80,4 @@ For a full exploration of the repository, refer to the Wiki.
 
 If you use this work in your research, please cite:
 
-> J. G. Cunha, R. H. Cuijpers, W. Erlhagen, E. Bicho, "Robustness and Adaptability in a Dynamic Neural Field Architecture Subject to Degeneration," in: *ROBOT 2025 – 8th Iberian Conference*, status: In press.
+> J. G. Cunha, R. H. Cuijpers, W. Erlhagen, E. Bicho, "Robustness and Adaptability in a Dynamic Neural Field Architecture Subject to Degeneration," in: *ROBOT 2025 – 8th Iberian Conference*, [doi:](https://link.springer.com/chapter/10.1007/978-3-032-30156-7_14)
